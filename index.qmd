@@ -7,9 +7,9 @@ page-layout: full
 ```{=html}
 <section class="hero">
   <div class="hero-tekst">
-    <p class="eyebrow">Fysikk og matematikk for ingeniør- og realfag</p>
+    <p class="eyebrow">Fysikk på alle nivå!</p>
     <h1>Fysikk forklart <span class="g">på tavla.</span></h1>
-    <p class="lead">Korte videoer, tydelige formler, kode du kan kjøre selv og oppgaver med hint når du står fast. Laget av Dr.&nbsp;Normann, emne for emne.</p>
+    <p class="lead">Korte videoer, tydelige formler, kode du kan kjøre selv og oppgaver med hint når du står fast. Laget av de som kan det best: ekte fysikere med formidlerglede!</p>
     <div class="cta">
       <a class="btn-chalk" href="forkurs/index.html">Gå til forkurset</a>
     </div>
