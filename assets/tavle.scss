@@ -288,8 +288,13 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 }
 
 // ---------- hero-scene og profiler ----------
-.hero-scene { position: relative; min-width: 0; margin-right: -2rem; }
-.hero-scene img { display: block; width: 100%; height: auto; -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent); mask-image: linear-gradient(to bottom, #000 82%, transparent); }
+.hero { grid-template-columns: 1fr; min-height: clamp(520px, 46vw, 680px); }
+.hero-tekst { position: relative; z-index: 1; max-width: 560px; }
+.hero-tekst::before { content: ""; position: absolute; inset: -3rem -4rem -3rem -6rem; z-index: -1; background: radial-gradient(ellipse at 35% 50%, rgba($slate, .92) 30%, rgba($slate, 0) 72%); pointer-events: none; }
+.hero-scene { position: absolute; z-index: -1; right: -7rem; top: -2.5rem; width: 82%; pointer-events: none; }
+.hero-scene img { display: block; width: 100%; height: auto;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 22%), linear-gradient(to bottom, #000 80%, transparent); -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent 0%, #000 22%), linear-gradient(to bottom, #000 80%, transparent); mask-composite: intersect; }
 .profiler { border-top: 1px solid $line; padding-top: 2.5rem; margin-top: 3.5rem; }
 .profiler h2 { margin-top: .2rem; }
 .profil-rad { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 1rem; }
@@ -300,7 +305,9 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 .profilkort h3 { margin: .3rem 0 0; font-size: 1.4rem; border: 0; }
 .profil-rolle { color: $neon; font-family: "Architects Daughter", cursive; margin: 0 0 .6rem; }
 @media (max-width: 860px) {
-  .hero-scene { margin-right: 0; }
+  .hero { min-height: 0; padding-top: 11rem; }
+  .hero-scene { right: -1rem; left: -1rem; width: auto; top: -1rem; opacity: .75; }
+  .hero-tekst::before { inset: -2rem -2rem; background: radial-gradient(ellipse at 50% 55%, rgba($slate, .9) 40%, rgba($slate, 0) 80%); }
   .profil-rad { grid-template-columns: 1fr; }
 }
 @media (max-width: 520px) {
