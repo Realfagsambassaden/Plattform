@@ -1,6 +1,7 @@
 // KI-tjener for fysikkhjelp.no (Cloudflare Worker).
 //   POST /hint     – ETT hint til en oppgave (åpent for alle)
-//   POST /dekning  – dekningskart: hvor godt dekker fysikkhjelp.no et emne? (krever innlogget bruker)
+//   POST /dekning  – dekningskart: hvor godt dekker fysikkhjelp.no et emne? Åpent for alle;
+//                    innloggede brukere får i tillegg sidene/veikartet.
 // API-nøkler ligger som hemmeligheter i Cloudflare og vises aldri på nettsiden.
 //
 // INNSTILLINGER (variabler/hemmeligheter på workeren i Cloudflare, ingen kodeendring):
@@ -107,9 +108,13 @@ async function hint(request, env, b, h) {
 // ---------------------------------------------------------------- dekning
 async function dekning(request, env, b, h) {
   const bruker = await innloggetBruker(request, env);
-  if (!bruker) return json({ feil: "Du må være logget inn for å se dekningskartet.", innlogging: true }, 401, h);
-  if (!(await innenforGrense(env, `dekning:${bruker.id}:${new Date().toISOString().slice(0, 10)}`, 15, 90000)))
-    return json({ feil: "Du har laget mange dekningskart i dag. Prøv igjen i morgen." }, 429, h);
+  const dag = new Date().toISOString().slice(0, 10);
+  const ip = request.headers.get("CF-Connecting-IP") || "ukjent";
+  const ok = bruker
+    ? await innenforGrense(env, `dekning:${bruker.id}:${dag}`, 15, 90000)
+    : await innenforGrense(env, `dekning-ip:${ip}:${dag}`, 5, 90000);
+  if (!ok) return json({ feil: bruker ? "Du har laget mange dekningskart i dag. Prøv igjen i morgen."
+                                       : "Du har laget mange dekningskart i dag. Registrer deg gratis for å lage flere." }, 429, h);
 
   // 1. emnebeskrivelsen
   let tekst = kort(b.tekst, 30000).trim();
@@ -142,13 +147,14 @@ async function dekning(request, env, b, h) {
       .map((s) => ({ url: s.url, tittel: s.tittel, kapittel: s.kapittel })),
   }));
   if (!temaer.length) throw feil("Fant ingen faglige temaer i emnebeskrivelsen.", 422);
-  return json({ emnekode: kort(r.emnekode, 30), emnenavn: kort(r.emnenavn, 150), kilde, temaer, oppsummering: kort(r.oppsummering, 800) }, 200, h);
+  // Uten innlogging: svar på om faget dekkes, men ikke hvilke sider (veikartet) – det er for registrerte brukere.
+  if (!bruker) temaer.forEach((t) => { t.antallSider = t.sider.length; t.sider = []; });
+  return json({ emnekode: kort(r.emnekode, 30), emnenavn: kort(r.emnenavn, 150), kilde, temaer, oppsummering: kort(r.oppsummering, 800), innlogget: !!bruker }, 200, h);
 }
 
 async function innloggetBruker(request, env) {
   const token = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
-  if (!token) return null;
-  if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) throw feil("Innlogging er ikke satt opp ennå.", 503);
+  if (!token || !env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) return null;
   const r = await fetch(`${env.SUPABASE_URL}/auth/v1/user`, { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` } });
   if (!r.ok) return null;
   const u = await r.json();

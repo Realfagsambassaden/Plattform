@@ -254,3 +254,14 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 .kart-flis.god .merke { color: $neon; } .kart-flis.delvis .merke { color: $yellow; } .kart-flis.ingen .merke { color: $dust; }
 .kart-merk { font-size: .85rem; margin-top: 1.5rem; }
 @media (max-width: 520px) { .dekning-rad { flex-direction: column; } }
+
+.kart-overskrift { margin-top: 2rem; border: 0; }
+.laast-sider { color: $dust; font-size: .85rem !important; margin-top: .3rem !important; }
+.veikart-laas { margin: 1.5rem 0; border: 1px dashed mix($neon, $line, 50%); border-radius: 12px; padding: 1.3rem 1.4rem; background: rgba($neon, .03); }
+.veikart-laas h3 { margin: .2rem 0 .5rem; border: 0; }
+.veikart-laas .btn-chalk { margin-top: .4rem; }
+.veikart { margin: 1.5rem 0; border: 1px solid $line; border-radius: 12px; padding: 1.2rem 1.4rem; }
+.veikart h3 { margin: .2rem 0 .8rem; border: 0; }
+.veikart ol { margin: 0; padding-left: 1.4rem; display: flex; flex-direction: column; gap: .5rem; }
+.veikart li::marker { font-weight: 700; color: $dust; }
+.veikart li.god::marker { color: $neon; } .veikart li.delvis::marker { color: $yellow; }

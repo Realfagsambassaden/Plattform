@@ -7,7 +7,6 @@
 function start() {
   var rot = document.getElementById('dekning');
   var skjema = rot.querySelector('.dekning-skjema');
-  var laas = rot.querySelector('.dekning-laas');
   var ut = rot.querySelector('.dekning-resultat');
   var meta = document.querySelector('meta[name="fysikkhjelp-hint-api"]');
   var API = meta ? meta.content.replace(/\/hint\/?$/, '/dekning') : '';
@@ -19,17 +18,12 @@ function start() {
   }
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
 
-  if (!window.fhKonto || !window.fhKonto.sattOpp) {
-    laas.hidden = false;
-    laas.querySelector('a').outerHTML = '<p class="muted">Registrering åpner snart.</p>';
-    return;
+  // Innlogging er valgfri: uten bruker får du svar på om faget dekkes, med bruker også veikartet.
+  if (window.fhKonto && window.fhKonto.sattOpp) window.fhKonto().then(function (k) { klient = k; }).catch(function () {});
+  function hentToken() {
+    if (!klient) return Promise.resolve(null);
+    return klient.auth.getSession().then(function (r) { return r.data.session && r.data.session.access_token; });
   }
-  window.fhKonto().then(function (k) {
-    klient = k;
-    function tegn(sesjon) { skjema.hidden = !sesjon; laas.hidden = !!sesjon; }
-    k.auth.getSession().then(function (r) { tegn(r.data.session); });
-    k.auth.onAuthStateChange(function (_h, s) { tegn(s); });
-  }).catch(function () { laas.hidden = false; });
 
   skjema.addEventListener('submit', function (ev) {
     ev.preventDefault();
@@ -38,12 +32,12 @@ function start() {
     var knapp = skjema.querySelector('button[type="submit"]');
     knapp.disabled = true; ut.innerHTML = '';
     melding('Leser emnebeskrivelsen og sammenligner med innholdet på siden … Dette tar gjerne 20–40 sekunder.');
-    klient.auth.getSession().then(function (r) {
-      var token = r.data.session && r.data.session.access_token;
-      if (!token) throw new Error('Du må logge inn på nytt.');
+    hentToken().then(function (token) {
+      var hode = { 'Content-Type': 'application/json' };
+      if (token) hode.Authorization = 'Bearer ' + token;
       return fetch(API, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        headers: hode,
         body: JSON.stringify(tekst ? { tekst: tekst } : { url: url })
       });
     }).then(function (r) {
@@ -74,12 +68,18 @@ function start() {
          '<span class="god" style="width:' + pst(n.god) + '"></span><span class="delvis" style="width:' + pst(n.delvis) + '"></span><span class="ingen" style="width:' + pst(n.ingen) + '"></span></div>';
     h += '<ul class="kart-forklaring"><li><i class="god"></i>Godt dekket (' + n.god + ')</li><li><i class="delvis"></i>Delvis (' + n.delvis + ')</li><li><i class="ingen"></i>Ikke dekket (' + n.ingen + ')</li></ul></div>';
     if (d.oppsummering) h += '<p class="kart-oppsummering">' + esc(d.oppsummering) + '</p>';
+    if (d.innlogget) h += veikart(d.temaer);
+    else h += '<div class="veikart-laas"><div><p class="eyebrow">Ditt veikart</p><h3>Vil du vite nøyaktig hva du skal lese?</h3>' +
+      '<p>Med en gratis bruker får du et veikart for faget: hvilke sider og oppgaver på fysikkhjelp.no som hører til hvert tema, i riktig rekkefølge. Etter hvert kommer også tester og personlig tilpasning.</p>' +
+      '<a class="btn-chalk" href="konto/index.html?neste=dekning">Registrer deg gratis</a> <a class="btn-chalk ghost" href="konto/index.html?neste=dekning">Logg inn</a></div></div>';
+    h += '<h3 class="kart-overskrift">Temaene i faget</h3>';
     h += '<div class="kart">';
     var rekke = { god: 0, delvis: 1, ingen: 2 };
     d.temaer.slice().sort(function (a, b) { return rekke[a.dekning] - rekke[b.dekning]; }).forEach(function (t) {
       h += '<div class="kart-flis ' + t.dekning + '"><span class="merke">' + ({ god: 'Godt dekket', delvis: 'Delvis', ingen: 'Ikke dekket' })[t.dekning] + '</span>';
       h += '<h3>' + esc(t.tema) + '</h3>';
       if (t.kommentar) h += '<p>' + esc(t.kommentar) + '</p>';
+      if (!d.innlogget && t.antallSider) h += '<p class="laast-sider">🔒 ' + t.antallSider + (t.antallSider === 1 ? ' side' : ' sider') + ' i veikartet</p>';
       if (t.sider.length) {
         h += '<ul>';
         t.sider.forEach(function (s) { h += '<li><a href="' + esc(s.url.replace(/^\//, '')) + '">' + esc(s.tittel) + '</a></li>'; });
@@ -90,5 +90,17 @@ function start() {
     h += '</div><p class="muted kart-merk">Kartet er laget av en KI som har sammenlignet emnebeskrivelsen med innholdet på fysikkhjelp.no. Det er et anslag, ikke en garanti. Sjekk alltid pensumlisten fra faglærer.</p>';
     ut.innerHTML = h;
     ut.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Veikart: temaene i den rekkefølgen emnebeskrivelsen har dem, med sidene som skal leses.
+  function veikart(temaer) {
+    var h = '<section class="veikart"><p class="eyebrow">Ditt veikart</p><h3>Slik kan du bruke fysikkhjelp.no i dette faget</h3><ol>';
+    temaer.forEach(function (t) {
+      h += '<li class="' + t.dekning + '"><strong>' + esc(t.tema) + '</strong>';
+      if (t.sider.length) h += ' – les ' + t.sider.map(function (s) { return '<a href="' + esc(s.url.replace(/^\//, '')) + '">' + esc(s.tittel) + '</a>'; }).join(', ');
+      else h += ' – <span class="muted">finnes ikke her ennå, bruk læreboka</span>';
+      h += '</li>';
+    });
+    return h + '</ol></section>';
   }
 }
