@@ -82,8 +82,9 @@ Velg kurs
       </div>
       <div>
         <h3>Dr. Normann</h3>
-        <p class="profil-rolle">Fysiker og formidler</p>
-        <p>Jeg heter Ben og er fysiker. Her legger jeg ut forklaringene jeg selv skulle ønske jeg hadde: én idé om gangen, tegnet ut på tavla, med regning du kan følge linje for linje.</p>
+        <p class="profil-rolle">Ph.d. i matematisk kosmologi</p>
+        <p>Jeg heter Ben, har doktorgrad i matematisk kosmologi og har formidlet og undervist realfag i ti år. I 2018 vant jeg den nasjonale finalen i Forsker Grand Prix.</p>
+        <p>Her legger jeg ut forklaringene jeg selv skulle ønske jeg hadde: én idé om gangen, tegnet ut på tavla, med regning du kan følge linje for linje.</p>
       </div>
     </article>
     <article class="profilkort">
@@ -93,8 +94,8 @@ Velg kurs
       </div>
       <div>
         <h3>Andrea</h3>
-        <p class="profil-rolle">Formidler</p>
-        <p class="muted">[Kort presentasjon av Andrea kommer.]</p>
+        <p class="profil-rolle">Dobbel mastergrad</p>
+        <p>Andrea har i en årrekke vært ansiktet utad og selve drivkraften i NTNU Fysikkstudio, som lager fysikkvideoer av høy kvalitet.</p>
       </div>
     </article>
   </div>
