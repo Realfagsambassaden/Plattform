@@ -286,3 +286,25 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
   .dekning-banner { flex-wrap: wrap; }
   .dekning-banner img { width: 150px; }
 }
+
+// ---------- hero-scene og profiler ----------
+.hero-scene { position: relative; min-width: 0; margin-right: -2rem; }
+.hero-scene img { display: block; width: 100%; height: auto; -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent); mask-image: linear-gradient(to bottom, #000 82%, transparent); }
+.profiler { border-top: 1px solid $line; padding-top: 2.5rem; margin-top: 3.5rem; }
+.profiler h2 { margin-top: .2rem; }
+.profil-rad { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 1rem; }
+.profilkort { display: grid; grid-template-columns: 150px 1fr; gap: 1.3rem; align-items: start; border: 1px solid $line; border-radius: 14px; padding: 1.3rem; }
+.profil-bilder { position: relative; width: 150px; }
+.profil-foto { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid $neon; box-shadow: 0 0 0 6px rgba($neon, .12), 0 0 28px rgba($neon, .25); }
+.profil-ikon { position: absolute; right: -26px; bottom: -22px; width: 84px; height: auto; filter: drop-shadow(0 0 6px rgba(0,0,0,.8)); transform: rotate(-6deg); }
+.profilkort h3 { margin: .3rem 0 0; font-size: 1.4rem; border: 0; }
+.profil-rolle { color: $neon; font-family: "Architects Daughter", cursive; margin: 0 0 .6rem; }
+@media (max-width: 860px) {
+  .hero-scene { margin-right: 0; }
+  .profil-rad { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .profilkort { grid-template-columns: 1fr; justify-items: start; }
+}
+body { overflow-x: clip; }
+@media (max-width: 860px) { .hero::before { inset: -1rem 0; } }

@@ -14,9 +14,8 @@ page-layout: full
       <a class="btn-chalk" href="forkurs/index.html">Gå til forkurset</a>
     </div>
   </div>
-  <div class="board">
-    <span class="tag">W = F · s · cos θ</span>
-    <img src="assets/img/tegninger/kjelke.webp" alt="Dashman drar en kjelke med kraften F i vinkelen theta. Han på kjelken sier «Kom igjen nå!»">
+  <div class="hero-scene">
+    <img src="assets/img/tegninger/hero-scene.webp" alt="Dr. Normann og Andrea forklarer ivrig, med et skrått kast og radianer tegnet i kritt rundt seg">
   </div>
 </section>
 ```
@@ -72,13 +71,32 @@ Velg kurs
   <span>Lim inn emnebeskrivelsen til faget du skal ta eksamen i, og få et kart over hva du finner her. →</span></span>
 </a>
 
-<section class="about">
-  <img src="assets/img/tegninger/hallo.webp" alt="Dashman vinker og sier hallo">
-  <div>
-    <p class="eyebrow">Om Dr. Normann</p>
-    <h2>Hvem står bak?</h2>
-    <p>Jeg heter Ben og er fysiker. Her legger jeg ut forklaringene jeg selv skulle ønske jeg hadde: én idé om gangen, tegnet ut på tavla, med regning du kan følge linje for linje.</p>
-    <p class="muted">[Utkast – skriv inn din egen presentasjon her.]</p>
+<section class="profiler">
+  <p class="eyebrow">Våre profiler</p>
+  <h2>Hvem forklarer?</h2>
+  <div class="profil-rad">
+    <article class="profilkort">
+      <div class="profil-bilder">
+        <img class="profil-foto" src="assets/img/ben-portrett.webp" alt="Portrett av Ben David Normann">
+        <img class="profil-ikon" src="assets/img/drnormann-ikon.png" alt="Dr. Normann">
+      </div>
+      <div>
+        <h3>Dr. Normann</h3>
+        <p class="profil-rolle">Fysiker og formidler</p>
+        <p>Jeg heter Ben og er fysiker. Her legger jeg ut forklaringene jeg selv skulle ønske jeg hadde: én idé om gangen, tegnet ut på tavla, med regning du kan følge linje for linje.</p>
+      </div>
+    </article>
+    <article class="profilkort">
+      <div class="profil-bilder">
+        <img class="profil-foto" src="assets/img/andrea-portrett.webp" alt="Portrett av Andrea">
+        <img class="profil-ikon" src="assets/img/andrea-ikon.png" alt="Andrea">
+      </div>
+      <div>
+        <h3>Andrea</h3>
+        <p class="profil-rolle">Formidler</p>
+        <p class="muted">[Kort presentasjon av Andrea kommer.]</p>
+      </div>
+    </article>
   </div>
 </section>
 
