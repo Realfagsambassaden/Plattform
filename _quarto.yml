@@ -5,6 +5,7 @@ project:
     - "*.qmd"
   resources:
     - assets/
+    - innhold.json
 
 lang: nb
 
@@ -27,6 +28,11 @@ website:
         text: Matematikk
       - href: kommer/avansert-fysikk.qmd
         text: Avansert fysikk
+    right:
+      - href: dekning.qmd
+        text: Dekker vi faget ditt?
+      - href: konto/index.qmd
+        text: Logg inn
   sidebar:
     - id: forkurs
       title: "Forkurs (TRES)"
@@ -135,6 +141,9 @@ format:
       - text: |
           <!-- Adressen til hint-tjeneren (Cloudflare Worker). Bytt ut når den er satt opp. -->
           <meta name="fysikkhjelp-hint-api" content="https://hint.fysikkhjelp.no/hint">
+          <!-- Brukerkontoer (Supabase). Begge verdiene er offentlige og trygge å ha her. -->
+          <meta name="supabase-url" content="">
+          <meta name="supabase-key" content="">
     include-after-body:
       - text: |
           <script>
@@ -142,7 +151,7 @@ format:
             (function () {
               var s = document.querySelector('script[src*="site_libs/"]');
               var root = s ? s.getAttribute('src').split('site_libs/')[0] : '';
-              ['assets/js/kode.js', 'assets/js/oppgaver.js'].forEach(function (p) {
+              ['assets/js/konto.js', 'assets/js/kode.js', 'assets/js/oppgaver.js'].forEach(function (p) {
                 var el = document.createElement('script'); el.src = root + p; document.body.appendChild(el);
               });
             })();

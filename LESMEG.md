@@ -73,3 +73,11 @@ Dette repoet trenger to hemmeligheter (Settings → Secrets and variables → Ac
 TRES0312 trenger hemmeligheten `FYSIKKHJELP_TOKEN` – en GitHub-nøkkel (fine-grained) med tilgang til dette repoet og tillatelsen *Contents: Read and write*. Den brukes bare til å «ringe på» når kompendiet endres (se `.github/workflows/oppdater-fysikkhjelp.yml` i TRES0312).
 
 Nytt fag: legg til en «Hent …»-blokk i `.github/workflows/bygg.yml`, et kall i `bygg.sh`, og den samme ringeklokka i fagrepoet.
+
+## 7. Brukerkontoer og dekningskart
+
+- Innlogging går via Supabase (brukerdata lagres i EU). Adressen og den offentlige nøkkelen står i `_quarto.yml` (`supabase-url`, `supabase-key`). Er de tomme, står det «Innlogging er ikke satt opp ennå».
+- `konto/index.qmd` + `assets/js/konto-side.js`: logg inn, registrer deg, glemt passord, Min side.
+- `assets/js/konto.js`: lastes på alle sider og bytter «Logg inn» til «Min side» i menyen.
+- `dekning.qmd` + `assets/js/dekning.js`: «Dekker vi faget ditt?». Krever innlogging. Sender emnebeskrivelsen til KI-tjeneren (`/dekning` i `hint-tjener/worker.js`), som sammenligner den med `innhold.json` (lages av `verktoy/innhold.py` ved hver bygging).
+- KI-tjeneren trenger `SUPABASE_URL` og `SUPABASE_ANON_KEY` for å sjekke at brukeren er logget inn.

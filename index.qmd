@@ -51,6 +51,12 @@ Velg kurs
   </a>
 </div>
 
+<a class="dekning-banner" href="dekning.html">
+  <span class="eyebrow">Nytt</span>
+  <strong>Dekker vi faget ditt?</strong>
+  <span>Lim inn emnebeskrivelsen til faget du skal ta eksamen i, og få et kart over hva du finner her. →</span>
+</a>
+
 <section class="about">
   <img src="assets/img/drnormann-logo.png" alt="Dr. Normann">
   <div>

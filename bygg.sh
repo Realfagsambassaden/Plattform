@@ -15,6 +15,7 @@ export FIG_CACHE="${FIG_CACHE:-$HER/.figur-cache}"
 echo "== Forkurs (TRES0312) fra $TRES0312"
 python3 "$HER/verktoy/convert.py" "$TRES0312/TRES0312_Kompendium" "$HER"
 python3 "$HER/verktoy/meny.py" "$HER"
+python3 "$HER/verktoy/innhold.py" "$HER"
 
 cd "$HER"
 if [ "${1:-}" = "preview" ]; then

@@ -1,0 +1,35 @@
+---
+title: "Dekker vi faget ditt?"
+subtitle: "Lim inn adressen til emnebeskrivelsen for faget du skal ta eksamen i, så får du et kart over hvor godt fysikkhjelp.no dekker pensum."
+toc: false
+page-layout: full
+---
+
+```{=html}
+<div id="dekning" class="dekning">
+  <form class="dekning-skjema" hidden>
+    <label for="dekning-url">Nettadresse til emnebeskrivelsen</label>
+    <div class="dekning-rad">
+      <input id="dekning-url" name="url" type="url" inputmode="url" placeholder="https://www.ntnu.no/studier/emner/TFY4106">
+      <button type="submit" class="btn-chalk">Lag kart</button>
+    </div>
+    <details class="dekning-tekst">
+      <summary>… eller lim inn teksten fra emnebeskrivelsen</summary>
+      <textarea name="tekst" rows="8" placeholder="Lim inn læringsutbytte, faglig innhold og pensum her."></textarea>
+    </details>
+    <p class="dekning-melding" role="status" aria-live="polite"></p>
+  </form>
+
+  <div class="dekning-laas" hidden>
+    <div class="dekning-eksempel" aria-hidden="true">
+      <span class="flis god">Newtons lover</span><span class="flis god">Arbeid og energi</span><span class="flis delvis">Rotasjon</span>
+      <span class="flis ingen">Svingninger</span><span class="flis delvis">Bevegelsesmengde</span><span class="flis ingen">Termodynamikk</span>
+    </div>
+    <p><strong>Dekningskartet er for registrerte brukere.</strong> Det er gratis å registrere seg.</p>
+    <a class="btn-chalk" href="konto/index.html?neste=dekning">Registrer deg eller logg inn</a>
+  </div>
+
+  <div class="dekning-resultat" aria-live="polite"></div>
+</div>
+<script src="assets/js/dekning.js"></script>
+```
