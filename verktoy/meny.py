@@ -7,6 +7,10 @@ from pathlib import Path
 P = Path(sys.argv[1])
 toc = json.loads((P / 'forkurs' / '_innhold.json').read_text(encoding='utf-8'))
 
+# Dashman-tegning per kapittel (assets/img/tegninger/)
+BILDER = {'hva-er-fysikk': 'sau-maling', 'matematikk': 'skratt-kast', 'kinematikk': 'fotball', 'krefter': 'bokser',
+          'energi': 'kjelke', 'statikk': 'hallo', 'fluider': 'hydraulikk', 'elektrisitet': 'e-felt'}
+
 # ---- oversiktsside
 q = ['---', 'title: "Forkurs (TRES0312)"',
      'subtitle: "Fysikk for deg som ikke har hatt mye matematikk eller fysikk før. Video, forklaring, eksempler og oppgaver med løsning og hint."',
@@ -24,6 +28,8 @@ for c in toc:
     q.append(f'<div class="kapittel{"" if live else " arbeid"}">')
     q.append(f'  <a class="kap-hode" href="{c["dir"]}/index.html"><span class="kap-nr">{c["nr"]}</span><span class="kap-navn">{c["tittel"]}</span>'
              + ('' if live else '<em class="pill off">under arbeid</em>') + '</a>')
+    b = BILDER.get(c['dir'].split('-', 1)[1])
+    if b: q.append(f'  <a href="{c["dir"]}/index.html" tabindex="-1" aria-hidden="true"><img class="kap-bilde" src="../assets/img/tegninger/{b}.webp" alt="" loading="lazy"></a>')
     if meta: q.append(f'  <p class="kap-meta">{" · ".join(meta)}</p>')
     q.append('  <ul>')
     for s in c['sider']:

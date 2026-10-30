@@ -6,7 +6,7 @@ page-layout: full
 
 ```{=html}
 <section class="hero">
-  <div>
+  <div class="hero-tekst">
     <p class="eyebrow">Fysikk og matematikk for ingeniør- og realfag</p>
     <h1>Fysikk forklart <span class="g">på tavla.</span></h1>
     <p class="lead">Korte videoer, tydelige formler, kode du kan kjøre selv og oppgaver med hint når du står fast. Laget av Dr.&nbsp;Normann, emne for emne.</p>
@@ -14,9 +14,9 @@ page-layout: full
       <a class="btn-chalk" href="forkurs/index.html">Gå til forkurset</a>
     </div>
   </div>
-  <div class="board" role="img" aria-label="Tavletegning: kjelke dratt med kraften F i vinkel theta, med komponentene Fx og Fy og forflytningen s">
+  <div class="board">
     <span class="tag">W = F · s · cos θ</span>
-    <canvas id="tavle-hero" width="640" height="400"></canvas>
+    <img src="assets/img/tegninger/kjelke.webp" alt="Dashman drar en kjelke med kraften F i vinkelen theta. Han på kjelken sier «Kom igjen nå!»">
   </div>
 </section>
 ```
@@ -30,35 +30,50 @@ Velg kurs
 ```{=html}
 <div class="tracks">
   <a class="track live" href="forkurs/index.html">
+    <img class="track-bilde" src="assets/img/tegninger/fotball.webp" alt="" loading="lazy">
     <span class="status">Åpent nå</span>
     <h3>Forkurs</h3>
     <p>For deg som skal begynne på ingeniør- eller realfag. Fra «hva er fysikk?» via kinematikk, krefter og energi til statikk og fluider.</p>
   </a>
   <a class="track" href="kommer/ingeniorfysikk.html">
+    <img class="track-bilde" src="assets/img/tegninger/malingsbombe.webp" alt="" loading="lazy">
     <span class="status">Kommer</span>
     <h3>Ingeniørfysikk</h3>
     <p>Fysikken i ingeniørstudiet, ordnet etter emne.</p>
   </a>
   <a class="track" href="kommer/matematikk.html">
+    <img class="track-bilde" src="assets/img/tegninger/flate-normal.webp" alt="" loading="lazy">
     <span class="status">Kommer</span>
     <h3>Matematikk</h3>
     <p>Algebra, funksjoner, derivasjon og integrasjon, på samme måte.</p>
   </a>
   <a class="track" href="kommer/avansert-fysikk.html">
+    <img class="track-bilde" src="assets/img/tegninger/euler-lagrange.webp" alt="" loading="lazy">
     <span class="status">Kommer</span>
     <h3>Avansert fysikk</h3>
     <p>For deg som vil lenger enn pensum.</p>
   </a>
 </div>
 
+<section class="slik">
+  <p class="eyebrow">Slik lærer du her</p>
+  <h2>Én idé om gangen</h2>
+  <div class="slik-rad">
+    <div><img src="assets/img/tegninger/volumstrom.webp" alt="Tavlenotater om volumstrøm og kontinuitetslikningen" loading="lazy"><h3>Video og tavle</h3><p>Korte videoer og håndskrevne tavlenotater, akkurat som i forelesningen.</p></div>
+    <div><img src="assets/img/tegninger/bokser.webp" alt="Dashman får et slag: kraft og motkraft, F og F′" loading="lazy"><h3>Oppgaver med hint</h3><p>Står du fast? Få et hint om gangen, ikke hele svaret.</p></div>
+    <div><img src="assets/img/tegninger/rakett.webp" alt="Rakett i verdensrommet" loading="lazy"><h3>Kode du kan kjøre</h3><p>Endre tallene og kjør Python rett i nettleseren. Ingenting å installere.</p></div>
+  </div>
+</section>
+
 <a class="dekning-banner" href="dekning.html">
-  <span class="eyebrow">Nytt</span>
+  <img src="assets/img/tegninger/sau-maling.webp" alt="Dashman måler en sau med linjal" loading="lazy">
+  <span class="banner-tekst"><span class="eyebrow">Nytt</span>
   <strong>Dekker vi faget ditt?</strong>
-  <span>Lim inn emnebeskrivelsen til faget du skal ta eksamen i, og få et kart over hva du finner her. →</span>
+  <span>Lim inn emnebeskrivelsen til faget du skal ta eksamen i, og få et kart over hva du finner her. →</span></span>
 </a>
 
 <section class="about">
-  <img src="assets/img/drnormann-logo.png" alt="Dr. Normann">
+  <img src="assets/img/tegninger/hallo.webp" alt="Dashman vinker og sier hallo">
   <div>
     <p class="eyebrow">Om Dr. Normann</p>
     <h2>Hvem står bak?</h2>
@@ -67,5 +82,4 @@ Velg kurs
   </div>
 </section>
 
-<script src="assets/js/tavle-hero.js"></script>
 ```
