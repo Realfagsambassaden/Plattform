@@ -1,0 +1,62 @@
+# Bygger fysikkhjelp.no fra fagrepoene og legger den ut.
+# Kjører når noe endres i dette repoet, når et fagrepo «ringer på» (repository_dispatch),
+# eller når du starter den manuelt fra Actions-fanen.
+name: Bygg fysikkhjelp.no
+
+on:
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: [kilde-oppdatert]
+  workflow_dispatch:
+
+concurrency:
+  group: bygg
+  cancel-in-progress: true
+
+jobs:
+  bygg-og-publiser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Hent forkurset (TRES0312)
+        uses: actions/checkout@v4
+        with:
+          repository: kosmoben/TRES0312
+          path: kilder/TRES0312
+          sparse-checkout: TRES0312_Kompendium
+
+      - name: Installer LaTeX (til TikZ-figurene) og pdftocairo
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends \
+            texlive-latex-base texlive-latex-recommended texlive-latex-extra \
+            texlive-pictures texlive-science texlive-fonts-recommended \
+            texlive-lang-european poppler-utils
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: 1.6.42
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Husk ferdige figurer mellom kjøringer
+        uses: actions/cache@v4
+        with:
+          path: .figur-cache
+          key: figurer-${{ hashFiles('kilder/*/TRES0312_Kompendium/files/*.tex', 'kilder/*/TRES0312_Kompendium/amd.sty') }}
+          restore-keys: figurer-
+
+      - name: Bygg nettsiden
+        run: bash bygg.sh
+
+      - name: Publiser til Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy

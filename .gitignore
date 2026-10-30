@@ -1,0 +1,7 @@
+# Lages automatisk av bygg.sh fra kompendiet – ikke rediger disse, rediger .tex-filene
+/forkurs/
+/_site/
+/.quarto/
+/.figur-cache/
+/kilder/
+/_to_delete/
