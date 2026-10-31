@@ -1,0 +1,7 @@
+# Realfagsambassaden – paraplysiden. Publiseres av GitHub-automatikken (.github/workflows/bygg.yml).
+name = "realfagsambassaden"
+compatibility_date = "2024-11-01"
+workers_dev = true
+
+[assets]
+directory = "./public"

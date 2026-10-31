@@ -1,0 +1,60 @@
+:root{--tavle:#0d1110;--tavle2:#131917;--linje:#2a3330;--kritt:#ecefe6;--stov:#9aa49e;--neon:#6ef04a;--gul:#eee462;--bla:#7aa8ff;--oransje:#f0a03c;--rosa:#f08fb0}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:clip}
+body{margin:0;background:var(--tavle);color:var(--kritt);font:400 1.08rem/1.6 "Comic Neue","Comic Sans MS","Chalkboard SE",system-ui,sans-serif;overflow-x:clip}
+a{color:var(--neon)}
+h1,h2,h3{font-weight:700;line-height:1.1;margin:0}
+.overlinje{font:700 .8rem/1 "Comic Neue",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--neon);margin:0 0 .6rem}
+.topp{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.8rem clamp(16px,4vw,48px);background:rgba(13,17,16,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--linje)}
+.merke{display:flex;align-items:center;gap:.6rem;color:var(--kritt);text-decoration:none;font-size:1.25rem}
+.merke b{color:var(--neon)}
+.topp nav{display:flex;gap:1.3rem;flex-wrap:wrap}
+.topp nav a{color:var(--stov);text-decoration:none}
+.topp nav a:hover{color:var(--kritt)}
+main{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
+.hero{position:relative;min-height:clamp(460px,62vh,640px);display:flex;align-items:center;isolation:isolate;padding:3rem 0}
+.hero::before{content:"";position:absolute;inset:-1rem -3rem;z-index:-1;background:url(img/tavle-bakgrunn.webp) center/cover no-repeat;opacity:.22;-webkit-mask-image:radial-gradient(ellipse at 60% 50%,#000 30%,transparent 78%);mask-image:radial-gradient(ellipse at 60% 50%,#000 30%,transparent 78%)}
+.hero-tekst{max-width:700px}
+.hero h1{font-size:clamp(2.6rem,6.5vw,4.8rem)}
+.hero h1 span{display:block;color:var(--neon)}
+.ingress{font-size:1.2rem;max-width:56ch;margin:1.3rem 0 0}
+.knapper{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.8rem}
+.knapp{display:inline-flex;padding:.85rem 1.3rem;border-radius:8px;background:var(--neon);color:#0b130a;font-weight:700;text-decoration:none;border:2px solid var(--neon)}
+.knapp.spokelse{background:transparent;color:var(--kritt);border-color:var(--linje)}
+.knapp.spokelse:hover{border-color:var(--stov)}
+.seksjon{padding:4rem 0 1rem;scroll-margin-top:70px}
+.seksjon h2{font-size:clamp(1.8rem,3.6vw,2.5rem);margin-bottom:1.4rem}
+.fag{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.fagkort{--farge:var(--stov);position:relative;display:flex;flex-direction:column;gap:.45rem;padding:1.2rem;border:1px solid var(--linje);border-radius:14px;color:var(--stov);text-decoration:none;min-width:0}
+.fagkort img,.fagkort svg{width:100%;height:110px;object-fit:contain;color:var(--farge);margin-bottom:.4rem}
+.fagkort h3{font-size:1.25rem;color:var(--kritt)}
+.fagkort p{margin:0;font-size:.98rem}
+.fagkort .status{font:700 .72rem/1 "Comic Neue",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--farge)}
+.fagkort.fysikk{--farge:var(--neon)}.fagkort.matte{--farge:var(--bla)}.fagkort.kjemi{--farge:var(--oransje)}.fagkort.bio{--farge:var(--gul)}
+.fagkort:not(.aapen) img{filter:grayscale(.5);opacity:.75}
+.fagkort.aapen{border-color:color-mix(in srgb,var(--neon) 55%,var(--linje));background:rgba(110,240,74,.05);color:var(--kritt)}
+.fagkort.aapen:hover{border-color:var(--neon)}
+.gaa{margin-top:auto;padding-top:.6rem;color:var(--neon);font-weight:700}
+.podkast{display:grid;grid-template-columns:1.3fr 1fr;gap:2rem;align-items:center}
+.plattformer{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.2rem}
+.plattform{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1rem;border:1px solid var(--linje);border-radius:99px;color:var(--stov)}
+a.plattform{color:var(--kritt);text-decoration:none}a.plattform:hover{border-color:var(--neon)}
+.plattform svg{width:20px;height:20px}
+.snart{font-family:"Architects Daughter",cursive;color:var(--gul);transform:rotate(-1.5deg);display:inline-block;margin-top:1rem}
+.podkast-bilde img{width:100%;max-height:300px;object-fit:contain}
+.profiler{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem}
+.profil{display:grid;grid-template-columns:150px 1fr;gap:1.3rem;padding:1.3rem;border:1px solid var(--linje);border-radius:14px}
+.bilder{position:relative;width:150px}
+.foto{width:150px;height:150px;border-radius:50%;object-fit:cover;border:3px solid var(--neon);box-shadow:0 0 0 6px rgba(110,240,74,.12),0 0 28px rgba(110,240,74,.25)}
+.ikon{position:absolute;right:-26px;bottom:-22px;width:84px;transform:rotate(-6deg);filter:drop-shadow(0 0 6px rgba(0,0,0,.8))}
+.profil h3{font-size:1.4rem;margin-top:.3rem}
+.rolle{font-family:"Architects Daughter",cursive;color:var(--neon);margin:0 0 .6rem}
+.profil p:last-child{margin:0}
+.samarbeid{display:grid;grid-template-columns:200px 1fr;gap:2rem;align-items:center;border-top:1px solid var(--linje);margin-top:3rem}
+.samarbeid img{width:100%}
+.bunn{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;padding:1.5rem clamp(16px,4vw,48px);margin-top:4rem;border-top:1px solid var(--linje);color:var(--stov);font-size:.9rem}
+@media (max-width:900px){.fag{grid-template-columns:1fr 1fr}.podkast,.profiler{grid-template-columns:1fr}.topp nav{display:none}}
+@media (max-width:560px){.fag{grid-template-columns:1fr}.profil{grid-template-columns:1fr}.samarbeid{grid-template-columns:1fr}.samarbeid img{width:140px}.hero::before{inset:-1rem 0}}
+.merke .ordmerke{height:26px;width:auto}
+.hero-logo{display:block;width:min(420px,80%);height:auto;margin:0 0 1.6rem -10px}
+@media (max-width:560px){.merke .ordmerke{height:20px}}
