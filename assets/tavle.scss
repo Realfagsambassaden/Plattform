@@ -315,3 +315,21 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 }
 body { overflow-x: clip; }
 @media (max-width: 860px) { .hero::before { inset: -1rem 0; } }
+
+// ---------- logo og Realfagsambassaden-merke ----------
+.navbar-brand .navbar-logo { max-height: 30px; width: auto; }
+.navbar .nav-link .ra-merke { display: inline-flex; align-items: center; gap: .35rem; padding: .25rem .6rem .25rem .7rem; border: 1px solid $line; border-radius: 99px; line-height: 1; }
+.navbar .nav-link:hover .ra-merke { border-color: mix($neon, $line, 60%); }
+.ra-merke .ra-tekst { font-size: .78rem; color: $dust; white-space: nowrap; }
+.ra-merke .ra-ikon { height: 24px; width: 24px; }
+.ra-merke .ra-ord { height: 15px; width: auto; }
+.navbar .nav-link { white-space: nowrap; }
+@media (min-width: 1200px) {
+  .navbar-expand-xl .navbar-nav .nav-link { padding-left: .45rem; padding-right: .45rem; font-size: .95rem; }
+  .navbar-brand .navbar-logo { max-height: 34px; }
+}
+@media (min-width: 1200px) and (max-width: 1300px) {
+  .ra-merke .ra-tekst { display: none; }
+  .navbar-expand-xl .navbar-nav .nav-link { font-size: .9rem; padding-left: .35rem; padding-right: .35rem; }
+}
+.hero-logo { display: block; width: min(380px, 75%); height: auto; margin: 0 0 1.4rem -8px; }

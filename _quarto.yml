@@ -16,7 +16,10 @@ website:
   favicon: assets/img/drnormann-logo.png
   page-navigation: true
   navbar:
-    title: "fysikkhjelp<span class='dot'>.</span>no"
+    title: false
+    logo: assets/img/fh-logo-linje.png
+    logo-alt: "fysikkhjelp.no"
+    collapse-below: xl
     left:
       - href: index.qmd
         text: Forside
@@ -33,6 +36,9 @@ website:
         text: Dekker vi faget ditt?
       - href: konto/index.qmd
         text: Logg inn
+      - href: https://realfagsambassaden.no
+        text: "<span class='ra-merke'><span class='ra-tekst'>En del av</span><img src='/assets/img/ra-ikon.png' alt='' class='ra-ikon'><img src='/assets/img/ra-logo-linje.png' alt='Realfagsambassaden' class='ra-ord'></span>"
+        aria-label: "En del av Realfagsambassaden"
   sidebar:
     - id: forkurs
       title: "Forkurs (TRES)"
