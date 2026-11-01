@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doner forelesningsnotater – Realfagsambassaden</title>
+<meta name="description" content="Har du forelesningsnotater i fysikk, matematikk, kjemi eller biologi? Doner dem til Realfagsambassaden, så blir de til gratis læringsressurser for alle.">
+<link rel="icon" href="img/ra-favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Comic+Neue:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="stil.css">
+</head>
+<body>
+<header class="topp">
+  <a class="merke" href="./"><img src="img/ra-ikon.png" alt="" width="44" height="44"><img class="ordmerke" src="img/ra-logo-linje.png" alt="Realfagsambassaden" height="26"></a>
+  <nav aria-label="Hovedmeny">
+    <a href="./#sider">Hjelpesidene</a>
+    <a href="./#podkast">Podkast</a>
+    <a href="./#ambassadorer">Ambassadørene</a>
+    <a href="doner.html" aria-current="page">Doner notater</a>
+  </nav>
+</header>
+
+<main>
+  <section class="seksjon doner-topp">
+    <div>
+      <p class="overlinje">Doner dine forelesningsnotater</p>
+      <h1>Notatene dine kan hjelpe tusenvis av studenter.</h1>
+      <p class="ingress">Har du forelesningsnotater, lysbilder eller håndskrevne utledninger i et realfag? Gi dem til Realfagsambassaden. Vi går gjennom dem, sammenligner med det vi allerede har, og bygger dem inn i gratis læringssider med forklaringer, figurer og oppgaver. Du blir kreditert.</p>
+      <ol class="steg">
+        <li><b>Du laster opp</b> notatene her (PDF, LaTeX, bilder, lysbilder).</li>
+        <li><b>Vi går gjennom</b> dem og ser hva som er nytt i forhold til det som finnes.</li>
+        <li><b>En fagperson godkjenner</b> før noe publiseres, og du får beskjed når det er ute.</li>
+      </ol>
+    </div>
+    <img src="img/hallo.webp" alt="" class="doner-bilde">
+  </section>
+
+  <form id="doner" class="seksjon doner-skjema" novalidate>
+    <h2>Last opp notatene</h2>
+    <div class="felt-rad">
+      <label>Navn <input name="navn" required autocomplete="name"></label>
+      <label>E-post <input name="epost" type="email" required autocomplete="email"></label>
+    </div>
+    <div class="felt-rad">
+      <label>Institusjon <span class="valgfritt">(valgfritt)</span> <input name="institusjon" placeholder="f.eks. NTNU, Institutt for fysikk"></label>
+      <label>Nettsted
+        <select name="nettsted">
+          <option value="fysikkhjelp">fysikkhjelp.no</option>
+          <option value="matematikkhjelp">matematikkhjelp.no</option>
+          <option value="kjemihjelp">kjemihjelp.no</option>
+          <option value="biologihjelp">biologihjelp.no</option>
+        </select>
+      </label>
+    </div>
+    <div class="felt-rad">
+      <label>Fag <input name="fag" required placeholder="f.eks. Ingeniørfysikk – mekanikk"></label>
+      <label>Emnekode <span class="valgfritt">(valgfritt)</span> <input name="emnekode" placeholder="f.eks. TFY4106"></label>
+    </div>
+
+    <label class="slipp" id="slipp">
+      <input type="file" name="filer" multiple hidden accept=".pdf,.tex,.bib,.sty,.cls,.zip,.md,.qmd,.txt,.png,.jpg,.jpeg,.heic,.webp,.svg,.ppt,.pptx,.key,.doc,.docx,.odt,.odp,.ipynb,.py">
+      <span class="slipp-tekst"><b>Dra filene hit</b> eller klikk for å velge<br><small>PDF, LaTeX, bilder, lysbilder eller zip · maks 25 MB per fil, 90 MB totalt</small></span>
+      <ul class="filliste"></ul>
+    </label>
+
+    <label>Kommentar <span class="valgfritt">(valgfritt)</span>
+      <textarea name="kommentar" rows="4" placeholder="Hva dekker notatene? Er det noe vi bør vite, f.eks. hvilke deler du er mest fornøyd med?"></textarea>
+    </label>
+
+    <label>Hvordan vil du krediteres?
+      <select name="kreditering">
+        <option value="fullt navn">Med fullt navn (og institusjon)</option>
+        <option value="initialer">Bare med initialer</option>
+        <option value="anonym">Anonymt</option>
+      </select>
+    </label>
+
+    <label class="avkryss"><input type="checkbox" name="rettigheter" value="ja" required>
+      <span>Jeg bekrefter at jeg har rett til å dele dette materialet, og gir Realfagsambassaden lov til å bearbeide det og publisere innhold basert på det under en åpen lisens. Figurer og oppgaver som er hentet fra lærebøker, vil bli tegnet og skrevet om.</span></label>
+    <p class="liten">Navn og e-post brukes bare til å kontakte deg om donasjonen og til kreditering slik du har valgt. Notatene lagres privat til de er gjennomgått.</p>
+
+    <input type="text" name="nettadresse" tabindex="-1" autocomplete="off" class="honning" aria-hidden="true">
+
+    <button type="submit" class="knapp">Doner notatene</button>
+    <div class="fremdrift" hidden><span></span></div>
+    <p class="melding" role="status" aria-live="polite"></p>
+  </form>
+</main>
+
+<footer class="bunn">
+  <span>Realfagsambassaden · drevet av Normann Formidling</span>
+  <span><a href="./">Til forsiden</a></span>
+</footer>
+
+<script>
+(function () {
+  var skjema = document.getElementById('doner'), slipp = document.getElementById('slipp');
+  var input = slipp.querySelector('input[type=file]'), liste = slipp.querySelector('.filliste');
+  var melding = skjema.querySelector('.melding'), fremdrift = skjema.querySelector('.fremdrift'), knapp = skjema.querySelector('button[type=submit]');
+  var valgte = [];
+  function mb(b) { return (b / 1048576).toFixed(1) + ' MB'; }
+  function vis() {
+    liste.innerHTML = '';
+    valgte.forEach(function (f, i) {
+      var li = document.createElement('li'); li.textContent = f.name + ' · ' + mb(f.size);
+      var x = document.createElement('button'); x.type = 'button'; x.textContent = '×'; x.setAttribute('aria-label', 'Fjern ' + f.name);
+      x.onclick = function (e) { e.preventDefault(); valgte.splice(i, 1); vis(); };
+      li.appendChild(x); liste.appendChild(li);
+    });
+  }
+  function legg(fl) { Array.prototype.forEach.call(fl, function (f) { valgte.push(f); }); vis(); }
+  input.addEventListener('change', function () { legg(input.files); input.value = ''; });
+  ['dragenter', 'dragover'].forEach(function (t) { slipp.addEventListener(t, function (e) { e.preventDefault(); slipp.classList.add('over'); }); });
+  ['dragleave', 'drop'].forEach(function (t) { slipp.addEventListener(t, function (e) { e.preventDefault(); slipp.classList.remove('over'); }); });
+  slipp.addEventListener('drop', function (e) { legg(e.dataTransfer.files); });
+  function si(t, feil) { melding.textContent = t; melding.className = 'melding' + (feil ? ' feil' : ' ok'); }
+
+  skjema.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!skjema.navn.value.trim() || !skjema.epost.value.trim() || !skjema.fag.value.trim()) return si('Fyll inn navn, e-post og fag.', true);
+    if (!valgte.length) return si('Legg ved minst én fil.', true);
+    if (!skjema.rettigheter.checked) return si('Du må bekrefte at du har rett til å dele notatene.', true);
+    var tot = valgte.reduce(function (s, f) { return s + f.size; }, 0);
+    if (tot > 90 * 1048576) return si('Filene er for store til sammen (maks 90 MB). Del dem opp i flere donasjoner.', true);
+    var fd = new FormData(skjema); fd.delete('filer'); valgte.forEach(function (f) { fd.append('filer', f, f.name); });
+    var x = new XMLHttpRequest(); x.open('POST', '/api/doner');
+    knapp.disabled = true; fremdrift.hidden = false; si('Laster opp …');
+    x.upload.onprogress = function (ev) { if (ev.lengthComputable) fremdrift.firstElementChild.style.width = (100 * ev.loaded / ev.total) + '%'; };
+    x.onload = function () {
+      var j = {}; try { j = JSON.parse(x.responseText); } catch (er) {}
+      knapp.disabled = false; fremdrift.hidden = true;
+      if (x.status >= 200 && x.status < 300 && j.ok) {
+        skjema.reset(); valgte = []; vis();
+        si('Tusen takk! Notatene er mottatt. Vi tar kontakt når vi har gått gjennom dem.');
+      } else si(j.feil || ('Noe gikk galt (' + x.status + '). Prøv igjen.'), true);
+    };
+    x.onerror = function () { knapp.disabled = false; fremdrift.hidden = true; si('Fikk ikke kontakt. Sjekk nettforbindelsen og prøv igjen.', true); };
+    x.send(fd);
+  });
+})();
+</script>
+</body>
+</html>

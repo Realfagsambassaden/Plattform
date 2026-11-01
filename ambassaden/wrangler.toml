@@ -1,7 +1,10 @@
 # Realfagsambassaden – paraplysiden. Publiseres av GitHub-automatikken (.github/workflows/bygg.yml).
+# Statiske sider i public/; worker.js tar imot donasjoner på /api/doner.
 name = "realfagsambassaden"
+main = "worker.js"
 compatibility_date = "2024-11-01"
 workers_dev = true
 
 [assets]
 directory = "./public"
+binding = "ASSETS"

@@ -58,3 +58,37 @@ a.plattform{color:var(--kritt);text-decoration:none}a.plattform:hover{border-col
 .merke .ordmerke{height:26px;width:auto}
 .hero-logo{display:block;width:min(420px,80%);height:auto;margin:0 0 1.6rem -10px}
 @media (max-width:560px){.merke .ordmerke{height:20px}}
+/* ---------- doner notater ---------- */
+.doner-topp{display:grid;grid-template-columns:1.6fr 1fr;gap:2rem;align-items:center}
+.doner-topp h1{font-size:clamp(2rem,4.5vw,3.2rem);margin-bottom:1rem}
+.doner-bilde{width:100%;max-width:240px;justify-self:center}
+.steg{padding-left:1.2rem;margin:1.4rem 0 0;display:flex;flex-direction:column;gap:.4rem}
+.steg li::marker{color:var(--neon);font-weight:700}
+.doner-skjema{max-width:820px;display:flex;flex-direction:column;gap:1rem;border:1px solid var(--linje);border-radius:16px;padding:1.6rem;margin-top:2rem}
+.doner-skjema h2{margin-bottom:.2rem}
+.doner-skjema label{display:flex;flex-direction:column;gap:.35rem;font-weight:700}
+.felt-rad{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.valgfritt{font-weight:400;color:var(--stov);font-size:.9rem}
+.doner-skjema input,.doner-skjema select,.doner-skjema textarea{background:rgba(255,255,255,.04);border:1px solid var(--linje);border-radius:8px;color:var(--kritt);padding:.65rem .75rem;font:inherit;font-weight:400}
+.doner-skjema select option{background:var(--tavle2)}
+.doner-skjema input:focus,.doner-skjema select:focus,.doner-skjema textarea:focus{outline:2px solid rgba(110,240,74,.6);border-color:transparent}
+.slipp{border:2px dashed var(--linje)!important;border-radius:12px;padding:1.6rem;text-align:center;cursor:pointer;font-weight:400!important}
+.slipp.over,.slipp:hover{border-color:var(--neon)!important;background:rgba(110,240,74,.04)}
+.slipp small{color:var(--stov)}
+.filliste{list-style:none;padding:0;margin:.4rem 0 0;text-align:left;display:flex;flex-direction:column;gap:.3rem}
+.filliste li{display:flex;justify-content:space-between;align-items:center;gap:.5rem;background:rgba(255,255,255,.04);border-radius:6px;padding:.35rem .6rem;font-size:.95rem;word-break:break-all}
+.filliste button{background:none;border:0;color:var(--stov);font-size:1.2rem;cursor:pointer}
+.avkryss{flex-direction:row!important;align-items:flex-start;gap:.7rem!important;font-weight:400!important}
+.avkryss input{margin-top:.3rem;width:18px;height:18px;flex:none;accent-color:var(--neon)}
+.liten{font-size:.88rem;color:var(--stov);margin:0}
+.honning{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.doner-skjema .knapp{align-self:flex-start;cursor:pointer;font:inherit;font-weight:700}
+.doner-skjema .knapp:disabled{opacity:.5;cursor:wait}
+.fremdrift{height:8px;border-radius:4px;background:var(--linje);overflow:hidden}
+.fremdrift span{display:block;height:100%;width:0;background:var(--neon);transition:width .2s}
+.melding{margin:0;min-height:1.3em}.melding.ok{color:var(--neon)}.melding.feil{color:#ff8a80}
+.doner-kort{display:flex;gap:1.5rem;align-items:center;border:1px dashed color-mix(in srgb,var(--gul) 60%,var(--linje));border-radius:14px;padding:1.3rem 1.5rem;text-decoration:none;color:var(--stov);margin-top:2.5rem}
+.doner-kort:hover{border-color:var(--gul)}
+.doner-kort strong{color:var(--kritt);font-size:1.25rem;display:block;margin-bottom:.2rem}
+.doner-kort img{width:110px;flex:none}
+@media (max-width:700px){.doner-topp,.felt-rad{grid-template-columns:1fr}.doner-bilde{max-width:150px}}

@@ -67,6 +67,8 @@ jobs:
   # Realfagsambassaden (paraplysiden) – ren HTML, publiseres direkte uten bygging.
   realfagsambassaden:
     runs-on: ubuntu-latest
+    env:
+      DONASJON_TOKEN: ${{ secrets.DONASJON_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - name: Publiser til Cloudflare
@@ -76,3 +78,15 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: ambassaden
           command: deploy
+      - name: Nøkkel for donasjoner (hvis den finnes)
+        if: env.DONASJON_TOKEN != ''
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: ambassaden
+          command: deploy
+          secrets: |
+            GH_DONASJON
+        env:
+          GH_DONASJON: ${{ secrets.DONASJON_TOKEN }}
