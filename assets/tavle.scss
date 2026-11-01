@@ -374,6 +374,8 @@ body { overflow-x: clip; }
 /* ---------- Lærersiden: Design din forelesning ---------- */
 .mj-last { display: none; }
 .larer-test { border: 1px dashed $orange; color: $orange; border-radius: 8px; padding: .5rem .8rem; font-size: .95rem; }
+.larer-konto { color: $dust; font-size: .95rem; margin-bottom: .6rem; }
+.larer-konto b { color: $chalk; }
 .larer-rutenett { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 2rem; align-items: start; }
 @media (max-width: 900px) { .larer-rutenett { grid-template-columns: 1fr; } }
 .larer h2 { font-size: 1.25rem; margin-top: .5rem; }

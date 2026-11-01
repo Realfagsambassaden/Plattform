@@ -14,12 +14,15 @@
       '<button type="button" class="btn-chalk sekundar">+ Legg til i forelesning</button>';
     hode.appendChild(bar);
     bar.querySelector('button').addEventListener('click', function () {
-      var nok = 'fh-forelesninger', l = []; try { l = JSON.parse(localStorage.getItem(nok)) || []; } catch (e) {}
-      var f = l[0] || { id: 'f' + Date.now().toString(36), navn: 'Min forelesning', sider: [] };
-      if (f.sider.indexOf(sti) < 0) f.sider.push(sti);
-      l = [f].concat(l.filter(function (x) { return x.id !== f.id; }));
-      try { localStorage.setItem(nok, JSON.stringify(l)); } catch (e) {}
-      this.textContent = '✓ Lagt til i «' + f.navn + '»'; this.disabled = true;
+      var knapp = this; knapp.disabled = true;
+      var lastet = window.fhLarer ? Promise.resolve() : new Promise(function (ok) { var s = document.createElement('script'); s.src = R + 'assets/js/larer-felles.js'; s.onload = ok; s.onerror = ok; document.body.appendChild(s); });
+      lastet.then(function () { return window.fhLarer ? fhLarer.klar() : 'feil'; }).then(function (m) {
+        if (m === 'ute') { location.href = R + 'konto/index.html?neste=larer'; return; }
+        if (m === 'feil') { knapp.disabled = false; return; }
+        var f = fhLarer.utkast() || { id: 'f' + Date.now().toString(36), navn: 'Min forelesning', sider: [] };
+        if (f.sider.indexOf(sti) < 0) f.sider.push(sti);
+        return fhLarer.lagre(f).then(function () { knapp.textContent = '✓ Lagt til i «' + f.navn + '»'; });
+      });
     });
   }).catch(function () {});
 })();

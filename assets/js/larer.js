@@ -6,9 +6,9 @@
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
   function vent(n) { return new Promise(function (ok) { (function sjekk(i) { if (window.fhKonto || i > n) ok(); else setTimeout(function () { sjekk(i + 1); }, 100); })(0); }); }
 
-  vent(30).then(function () { return last('assets/js/larer-felles.js'); }).then(function () { return fhLarer.tilgang(); }).then(function (t) {
+  vent(30).then(function () { return last('assets/js/larer-felles.js'); }).then(function () { return fhLarer.klar(); }).then(function (t) {
     if (t === 'ute') {
-      rot.innerHTML = '<div class="konto-boks"><h2>Logg inn som lærer</h2><p>Forelesningsverktøyet er for forelesere og lærere. Logg inn for å lage og lagre dine egne forelesninger.</p><p><a class="btn-chalk" href="' + R + 'konto/index.html">Logg inn</a></p></div>';
+      rot.innerHTML = '<div class="konto-boks"><h2>Logg inn som lærer</h2><p>Forelesningsverktøyet er for forelesere og lærere. Logg inn (eller registrer deg gratis) for å lage dine egne forelesninger. De lagres på kontoen din, så du finner dem igjen på alle maskiner.</p><p><a class="btn-chalk" href="' + R + 'konto/index.html?neste=larer">Logg inn</a></p></div>';
       return;
     }
     try { localStorage.setItem('fh-larer', '1'); } catch (e) {}
@@ -23,7 +23,9 @@
     function ny() { return { id: 'f' + Date.now().toString(36), navn: 'Min forelesning', sider: [] }; }
 
     rot.innerHTML =
-      (tilgang === 'test' ? '<p class="larer-test">Testversjon: innlogging er ikke slått på ennå, så forelesningene lagres bare i denne nettleseren.</p>' : '') +
+      (tilgang === 'test' ? '<p class="larer-test">Testversjon: innlogging er ikke slått på ennå, så forelesningene lagres bare i denne nettleseren.</p>'
+        : '<p class="larer-konto">Innlogget som <b>' + esc(fhLarer.epost()) + '</b>. Forelesningene lagres på kontoen din. <a href="' + R + 'konto/index.html">Min side</a></p>') +
+      '<p class="larer-test larer-feil" hidden>Fikk ikke lagret på kontoen din akkurat nå. Endringene vises her, men sjekk nettforbindelsen og last siden på nytt.</p>' +
       '<div class="larer-rutenett">' +
       '<section class="larer-kilde"><h2>1. Plukk stoff</h2>' +
       '<input type="search" class="larer-sok" placeholder="Søk etter tema, f.eks. skrått kast, vektorer, energi …" aria-label="Søk i stoffet">' +
@@ -88,6 +90,7 @@
       else if (h === 'vis') { lagre(); location.href = R + 'larer/forelesning.html#id=' + encodeURIComponent(f.id); }
     });
     function confirmSlett(b) { if (b.dataset.sikker) return true; b.dataset.sikker = '1'; b.textContent = 'Slett?'; return false; }
+    document.addEventListener('fh-larer-feil', function () { rot.querySelector('.larer-feil').hidden = false; });
     tegnValgt(); tegnKilde();
   }
 })();
