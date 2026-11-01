@@ -36,7 +36,8 @@ function start() {
     function tegn(sesjon) {
       if (gjenoppretter && sesjon) return tegnNyttPassord(k);
       if (sesjon) {
-        if (neste === 'dekning') { location.href = '../dekning.html'; return; }
+        var mal = { dekning: '../dekning.html', larer: '../larer/index.html' }[neste];
+        if (mal) { location.href = mal; return; }
         vis('mal-inne');
         rot.querySelector('.profil-navn').textContent = sesjon.user.email;
         rot.querySelector('[data-handling="ut"]').onclick = function () { k.auth.signOut().then(function () { tegn(null); }); };

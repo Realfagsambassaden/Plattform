@@ -8,7 +8,7 @@
   function param(n) { var m = location.hash.match(new RegExp('[#&]' + n + '=([^&]*)')); return m ? decodeURIComponent(m[1]) : null; }
   function last(src) { return new Promise(function (ok) { var s = document.createElement('script'); s.src = R + src; s.onload = ok; s.onerror = ok; document.body.appendChild(s); }); }
 
-  last('assets/js/larer-felles.js').then(function () {
+  last('assets/js/larer-felles.js').then(function () { return fhLarer.klar(); }).then(function () {
     var navn = 'Forelesning', urler = [];
     var id = param('id'), sider = param('sider');
     if (id && fhLarer.hent(id)) { var f = fhLarer.hent(id); navn = f.navn; urler = f.sider; }

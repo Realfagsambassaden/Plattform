@@ -25,7 +25,7 @@
     if (klientLofte) return klientLofte;
     klientLofte = new Promise(function (ok, nei) {
       var s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';
+      s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
       s.onload = function () {
         var k = window.supabase.createClient(URL_, NOKKEL, { auth: { persistSession: true, detectSessionInUrl: true, flowType: 'implicit' } });
         k.auth.onAuthStateChange(function (_hendelse, sesjon) { oppdaterMeny(!!sesjon); });

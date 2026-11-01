@@ -46,6 +46,11 @@ toc: false
         <h3>Dekker vi faget ditt?</h3>
         <p>Lim inn emnebeskrivelsen til faget du skal ta, og få et kart over hva fysikkhjelp.no dekker.</p>
       </a>
+      <a class="track live" href="../larer/index.html">
+        <span class="status">For lærere · test</span>
+        <h3>Design din forelesning</h3>
+        <p>Plukk sider, eksempler og oppgaver, sett dem i din rekkefølge og vis dem som tavleslides. Lagres på kontoen din.</p>
+      </a>
       <div class="track"><span class="status">Kommer</span><h3>Test deg selv</h3><p>Finn ut hva du behersker, og få en ferdighetsprofil basert på oppgavene du har løst.</p></div>
       <div class="track"><span class="status">Kommer</span><h3>Estimert karakter</h3><p>Et anslag på hvor du ligger an før eksamen.</p></div>
       <div class="track"><span class="status">Kommer</span><h3>Veiledning</h3><p>Bestill veiledning med Dr. Normann.</p></div>
