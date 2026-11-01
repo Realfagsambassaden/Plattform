@@ -137,7 +137,7 @@ for o in omrader:
                 q.append(f'- [{s["tittel"]}](../../{s["qmd"]})' + (f' []{{.emne-kilde}}' if False else '') + (f' <span class="emne-kilde">{lp}</span>' if lp else ''))
             q += [':::', '']
         else:
-            q += ['::: {.callout-note title="Kommer"}', 'Vi har ikke stoff om dette emnet ennå. Har du forelesningsnotater du vil dele? [Doner dem her](https://realfagsambassaden.no/doner.html).', ':::', '']
+            q += ['::: {.callout-note title="Kommer"}', 'Vi har ikke stoff om dette emnet ennå. Har du forelesningsnotater du vil dele? [Donér dem her](https://realfagsambassaden.no/doner.html).', ':::', '']
         (UT / o['id'] / f'{e["id"]}.qmd').write_text('\n'.join(q), encoding='utf-8')
 
 # løyper/index.qmd
@@ -146,7 +146,7 @@ q = ['---', 'title: "Løyper"', 'subtitle: "En løype er en vei gjennom emnene f
      'toc: false', '---', '', '```{=html}', '<div class="loyper">']
 for L in loyper:
     meta = ' · '.join(x for x in (L.get('institusjon'), L.get('emnekode'), f'{len(L["sider"])} sider') if x)
-    q.append(f'<a class="loype" href="../{L["oversikt"].replace(".qmd", ".html")}"><span class="status">Klar</span><h3>{L["tittel"]}</h3><p class="loype-meta">{meta}</p><p>{L.get("beskrivelse", "")}</p></a>')
+    q.append(f'<a class="loype" href="../{L["oversikt"].replace(".qmd", ".html")}"><span class="status">Løype</span><h3>{L["tittel"]}</h3><p class="loype-meta">{meta}</p><p>{L.get("beskrivelse", "")}</p></a>')
 q.append('<a class="loype egen" href="../dekning.html"><span class="status">Lag din egen</span><h3>Har du et annet kurs?</h3><p>Lim inn emnebeskrivelsen, så finner vi sidene som passer og lager en løype for deg.</p></a>')
 q += ['</div>', '```', '']
 (LU / 'index.qmd').write_text('\n'.join(q), encoding='utf-8')
@@ -186,7 +186,7 @@ for L in loyper:
         else:
             for k in d['kapitler']: sb += kap_blokk(k, '                ')
 
-meny = ['    left:', '      - href: index.qmd', '        text: Forside', '      - text: Emner', '        menu:', '          - href: emner/index.qmd', '            text: "Alle emner"']
+meny = ['    left:', '      - text: Emner', '        menu:', '          - href: emner/index.qmd', '            text: "Alle emner"']
 for o in omrader:
     meny += [f'          - href: emner/{o["id"]}/index.qmd', f'            text: "{o["tittel"]}"' + ('' if antall(o) else '')]
 meny += ['      - text: Løyper', '        menu:', '          - href: loyper/index.qmd', '            text: "Alle løyper"']
