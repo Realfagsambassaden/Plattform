@@ -127,7 +127,7 @@
     var fd = new FormData(skjema); fd.delete('filer'); valgte.forEach(function (f) { fd.append('filer', f, f.name); });
     var x = new XMLHttpRequest(); x.open('POST', '/api/doner');
     knapp.disabled = true; fremdrift.hidden = false; si('Laster opp …');
-    x.upload.onprogress = function (ev) { if (ev.lengthComputable) fremdrift.firstElementChild.style.width = (100 * ev.loaded / ev.total) + '%'; };
+    x.upload.onprogress = function (ev) { if (ev.lengthComputable) { fremdrift.firstElementChild.style.width = (100 * ev.loaded / ev.total) + '%'; si(ev.loaded < ev.total ? 'Laster opp … ' + Math.round(100 * ev.loaded / ev.total) + ' %' : 'Lagrer notatene trygt … dette tar litt tid. Ikke lukk siden.'); } };
     x.onload = function () {
       var j = {}; try { j = JSON.parse(x.responseText); } catch (er) {}
       knapp.disabled = false; fremdrift.hidden = true;

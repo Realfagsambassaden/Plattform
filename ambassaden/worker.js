@@ -64,11 +64,12 @@ async function doner(request, env) {
   const mappe = `${dato}-${slug(d.navn)}-${id}`;
   const navnBrukt = new Set();
 
+  const filerUt = [];
   for (const x of filer) {
     let n = x.name.replace(/[\/\\]/g, "_").replace(/[^\w.\-æøåÆØÅ ]/g, "_").slice(-120);
     while (navnBrukt.has(n)) n = "1-" + n;
     navnBrukt.add(n);
-    await leggTil(env, `${mappe}/${n}`, await x.arrayBuffer(), `Donasjon ${mappe}: ${n}`);
+    filerUt.push({ sti: `${mappe}/${n}`, fil: x });
   }
   const info = [
     `# Donasjon ${mappe}`, "",
@@ -78,7 +79,8 @@ async function doner(request, env) {
     "## Kommentar", "", d.kommentar || "–", "",
     "## Filer", "", ...[...navnBrukt].map((n) => `- [${n}](${encodeURIComponent(n)})`), "",
   ].join("\n");
-  await leggTil(env, `${mappe}/INFO.md`, new TextEncoder().encode(info), `Donasjon ${mappe}: info`);
+  filerUt.push({ sti: `${mappe}/INFO.md`, tekst: info });
+  await lagreAlt(env, filerUt, `Donasjon ${mappe}: ${d.fag} (${filerUt.length - 1} filer)`);
 
   await gh(env, `repos/${REPO}/issues`, "POST", {
     title: `Ny donasjon: ${d.fag} – ${d.navn}`,
@@ -93,15 +95,40 @@ function base64(buf) {
   for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000));
   return btoa(s);
 }
-async function leggTil(env, sti, buf, melding) {
-  await gh(env, `repos/${REPO}/contents/${sti.split("/").map(encodeURIComponent).join("/")}`, "PUT",
-    { message: melding, content: base64(buf) });
+// Alle filene lagres i én commit (Git Data API): blobs lastes opp parallelt, så ett tre og én commit.
+// Mye raskere enn én commit per fil. Begrenser hvor mye som er i luften samtidig, så minnet holder.
+async function lagreAlt(env, filer, melding) {
+  const BUDSJETT = 30 * 1024 * 1024;
+  const tre = new Array(filer.length);
+  let i = 0, iLufta = 0; const aktive = new Set();
+  while (i < filer.length || aktive.size) {
+    while (i < filer.length) {
+      const f = filer[i], str = f.fil ? f.fil.size : f.tekst.length;
+      if (aktive.size && iLufta + str > BUDSJETT) break;
+      const nr = i++; iLufta += str;
+      const p = (async () => {
+        const body = f.fil ? { content: base64(await f.fil.arrayBuffer()), encoding: "base64" } : { content: f.tekst, encoding: "utf-8" };
+        const b = await gh(env, `repos/${REPO}/git/blobs`, "POST", body);
+        tre[nr] = { path: f.sti, mode: "100644", type: "blob", sha: b.sha };
+      })().finally(() => { iLufta -= str; aktive.delete(p); });
+      aktive.add(p);
+    }
+    if (aktive.size) await Promise.race(aktive);
+  }
+  for (let forsok = 0; ; forsok++) {
+    const ref = await gh(env, `repos/${REPO}/git/ref/heads/main`, "GET");
+    const forelder = await gh(env, `repos/${REPO}/git/commits/${ref.object.sha}`, "GET");
+    const t = await gh(env, `repos/${REPO}/git/trees`, "POST", { base_tree: forelder.tree.sha, tree: tre });
+    const c = await gh(env, `repos/${REPO}/git/commits`, "POST", { message: melding, tree: t.sha, parents: [ref.object.sha] });
+    try { await gh(env, `repos/${REPO}/git/refs/heads/main`, "PATCH", { sha: c.sha }); return; }
+    catch (e) { if (forsok >= 3) throw e; }   // noen andre lagret samtidig – prøv igjen
+  }
 }
 async function gh(env, sti, metode, body) {
   const r = await fetch(`https://api.github.com/${sti}`, {
     method: metode,
     headers: { Authorization: `Bearer ${env.GH_DONASJON}`, Accept: "application/vnd.github+json", "User-Agent": "realfagsambassaden-donasjon", "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    body: body === undefined ? undefined : JSON.stringify(body),
   });
   if (!r.ok) { console.log("GitHub", r.status, (await r.text()).slice(0, 300)); throw feil("Fikk ikke lagret donasjonen akkurat nå. Prøv igjen litt senere.", 502); }
   return r.json();
