@@ -64,7 +64,14 @@ window.fhLarer = (function () {
     return klient.from('forelesninger').delete().eq('eier', bruker.id).eq('id', id).then(function (svar) { if (svar.error) varsle(svar.error); });
   }
 
+  // En side i en forelesning er enten en adresse, eller {url, skjul: [deler foreleseren har fjernet]}
+  function oppforing(x) { return typeof x === 'string' ? { url: x, skjul: [] } : { url: x.url, skjul: (x.skjul || []).slice() }; }
+  function url(x) { return typeof x === 'string' ? x : x.url; }
+
   return {
+    oppforing: oppforing,
+    url: url,
+    harSide: function (f, u) { return f.sider.some(function (x) { return url(x) === u; }); },
     klar: klar,
     tilgang: klar,
     modus: function () { return modus; },

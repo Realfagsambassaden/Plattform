@@ -128,6 +128,10 @@ mjx-container { color: $chalk; }
 .oppg-verktoy button.hint, .hint-panel button.send { border-color: mix($cyan, $line, 60%); color: $cyan; }
 .oppg-verktoy button:disabled, .hint-panel button:disabled { opacity: .6; cursor: progress; }
 .losning { margin-top: .8rem; padding-left: .9rem; border-left: 2px solid $cyan; }
+.eksempel.eks-skjult:not(.eks-apen) > .losning { display: none; }
+.eksempel > .losning { border-left-color: #ff8a8f; }
+.eks-vis { font: 700 13px/1 $headings-font-family; border-radius: 6px; padding: .55rem .85rem; margin: .5rem 0 .2rem; border: 1px solid mix(#ff8a8f, $line, 60%); background: transparent; color: #ff8a8f; cursor: pointer; }
+.eks-vis:hover { background: rgba(255, 138, 143, .08); }
 .hint-panel { margin-top: .8rem; display: grid; gap: .5rem; }
 .hint-panel label { font-size: .9rem; color: $dust; }
 .hint-panel textarea { width: 100%; min-height: 4.2rem; border-radius: 8px; border: 1px solid $line; background: $slate-2; color: $chalk; padding: .6rem .8rem; font: inherit; font-size: .95rem; }
@@ -407,7 +411,38 @@ body { overflow-x: clip; }
 /* ---------- Forelesningsmodus ---------- */
 body.har-foredrag { overflow: hidden; }
 .foredrag { position: fixed; inset: 0; z-index: 2000; background: $slate; display: flex; flex-direction: column; outline: none; }
-.fd-slide { flex: 1; overflow-y: auto; padding: 4vh 6vw 2vh; max-width: 1400px; width: 100%; margin: 0 auto; font-size: clamp(1.15rem, 1.9vw, 1.7rem); line-height: 1.5; }
+.fd-flate { flex: 1; min-height: 0; display: flex; justify-content: center; }
+.fd-slide { height: 100%; overflow: hidden; box-sizing: border-box; padding: 4vh 6vw 2vh; max-width: 1400px; width: 100%; font-size: clamp(1.15rem, 1.9vw, 1.7rem); line-height: 1.5; }
+.fd-slide > h2:first-child { margin-top: 0; }
+.fd-slide .eksempel { border-left: 0; padding: 0; margin: 0; }
+.fd-slide .losning { margin-top: .9em; }
+.fd-losmerke { font-family: $headings-font-family; font-weight: 700; color: $cyan; font-size: .75em; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 .3em; }
+.fd-slide [data-trinn][hidden] { display: none !important; }
+/* Usynlige hjelpeflater: lageret der alt settes med MathJax, og en slide som brukes til å måle hva som får plass */
+.fd-lager { position: absolute; left: -10000px; top: 0; width: min(1400px, 100vw); visibility: hidden; font-size: clamp(1.15rem, 1.9vw, 1.7rem); line-height: 1.5; }
+.fd-maaleflate { position: absolute; left: -10000px; top: 0; visibility: hidden; display: block; }
+.fd-maaleflate .fd-maal { max-width: none; }
+/* Tilpass innholdet */
+.fd-rediger { max-width: 960px; margin: 0 auto 4rem; }
+.fd-rediger-topp { position: sticky; top: 0; z-index: 5; background: $slate; border-bottom: 1px solid $line; padding: 1rem 0 .8rem; display: flex; gap: 1rem; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; }
+.fd-rediger-topp h1 { font-size: 1.6rem; margin: 0 0 .3rem; }
+.fd-rediger-topp p { margin: 0; color: $dust; max-width: 60ch; font-size: .95rem; }
+.fd-rediger-knapper { display: flex; gap: .5rem; }
+.fd-r-sidetittel { margin: 2.2rem 0 .6rem; color: $neon; font-size: 1.35rem; }
+.fd-r-sidetittel small { color: $dust; font-size: .8rem; font-weight: 400; margin-left: .4rem; }
+.fd-r-rad { display: flex; gap: .7rem; align-items: flex-start; padding: .35rem 0; border-top: 1px dashed rgba(255,255,255,.06); }
+.fd-r-innhold { flex: 1; min-width: 0; }
+.fd-r-innhold > :last-child { margin-bottom: 0; }
+.fd-r-knapp { flex: none; width: 2rem; height: 2rem; border-radius: 50%; border: 1px solid $line; background: transparent; color: $chalk; font: 700 1.1rem/1 $headings-font-family; cursor: pointer; margin-top: .15rem; }
+.fd-r-knapp:hover { border-color: #ff8a8f; color: #ff8a8f; }
+.fd-r-knapp:disabled { opacity: .3; cursor: default; }
+.fd-r-rad.av .fd-r-innhold { opacity: .28; max-height: 4.5em; overflow: hidden; -webkit-mask-image: linear-gradient(#000 40%, transparent); mask-image: linear-gradient(#000 40%, transparent); }
+.fd-r-rad.av .fd-r-knapp { border-color: $neon; color: $neon; }
+.fd-r-merke { display: inline-block; font: 700 .7rem/1 $headings-font-family; letter-spacing: .08em; text-transform: uppercase; color: $dust; margin-bottom: .3rem; }
+.fd-r-los { margin-left: 2.7rem; }
+.fd-r-los .fd-r-merke { color: $cyan; }
+.fd-r-overskrift .fd-r-innhold > h2, .fd-r-overskrift .fd-r-innhold > h3 { margin: .2rem 0; }
+.larer-tilpasset { color: $dust; margin-left: .3rem; }
 .fd-slide h2 { font-size: 1.5em; color: $neon; border: 0; margin: 0 0 .8em; }
 .fd-slide h1 { font-size: 2.6em; }
 .fd-slide img { max-height: 58vh; width: auto !important; max-width: 100%; }

@@ -597,7 +597,7 @@ def post(md, exm_counter):
     md = re.sub(r'FHOUT(.*?)FHE', lambda m: code(m, '{.text .utskrift}'), md, flags=re.S)
     md = re.sub(r'\$\$(.*?)\$\$', lambda m: '$$' + re.sub(r'\n[ \t]*(?=\n)', '', m.group(1)) + '$$', md, flags=re.S)
     md = re.sub(r'\n{3,}', '\n\n', md)
-    return md
+    return skjul_eksempellosninger(md)   # løsningen i eksempler skjules bak «Vis løsning»
 
 def esc(s):
     return s.replace('"', '\\"').replace('\n', ' ')
@@ -615,6 +615,8 @@ def pandoc_code_unprotect(md):
     return md
 
 QUARTO = os.environ.get('QUARTO', 'quarto')
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from eksempler import behandle as skjul_eksempellosninger
 
 def split_sections(t):
     """returns (chapter_title, pre, [(title, body)])"""

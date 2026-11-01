@@ -102,3 +102,20 @@
     }
   });
 })();
+
+// Eksempler: løsningen (::: {.losning} inne i ::: {.eksempel}) skjules bak «Vis løsning».
+(function () {
+  document.querySelectorAll('div.eksempel').forEach(function (eks) {
+    var los = eks.querySelector(':scope > .losning'); if (!los) return;
+    eks.classList.add('eks-skjult');
+    var knapp = document.createElement('button');
+    knapp.type = 'button'; knapp.className = 'eks-vis'; knapp.setAttribute('aria-expanded', 'false');
+    knapp.textContent = 'Vis løsning';
+    eks.insertBefore(knapp, los);
+    knapp.addEventListener('click', function () {
+      var apen = eks.classList.toggle('eks-apen');
+      knapp.setAttribute('aria-expanded', String(apen));
+      knapp.textContent = apen ? 'Skjul løsning' : 'Vis løsning';
+    });
+  });
+})();

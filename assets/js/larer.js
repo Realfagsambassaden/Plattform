@@ -35,8 +35,9 @@
       '<ol class="larer-sider"></ol>' +
       '<p class="larer-tom">Ingen sider valgt ennå. Klikk <b>+</b> ved siden av en side til venstre.</p>' +
       '<div class="larer-knapper"><button type="button" class="btn-chalk" data-h="vis">▶ Vis forelesning</button>' +
+      '<button type="button" class="btn-chalk sekundar" data-h="tilpass">✎ Tilpass innholdet</button>' +
       '<button type="button" class="btn-chalk sekundar" data-h="ny">Ny forelesning</button></div>' +
-      '<p class="larer-tips">Tips: I forelesningsmodus blar du med piltastene, <kbd>L</kbd> viser løsningen på en oppgave, og <kbd>F</kbd> gir fullskjerm.</p>' +
+      '<p class="larer-tips">Tips: Med <b>✎ Tilpass innholdet</b> klikker du vekk tekst, definisjoner og løsninger du ikke vil ha med. I forelesningsmodus blar du med piltastene. Løsninger kommer først på neste klikk, og <kbd>F</kbd> gir fullskjerm.</p>' +
       '<div class="larer-lagret"></div></section></div>';
 
     var liste = rot.querySelector('.larer-liste'), sok = rot.querySelector('.larer-sok'), ol = rot.querySelector('.larer-sider'), navn = rot.querySelector('.larer-navn');
@@ -51,7 +52,7 @@
       liste.innerHTML = rekke.length ? rekke.map(function (k) {
         return '<details' + (q ? ' open' : '') + '><summary>' + esc(k) + ' <span class="ant">' + grupper[k].length + '</span></summary><ul>' +
           grupper[k].map(function (s) {
-            var valgt = f.sider.indexOf(s.url) >= 0;
+            var valgt = fhLarer.harSide(f, s.url);
             return '<li><button type="button" class="larer-pluss" data-url="' + esc(s.url) + '"' + (valgt ? ' disabled' : '') + ' aria-label="Legg til ' + esc(s.tittel) + '">' + (valgt ? '✓' : '+') + '</button>' +
               '<span><a href="' + esc(s.url) + '" target="_blank">' + esc(s.tittel) + '</a><small>' + esc(s.del) + (s.antall_oppgaver ? ' · ' + s.antall_oppgaver + ' oppg.' : '') + (s.video ? ' · video' : '') + '</small></span></li>';
           }).join('') + '</ul></details>';
@@ -61,13 +62,15 @@
     function tegnValgt() {
       navn.value = f.navn;
       ol.innerHTML = f.sider.map(function (u, i) {
-        return '<li><span>' + esc(tittel(u)) + '</span><span class="larer-flytt">' +
+        var uu = fhLarer.url(u), ant = typeof u === 'string' ? 0 : (u.skjul || []).length;
+        return '<li><span>' + esc(tittel(uu)) + (ant ? ' <small class="larer-tilpasset">' + ant + ' del' + (ant > 1 ? 'er' : '') + ' fjernet</small>' : '') + '</span><span class="larer-flytt">' +
           '<button type="button" data-i="' + i + '" data-h="opp" aria-label="Flytt opp"' + (i ? '' : ' disabled') + '>↑</button>' +
           '<button type="button" data-i="' + i + '" data-h="ned" aria-label="Flytt ned"' + (i < f.sider.length - 1 ? '' : ' disabled') + '>↓</button>' +
           '<button type="button" data-i="' + i + '" data-h="fjern" aria-label="Fjern">✕</button></span></li>';
       }).join('');
       rot.querySelector('.larer-tom').hidden = f.sider.length > 0;
       rot.querySelector('[data-h="vis"]').disabled = !f.sider.length;
+      rot.querySelector('[data-h="tilpass"]').disabled = !f.sider.length;
       var andre = fhLarer.alle().filter(function (x) { return x.id !== f.id; });
       rot.querySelector('.larer-lagret').innerHTML = andre.length ? '<h3>Lagrede forelesninger</h3><ul>' + andre.map(function (x) {
         return '<li><a href="#" data-h="apne" data-id="' + esc(x.id) + '">' + esc(x.navn) + '</a> <small>' + x.sider.length + ' sider</small> <button type="button" data-h="slett" data-id="' + esc(x.id) + '" aria-label="Slett">✕</button></li>';
@@ -88,6 +91,7 @@
       else if (h === 'apne') { e.preventDefault(); f = fhLarer.hent(b.getAttribute('data-id')); lagre(); }
       else if (h === 'slett') { if (confirmSlett(b)) { fhLarer.slett(b.getAttribute('data-id')); tegnValgt(); } }
       else if (h === 'vis') { lagre(); location.href = R + 'larer/forelesning.html#id=' + encodeURIComponent(f.id); }
+      else if (h === 'tilpass') { lagre(); location.href = R + 'larer/forelesning.html#id=' + encodeURIComponent(f.id) + '&rediger=1'; }
     });
     function confirmSlett(b) { if (b.dataset.sikker) return true; b.dataset.sikker = '1'; b.textContent = 'Slett?'; return false; }
     document.addEventListener('fh-larer-feil', function () { rot.querySelector('.larer-feil').hidden = false; });
