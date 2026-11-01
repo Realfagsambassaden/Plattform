@@ -81,3 +81,14 @@ Nytt fag: legg til en «Hent …»-blokk i `.github/workflows/bygg.yml`, et kall
 - `assets/js/konto.js`: lastes på alle sider og bytter «Logg inn» til «Min side» i menyen.
 - `dekning.qmd` + `assets/js/dekning.js`: «Dekker vi faget ditt?». Krever innlogging. Sender emnebeskrivelsen til KI-tjeneren (`/dekning` i `hint-tjener/worker.js`), som sammenligner den med `innhold.json` (lages av `verktoy/innhold.py` ved hver bygging).
 - KI-tjeneren trenger `SUPABASE_URL` og `SUPABASE_ANON_KEY` for å sjekke at brukeren er logget inn.
+
+## 8. Nye fag (fra malen)
+
+Nye fag lages fra malen **Realfagsambassaden/fag-mal** (Use this template). Faget legges inn med én linje i `fag.yml` her i plattformen:
+
+```yaml
+fag:
+  - repo: Realfagsambassaden/fysikk-mekanikk
+```
+
+Faget bestemmer selv nettsted, navn, kortnavn og status (`skjult`/`arbeid`/`klar`) i sin egen `fag.yml`. `verktoy/fag.py` henter det inn ved hver bygging, lager oversiktsside, sidemeny og menypunkt. Hvert fag-repo «ringer på» plattformen når det endres (organisasjons-hemmeligheten `PLATTFORM_TOKEN`).

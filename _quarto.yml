@@ -3,6 +3,7 @@ project:
   output-dir: _site
   render:
     - "*.qmd"
+    - "!kilder/"
   resources:
     - assets/
     - innhold.json

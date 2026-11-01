@@ -34,7 +34,14 @@ if toc_f.exists():
             f = P / 'forkurs' / c['dir'] / s['fil']
             sider.append(les_side(f, f"/forkurs/{c['dir']}/{s['fil'].replace('.qmd', '.html')}", 'Forkurs', kap))
 
-# Senere: flere deler (ingeniørfysikk, matematikk, …) legges til her på samme måte.
+# Fag fra fag-malen (se verktoy/fag.py)
+fag_f = P / '_fag.json'
+if fag_f.exists():
+    for f in json.loads(fag_f.read_text(encoding='utf-8')):
+        for k in f['kapitler']:
+            for s in k['sider']:
+                fil = P / f['kortnavn'] / 'kapitler' / k['dir'] / s['fil']
+                sider.append(les_side(fil, f"/{f['kortnavn']}/kapitler/{k['dir']}/{s['fil'].replace('.qmd', '.html')}", f['tittel'], k['tittel']))
 
 (P / 'innhold.json').write_text(json.dumps({'sider': sider}, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
 print('innhold.json:', len(sider), 'sider')
