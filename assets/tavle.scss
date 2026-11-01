@@ -80,6 +80,14 @@ mjx-container { color: $chalk; }
 .track.live { color: $chalk; border-color: mix($neon, $line, 55%); background: rgba($neon, .05); }
 .track.live .status { color: $neon; }
 .track.live:hover { border-color: $neon; }
+.track.utforsk, .track.egen { grid-column: span 2; display: grid; grid-template-columns: 140px 1fr; grid-template-rows: auto auto 1fr; column-gap: 1.2rem; }
+.track.utforsk .track-bilde, .track.egen .track-bilde { grid-row: 1 / span 3; height: 110px; margin: 0; }
+.track.utforsk { border-color: mix($cyan, $line, 55%); background: rgba($cyan, .05); }
+.track.utforsk .status { color: $cyan; }
+.track.utforsk:hover { border-color: $cyan; }
+.track.egen { border-style: dashed; border-color: mix($yellow, $line, 60%); background: rgba($yellow, .03); }
+.track.egen .status { color: $yellow; }
+.track.egen:hover { border-color: $yellow; }
 .about { display: grid; grid-template-columns: 170px 1fr; gap: 1.8rem; align-items: center; border-top: 1px solid $line; padding-top: 2.5rem; margin-top: 3.5rem; }
 .about img { width: 150px; }
 
@@ -191,7 +199,7 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 .kommer { text-align: center; padding: 3rem 1rem 4rem; max-width: 560px; margin: 0 auto; }
 .kommer .kommer-stor { font-family: "Architects Daughter", cursive; font-size: 2.6rem; color: $yellow; transform: rotate(-2deg); margin-bottom: 1.5rem; }
 .forkurs-tall { font-family: "Architects Daughter", cursive; color: $yellow; font-size: 1.15rem; transform: rotate(-1deg); display: inline-block; }
-@media (max-width: 520px) { .tracks { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .tracks { grid-template-columns: 1fr; } .track.utforsk, .track.egen { grid-column: auto; grid-template-columns: 1fr; } .track.utforsk .track-bilde, .track.egen .track-bilde { grid-row: auto; } }
 
 // ---------- konto ----------
 .navbar .nav-link.innlogget { color: $neon !important; }

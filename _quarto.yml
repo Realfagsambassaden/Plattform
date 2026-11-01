@@ -24,8 +24,6 @@ website:
     logo-alt: "fysikkhjelp.no"
     collapse-below: xl
     left:
-      - href: index.qmd
-        text: Forside
       - text: Emner
         menu:
           - href: emner/index.qmd

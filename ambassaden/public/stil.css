@@ -16,7 +16,7 @@ main{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
 .hero::before{content:"";position:absolute;inset:-1rem -3rem;z-index:-1;background:url(img/tavle-bakgrunn.webp) center/cover no-repeat;opacity:.22;-webkit-mask-image:radial-gradient(ellipse at 60% 50%,#000 30%,transparent 78%);mask-image:radial-gradient(ellipse at 60% 50%,#000 30%,transparent 78%)}
 .hero-tekst{max-width:700px}
 .hero h1{font-size:clamp(2.6rem,6.5vw,4.8rem)}
-.hero h1 span{display:block;color:var(--neon)}
+.hero h1 span{color:var(--neon)}
 .ingress{font-size:1.2rem;max-width:56ch;margin:1.3rem 0 0}
 .knapper{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.8rem}
 .knapp{display:inline-flex;padding:.85rem 1.3rem;border-radius:8px;background:var(--neon);color:#0b130a;font-weight:700;text-decoration:none;border:2px solid var(--neon)}
