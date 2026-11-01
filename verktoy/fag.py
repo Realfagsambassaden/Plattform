@@ -47,13 +47,16 @@ for post in liste:
                     t = f.read_text(encoding='utf-8')
                     t = re.sub(r'^(---\n.*?\n---\n)', lambda m: m.group(1) + '\n' + banner, t, count=1, flags=re.S)
                     f.write_text(t, encoding='utf-8')
-        kapitler.append({'dir': kap.name, 'tittel': tittel(kap / 'index.qmd') if (kap / 'index.qmd').exists() else kap.name,
+        dl = re.search(r'^del:\s*"?(.*?)"?\s*$', (kap / 'index.qmd').read_text(encoding='utf-8'), re.M) if (kap / 'index.qmd').exists() else None
+        kapitler.append({'dir': kap.name, 'tittel': tittel(kap / 'index.qmd') if (kap / 'index.qmd').exists() else kap.name, 'del': dl.group(1) if dl else '',
                          'har_index': (kap / 'index.qmd').exists(), 'sider': [{'fil': s.name, 'tittel': tittel(s)} for s in sider]})
     # oversiktsside
     q = ['---', f'title: "{meta["tittel"]}"', f'subtitle: "{meta.get("beskrivelse", "")}"', 'toc: false', '---', '', banner]
     if meta.get('bilde') and (mappe / meta['bilde']).exists(): q.append(f'![]({meta["bilde"]}){{.kommer-bilde}}\n')
     if meta.get('ansvarlig'): q.append(f'*Ansvarlig: {meta["ansvarlig"]}*\n')
+    forrige_del = None
     for i, k in enumerate(kapitler, 1):
+        if k['del'] and k['del'] != forrige_del: q.append(f'# {k["del"]}\n'); forrige_del = k['del']
         q.append(f'## {i}. {k["tittel"]}\n')
         if k['har_index']: q.append(f'- [Om kapittelet](kapitler/{k["dir"]}/index.qmd)')
         q += [f'- [{s["tittel"]}](kapitler/{k["dir"]}/{s["fil"]})' for s in k['sider']] + ['']

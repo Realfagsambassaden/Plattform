@@ -419,3 +419,7 @@ body.har-foredrag { overflow: hidden; }
 .fd-knapper { display: flex; gap: .4rem; align-items: center; }
 .fd-knapper button, .fd-knapper a { background: transparent; border: 1px solid $line; color: $chalk; border-radius: 6px; padding: .2rem .6rem; text-decoration: none; }
 .fd-knapper [data-h="løsning"] { border-color: $cyan; color: $cyan; }
+
+/* Tydelig trestruktur i sidemenyen: hvert nivå rykkes inn med en tynn kritt-strek */
+#quarto-sidebar .sidebar-item-section .sidebar-section { padding-left: .55rem; margin-left: .35rem; border-left: 1px solid $line; }
+#quarto-sidebar .sidebar-item-section .sidebar-item-section > .sidebar-item-container .sidebar-item-text { font-weight: 600; }

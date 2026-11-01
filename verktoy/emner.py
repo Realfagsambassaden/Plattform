@@ -48,8 +48,10 @@ for lf in sorted((P / 'loyper').glob('*.yml')):
             if eid: koble(sti, s['tittel'], eid, L['tittel'])
             else: uten_emne.append((sti, s['tittel'], L['tittel']))
             rekke.append({'qmd': sti, 'tittel': s['tittel'], 'kapittel': f"{c['nr']}. {c['tittel']}"})
+    struktur = [{'tittel': None, 'kapitler': [{'tittel': f"{c['nr']}. {c['tittel']}", 'href': f"forkurs/{c['dir']}/index.qmd",
+                  'sider': [f"forkurs/{c['dir']}/{s['fil']}" for s in c['sider']]} for c in toc]}]
     loyper.append({**{k: L.get(k) for k in ('id', 'tittel', 'institusjon', 'emnekode', 'beskrivelse')},
-                   'oversikt': 'forkurs/index.qmd', 'sider': rekke})
+                   'oversikt': 'forkurs/index.qmd', 'sider': rekke, 'struktur': struktur})
 
 # ---- fag fra malen
 fag_f = P / '_fag.json'
@@ -70,8 +72,15 @@ for lf in sorted((P / 'loyper').glob('*.yml')):
     if not f: continue
     rekke = [{'qmd': f"{f['kortnavn']}/kapitler/{k['dir']}/{s['fil']}", 'tittel': s['tittel'], 'kapittel': k['tittel']}
              for k in f['kapitler'] for s in k['sider']]
+    struktur = []
+    for i, k in enumerate(f['kapitler'], 1):
+        if not struktur or struktur[-1]['tittel'] != (k.get('del') or None):
+            struktur.append({'tittel': k.get('del') or None, 'kapitler': []})
+        struktur[-1]['kapitler'].append({'tittel': f"{i}. {k['tittel']}",
+            'href': f"{f['kortnavn']}/kapitler/{k['dir']}/index.qmd" if k.get('har_index') else None,
+            'sider': [f"{f['kortnavn']}/kapitler/{k['dir']}/{s['fil']}" for s in k['sider']]})
     loyper.append({**{k: L.get(k) for k in ('id', 'tittel', 'institusjon', 'emnekode', 'beskrivelse')},
-                   'oversikt': f"{f['kortnavn']}/index.qmd", 'sider': rekke})
+                   'oversikt': f"{f['kortnavn']}/index.qmd", 'sider': rekke, 'struktur': struktur})
 
 def html(q): return '/' + q.replace('.qmd', '.html')
 
@@ -165,10 +174,17 @@ for o in omrader:
 if uten_emne:
     sb += ['        - section: "Annet"', '          contents:'] + [f'            - {s}' for s, _, _ in uten_emne]
 sb += ['        - section: "Løyper"', '          href: loyper/index.qmd', '          contents:']
+def kap_blokk(k, inn):
+    b = [f'{inn}- section: "{k["tittel"]}"'] + ([f'{inn}  href: {k["href"]}'] if k.get('href') else []) + [f'{inn}  contents:']
+    return b + [f'{inn}    - {x}' for x in k['sider']]
 for L in loyper:
-    sb.append(f'            - {L["oversikt"]}')
-    if L['oversikt'] == 'forkurs/index.qmd':
-        sb += [f'            - {p.relative_to(P).as_posix()}' for p in sorted((P / 'forkurs').glob('*/index.qmd'))]
+    sb += [f'            - section: "{L["tittel"]}"', f'              href: {L["oversikt"]}', '              contents:']
+    for d in L.get('struktur', []):
+        if d['tittel']:
+            sb += [f'                - section: "{d["tittel"]}"', '                  contents:']
+            for k in d['kapitler']: sb += kap_blokk(k, '                    ')
+        else:
+            for k in d['kapitler']: sb += kap_blokk(k, '                ')
 
 meny = ['    left:', '      - href: index.qmd', '        text: Forside', '      - text: Emner', '        menu:', '          - href: emner/index.qmd', '            text: "Alle emner"']
 for o in omrader:
@@ -181,7 +197,7 @@ meny += ['          - href: dekning.qmd', '            text: "Lag din egen løyp
 
 yml = (P / '_quarto.yml').read_text(encoding='utf-8')
 yml = re.sub(r'\n# >>> fag-sidemeny.*?# <<< fag-sidemeny\n', '\n', yml, flags=re.S)
-yml = re.sub(r'  sidebar:\n(?:(?:    |      |        |          |            |              |                ).*\n)*', '\n'.join(sb) + '\n', yml, count=1)
+yml = re.sub(r'  sidebar:\n(?:    +.*\n)*', '\n'.join(sb) + '\n', yml, count=1)
 yml = re.sub(r'    left:\n(?:      .*\n|        .*\n|          .*\n|            .*\n)*', '\n'.join(meny) + '\n', yml, count=1)
 (P / '_quarto.yml').write_text(yml, encoding='utf-8')
 
