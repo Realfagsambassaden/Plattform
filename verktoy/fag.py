@@ -5,7 +5,7 @@ Bruk: python3 fag.py <prosjektmappe> <nettsted>   (f.eks. fysikkhjelp)
 - henter hvert repo til kilder/<navn> (git clone), med mindre mappen finnes fra før (lokal forhåndsvisning)
 - kopierer kapitler/ og bilder/ til <kortnavn>/ og lager en oversiktsside
 - legger til sidemeny og menypunkt i _quarto.yml, og skriver _fag.json (brukes av innhold.py)"""
-import json, re, shutil, subprocess, sys
+import json, os, re, shutil, subprocess, sys
 from pathlib import Path
 import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -56,15 +56,44 @@ for post in liste:
         kapitler.append({'dir': kap.name, 'tittel': tittel(kap / 'index.qmd') if (kap / 'index.qmd').exists() else kap.name, 'del': dl.group(1) if dl else '',
                          'har_index': (kap / 'index.qmd').exists(), 'sider': [{'fil': s.name, 'tittel': tittel(s)} for s in sider]})
     # oversiktsside
-    q = ['---', f'title: "{meta["tittel"]}"', f'subtitle: "{meta.get("beskrivelse", "")}"', 'toc: false', '---', '', banner]
+    q = ['---', f'title: "{meta["tittel"]}"', f'subtitle: "{meta.get("beskrivelse", "")}"', 'toc: false', 'page-layout: full', '---', '', banner]
     if meta.get('bilde') and (mappe / meta['bilde']).exists(): q.append(f'![]({meta["bilde"]}){{.kommer-bilde}}\n')
     if meta.get('ansvarlig'): q.append(f'*Ansvarlig: {meta["ansvarlig"]}*\n')
-    forrige_del = None
+    # PDF-kompendium (fag.yml: pdf: …). Lages hver gang nettsiden bygges; feiler det, bygges nettsiden likevel.
+    if meta.get('pdf') and os.environ.get('UTEN_PDF') != '1':
+        pdf = P / '_pdf' / f'{kort}.pdf'
+        r = subprocess.run([sys.executable, str(Path(__file__).resolve().parent / 'pdf' / 'lag_pdf.py'), str(mappe), str(pdf)], capture_output=True, text=True)
+        print(r.stdout[-600:]); 
+        if r.returncode == 0 and pdf.exists():
+            q.append(f'```{{=html}}\n<p class="pdf-lenke"><a class="btn-chalk sekundar" href="{kort}.pdf" download>⤓ Last ned som PDF</a> <span>Hele faget som kompendium, oppdatert {__import__("datetime").date.today().strftime("%d.%m.%Y")}.</span></p>\n```\n')
+        else:
+            print('PDF feilet for', kort, r.stderr[-800:])
+    # Kapitlene som avrundede bokser, som i forkurset (tegning: i kapitlets index.qmd velger bildet)
+    TEGNINGER = ['sau-maling', 'skratt-kast', 'bokser', 'kjelke', 'hockey', 'rakett', 'fotball', 'flaske', 'bernoulli', 'e-felt']
+    def tell(f):
+        t = f.read_text(encoding='utf-8'); return t.count('{{< video'), len(re.findall(r'\{\.oppgave\b', t))
+    tot_v = tot_o = 0; html = []; forrige_del = None; apen = False
     for i, k in enumerate(kapitler, 1):
-        if k['del'] and k['del'] != forrige_del: q.append(f'# {k["del"]}\n'); forrige_del = k['del']
-        q.append(f'## {i}. {k["tittel"]}\n')
-        if k['har_index']: q.append(f'- [Om kapittelet](kapitler/{k["dir"]}/index.qmd)')
-        q += [f'- [{s["tittel"]}](kapitler/{k["dir"]}/{s["fil"]})' for s in k['sider']] + ['']
+        kdir = ut / 'kapitler' / k['dir']
+        filer = ([kdir / 'index.qmd'] if k['har_index'] else []) + [kdir / s_['fil'] for s_ in k['sider']]
+        v = sum(tell(f)[0] for f in filer); o = sum(tell(f)[1] for f in filer); tot_v += v; tot_o += o
+        tg = re.search(r'^tegning:\s*"?([\w-]+)"?\s*$', (kdir / 'index.qmd').read_text(encoding='utf-8'), re.M) if k['har_index'] else None
+        tegning = tg.group(1) if tg else TEGNINGER[(i - 1) % len(TEGNINGER)]
+        if k['del'] and k['del'] != forrige_del:
+            if apen: html.append('</div>')
+            html.append(f'<h2 class="kap-del">{k["del"]}</h2>\n<div class="kapitler">'); apen = True; forrige_del = k['del']
+        elif not apen:
+            html.append('<div class="kapitler">'); apen = True
+        hode = f'kapitler/{k["dir"]}/index.html' if k['har_index'] else f'kapitler/{k["dir"]}/{k["sider"][0]["fil"].replace(".qmd", ".html")}'
+        meta_ = ' · '.join(x for x in [f'{v} video{"er" if v != 1 else ""}' if v else '', f'{o} oppgave{"r" if o != 1 else ""}' if o else ''] if x)
+        html += ['<div class="kapittel">',
+                 f'  <a class="kap-hode" href="{hode}"><span class="kap-nr">{i}</span><span class="kap-navn">{k["tittel"]}</span></a>',
+                 f'  <a href="{hode}" tabindex="-1" aria-hidden="true"><img class="kap-bilde" src="../assets/img/tegninger/{tegning}.webp" alt="" loading="lazy"></a>',
+                 f'  <p class="kap-meta">{meta_}</p>' if meta_ else '', '  <ul>']
+        html += [f'    <li><a href="kapitler/{k["dir"]}/{s_["fil"].replace(".qmd", ".html")}">{s_["tittel"]}</a></li>' for s_ in k['sider']]
+        html += ['  </ul>', '</div>']
+    if apen: html.append('</div>')
+    q += ['```{=html}', f'<p class="forkurs-tall">→ {len(kapitler)} kapitler, {tot_o} oppgaver, {tot_v} videoer</p>'] + [h for h in html if h] + ['```', '']
     (ut / 'index.qmd').write_text('\n'.join(q), encoding='utf-8')
     fag_ut.append({'kortnavn': kort, 'tittel': meta['tittel'], 'status': meta.get('status'), 'kapitler': kapitler,
                    'beskrivelse': meta.get('beskrivelse', ''), 'bilde': f'{kort}/{meta["bilde"]}' if meta.get('bilde') else None})

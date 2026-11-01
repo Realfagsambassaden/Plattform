@@ -468,3 +468,7 @@ body.har-foredrag { overflow: hidden; }
 /* Tydelig trestruktur i sidemenyen: hvert nivå rykkes inn med en tynn kritt-strek */
 #quarto-sidebar .sidebar-item-section .sidebar-section { padding-left: .55rem; margin-left: .35rem; border-left: 1px solid $line; }
 #quarto-sidebar .sidebar-item-section .sidebar-item-section > .sidebar-item-container .sidebar-item-text { font-weight: 600; }
+
+.pdf-lenke { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .8rem; margin: .4rem 0 1.4rem; }
+.pdf-lenke span { color: $dust; font-size: .9rem; }
+.kap-del { margin: 2rem 0 0; color: $neon; border: 0; font-size: 1.5rem; }

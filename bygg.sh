@@ -25,5 +25,7 @@ if [ "${1:-}" = "preview" ]; then
 else
   echo "== Bygger nettsiden"
   quarto render
+  # PDF-kompendiene (laget av fag.py) legges ved siden av fagets sider
+  for f in _pdf/*.pdf; do [ -e "$f" ] || continue; k=$(basename "$f" .pdf); mkdir -p "_site/$k"; cp "$f" "_site/$k/"; done
   echo "Ferdig: $HER/_site"
 fi

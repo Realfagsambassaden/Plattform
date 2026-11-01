@@ -1,0 +1,67 @@
+% Oppsett for PDF-kompendiene fra fysikkhjelp.no (brukes av lag_pdf.py via Quarto/xelatex).
+% Farger og bokser som i TRES0312-kompendiet; skrift og forside som på nettsiden.
+\usepackage{fontspec}
+\setmainfont{ComicNeue}[Path=FONTSTI/, Extension=.ttf, UprightFont=*-Regular, BoldFont=*-Bold, ItalicFont=*-Italic, BoldItalicFont=*-BoldItalic]
+\newfontfamily\display{Montserrat}[Path=FONTSTI/, Extension=.ttf, UprightFont=*-ExtraBold, BoldFont=*-Black]
+\newfontfamily\kritt{ComicNeue}[Path=FONTSTI/, Extension=.ttf, UprightFont=*-Bold]
+\usepackage{xcolor,tikz,graphicx,amsmath,amssymb}
+\usetikzlibrary{decorations.pathmorphing,arrows.meta,calc}
+\usepackage[most]{tcolorbox}
+\usepackage{qrcode}
+\usepackage{newunicodechar}
+\newunicodechar{✓}{\ensuremath{\checkmark}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+
+% Nettsidens farger (forsiden) og kompendiets farger (innmaten)
+\definecolor{slate}{HTML}{0d1110}\definecolor{line}{HTML}{2a3330}
+\definecolor{chalk}{HTML}{ecefe6}\definecolor{dust}{HTML}{9aa49e}\definecolor{neon}{HTML}{6ef04a}
+\definecolor{cyan}{HTML}{56d7b8}\definecolor{orange}{HTML}{f19c2c}
+\definecolor{headCol}{RGB}{18,82,88}
+\definecolor{exmscol}{HTML}{e04b52}
+\definecolor{oppgcol}{HTML}{1A6B9A}
+\definecolor{defscol}{HTML}{449944}
+\definecolor{graabg}{HTML}{F1F1EE}
+\definecolor{losbg}{HTML}{FBF6F5}
+
+% Overskrifter
+\addtokomafont{disposition}{\color{headCol}}
+\addtokomafont{chapter}{\kritt\Huge}
+\addtokomafont{chapterprefix}{\display\normalsize\color{exmscol}}
+\renewcommand*{\chapterformat}{\mbox{\display\large\color{exmscol}KAPITTEL \thechapter}}
+\RedeclareSectionCommand[beforeskip=0pt, afterskip=1.6\baselineskip, innerskip=4mm]{chapter}
+\RedeclareSectionCommand[beforeskip=-2.2\baselineskip, afterskip=1\baselineskip]{section}
+
+% Topp- og bunntekst
+\usepackage[headsepline=.4pt]{scrlayer-scrpage}
+\clearpairofpagestyles
+\ihead{\small\color{dust!60!black}fysikk\textcolor{defscol}{hjelp}.no \enspace·\enspace FAGTITTEL}
+\ohead{\small\color{dust!60!black}\leftmark}
+\ofoot*{\small\pagemark}
+\automark[chapter]{chapter}
+
+% Bokser
+\tcbset{boks/.style={enhanced, breakable, boxrule=0pt, arc=2pt, left=10pt, right=8pt, top=6pt, bottom=6pt,
+  before skip=10pt, after skip=10pt}}
+\newtcolorbox{eksempel}[1]{boks, colback=white, borderline west={3pt}{0pt}{exmscol},
+  title={\textit{#1}}, coltitle=exmscol, fonttitle=\bfseries, attach title to upper={\par\smallskip}}
+\newtcolorbox{losningdel}{boks, colback=losbg, borderline west={2pt}{0pt}{exmscol!45}, before skip=6pt,
+  title={Løsning}, coltitle=exmscol!80!black, fonttitle=\bfseries\small, attach title to upper={\par}}
+\newtcolorbox{oppgave}[2]{boks, colback=oppgcol!5, borderline west={3pt}{0pt}{oppgcol},
+  title={#1}, coltitle=oppgcol, fonttitle=\bfseries, attach title to upper={\hfill{\small\color{oppgcol!70}#2}\par\smallskip}}
+\newtcolorbox{merkboks}[1]{boks, colback=headCol!4, borderline west={3pt}{0pt}{headCol!70}, title={#1}, coltitle=headCol, fonttitle=\bfseries, attach title to upper={\par\smallskip}}
+\newtcolorbox{graaboks}{boks, colback=graabg, borderline west={3pt}{0pt}{defscol}}
+
+% Video: QR-kode og lenke
+\newcommand{\videoqr}[1]{\par\smallskip\noindent
+  \begin{tcolorbox}[boks, colback=white, borderline={.4pt}{0pt}{line!40}, width=.78\linewidth]
+    \begin{minipage}[c]{2.3cm}\qrcode[height=2cm]{#1}\end{minipage}\hfill
+    \begin{minipage}[c]{\dimexpr\linewidth-2.7cm}{\bfseries\color{headCol}Video}\\[1mm]
+      {\small Skann koden eller gå til}\\{\small\url{#1}}\end{minipage}
+  \end{tcolorbox}\par}
+
+\setlength{\parskip}{.45\baselineskip}
+\setlength{\parindent}{0pt}
+\usepackage{etoolbox}
+\AtBeginEnvironment{oppgave}{\setlength{\parskip}{.3\baselineskip}}
