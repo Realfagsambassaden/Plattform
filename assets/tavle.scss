@@ -333,3 +333,40 @@ body { overflow-x: clip; }
   .navbar-expand-xl .navbar-nav .nav-link { font-size: .9rem; padding-left: .35rem; padding-right: .35rem; }
 }
 .hero-logo { display: block; width: min(380px, 75%); height: auto; margin: 0 0 1.4rem -8px; }
+
+// ---------- emner og løyper ----------
+.omrader { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin-top: 1rem; }
+.omrade { border: 1px solid mix($neon, $line, 45%); border-radius: 14px; padding: 1.1rem 1.2rem; min-width: 0; }
+.omrade.tomt { border-style: dashed; border-color: $line; }
+.omr-hode { display: flex; flex-direction: column; gap: .4rem; text-decoration: none; color: $chalk; }
+.omr-hode img { height: 110px; object-fit: contain; width: 100%; }
+.omrade.tomt .omr-hode img { filter: grayscale(.6); opacity: .6; }
+.omr-navn { font-weight: 700; font-size: 1.3rem; }
+.omr-beskr { color: $dust; font-size: .95rem; margin: .3rem 0 .4rem; }
+.omrade ul { margin: 0; padding-left: 1.1rem; }
+.omrade li a { color: $chalk; text-decoration: none; }
+.omrade li a:hover { color: $neon; }
+.omrade li a.tom { color: $dust; opacity: .65; }
+.omrade .ant { font-size: .75rem; color: $neon; border: 1px solid mix($neon, $line, 50%); border-radius: 99px; padding: 0 .4rem; margin-left: .2rem; }
+.emne-sider ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: .5rem; }
+.emne-sider li { border: 1px solid $line; border-radius: 10px; padding: .7rem 1rem; }
+.emne-sider li a { font-weight: 700; color: $chalk; text-decoration: none; }
+.emne-sider li a:hover { color: $neon; }
+.emne-kilde { display: block; font-size: .85rem; color: $dust; }
+.loyper { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem; }
+.loype { display: flex; flex-direction: column; gap: .4rem; border: 1px solid mix($neon, $line, 55%); background: rgba($neon, .04); border-radius: 14px; padding: 1.2rem; text-decoration: none; color: $chalk; }
+.loype:hover { border-color: $neon; }
+.loype .status { font: 700 12px/1 $headings-font-family; letter-spacing: .1em; text-transform: uppercase; color: $neon; }
+.loype h3 { margin: 0; border: 0; font-size: 1.25rem; }
+.loype p { margin: 0; color: $dust; }
+.loype.egen { border-style: dashed; border-color: mix($yellow, $line, 60%); background: transparent; }
+.loype.egen .status { color: $yellow; }
+.loype-meta { font-family: "Architects Daughter", cursive; color: $neon !important; }
+.loype-linje { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.2rem; padding: .55rem .9rem; margin: 0 0 1rem; border: 1px solid $line; border-radius: 10px; font-size: .92rem; background: rgba(255,255,255,.02); }
+.loype-linje a { color: $chalk; text-decoration: none; }
+.loype-linje a:hover { color: $neon; }
+.ll-merke { font: 700 10px/1 $headings-font-family; letter-spacing: .1em; text-transform: uppercase; color: $neon; margin-right: .45rem; }
+.ll-pos { color: $dust; font-size: .85rem; margin-left: .3rem; }
+.ll-knapper { margin-left: auto; display: flex; gap: .8rem; }
+.ll-knapper a { border: 1px solid $line; border-radius: 8px; padding: .2rem .6rem; }
+.ll-knapper a:hover { border-color: $neon; }

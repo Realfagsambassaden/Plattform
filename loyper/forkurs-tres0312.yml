@@ -1,0 +1,37 @@
+# Løype: Forkurs TRES0312 (NTNU). Sidene lages fra LaTeX-kompendiet (kosmoben/TRES0312), i kompendiets rekkefølge.
+# Her kobles hver side til et emne i emner.yml. Kapittelnavnet alene gir standard-emnet for hele kapittelet;
+# «kapittel/fil» (uten .qmd) overstyrer for én side.
+id: forkurs-tres0312
+tittel: "Forkurs TRES0312"
+institusjon: "NTNU"
+emnekode: "TRES0312"
+beskrivelse: "Forkurs i fysikk for deg som skal begynne på ingeniør- eller realfag, men ikke har hatt mye fysikk eller matematikk før."
+kilde: forkurs
+emner:
+  01-hva-er-fysikk: hva-er-fysikk
+  01-hva-er-fysikk/02-fysiske-storrelser: storrelser-og-enheter
+  01-hva-er-fysikk/03-a-regne-med-enheter: storrelser-og-enheter
+  01-hva-er-fysikk/04-signifikante-siffer: maling-og-usikkerhet
+  01-hva-er-fysikk/05-tall-pa-standardform: maling-og-usikkerhet
+  01-hva-er-fysikk/06-eksempel-pa-beregning: maling-og-usikkerhet
+  01-hva-er-fysikk/07-ekstraoppgaver: storrelser-og-enheter
+  02-matematikk: matematiske-verktoy
+  02-matematikk/04-vektorer: vektorer
+  02-matematikk/05-operasjoner-med-vektorer: vektorer
+  02-matematikk/06-matematisk-modellering: modellering
+  03-kinematikk: kinematikk
+  03-kinematikk/05-sirkelbevegelse: sirkelbevegelse
+  04-krefter: newtons-lover
+  04-krefter/01-bevegelsesmengde: bevegelsesmengde
+  04-krefter/05-bevaring-av-bevegelsesmengde: bevegelsesmengde
+  05-energi: arbeid-og-energi
+  05-energi/06-stot: bevegelsesmengde
+  06-statikk: statikk
+  07-fluider: hydrostatikk
+  08-termofysikk: temperatur-og-varme
+  08-termofysikk/02-termodynamikkens-1-lov: termodynamikk
+  08-termofysikk/08-prosesstyper-og-pv-diagram: termodynamikk
+  08-termofysikk/06-kinetisk-gassteori: gasser
+  08-termofysikk/07-tilstandslikninga-for-idealgass: gasser
+  09-elektrisitet: kretser
+  09-elektrisitet/02-elektrisk-kraft-og-ladning: elektrisk-felt

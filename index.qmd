@@ -31,27 +31,27 @@ Velg kurs
 <div class="tracks">
   <a class="track live" href="forkurs/index.html">
     <img class="track-bilde" src="assets/img/tegninger/fotball.webp" alt="" loading="lazy">
-    <span class="status">Åpent nå</span>
-    <h3>Forkurs</h3>
+    <span class="status">Løype · klar</span>
+    <h3>Forkurs TRES0312</h3>
     <p>For deg som skal begynne på ingeniør- eller realfag. Fra «hva er fysikk?» via kinematikk, krefter og energi til statikk og fluider.</p>
   </a>
-  <a class="track" href="kommer/ingeniorfysikk.html">
-    <img class="track-bilde" src="assets/img/tegninger/malingsbombe.webp" alt="" loading="lazy">
-    <span class="status">Kommer</span>
-    <h3>Ingeniørfysikk</h3>
-    <p>Fysikken i ingeniørstudiet, ordnet etter emne.</p>
+  <a class="track live" href="emner/index.html">
+    <img class="track-bilde" src="assets/img/tegninger/kjelke.webp" alt="" loading="lazy">
+    <span class="status">Utforsk</span>
+    <h3>Alle emner</h3>
+    <p>Alt stoffet ordnet etter tema: mekanikk, fluider, termofysikk, elektromagnetisme og mer.</p>
   </a>
-  <a class="track" href="kommer/matematikk.html">
+  <a class="track live" href="dekning.html">
+    <img class="track-bilde" src="assets/img/tegninger/sau-maling.webp" alt="" loading="lazy">
+    <span class="status">Ditt kurs</span>
+    <h3>Lag din egen løype</h3>
+    <p>Lim inn emnebeskrivelsen til faget ditt, så finner vi sidene som passer.</p>
+  </a>
+  <a class="track" href="https://realfagsambassaden.no/#sider">
     <img class="track-bilde" src="assets/img/tegninger/flate-normal.webp" alt="" loading="lazy">
     <span class="status">Kommer</span>
     <h3>Matematikk</h3>
-    <p>Algebra, funksjoner, derivasjon og integrasjon, på samme måte.</p>
-  </a>
-  <a class="track" href="kommer/avansert-fysikk.html">
-    <img class="track-bilde" src="assets/img/tegninger/euler-lagrange.webp" alt="" loading="lazy">
-    <span class="status">Kommer</span>
-    <h3>Avansert fysikk</h3>
-    <p>For deg som vil lenger enn pensum.</p>
+    <p>På matematikkhjelp.no, i samme stil.</p>
   </a>
 </div>
 

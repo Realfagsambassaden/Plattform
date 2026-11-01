@@ -1,0 +1,76 @@
+# Emnekartet for fysikkhjelp.no – grunnmuren for alt stoff.
+# Område → emner. Rekkefølgen her er rekkefølgen på nettsiden.
+# Sider kobles til emner i loyper/*.yml (forkurset) eller med «emne:» øverst i en .qmd-fil (fag fra malen).
+# «bilde» er en tegning i assets/img/tegninger/ (valgfritt).
+
+omrader:
+  - id: grunnlag
+    tittel: "Grunnlag og verktøy"
+    beskrivelse: "Hva fysikk er, størrelser og enheter, og matematikken vi trenger."
+    bilde: sau-maling
+    emner:
+      - { id: hva-er-fysikk, tittel: "Hva er fysikk?" }
+      - { id: storrelser-og-enheter, tittel: "Størrelser og enheter" }
+      - { id: maling-og-usikkerhet, tittel: "Tall, måling og usikkerhet" }
+      - { id: matematiske-verktoy, tittel: "Matematiske verktøy" }
+      - { id: vektorer, tittel: "Vektorer" }
+      - { id: modellering, tittel: "Modellering og problemløsning" }
+
+  - id: mekanikk
+    tittel: "Mekanikk"
+    beskrivelse: "Bevegelse, krefter, energi og likevekt."
+    bilde: kjelke
+    emner:
+      - { id: kinematikk, tittel: "Kinematikk" }
+      - { id: sirkelbevegelse, tittel: "Sirkelbevegelse" }
+      - { id: newtons-lover, tittel: "Newtons lover og krefter" }
+      - { id: bevegelsesmengde, tittel: "Bevegelsesmengde og støt" }
+      - { id: arbeid-og-energi, tittel: "Arbeid og energi" }
+      - { id: statikk, tittel: "Likevekt og kraftmoment" }
+      - { id: rotasjon, tittel: "Rotasjon og spinn" }
+      - { id: gravitasjon, tittel: "Gravitasjon" }
+      - { id: svingninger, tittel: "Svingninger" }
+
+  - id: fluider
+    tittel: "Fluidmekanikk"
+    beskrivelse: "Trykk, oppdrift og strømning i væsker og gasser."
+    bilde: hydraulikk
+    emner:
+      - { id: hydrostatikk, tittel: "Trykk og oppdrift" }
+      - { id: stromning, tittel: "Strømning og Bernoulli" }
+
+  - id: termofysikk
+    tittel: "Termofysikk"
+    beskrivelse: "Temperatur, varme, gasser og termodynamikkens lover."
+    bilde: rakett
+    emner:
+      - { id: temperatur-og-varme, tittel: "Temperatur og varme" }
+      - { id: termodynamikk, tittel: "Termodynamikkens lover" }
+      - { id: gasser, tittel: "Gasser og kinetisk teori" }
+
+  - id: elektromagnetisme
+    tittel: "Elektromagnetisme"
+    beskrivelse: "Ladning, felt, strøm, kretser og magnetisme."
+    bilde: e-felt
+    emner:
+      - { id: elektrisk-felt, tittel: "Ladning og elektrisk felt" }
+      - { id: elektrisk-potensial, tittel: "Elektrisk potensial" }
+      - { id: kretser, tittel: "Strøm og kretser" }
+      - { id: magnetisme, tittel: "Magnetisme og induksjon" }
+
+  - id: bolger
+    tittel: "Bølger og optikk"
+    beskrivelse: "Bølger, lyd og lys."
+    emner:
+      - { id: bolger-og-lyd, tittel: "Bølger og lyd" }
+      - { id: optikk, tittel: "Optikk" }
+
+  - id: moderne
+    tittel: "Moderne fysikk"
+    beskrivelse: "Relativitet, kvantefysikk og universet."
+    bilde: euler-lagrange
+    emner:
+      - { id: relativitet, tittel: "Relativitetsteori" }
+      - { id: kvantefysikk, tittel: "Kvantefysikk" }
+      - { id: atom-og-kjerne, tittel: "Atom- og kjernefysikk" }
+      - { id: kosmologi, tittel: "Kosmologi" }

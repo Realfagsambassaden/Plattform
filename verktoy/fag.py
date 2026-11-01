@@ -76,7 +76,7 @@ if fag_ut:
             sb += [f'            - {f["kortnavn"]}/kapitler/{k["dir"]}/{s["fil"]}' for s in k['sider']] or ['            []']
     sb.append('# <<< fag-sidemeny')
     yml = re.sub(r'(  sidebar:\n(?:    .*\n|      .*\n|        .*\n|          .*\n|            .*\n)*)', lambda m: m.group(1) + '\n'.join(sb) + '\n', yml, count=1)
-    meny = ['      # >>> fag-meny'] + [x for f in fag_ut for x in (f'      - href: {f["kortnavn"]}/index.qmd', f'        text: "{f["tittel"]}"')] + ['      # <<< fag-meny']
-    yml = yml.replace('      - href: kommer/ingeniorfysikk.qmd\n', '\n'.join(meny) + '\n      - href: kommer/ingeniorfysikk.qmd\n', 1)
+    meny = []  # menyen bygges nå av emner.py
+    _ = ['      # >>> fag-meny'] + [x for f in fag_ut for x in (f'      - href: {f["kortnavn"]}/index.qmd', f'        text: "{f["tittel"]}"')] + ['      # <<< fag-meny']
 (P / '_quarto.yml').write_text(yml, encoding='utf-8')
 print('fag:', len(fag_ut))

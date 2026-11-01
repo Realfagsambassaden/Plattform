@@ -92,3 +92,12 @@ fag:
 ```
 
 Faget bestemmer selv nettsted, navn, kortnavn og status (`skjult`/`arbeid`/`klar`) i sin egen `fag.yml`. `verktoy/fag.py` henter det inn ved hver bygging, lager oversiktsside, sidemeny og menypunkt. Hvert fag-repo «ringer på» plattformen når det endres (organisasjons-hemmeligheten `PLATTFORM_TOKEN`).
+
+## 9. Emner og løyper
+
+- **Emner er grunnmuren.** `emner.yml` lister områder (Mekanikk, Fluidmekanikk …) og emner (Kinematikk, Arbeid og energi …). Alt stoff hører til et emne.
+- **Løyper** er kurs lagt oppå emnene, f.eks. Forkurs TRES0312. `loyper/forkurs-tres0312.yml` kobler kompendiets sider til emner (kapittel = standard, kapittel/side = unntak).
+- Fag fra malen merker hver side med `emne:` øverst i fila.
+- `verktoy/emner.py` lager emne- og områdesidene (`emner/`), løypeoversikten (`loyper/index.qmd`), sidemenyen (etter emner) og toppmenyen (Emner ▾ / Løyper ▾), og `loyper.json`.
+- `assets/js/loype.js` viser emnet og «Forrige / Neste» i løypa øverst på hver innholdsside.
+- Egen innledningstekst til et emne: legg en fil i `emner-tekster/<emne-id>.md`.
