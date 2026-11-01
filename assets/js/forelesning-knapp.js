@@ -20,7 +20,7 @@
         if (m === 'ute') { location.href = R + 'konto/index.html?neste=larer'; return; }
         if (m === 'feil') { knapp.disabled = false; return; }
         var f = fhLarer.utkast() || { id: 'f' + Date.now().toString(36), navn: 'Min forelesning', sider: [] };
-        if (f.sider.indexOf(sti) < 0) f.sider.push(sti);
+        if (!fhLarer.harSide(f, sti)) f.sider.push(sti);
         return fhLarer.lagre(f).then(function () { knapp.textContent = '✓ Lagt til i «' + f.navn + '»'; });
       });
     });

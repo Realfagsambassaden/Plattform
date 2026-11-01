@@ -8,6 +8,8 @@ Bruk: python3 fag.py <prosjektmappe> <nettsted>   (f.eks. fysikkhjelp)
 import json, re, shutil, subprocess, sys
 from pathlib import Path
 import yaml
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from eksempler import behandle as skjul_eksempellosninger
 
 P = Path(sys.argv[1]).resolve(); NETTSTED = sys.argv[2]
 liste = (yaml.safe_load((P / 'fag.yml').read_text(encoding='utf-8')) or {}).get('fag') or []
@@ -36,6 +38,9 @@ for post in liste:
     if ut.exists(): shutil.rmtree(ut)
     shutil.copytree(mappe / 'kapitler', ut / 'kapitler')
     if (mappe / 'bilder').exists(): shutil.copytree(mappe / 'bilder', ut / 'bilder')
+    for f in (ut / 'kapitler').rglob('*.qmd'):   # sikkerhetsnett: løsningen i eksempler skjules bak «Vis løsning»
+        t = f.read_text(encoding='utf-8'); u = skjul_eksempellosninger(t)
+        if u != t: f.write_text(u, encoding='utf-8')
     arbeid = meta.get('status') == 'arbeid'
     banner = '::: {.callout-warning title="Under arbeid"}\nDette faget skrives fortsatt. Innholdet kan endre seg.\n:::\n\n' if arbeid else ''
     kapitler = []
