@@ -1,0 +1,64 @@
+% Forside – fylles ut av lag_pdf.py (TITTEL, UNDERTITTEL, LINJE, UTGAVE, BILDESTI)
+\begin{titlepage}
+\thispagestyle{empty}
+\begin{tikzpicture}[remember picture,overlay]
+  \fill[slate] (current page.south west) rectangle (current page.north east);
+  % svake krittspor i bakgrunnen
+  \begin{scope}[opacity=.06, line width=14pt, chalk, line cap=round]
+    \draw[decorate,decoration={random steps,segment length=9mm,amplitude=1.2mm}] ($(current page.north west)+(-1,-7)$) -- ($(current page.north east)+(1,-5.4)$);
+    \draw[decorate,decoration={random steps,segment length=9mm,amplitude=1.2mm}] ($(current page.south west)+(-1,8.5)$) -- ($(current page.south east)+(1,10.5)$);
+  \end{scope}
+  % formelstøv: tavlebakgrunnen fra nettsiden og noen formler fra faget, svakt i kritt
+  \node[opacity=.3, anchor=north] at ($(current page.north)+(0,-0.4)$) {\includegraphics[width=1.15\paperwidth]{BILDESTI/tavle-bakgrunn.png}};
+  \begin{scope}[color=dust, opacity=.32, font=\kritt]
+    \node[rotate=8, scale=1.5]  at ($(current page.north east)+(-4.2,-4.6)$) {$\sum\vec F = m\vec a$};
+    \node[rotate=-6, scale=1.3] at ($(current page.north east)+(-3.4,-7.0)$) {$W = \int \vec F\cdot\mathrm{d}\vec s$};
+    \node[rotate=4, scale=1.2]  at ($(current page.north west)+(4.2,-5.6)$) {$\vec p = m\vec v$};
+    \node[rotate=-10, scale=1.3] at ($(current page.north west)+(14.5,-15.6)$) {$\tau = I\alpha$};
+    \node[rotate=5, scale=1.2]  at ($(current page.south west)+(3.4,6.6)$) {$E_K = \tfrac12 mv^2$};
+    \node[rotate=-4, scale=1.2] at ($(current page.south east)+(-4.4,7.1)$) {$L = I\omega$};
+    \node[rotate=7, scale=1.1]  at ($(current page.south west)+(8.2,5.6)$) {$v^2 - v_0^2 = 2as$};
+    \node[rotate=-8, scale=1.1] at ($(current page.north west)+(9.6,-3.0)$) {$a_\perp = \dfrac{v^2}{R}$};
+    \node[rotate=3, scale=1.1]  at ($(current page.south east)+(-7.8,5.4)$) {$\vec J = \int \vec F\,\mathrm{d}t$};
+    \node[rotate=-5, scale=1.1] at ($(current page.north east)+(-6.0,-2.4)$) {$F = -kx$};
+  \end{scope}
+  % Dashman hilser
+  \node[anchor=south east] at ($(current page.south east)+(-1.0,15.3)$) {\includegraphics[height=6.0cm]{BILDESTI/hallo.png}};
+  % logo
+  \node[anchor=north west] at ($(current page.north west)+(1.6,-1.7)$) {\includegraphics[width=7.2cm]{BILDESTI/fh-logo-stor.png}};
+  % tittel (med en svak mørk dis bak, så formelstøvet ikke forstyrrer)
+  \fill[slate, opacity=.7, rounded corners=1cm] ($(current page.north west)+(1.2,-8.0)$) rectangle ($(current page.north west)+(16.3,-15.6)$);
+  \node[anchor=north west, align=left, text width=17cm] at ($(current page.north west)+(2.0,-8.6)$) {%
+    {\display\color{neon}\fontsize{11}{13}\selectfont F\,O\,R\,E\,L\,E\,S\,N\,I\,N\,G\,S\,N\,O\,T\,A\,T\,E\,R}\\[6mm]
+    {\kritt\color{chalk}\fontsize{58}{60}\selectfont TITTEL}\\[3mm]
+    {\kritt\color{neon}\fontsize{30}{34}\selectfont UNDERTITTEL}\\[7mm]
+    {\color{dust}\fontsize{13}{17}\selectfont LINJE}};
+  % krittfigur: skrått kast
+  \begin{scope}[shift={($(current page.south west)+(3.2,9.4)$)}, x=1cm, y=1cm, line cap=round, line join=round]
+    \draw[line, line width=.6pt] (0,0) -- (15.2,0);
+    \draw[chalk, line width=1.6pt, dash pattern=on 2.5pt off 4pt] plot[domain=0:14.2, samples=80, smooth] (\x, {1.05*\x - 0.074*\x*\x});
+    \foreach \t/\c in {0/neon, 7.1/cyan, 12.2/orange} {
+      \pgfmathsetmacro{\yy}{1.05*\t - 0.074*\t*\t}
+      \pgfmathsetmacro{\dy}{1.05 - 0.148*\t}
+      \fill[chalk] (\t,\yy) circle (3.2pt);
+      \draw[\c, line width=2pt, -{Stealth[length=3.5mm]}] (\t,\yy) -- ++(1.7, 1.7*\dy);
+    }
+    \draw[neon, line width=1.4pt, -{Stealth[length=3mm]}] (0,0) -- (0,2.6) node[above, font=\kritt\fontsize{15}{15}\selectfont, chalk] {$y$};
+    \node[font=\kritt\fontsize{16}{16}\selectfont, neon] at (2.6,2.9) {$\vec v_0$};
+    \node[font=\kritt\fontsize{15}{15}\selectfont, dust, anchor=west] at (9.3,4.6) {$y = v_{0y}t - \tfrac12\mathrm{g}t^2$};
+  \end{scope}
+  % bunn: Realfagsambassaden
+  \draw[line, line width=.6pt] ($(current page.south west)+(2,4.4)$) -- ($(current page.south east)+(-2,4.4)$);
+  \node[anchor=west] (ra) at ($(current page.south west)+(1.75,2.75)$) {\includegraphics[width=1.9cm]{BILDESTI/ra-ikon.png}};
+  \node[anchor=west, align=left] at ($(ra.east)+(0.1,0)$) {%
+    {\color{dust}\fontsize{10}{12}\selectfont Et prosjekt fra}\\[1mm]
+    {\display\bfseries\color{chalk}\fontsize{17}{19}\selectfont Realfagsambassaden}\\[1mm]
+    {\color{neon}\fontsize{11}{13}\selectfont realfagsambassaden.no}};
+  \node[anchor=east, align=right] at ($(current page.south east)+(-2,2.75)$) {%
+    {\color{dust}\fontsize{10}{12}\selectfont Les, se videoer og løs oppgaver på}\\[1mm]
+    {\kritt\fontsize{17}{19}\selectfont\color{chalk}fysikk\textcolor{neon}{hjelp}.no}\\[1mm]
+    {\color{dust}\fontsize{10}{12}\selectfont Dr.\ Normann og bidragsytere · UTGAVE}};
+\end{tikzpicture}
+\null
+\end{titlepage}
+\cleardoublepage

@@ -28,13 +28,13 @@ jobs:
           path: kilder/TRES0312
           sparse-checkout: TRES0312_Kompendium
 
-      - name: Installer LaTeX (til TikZ-figurene) og pdftocairo
+      - name: Installer LaTeX (TikZ-figurene og PDF-kompendiene) og pdftocairo
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq --no-install-recommends \
             texlive-latex-base texlive-latex-recommended texlive-latex-extra \
             texlive-pictures texlive-science texlive-fonts-recommended \
-            texlive-lang-european poppler-utils
+            texlive-lang-european texlive-xetex lmodern poppler-utils
 
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
