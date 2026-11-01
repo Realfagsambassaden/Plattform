@@ -4,6 +4,7 @@ project:
   render:
     - "*.qmd"
     - "!kilder/"
+    - "!fag/"
   resources:
     - assets/
     - innhold.json
@@ -49,8 +50,13 @@ website:
             text: "Alle løyper"
           - href: forkurs/index.qmd
             text: "Forkurs TRES0312"
+          - href: ingeniorfysikk/index.qmd
+            text: "Ingeniørfysikk – mekanikk"
           - href: dekning.qmd
             text: "Lag din egen løype"
+          - text: "---"
+          - href: larer/index.qmd
+            text: "For lærere: design din forelesning"
     right:
       - href: dekning.qmd
         text: Dekker vi faget ditt?
@@ -73,18 +79,21 @@ website:
               href: emner/grunnlag/hva-er-fysikk.qmd
               contents:
                 - forkurs/01-hva-er-fysikk/01-hva-er-fysikk.qmd
+                - ingeniorfysikk/kapitler/01-introduksjon/01-hva-er-fysikk.qmd
             - section: "Størrelser og enheter"
               href: emner/grunnlag/storrelser-og-enheter.qmd
               contents:
                 - forkurs/01-hva-er-fysikk/02-fysiske-storrelser.qmd
                 - forkurs/01-hva-er-fysikk/03-a-regne-med-enheter.qmd
                 - forkurs/01-hva-er-fysikk/07-ekstraoppgaver.qmd
+                - ingeniorfysikk/kapitler/01-introduksjon/02-enheter.qmd
             - section: "Tall, måling og usikkerhet"
               href: emner/grunnlag/maling-og-usikkerhet.qmd
               contents:
                 - forkurs/01-hva-er-fysikk/04-signifikante-siffer.qmd
                 - forkurs/01-hva-er-fysikk/05-tall-pa-standardform.qmd
                 - forkurs/01-hva-er-fysikk/06-eksempel-pa-beregning.qmd
+                - ingeniorfysikk/kapitler/01-introduksjon/03-signifikante-sifre.qmd
             - section: "Matematiske verktøy"
               href: emner/grunnlag/matematiske-verktoy.qmd
               contents:
@@ -97,6 +106,7 @@ website:
               contents:
                 - forkurs/02-matematikk/04-vektorer.qmd
                 - forkurs/02-matematikk/05-operasjoner-med-vektorer.qmd
+                - ingeniorfysikk/kapitler/01-introduksjon/04-vektorer.qmd
             - section: "Modellering og problemløsning"
               href: emner/grunnlag/modellering.qmd
               contents:
@@ -112,10 +122,14 @@ website:
                 - forkurs/03-kinematikk/03-akselerasjon.qmd
                 - forkurs/03-kinematikk/04-bevegelseslikningene-for-konstant-akselerasjon.qmd
                 - forkurs/03-kinematikk/06-ekstraoppgaver.qmd
+                - ingeniorfysikk/kapitler/02-kinematikk/01-posisjon-fart-akselerasjon.qmd
+                - ingeniorfysikk/kapitler/02-kinematikk/02-konstant-akselerasjon.qmd
+                - ingeniorfysikk/kapitler/02-kinematikk/03-skratt-kast.qmd
             - section: "Sirkelbevegelse"
               href: emner/mekanikk/sirkelbevegelse.qmd
               contents:
                 - forkurs/03-kinematikk/05-sirkelbevegelse.qmd
+                - ingeniorfysikk/kapitler/02-kinematikk/04-sirkelbevegelse.qmd
             - section: "Newtons lover og krefter"
               href: emner/mekanikk/newtons-lover.qmd
               contents:
@@ -204,6 +218,7 @@ website:
             - forkurs/07-fluider/index.qmd
             - forkurs/08-termofysikk/index.qmd
             - forkurs/09-elektrisitet/index.qmd
+            - ingeniorfysikk/index.qmd
   page-footer:
     left: "fysikkhjelp.no · Dr. Normann"
     right: "Laget med [Quarto](https://quarto.org)"
@@ -232,7 +247,7 @@ format:
             (function () {
               var s = document.querySelector('script[src*="site_libs/"]');
               var root = s ? s.getAttribute('src').split('site_libs/')[0] : '';
-              ['assets/js/konto.js', 'assets/js/loype.js', 'assets/js/kode.js', 'assets/js/oppgaver.js'].forEach(function (p) {
+              ['assets/js/konto.js', 'assets/js/loype.js', 'assets/js/kode.js', 'assets/js/oppgaver.js', 'assets/js/forelesning-knapp.js'].forEach(function (p) {
                 var el = document.createElement('script'); el.src = root + p; document.body.appendChild(el);
               });
             })();

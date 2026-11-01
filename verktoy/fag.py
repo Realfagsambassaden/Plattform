@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Henter inn fag laget fra malen Realfagsambassaden/fag-mal og kobler dem inn i nettstedet.
 Bruk: python3 fag.py <prosjektmappe> <nettsted>   (f.eks. fysikkhjelp)
-- leser fag.yml i plattformen (liste over repoer)
+- leser fag.yml i plattformen (liste over repoer, eller «sti:» til en mappe i plattformen)
 - henter hvert repo til kilder/<navn> (git clone), med mindre mappen finnes fra før (lokal forhåndsvisning)
 - kopierer kapitler/ og bilder/ til <kortnavn>/ og lager en oversiktsside
 - legger til sidemeny og menypunkt i _quarto.yml, og skriver _fag.json (brukes av innhold.py)"""
@@ -19,7 +19,11 @@ def tittel(f):
     return m.group(1) if m else f.stem
 
 for post in liste:
-    repo = post['repo']; navn = repo.split('/')[-1]; mappe = KILDER / navn
+    if post.get('sti'):   # fag som ligger i plattformen selv (f.eks. mens det venter på eget repo)
+        repo = post['sti']; mappe = P / post['sti']
+        if not mappe.exists(): print('FEIL: finner ikke', mappe); continue
+    else:
+        repo = post['repo']; navn = repo.split('/')[-1]; mappe = KILDER / navn
     if not mappe.exists():
         r = subprocess.run(['git', 'clone', '--depth', '1', f'https://github.com/{repo}', str(mappe)], capture_output=True, text=True)
         if r.returncode: print('FEIL: fikk ikke hentet', repo, r.stderr[-300:]); continue

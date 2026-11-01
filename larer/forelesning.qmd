@@ -1,0 +1,12 @@
+---
+title: "Forelesning"
+toc: false
+page-layout: full
+---
+
+```{=html}
+<div id="foredrag-start" class="larer"><p>Gjør klar forelesningen …</p></div>
+<script src="../assets/js/forelesning.js"></script>
+```
+
+[$x$]{.mj-last aria-hidden="true"}

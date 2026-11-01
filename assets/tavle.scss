@@ -370,3 +370,52 @@ body { overflow-x: clip; }
 .ll-knapper { margin-left: auto; display: flex; gap: .8rem; }
 .ll-knapper a { border: 1px solid $line; border-radius: 8px; padding: .2rem .6rem; }
 .ll-knapper a:hover { border-color: $neon; }
+
+/* ---------- Lærersiden: Design din forelesning ---------- */
+.mj-last { display: none; }
+.larer-test { border: 1px dashed $orange; color: $orange; border-radius: 8px; padding: .5rem .8rem; font-size: .95rem; }
+.larer-rutenett { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 2rem; align-items: start; }
+@media (max-width: 900px) { .larer-rutenett { grid-template-columns: 1fr; } }
+.larer h2 { font-size: 1.25rem; margin-top: .5rem; }
+.larer-sok, .larer-navn { width: 100%; background: transparent; color: $chalk; border: 1px solid $line; border-radius: 8px; padding: .55rem .75rem; margin-bottom: .8rem; }
+.larer-navn { font-weight: 700; font-size: 1.1rem; }
+.larer-liste details { border-bottom: 1px solid $line; padding: .35rem 0; }
+.larer-liste summary { cursor: pointer; font-weight: 700; }
+.larer-liste summary .ant { color: $dust; font-weight: 400; font-size: .85rem; }
+.larer-liste ul, .larer-sider { list-style: none; padding: 0; margin: .4rem 0; }
+.larer-liste li { display: flex; gap: .6rem; align-items: flex-start; padding: .25rem 0; }
+.larer-liste li small { display: block; color: $dust; font-size: .8rem; }
+.larer-pluss { flex: none; width: 1.9rem; height: 1.9rem; border-radius: 50%; border: 1px solid $neon; background: transparent; color: $neon; font-weight: 800; line-height: 1; }
+.larer-pluss:disabled { border-color: $line; color: $dust; }
+.larer-valgt { position: sticky; top: 5rem; border: 1px solid $line; border-radius: 12px; padding: 1rem 1.2rem; }
+.larer-sider { counter-reset: fd; }
+.larer-sider li { counter-increment: fd; display: flex; justify-content: space-between; gap: .5rem; align-items: center; padding: .4rem 0; border-bottom: 1px solid $line; }
+.larer-sider li::before { content: counter(fd); color: $neon; font-weight: 800; width: 1.4rem; flex: none; }
+.larer-sider li > span:first-of-type { flex: 1; }
+.larer-flytt button, .larer-lagret button { background: transparent; border: 1px solid $line; color: $chalk; border-radius: 6px; padding: 0 .45rem; margin-left: .15rem; }
+.larer-flytt button:disabled { opacity: .3; }
+.larer-knapper { display: flex; gap: .6rem; flex-wrap: wrap; margin: 1rem 0 .4rem; }
+.btn-chalk.sekundar { background: transparent; border-color: $line; color: $chalk !important; cursor: pointer; }
+.larer-tips, .larer-tom { color: $dust; font-size: .9rem; }
+.larer-lagret ul { padding-left: 1rem; }
+.larer-lagret small { color: $dust; }
+.fd-sideknapper { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .8rem; }
+.fd-sideknapper .btn-chalk { font-size: .85rem; padding: .3rem .8rem; }
+
+/* ---------- Forelesningsmodus ---------- */
+body.har-foredrag { overflow: hidden; }
+.foredrag { position: fixed; inset: 0; z-index: 2000; background: $slate; display: flex; flex-direction: column; outline: none; }
+.fd-slide { flex: 1; overflow-y: auto; padding: 4vh 6vw 2vh; max-width: 1400px; width: 100%; margin: 0 auto; font-size: clamp(1.15rem, 1.9vw, 1.7rem); line-height: 1.5; }
+.fd-slide h2 { font-size: 1.5em; color: $neon; border: 0; margin: 0 0 .8em; }
+.fd-slide h1 { font-size: 2.6em; }
+.fd-slide img { max-height: 58vh; width: auto !important; max-width: 100%; }
+.fd-slide .quarto-video, .fd-slide iframe { width: 100%; aspect-ratio: 16 / 9; height: auto; max-height: 70vh; }
+.fd-slide .oppgave { border: 0; padding: 0; }
+.fd-forside, .fd-tittel { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+.fd-merke { color: $neon; font-family: $headings-font-family; letter-spacing: .1em; text-transform: uppercase; font-size: .7em; }
+.fd-under { color: $dust; }
+.fd-linje { display: flex; align-items: center; gap: 1rem; padding: .5rem 1.2rem; border-top: 1px solid $line; color: $dust; font-size: .9rem; }
+.fd-navn { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fd-knapper { display: flex; gap: .4rem; align-items: center; }
+.fd-knapper button, .fd-knapper a { background: transparent; border: 1px solid $line; color: $chalk; border-radius: 6px; padding: .2rem .6rem; text-decoration: none; }
+.fd-knapper [data-h="løsning"] { border-color: $cyan; color: $cyan; }

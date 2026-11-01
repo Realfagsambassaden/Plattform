@@ -53,13 +53,25 @@ for lf in sorted((P / 'loyper').glob('*.yml')):
 
 # ---- fag fra malen
 fag_f = P / '_fag.json'
-for f in (json.loads(fag_f.read_text(encoding='utf-8')) if fag_f.exists() else []):
+fag_liste = json.loads(fag_f.read_text(encoding='utf-8')) if fag_f.exists() else []
+for f in fag_liste:
     for k in f['kapitler']:
         for s in k['sider']:
             sti = f"{f['kortnavn']}/kapitler/{k['dir']}/{s['fil']}"
             m = re.search(r'^emne:\s*"?([\w-]+)"?\s*$', (P / sti).read_text(encoding='utf-8'), re.M)
             if m: koble(sti, s['tittel'], m.group(1), f['tittel'])
             else: uten_emne.append((sti, s['tittel'], f['tittel']))
+
+# ---- løyper som følger et fag fra malen (kilde: fag, fag: <kortnavn>): sidene i fagets rekkefølge
+for lf in sorted((P / 'loyper').glob('*.yml')):
+    L = yaml.safe_load(lf.read_text(encoding='utf-8'))
+    if L.get('kilde') != 'fag': continue
+    f = next((x for x in fag_liste if x['kortnavn'] == L.get('fag')), None)
+    if not f: continue
+    rekke = [{'qmd': f"{f['kortnavn']}/kapitler/{k['dir']}/{s['fil']}", 'tittel': s['tittel'], 'kapittel': k['tittel']}
+             for k in f['kapitler'] for s in k['sider']]
+    loyper.append({**{k: L.get(k) for k in ('id', 'tittel', 'institusjon', 'emnekode', 'beskrivelse')},
+                   'oversikt': f"{f['kortnavn']}/index.qmd", 'sider': rekke})
 
 def html(q): return '/' + q.replace('.qmd', '.html')
 
@@ -164,7 +176,8 @@ for o in omrader:
 meny += ['      - text: Løyper', '        menu:', '          - href: loyper/index.qmd', '            text: "Alle løyper"']
 for L in loyper:
     meny += [f'          - href: {L["oversikt"]}', f'            text: "{L["tittel"]}"']
-meny += ['          - href: dekning.qmd', '            text: "Lag din egen løype"']
+meny += ['          - href: dekning.qmd', '            text: "Lag din egen løype"', '          - text: "---"',
+         '          - href: larer/index.qmd', '            text: "For lærere: design din forelesning"']
 
 yml = (P / '_quarto.yml').read_text(encoding='utf-8')
 yml = re.sub(r'\n# >>> fag-sidemeny.*?# <<< fag-sidemeny\n', '\n', yml, flags=re.S)
