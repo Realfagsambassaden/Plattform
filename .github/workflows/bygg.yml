@@ -44,6 +44,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Python-pakker
+        run: pip install pyyaml
+
       - name: Husk ferdige figurer mellom kjøringer
         uses: actions/cache@v4
         with:
