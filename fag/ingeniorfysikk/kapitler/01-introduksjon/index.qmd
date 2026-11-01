@@ -1,0 +1,5 @@
+---
+title: "Introduksjon: størrelser, enheter og vektorer"
+---
+
+Før vi kan beskrive bevegelse, trenger vi et felles språk: **fysiske størrelser** med **enheter**, en ryddig måte å skrive tall på, og **vektorer** for alt som har en retning. Dette kapittelet gir deg verktøyene du bruker resten av faget.

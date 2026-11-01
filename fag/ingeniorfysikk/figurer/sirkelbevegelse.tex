@@ -1,0 +1,10 @@
+\begin{tikzpicture}[scale=1.2]
+\draw[akse](-2.4,0)--(2.6,0) node[right]{$x$}; \draw[akse](0,-2.4)--(0,2.6) node[above]{$y$};
+\draw[thick](0,0) circle (1.8);
+\coordinate (P) at (40:1.8);
+\draw[vek](0,0)--(P) node[midway,above left]{$\vec R$};
+\fill (P) circle (0.06);
+\draw[vek,bla](P)--($(P)+(130:1.5)$) node[above]{$\vec v$};
+\draw[vek,gronn](P)--($(P)+(130:0.8)$) node[pos=0.6,below left]{$a_\parallel\,\hat u_\parallel$};
+\draw[vek,rod](P)--($(P)+(220:1.0)$) node[below]{$a_\perp\,\hat u_\perp$};
+\end{tikzpicture}

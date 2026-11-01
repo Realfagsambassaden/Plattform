@@ -1,0 +1,81 @@
+---
+title: "Posisjon, hastighet og akselerasjon"
+emne: kinematikk
+---
+
+{{< video https://www.youtube.com/watch?v=nQ7h4B4D5ig >}}
+
+<!-- tillegg: Claude -->
+For å beskrive en bevegelse trenger vi tre størrelser. Alle er funksjoner av tiden $t$.
+
+| Størrelse | Symbol | Betyr | SI-enhet |
+|---|---|---|---|
+| posisjon | $\vec s(t)$ | hvor legemet er | $\mathrm{m}$ |
+| hastighet | $\vec v(t)$ | hvor fort posisjonen endres | $\mathrm{m/s}$ |
+| akselerasjon | $\vec a(t)$ | hvor fort hastigheten endres | $\mathrm{m/s^2}$ |
+
+## Gjennomsnitt og øyeblikk
+
+Kjører du $120\ \mathrm{km}$ på $2\ \mathrm{h}$, er **gjennomsnittsfarten** $60\ \mathrm{km/h}$, selv om speedometeret har vist mye forskjellig underveis:
+$$
+\bar v = \frac{\Delta s}{\Delta t}
+$$
+Speedometeret viser **momentanfarten**, farten akkurat nå. Den får vi ved å gjøre tidsintervallet $\Delta t$ uendelig lite. Det er nettopp det den deriverte gjør:
+
+::: {.graa}
+$$
+\vec v(t) = \frac{\mathrm{d}\vec s}{\mathrm{d}t} = \vec s\,'(t), \qquad
+\vec a(t) = \frac{\mathrm{d}\vec v}{\mathrm{d}t} = \frac{\mathrm{d}^2\vec s}{\mathrm{d}t^2} = \vec s\,''(t)
+$$
+:::
+
+{{< video https://www.youtube.com/watch?v=giCcfGv-uTc >}}
+
+## Fart og hastighet er ikke det samme
+
+**Fart** er hvor fort noe går, uten retning. Det er et tall, for eksempel $v = 10\ \mathrm{m/s}$. **Hastighet** er fart *med retning*, altså en vektor, for eksempel $\vec v = (6{,}0,\ 8{,}0)\ \mathrm{m/s}$. Farten er lengden av hastighetsvektoren: $\sqrt{6^2+8^2} = 10\ \mathrm{m/s}$.
+
+En bil som holder $50\ \mathrm{km/h}$ gjennom en sving, har konstant fart men *endrer hastighet*, fordi retningen endres. Den har altså en akselerasjon, selv om speedometeret står stille. Dette kommer vi tilbake til under sirkelbevegelse.
+
+## Å lese grafer
+
+{{< video https://www.youtube.com/watch?v=Q4S15FxYehk >}}
+
+Sammenhengen mellom grafene er nyttig å kunne utenat:
+
+- **Stigningstallet** til $s(t)$-grafen er hastigheten. Stigningstallet til $v(t)$-grafen er akselerasjonen.
+- **Arealet under** $a(t)$-grafen er endringen i hastighet. Arealet under $v(t)$-grafen er forflytningen.
+
+Det andre punktet er integralregning: $\displaystyle\int_{t_1}^{t_2} a(t)\,\mathrm{d}t = v(t_2) - v(t_1)$.
+
+:::: {.oppgaver}
+
+::: {.oppgave tittel="Akselerasjonsgrafen til et tog" niva="Middels"}
+Grafen viser akselerasjonen til et tog som kjører rett fram mellom to stasjoner.
+
+![](../../bilder/akselerasjonsgraf-tog.svg){.tikz-fig style="width:480px"}
+
+a) Forklar ut fra grafen når farten øker og når den avtar.
+
+b) I hvilket tidsintervall har toget størst fart?
+
+c) Når begynner toget å bremse?
+
+d) Hva betyr arealet under grafen fra $t_1$ til $t_2$?
+
+e) Hva forteller stigningstallet til grafen?
+
+::: {.losning}
+**a)** Når akselerasjonen er *positiv* (grafen over $t$-aksen), øker farten. Når den er *negativ* (under aksen), avtar farten.
+
+**b)** Grafen ligger over aksen fra start til $t_3$, så farten øker hele denne tiden. Fra $t_3$ til $t_4$ er akselerasjonen null, og farten er konstant. Størst fart har toget derfor i intervallet $[t_3,\ t_4]$.
+
+**c)** Toget begynner å bremse når akselerasjonen blir negativ, ved $t_4$.
+
+**d)** Arealet er integralet $\int_{t_1}^{t_2} a(t)\,\mathrm{d}t = v(t_2) - v(t_1)$, altså **hvor mye farten øker** i dette tidsrommet.
+
+**e)** Stigningstallet sier hvor raskt *akselerasjonen* endrer seg. Det kalles **ryk** (engelsk *jerk*), med enhet $\mathrm{m/s^3}$. Det sier ikke direkte noe om farten, men kjennes godt i kroppen når toget rykker i gang.
+:::
+:::
+
+::::

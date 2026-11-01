@@ -1,0 +1,26 @@
+---
+title: "Hva er fysikk?"
+emne: hva-er-fysikk
+---
+
+{{< video https://www.youtube.com/watch?v=Zt_dt0fndx0 >}}
+
+<!-- tillegg: Claude -->
+Fysikk handler om å finne de enkle reglene bak det som skjer rundt oss: hvorfor en ball faller, hvorfor en bil sklir i svingen, hvordan en bro bærer vekten av trafikken. Fysikeren gjør det slik:
+
+1. **Observer** noe i naturen eller i et forsøk.
+2. **Lag en modell**: en forenklet beskrivelse med matematikk. Ofte ser vi bort fra noe, for eksempel luftmotstand.
+3. **Regn ut** hva modellen forutsier.
+4. **Sammenlign** med målinger. Stemmer det ikke, forbedrer vi modellen.
+
+Som ingeniør bruker du nettopp dette: du lager modeller av en konstruksjon eller en maskin og regner ut hva som skjer *før* du bygger den.
+
+## Mekanikk – det første vi lærer
+
+Mekanikk er læren om **bevegelse og krefter**. Vi starter med *kinematikk*, som beskriver bevegelse (hvor, hvor fort, hvor raskt farten endres), uten å spørre hvorfor. Deretter kommer *dynamikk*: Newtons lover forklarer bevegelsen ut fra kreftene som virker.
+
+{{< video https://www.youtube.com/watch?v=f5J60Vaof0M >}}
+
+::: {.callout-tip title="Slik jobber du best"}
+Se videoen, les teksten, og prøv oppgavene *før* du ser på løsningen. Står du fast, bruk hint-knappen. Det er i oppgavene du lærer mest.
+:::

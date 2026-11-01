@@ -1,0 +1,111 @@
+---
+title: "Størrelser og enheter"
+emne: storrelser-og-enheter
+---
+
+{{< video https://www.youtube.com/watch?v=N2us1vvGqfY >}}
+
+<!-- tillegg: Claude -->
+En **fysisk størrelse** er noe vi kan måle, for eksempel lengde, tid eller masse. Den skrives alltid som *tall ganger enhet*:
+
+$$
+s = 500\ \mathrm{km}
+$$
+
+Uten enhet er tallet meningsløst: «500» kan være meter, kilometer eller sekunder.
+
+## SI-systemet
+
+Forskere og ingeniører over hele verden bruker de samme grunnenhetene, **SI-enhetene**. I mekanikken trenger vi tre:
+
+| Størrelse | Symbol | SI-enhet |
+|---|---|---|
+| lengde | $s$, $x$ | meter, $\mathrm{m}$ |
+| masse | $m$ | kilogram, $\mathrm{kg}$ |
+| tid | $t$ | sekund, $\mathrm{s}$ |
+
+Alle andre enheter i mekanikken er bygget av disse tre. De kalles **avledede enheter**. Du finner dem ved å se på formelen som definerer størrelsen:
+
+::: {.graa}
+| Enhet | Størrelse | Fra formelen | I grunnenheter |
+|---|---|---|---|
+| newton, $\mathrm{N}$ | kraft | $F = ma$ | $\mathrm{kg\,m/s^2}$ |
+| joule, $\mathrm{J}$ | arbeid, energi | $W = Fs$ | $\mathrm{kg\,m^2/s^2}$ |
+| watt, $\mathrm{W}$ | effekt | $P = W/t$ | $\mathrm{kg\,m^2/s^3}$ |
+| pascal, $\mathrm{Pa}$ | trykk | $p = F/A$ | $\mathrm{kg/(m\,s^2)}$ |
+| hertz, $\mathrm{Hz}$ | frekvens | $f = 1/T$ | $\mathrm{s^{-1}}$ |
+:::
+
+## Å regne om enheter
+
+Trikset er å **erstatte hver enhet med det den er lik i SI**, og så regne ut tallet. Enhetene oppfører seg akkurat som bokstaver i algebra: de kan ganges, deles og forkortes.
+
+::: {.eksempel}
+**Eksempel:** Hvor mange m/s er $72\ \mathrm{km/h}$?
+
+Vi bruker $1\ \mathrm{km} = 1000\ \mathrm{m}$ og $1\ \mathrm{h} = 3600\ \mathrm{s}$:
+$$
+72\ \frac{\mathrm{km}}{\mathrm{h}} = 72 \cdot \frac{1000\ \mathrm{m}}{3600\ \mathrm{s}} = 20\ \mathrm{m/s}
+$$
+Huskeregel: del på 3,6 for å gå fra km/h til m/s.
+:::
+
+:::: {.oppgaver}
+
+::: {.oppgave tittel="Enhetsregning"}
+a) Hvor mange $\mathrm{m/s^2}$ tilsvarer en akselerasjon på $1\ \mathrm{km/h^2}$?
+
+b) En elbil bruker $1\ \mathrm{kWh}$ per mil ved blandet kjøring. Hva er dette i joule per meter?
+
+*Oppgitt:* $1\ \mathrm{kWh} = 3{,}6\cdot10^6\ \mathrm{J}$ og $1\ \mathrm{mil} = 10\ \mathrm{km}$.
+
+::: {.losning}
+**a)** Vi skriver om enhetene: $1\ \mathrm{km} = 1000\ \mathrm{m}$ og $1\ \mathrm{h} = 3600\ \mathrm{s}$. Legg merke til at timen er *kvadrert*:
+$$
+1\ \frac{\mathrm{km}}{\mathrm{h^2}} = \frac{1000\ \mathrm{m}}{(3600\ \mathrm{s})^2} = \frac{1000}{12\,960\,000}\ \mathrm{m/s^2} \approx \underline{\underline{7{,}7\cdot10^{-5}\ \mathrm{m/s^2}}}
+$$
+
+**b)** Vi gjør om energien til joule og strekningen til meter: $1\ \mathrm{mil} = 10\,000\ \mathrm{m}$.
+$$
+\frac{3{,}6\cdot10^6\ \mathrm{J}}{10\,000\ \mathrm{m}} = \underline{\underline{360\ \mathrm{J/m}}}
+$$
+:::
+:::
+
+::: {.oppgave tittel="Fart, strekning og tid"}
+Et nytt lyntog mellom Oslo og Trondheim kan holde en gjennomsnittsfart på $320\ \mathrm{km/h}$. Strekningen er $500\ \mathrm{km}$. Hvor lang tid bruker toget?
+
+::: {.losning}
+Fra definisjonen av fart, $v = s/t$, får vi $t = s/v$:
+$$
+t = \frac{500\ \mathrm{km}}{320\ \mathrm{km/h}} = 1{,}5625\ \mathrm{h}
+$$
+$0{,}5625\ \mathrm{h} \cdot 60\ \mathrm{min/h} \approx 34\ \mathrm{min}$, så toget bruker **1 time og 34 minutter**.
+:::
+:::
+
+::: {.oppgave tittel="SI-enheter"}
+Skriv enhetene under med SI-grunnenheter, og si hvilken fysisk størrelse de er enhet for.
+
+a) $\mathrm{N}$
+b) $\mathrm{Pa}$
+c) $\mathrm{J}$
+d) $\mathrm{W}$
+e) $\mathrm{Hz}$
+
+::: {.losning}
+Vi tar utgangspunkt i formelen som definerer hver størrelse.
+
+**a)** Newton er enheten for **kraft**. Fra Newtons 2. lov, $\sum F = ma$: $\ \mathrm{N} = \mathrm{kg\,m/s^2}$.
+
+**b)** Pascal er enheten for **trykk**, som er kraft per areal: $\ \mathrm{Pa} = \mathrm{N/m^2} = \mathrm{kg/(m\,s^2)}$.
+
+**c)** Joule er enheten for **arbeid og energi**. Arbeid er kraft ganger strekning: $\ \mathrm{J} = \mathrm{N\,m} = \mathrm{kg\,m^2/s^2}$.
+
+**d)** Watt er enheten for **effekt**, som er energi per tid: $\ \mathrm{W} = \mathrm{J/s} = \mathrm{kg\,m^2/s^3}$.
+
+**e)** Hertz er enheten for **frekvens**, antall svingninger per sekund: $\ \mathrm{Hz} = \mathrm{s^{-1}}$.
+:::
+:::
+
+::::

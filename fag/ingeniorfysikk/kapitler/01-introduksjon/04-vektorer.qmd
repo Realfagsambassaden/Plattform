@@ -1,0 +1,107 @@
+---
+title: "Vektorer og dekomponering"
+emne: vektorer
+---
+
+{{< video https://www.youtube.com/watch?v=c3yv7fgCnwA >}}
+
+<!-- tillegg: Claude -->
+Noen størrelser er helt beskrevet av ett tall, for eksempel masse ($5\ \mathrm{kg}$) eller tid ($3\ \mathrm{s}$). De kalles **skalarer**. Andre har også en **retning**: det er stor forskjell på å gå $500\ \mathrm{m}$ nordover og $500\ \mathrm{m}$ østover. Slike størrelser kalles **vektorer**, og vi tegner dem som piler. Lengden av pila er størrelsen, og pila peker i retningen.
+
+Vi skriver vektorer med en pil over: $\vec s$, $\vec v$, $\vec a$, $\vec F$. Lengden (størrelsen) skrives $|\vec a|$ eller bare $a$.
+
+## Komponenter
+
+I et koordinatsystem kan vi beskrive en vektor med hvor langt den går i $x$-retning og hvor langt i $y$-retning. Det er vektorens **komponenter**:
+$$
+\vec a = [a_x,\ a_y] = a_x\,\hat x + a_y\,\hat y
+$$
+Her er $\hat x$ og $\hat y$ **enhetsvektorer**: piler med lengde 1 langs aksene.
+
+## Dekomponering med trigonometri
+
+<!-- fra notatene -->
+Kjenner vi lengden $a$ og vinkelen $\theta$ med $x$-aksen, finner vi komponentene med en rettvinklet trekant:
+
+![](../../bilder/vektor-dekomponering.svg){.tikz-fig style="width:330px"}
+
+$$
+\cos\theta = \frac{\text{hosliggende katet}}{\text{hypotenus}} = \frac{a_x}{a}, \qquad
+\sin\theta = \frac{\text{motstående katet}}{\text{hypotenus}} = \frac{a_y}{a}
+$$
+
+::: {.graa}
+$$
+a_x = a\cos\theta, \qquad a_y = a\sin\theta, \qquad \tan\theta = \frac{a_y}{a_x}
+$$
+:::
+
+<!-- tillegg: Claude -->
+Andre veien, fra komponenter til lengde og vinkel, bruker vi Pytagoras:
+$$
+a = |\vec a| = \sqrt{a_x^2 + a_y^2}, \qquad \theta = \arctan\frac{a_y}{a_x}
+$$
+
+::: {.callout-tip title="Hvorfor dekomponere?"}
+Det er mye lettere å regne i én retning om gangen. Vi deler problemet i en $x$-del og en $y$-del, løser hver for seg, og setter sammen til slutt. Dette trikset bruker vi hele tiden i mekanikken, både for bevegelse og for krefter.
+:::
+
+{{< video https://www.youtube.com/watch?v=yUWWR755VEY >}}
+
+:::: {.oppgaver}
+
+::: {.oppgave tittel="Anne går en tur"}
+Anne går først $s_1 = 400\ \mathrm{m}$ østover og deretter $s_2 = 500\ \mathrm{m}$ nordover.
+
+a) Lag et koordinatsystem og tegn Annes tur.
+
+b) Tegn vektorene $\vec s_1$ og $\vec s_2$.
+
+c) Tegn summen $\vec s = \vec s_1 + \vec s_2$. Hvor langt er Anne fra startpunktet i luftlinje?
+
+::: {.losning}
+**a)** Vi velger positiv $x$-akse mot øst og positiv $y$-akse mot nord, med origo der Anne starter.
+
+**b)** $\vec s_1$ går fra origo $400\ \mathrm{m}$ langs $x$-aksen. $\vec s_2$ starter der $\vec s_1$ slutter og går $500\ \mathrm{m}$ i $y$-retning.
+
+**c)** Summen går fra origo til sluttpunktet:
+$$
+\vec s = (400,\ 0) + (0,\ 500) = (400,\ 500)\ \mathrm{m}
+$$
+Lengden finner vi med Pytagoras:
+$$
+|\vec s| = \sqrt{400^2 + 500^2}\ \mathrm{m} \approx \underline{\underline{640\ \mathrm{m}}}
+$$
+:::
+:::
+
+::: {.oppgave tittel="Arne drar en slede"}
+Arne drar en slede med en kraft $F = 600\ \mathrm{N}$ som danner vinkelen $\theta$ med bakken. Finn komponentene av kraften horisontalt og vertikalt.
+
+::: {.losning}
+Vi dekomponerer med cosinus og sinus:
+$$
+F_x = F\cos\theta = 600\ \mathrm{N}\cdot\cos\theta, \qquad F_y = F\sin\theta = 600\ \mathrm{N}\cdot\sin\theta
+$$
+Med for eksempel $\theta = 30^\circ$ blir $F_x \approx 520\ \mathrm{N}$ og $F_y = 300\ \mathrm{N}$. Bare $F_x$ drar sleden fremover; $F_y$ løfter litt på den.
+:::
+:::
+
+::: {.oppgave tittel="Vektor eller ikke?"}
+a) Er strekning en vektor?
+b) Er fart en vektor?
+c) Er akselerasjon en vektor?
+d) Er kraft en vektor?
+
+::: {.losning}
+**a)** Forflytning (endring i posisjon) har både størrelse og retning, og er en vektor. (Tilbakelagt *strekning* langs en bane er derimot bare en lengde.)
+
+**b)** *Hastighet* er en vektor: hvor fort og i hvilken retning. *Fart* er bare størrelsen av hastigheten, altså en skalar. I dagligtale blandes ordene, men i fysikk skiller vi dem.
+
+**c)** Ja. Akselerasjon er endring i hastighet per tid, og har retning.
+
+**d)** Ja. En kraft har både størrelse (målt i newton) og retning. Newton er enheten; vektoren er selve kraften.
+:::
+:::
+
+::::

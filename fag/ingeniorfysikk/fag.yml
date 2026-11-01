@@ -1,0 +1,8 @@
+# Ingeniørfysikk – mekanikkdelen av IFYA/IFYT/IFYG1000 og 1002 (NTNU).
+# Bygget fra donerte forelesningsnotater (anonymt) og fylt ut av Claude. Ligger foreløpig i Plattform,
+# flyttes til eget repo (Realfagsambassaden/ingeniorfysikk) når det er opprettet.
+nettsted: fysikkhjelp
+tittel: "Ingeniørfysikk"
+kortnavn: ingeniorfysikk
+beskrivelse: "Mekanikk for ingeniørstudenter: størrelser og vektorer, bevegelse, krefter og energi – med video, eksempler og oppgaver med løsning."
+status: arbeid

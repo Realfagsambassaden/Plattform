@@ -1,0 +1,76 @@
+---
+title: "Signifikante sifre og standardform"
+emne: maling-og-usikkerhet
+---
+
+{{< video https://www.youtube.com/watch?v=EwD-_OH2gLo >}}
+
+<!-- tillegg: Claude -->
+Ingen måling er helt nøyaktig. Antall **signifikante sifre** forteller hvor nøyaktig et tall er. Svaret ditt skal ikke virke mer nøyaktig enn målingene det bygger på.
+
+## Hvilke sifre teller?
+
+- Alle sifre som ikke er null, teller: $2{,}35$ har **3** signifikante sifre.
+- Nuller *mellom* andre sifre teller: $3{,}01$ har **3**.
+- Nuller *foran* teller ikke. De viser bare hvor kommaet står: $0{,}0030$ har **2** (3-tallet og nullen bak).
+- Nuller *bak* et komma teller, fordi noen har målt dem: $500{,}0$ har **4**.
+
+## Standardform
+
+På **standardform** skriver vi et tall som et tall mellom 1 og 10 ganget med en tierpotens:
+
+::: {.graa}
+$$
+a \cdot 10^{n}, \qquad 1 \le a < 10
+$$
+:::
+
+Da blir det tydelig hvor mange sifre som er signifikante, og store og små tall blir lette å lese:
+$$
+0{,}00301 = 3{,}01\cdot10^{-3}, \qquad 500{,}1 = 5{,}001\cdot10^{2}
+$$
+
+{{< video https://www.youtube.com/watch?v=UP4GI5vN_-A >}}
+
+## Eksempel fra forelesning: 10 milliarder
+
+<!-- fra notatene -->
+Hvor mange signifikante sifre har $10\,000\,000\,000$? Tar vi reglene bokstavelig, teller alle nullene, og vi får 11 sifre:
+$$
+10\,000\,000\,000 = 1{,}0000000000\cdot10^{10}
+$$
+Men hvis tallet betyr «rundt ti milliarder mennesker», er bare de to første sifrene ment. Da er det bedre å skrive
+$$
+10\cdot10^{9} = 10\ \text{mrd.}
+$$
+Bruk skjønn, og la sammenhengen avgjøre. Standardform er den sikreste måten å vise hva du mener.
+
+## Regel for svar
+
+<!-- tillegg: Claude -->
+::: {.callout-note title="Tommelfingerregel"}
+Ved ganging og deling: gi svaret med **like mange signifikante sifre som det minst nøyaktige tallet** du regnet med. Regn med alle sifrene underveis, og rund av først til slutt.
+:::
+
+:::: {.oppgaver}
+
+::: {.oppgave tittel="Standardform"}
+Skriv på standardform:
+
+a) $0{,}03\ \mathrm{s}$
+b) $0{,}00301\ \mathrm{Hz}$
+c) $500{,}1\ \mathrm{N}$
+d) $10\,000\,000\,000$
+
+::: {.losning}
+**a)** $0{,}03$ har ett signifikant siffer. Vi flytter kommaet to plasser mot høyre: $\underline{\underline{3\cdot10^{-2}\ \mathrm{s}}}$
+
+**b)** Vi flytter kommaet tre plasser mot høyre for å få et tall mellom 1 og 10: $\underline{\underline{3{,}01\cdot10^{-3}\ \mathrm{Hz}}}$
+
+**c)** Vi flytter kommaet to plasser mot venstre: $\underline{\underline{5{,}001\cdot10^{2}\ \mathrm{N}}}$
+
+**d)** Følger vi reglene bokstavelig, har tallet 11 signifikante sifre: $1{,}0000000000\cdot10^{10}$. Er det ment som «omtrent ti milliarder», skriver vi heller $1{,}0\cdot10^{10}$.
+:::
+:::
+
+::::

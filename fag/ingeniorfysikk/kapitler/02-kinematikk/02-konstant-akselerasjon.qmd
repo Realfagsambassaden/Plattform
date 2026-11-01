@@ -1,0 +1,123 @@
+---
+title: "Bevegelseslikningene for konstant akselerasjon"
+emne: kinematikk
+---
+
+{{< video https://www.youtube.com/watch?v=1rukKt6DYr0 >}}
+
+<!-- tillegg: Claude -->
+I mange viktige situasjoner er akselerasjonen konstant: fritt fall, en bil som bremser jevnt, en kloss som sklir ned et skråplan. Da kan vi finne posisjon og fart ved ethvert tidspunkt med fire enkle likninger.
+
+![Konstant akselerasjon: arealet under $a(t)$ gir endring i fart, og arealet under $v(t)$ gir forflytning.](../../bilder/bevegelsesgrafer.svg){.tikz-fig style="width:620px"}
+
+Fra grafene: $a(t)$ er en vannrett linje, så arealet under den er $a\,t$. Det gir farten. $v(t)$ er en rett linje, så arealet under den (et trapes) gir posisjonen:
+
+::: {.graa}
+$$
+\begin{aligned}
+v &= v_0 + a t \\
+s &= s_0 + v_0 t + \tfrac{1}{2} a t^2 \\
+v^2 - v_0^2 &= 2a(s - s_0) \\
+s - s_0 &= \tfrac{1}{2}(v_0 + v)\,t
+\end{aligned}
+$$
+:::
+
+Her er $s_0$ og $v_0$ posisjon og hastighet ved $t = 0$. Den tredje likningen er nyttig når du ikke kjenner tiden, den fjerde når du ikke kjenner akselerasjonen.
+
+{{< video https://www.youtube.com/watch?v=WxmJxCtOBOM >}}
+
+::: {.callout-important title="Velg positiv retning – og hold deg til den"}
+Bestem deg for hvilken retning som er positiv, og gi alle størrelser riktig fortegn ut fra det. Velger du *oppover* som positiv, er tyngdeakselerasjonen $a = -\mathrm{g} = -9{,}81\ \mathrm{m/s^2}$.
+:::
+
+:::: {.oppgaver}
+
+::: {.oppgave tittel="Ball kastet nedover"}
+En ball kastes nedover med en fart $v_0$ ved tiden $t = 0$. Vi velger positiv retning *oppover* og ser bort fra luftmotstand. Hvilket uttrykk for hastigheten er riktig?
+
+- **A.** $v = v_0 + \frac12 \mathrm{g} t^2$
+- **B.** $v = v_0 + \mathrm{g} t$
+- **C.** $v = v_0 - \mathrm{g} t$
+- **D.** $v = -v_0 - \frac12 \mathrm{g} t^2$
+- **E.** $v = -v_0 - \mathrm{g} t$
+
+::: {.losning}
+<!-- fra notatene -->
+Akselerasjonen er konstant, så vi bruker $v = v_0 + a t$. Uttrykkene med $t^2$ kan vi stryke med en gang: de hører til posisjonen, ikke hastigheten.
+
+Nå gjelder det fortegnene. Positiv retning er oppover. Ballen kastes *nedover*, så starthastigheten er $-v_0$. Tyngdeakselerasjonen peker også nedover: $a = -\mathrm{g}$. Dermed
+$$
+v = -v_0 - \mathrm{g} t \qquad \text{(alternativ E)}
+$$
+:::
+:::
+
+::: {.oppgave tittel="Bremselengde"}
+En bil som kjører i $30\ \mathrm{km/h}$, bremser jevnt og stopper etter $30\ \mathrm{m}$.
+
+a) Hvor stor er akselerasjonen?
+
+b) Hvor lang tid tar det før bilen står stille?
+
+c) Bilen bremser fra dobbelt så stor fart, $60\ \mathrm{km/h}$, med samme akselerasjon. Hvor lang blir bremsestrekningen og bremsetiden nå?
+
+::: {.losning}
+**a)** Vi kjenner ikke tiden, så vi bruker $v^2 - v_0^2 = 2as$ med $v = 0$ og $v_0 = 30/3{,}6\ \mathrm{m/s}$:
+$$
+a = \frac{v^2 - v_0^2}{2s} = \frac{0 - (30/3{,}6)^2}{2\cdot30}\ \mathrm{m/s^2} \approx \underline{\underline{-1{,}2\ \mathrm{m/s^2}}}
+$$
+Minustegnet betyr at akselerasjonen peker mot kjøreretningen: bilen bremser.
+
+**b)** Fra $s = \frac12(v_0 + v)t$ med $v = 0$:
+$$
+t = \frac{2s}{v_0} = \frac{2\cdot30\ \mathrm{m}}{30/3{,}6\ \mathrm{m/s}} \approx \underline{\underline{7{,}2\ \mathrm{s}}}
+$$
+
+**c)** Fra a) er $s = -v_0^2/(2a)$: bremselengden er proporsjonal med $v_0^2$. Dobbel fart gir $2^2 = 4$ ganger så lang bremselengde, altså $120\ \mathrm{m}$. Tiden er $t = -v_0/a$, proporsjonal med $v_0$, og blir dobbelt så lang: $14{,}4\ \mathrm{s}$.
+:::
+:::
+
+::: {.oppgave tittel="Innhenting" niva="Middels"}
+En personbil kjører med konstant fart $v = 100\ \mathrm{km/h}$ forbi en politibil som står i ro i $x = 0$. Politibilen reagerer etter $\Delta t = 2{,}0\ \mathrm{s}$ og starter da med konstant akselerasjon. La $t = 0$ være når politibilen starter. Den tar igjen personbilen $1{,}0\ \mathrm{km}$ lenger fram.
+
+a) Finn posisjonsfunksjonene for personbilen og politibilen.
+
+b) Hvor stor akselerasjon må politibilen ha?
+
+c) Hvor stor fart har politibilen idet den tar igjen personbilen?
+
+::: {.losning}
+**a)** Personbilen har et forsprang $v\Delta t$ ved $t = 0$, og kjører med konstant fart:
+$$
+x_1(t) = v\Delta t + v t
+$$
+Politibilen starter fra ro i $x = 0$ med konstant akselerasjon:
+$$
+x_2(t) = \tfrac12 a t^2
+$$
+
+**b)** De møtes når $x_1 = x_2 = x = 1{,}0\cdot10^3\ \mathrm{m}$. Fra personbilens likning finner vi tiden: $t = x/v - \Delta t$. Den setter vi inn i politibilens likning og løser for $a$:
+$$
+a = \frac{2x}{\left(\frac{x}{v} - \Delta t\right)^2} = \frac{2\cdot1{,}0\cdot10^3\ \mathrm{m}}{\left(\frac{1{,}0\cdot10^3\ \mathrm{m}}{100/3{,}6\ \mathrm{m/s}} - 2{,}0\ \mathrm{s}\right)^2} \approx \underline{\underline{1{,}7\ \mathrm{m/s^2}}}
+$$
+
+**c)** Fra $v^2 - v_0^2 = 2ax$ med $v_0 = 0$:
+$$
+v_{\text{politi}} = \sqrt{2ax} = \sqrt{2\cdot1{,}73\ \mathrm{m/s^2}\cdot1{,}0\cdot10^3\ \mathrm{m}} \approx 58{,}8\ \mathrm{m/s} \approx \underline{\underline{2{,}1\cdot10^2\ \mathrm{km/h}}}
+$$
+:::
+:::
+
+::: {.oppgave tittel="Appelsin fra Preikestolen"}
+Kenny mister en appelsin utfor kanten på Preikestolen. Den faller rett ned fra ro. Hvor lang tid bruker den på de første $3{,}0000\ \mathrm{m}$? Se bort fra luftmotstand.
+
+::: {.losning}
+Vi bruker $s = v_0 t + \frac12 a t^2$ med $v_0 = 0$ og $a = \mathrm{g}$ (positiv retning nedover):
+$$
+s = \tfrac12 \mathrm{g} t^2 \quad\Rightarrow\quad t = \sqrt{\frac{2s}{\mathrm{g}}} = \sqrt{\frac{2\cdot3{,}0000\ \mathrm{m}}{9{,}81\ \mathrm{m/s^2}}} \approx \underline{\underline{0{,}782\ \mathrm{s}}}
+$$
+:::
+:::
+
+::::

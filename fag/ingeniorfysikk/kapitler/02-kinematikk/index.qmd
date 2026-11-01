@@ -1,0 +1,5 @@
+---
+title: "Kinematikk: beskrivelse av bevegelse"
+---
+
+Kinematikk er læren om *hvordan* ting beveger seg: hvor de er, hvor fort de går, og hvor raskt farten endres. Vi spør ikke ennå om *hvorfor*. Det kommer med Newtons lover. Vi starter langs en rett linje, går videre til bevegelse i to dimensjoner (skrått kast), og avslutter med sirkelbevegelse.
