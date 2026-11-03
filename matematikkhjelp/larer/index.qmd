@@ -1,0 +1,11 @@
+---
+title: "Design din forelesning"
+subtitle: "For forelesere og lærere: plukk sider, eksempler og oppgaver fra matematikkhjelp.no, sett dem i den rekkefølgen du vil, og vis dem som tavleslides."
+toc: false
+page-layout: full
+---
+
+```{=html}
+<div id="larer" class="larer" aria-live="polite"><p>Laster …</p></div>
+<script src="../assets/js/larer.js"></script>
+```

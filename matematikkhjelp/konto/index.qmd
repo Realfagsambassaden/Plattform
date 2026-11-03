@@ -1,0 +1,63 @@
+---
+title: "Min side"
+toc: false
+---
+
+```{=html}
+<div id="konto" class="konto" aria-live="polite">
+  <p class="konto-laster">Laster …</p>
+</div>
+
+<template id="mal-ute">
+  <div class="konto-boks">
+    <div class="faner" role="tablist">
+      <button type="button" role="tab" data-fane="inn" aria-selected="true">Logg inn</button>
+      <button type="button" role="tab" data-fane="ny" aria-selected="false">Registrer deg</button>
+    </div>
+    <p class="konto-ingress" data-for="ny">Det er gratis å registrere seg. Som registrert bruker kan du blant annet sjekke hvor godt matematikkhjelp.no dekker faget du skal ta eksamen i.</p>
+    <form class="konto-skjema">
+      <label>E-post <input type="email" name="epost" autocomplete="email" required></label>
+      <label>Passord <input type="password" name="passord" autocomplete="current-password" minlength="8" required></label>
+      <p class="konto-hjelp" data-for="ny">Minst 8 tegn.</p>
+      <button type="submit" class="btn-chalk">Logg inn</button>
+      <p class="konto-melding" role="status"></p>
+      <p class="konto-lenker" data-for="inn"><a href="#" data-handling="glemt">Glemt passordet?</a></p>
+    </form>
+  </div>
+</template>
+
+<template id="mal-nytt-passord">
+  <div class="konto-boks">
+    <h2>Velg nytt passord</h2>
+    <form class="konto-skjema">
+      <label>Nytt passord <input type="password" name="passord" autocomplete="new-password" minlength="8" required></label>
+      <button type="submit" class="btn-chalk">Lagre passord</button>
+      <p class="konto-melding" role="status"></p>
+    </form>
+  </div>
+</template>
+
+<template id="mal-inne">
+  <div class="profil">
+    <p class="profil-hei">Hei, <span class="profil-navn"></span>!</p>
+    <div class="profil-kort">
+      <a class="track live" href="../dekning.html">
+        <span class="status">Klar</span>
+        <h3>Dekker vi faget ditt?</h3>
+        <p>Lim inn emnebeskrivelsen til faget du skal ta, og få et kart over hva matematikkhjelp.no dekker.</p>
+      </a>
+      <a class="track live" href="../larer/index.html">
+        <span class="status">For lærere · test</span>
+        <h3>Design din forelesning</h3>
+        <p>Plukk sider, eksempler og oppgaver, sett dem i din rekkefølge og vis dem som tavleslides. Lagres på kontoen din.</p>
+      </a>
+      <div class="track"><span class="status">Kommer</span><h3>Test deg selv</h3><p>Finn ut hva du behersker, og få en ferdighetsprofil basert på oppgavene du har løst.</p></div>
+      <div class="track"><span class="status">Kommer</span><h3>Estimert karakter</h3><p>Et anslag på hvor du ligger an før eksamen.</p></div>
+      <div class="track"><span class="status">Kommer</span><h3>Veiledning</h3><p>Bestill veiledning med Dr. Normann.</p></div>
+    </div>
+    <p class="profil-ut"><button type="button" class="btn-chalk ghost" data-handling="ut">Logg ut</button></p>
+  </div>
+</template>
+
+<script src="../assets/js/konto-side.js"></script>
+```

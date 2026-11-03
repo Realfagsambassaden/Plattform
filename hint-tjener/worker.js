@@ -18,6 +18,8 @@
 
 const STANDARD_MODELL = { claude: "claude-haiku-5-5", openai: "gpt-4o-mini" };
 const NETTSTED = "https://fysikkhjelp.no";
+const MATTE = "https://matematikkhjelp.no";
+const nettstedFor = (request) => ((request.headers.get("Origin") || "").includes("matematikkhjelp") ? MATTE : NETTSTED);
 const TILLATTE_OPPRINNELSER = [
   "https://fysikkhjelp.no",
   "https://www.fysikkhjelp.no",
@@ -133,16 +135,17 @@ async function dekning(request, env, b, h) {
   }
   if (tekst.length < 200) throw feil("Fant for lite tekst i emnebeskrivelsen. Prøv å lime inn teksten direkte.", 422);
 
-  // 2. innholdet på fysikkhjelp.no
-  const sider = await hentInnhold();
+  // 2. innholdet på nettstedet forespørselen kommer fra (fysikkhjelp.no eller matematikkhjelp.no)
+  const side = nettstedFor(request), navn = side.replace("https://", "");
+  const sider = await hentInnhold(side);
   const liste = sider.map((s, i) =>
     `${i + 1}|${s.del} – ${s.kapittel}|${s.tittel}|${[...s.emner, ...s.definisjoner].join("; ")}` +
     (s.oppgaver.length ? `|oppgaver: ${s.oppgaver.slice(0, 8).join("; ")}` : "")
   ).join("\n");
 
   // 3. spør KI-en
-  const melding = `EMNEBESKRIVELSE${kilde ? ` (fra ${kilde})` : ""}:\n${tekst.slice(0, 24000)}\n\nSIDER PÅ FYSIKKHJELP.NO (id|del – kapittel|tittel|innhold):\n${liste}`;
-  const raa = await spor(env, SYSTEM_DEKNING, melding, 3000);
+  const melding = `EMNEBESKRIVELSE${kilde ? ` (fra ${kilde})` : ""}:\n${tekst.slice(0, 24000)}\n\nSIDER PÅ ${navn.toUpperCase()} (id|del – kapittel|tittel|innhold):\n${liste}`;
+  const raa = await spor(env, SYSTEM_DEKNING.replaceAll("fysikkhjelp.no", navn), melding, 3000);
   const r = lesJson(raa);
   if (!r) throw feil("Klarte ikke å lage kartet denne gangen. Prøv igjen.", 502);
   if (r.feil) throw feil(r.feil, 422);
@@ -196,13 +199,14 @@ function htmlTilTekst(html) {
     .replace(/[ \t\r\f\v]+/g, " ").replace(/\n\s*\n+/g, "\n").trim();
 }
 
-let innholdCache = null;
-async function hentInnhold() {
-  if (innholdCache && Date.now() - innholdCache.t < 10 * 60 * 1000) return innholdCache.sider;
-  const r = await fetch(`${NETTSTED}/innhold.json`, { cf: { cacheTtl: 600 } });
+const innholdCache = {};
+async function hentInnhold(side) {
+  const c = innholdCache[side];
+  if (c && Date.now() - c.t < 10 * 60 * 1000) return c.sider;
+  const r = await fetch(`${side}/innhold.json`, { cf: { cacheTtl: 600 } });
   if (!r.ok) throw feil("Fant ikke innholdsoversikten til nettsiden.", 502);
   const sider = (await r.json()).sider || [];
-  innholdCache = { t: Date.now(), sider };
+  innholdCache[side] = { t: Date.now(), sider };
   return sider;
 }
 
