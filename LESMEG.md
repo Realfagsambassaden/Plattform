@@ -1,5 +1,7 @@
 # fysikkhjelp.no
 
+> Ny medarbeider? Les [BIDRA.md](BIDRA.md) først.
+
 Dette repoet er selve nettsiden. Innholdet hentes fra fagrepoene (foreløpig `kosmoben/TRES0312`). Du skriver i LaTeX i fagrepoet som før, pusher, og et par minutter senere er fysikkhjelp.no oppdatert.
 
 ## 1. Vanlig arbeidsflyt
