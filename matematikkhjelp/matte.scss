@@ -1,0 +1,14 @@
+/*-- scss:defaults --*/
+// matematikkhjelp.no: samme tavle som fysikkhjelp.no, men i blått.
+// Overstyrer fargene i assets/tavle.scss (der de er !default).
+$slate:   #0b1020;   // bakgrunn: mørk blåtavle
+$slate-2: #121a2e;   // bokser og kodeblokker
+$line:    #27334d;   // streker og rammer
+$chalk:   #eaf0fb;   // tekst
+$dust:    #9aa8c2;   // dempet tekst
+$neon:    #5aaeff;   // hovedfarge: lenker, knapper, uthevinger
+$cyan:    #8fd8ff;   // merknader
+$orange:  #f6a54a;
+$yellow:  #f2e67a;
+
+/*-- scss:rules --*/
