@@ -1,0 +1,44 @@
+---
+pagetitle: "matematikkhjelp.no – matematikk forklart"
+toc: false
+page-layout: full
+---
+
+```{=html}
+<section class="hero">
+  <div class="hero-tekst">
+    <p class="eyebrow">Matematikk på alle nivå!</p>
+    <h1>Matematikk <span class="g">forklart</span></h1>
+    <p class="lead">Korte videoer, tydelige formler, kode du kan kjøre selv og oppgaver med hint når du står fast. Laget av de som kan det best: ekte realfagsfolk med formidlerglede!</p>
+    <div class="cta">
+      <a class="btn-chalk" href="emner/index.html">Se emnene</a>
+    </div>
+  </div>
+  <div class="hero-scene">
+    <img src="assets/img/tegninger/flate-normal.webp" alt="En krum flate med en normalvektor tegnet i kritt">
+  </div>
+</section>
+```
+
+::: {.eyebrow}
+Velg løype
+:::
+
+## Hvor i løypa er du?
+
+```{=html}
+<div class="tracks">
+  <div class="track">
+    <img class="track-bilde" src="assets/img/tegninger/skratt-kast.webp" alt="" loading="lazy">
+    <span class="status">Løype · kommer</span>
+    <h3>Kalkulus</h3>
+    <p>Grenseverdier, derivasjon og integrasjon, med fullstendige eksempler og oppgaver med hint.</p>
+  </div>
+  <a class="track live" href="https://fysikkhjelp.no">
+    <img class="track-bilde" src="assets/img/tegninger/fotball.webp" alt="" loading="lazy">
+    <span class="status">Søsterside</span>
+    <h3>fysikkhjelp.no</h3>
+    <p>Fysikk forklart på samme måte, fra forkurs til ingeniørfysikk.</p>
+  </a>
+</div>
+```

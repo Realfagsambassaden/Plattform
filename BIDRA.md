@@ -4,11 +4,12 @@ Velkommen! Denne veiledningen er for deg som skal hjelpe til med nettsidene. Du 
 
 ## 1. Hva er hva
 
-Realfagsambassaden har to nettsider, og begge bygges fra dette repoet (**Plattform**):
+Realfagsambassaden har tre nettsider, og alle bygges fra dette repoet (**Plattform**):
 
 | Nettside | Hvor den ligger i repoet | Hva den er |
 |---|---|---|
 | **fysikkhjelp.no** | Hele repoet, utenom `ambassaden/` | Fagnettsiden: emner, løyper, videoer, kjørbar kode og oppgaver med KI-hint. Bygges med Quarto. |
+| **matematikkhjelp.no** | `matematikkhjelp/` | Matematikknettsiden. Samme verktøy og utseende som fysikkhjelp.no, men med eget emnekart (`matematikkhjelp/emner.yml`) og egne emnetekster (`matematikkhjelp/emner-tekster/`). |
 | **realfagsambassaden.no** | `ambassaden/` | Samlesiden: enkle HTML-sider (`public/`) og en liten tjeneste som tar imot donasjoner (`worker.js`). |
 
 Organisasjonen har også repoer for fag (`fag-mal`, `ingeniorfysikk`) og et privat repo for innsendt materiale (`donasjoner`). Disse og forkurset (TRES0312) tas hånd om av kjerneteamet.
@@ -21,8 +22,8 @@ Alt stoff på fysikkhjelp.no er bygget opp rundt **emner**, for eksempel «Kinem
 
 **Slik bidrar du til et emne:**
 
-1. **Finn emnet** i [`emner.yml`](emner.yml). Hvert emne har en `id`, for eksempel `arbeid-og-energi`.
-2. **Skriv emneteksten** i fila `emner-tekster/<emne-id>.md`, for eksempel `emner-tekster/arbeid-og-energi.md`. Finnes fila, bygger du videre på den. Finnes den ikke, lager du den. Teksten vises øverst på emnesiden.
+1. **Finn emnet** i [`emner.yml`](emner.yml) (fysikk) eller [`matematikkhjelp/emner.yml`](matematikkhjelp/emner.yml) (matematikk). Hvert emne har en `id`, for eksempel `arbeid-og-energi`.
+2. **Skriv emneteksten** i fila `emner-tekster/<emne-id>.md`, for eksempel `emner-tekster/arbeid-og-energi.md`. For matematikk bruker du `matematikkhjelp/emner-tekster/<emne-id>.md`. Finnes fila, bygger du videre på den. Finnes den ikke, lager du den. Teksten vises øverst på emnesiden.
 3. **Send inn endringen** som en pull request (se avsnitt 4).
 
 Emneteksten skrives i Markdown. Matematikk skrives med `$...$`, og en YouTube-video legges inn slik:

@@ -22,10 +22,14 @@ const TILLATTE_OPPRINNELSER = [
   "https://fysikkhjelp.no",
   "https://www.fysikkhjelp.no",
   "https://polished-surf-6e11.normann-formidling.workers.dev",
+  "https://matematikkhjelp.no",
+  "https://www.matematikkhjelp.no",
+  "https://matematikkhjelp.normann-formidling.workers.dev",
   "http://localhost:4200",              // quarto preview
+  "http://localhost:4201",              // quarto preview, matematikkhjelp.no
 ];
 
-const SYSTEM_HINT = `Du er en tålmodig fysikklærer på fysikkhjelp.no, laget av Dr. Normann, for studenter på forkurs for ingeniør- og realfag.
+const SYSTEM_HINT = `Du er en tålmodig FAGLÆRER på NETTSTED, laget av Dr. Normann, for studenter på forkurs for ingeniør- og realfag.
 Studenten jobber med en oppgave og ber om et hint.
 
 Regler:
@@ -101,7 +105,11 @@ async function hint(request, env, b, h) {
     (tidligere.length ? `Hint studenten allerede har fått:\n${tidligere.map((t, i) => `${i + 1}. ${t}`).join("\n")}\n\n` : "") +
     `Dette har studenten prøvd:\n${kort(b.forsok, 1500) || "(ingenting skrevet)"}\n\n` +
     `Gi neste hint.`;
-  const svar = await spor(env, SYSTEM_HINT, melding, 350);
+  // Samme tjener brukes av fysikkhjelp.no og matematikkhjelp.no: velg rolle ut fra hvilken side forespørselen kommer fra.
+  const matte = (request.headers.get("Origin") || "").includes("matematikkhjelp");
+  const system = SYSTEM_HINT.replace("FAGLÆRER", matte ? "matematikklærer" : "fysikklærer")
+                            .replace("NETTSTED", matte ? "matematikkhjelp.no" : "fysikkhjelp.no");
+  const svar = await spor(env, system, melding, 350);
   return json({ hint: svar || "Prøv å tegne opp kreftene og forflytningen først. Hvilken del av kraften peker langs bevegelsen?" }, 200, h);
 }
 

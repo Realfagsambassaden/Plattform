@@ -1,0 +1,48 @@
+# Emnekartet for matematikkhjelp.no – grunnmuren for alt stoff.
+# Område → emner. Rekkefølgen her er rekkefølgen på nettsiden.
+# Sider kobles til emner med «emne: <id>» øverst i en .qmd-fil (fag fra malen), eller i loyper/*.yml.
+# «bilde» er en tegning i assets/img/tegninger/ (valgfritt).
+
+omrader:
+  - id: grunnlag
+    tittel: "Grunnlag"
+    beskrivelse: "Tall, algebra og funksjoner: verktøyene resten av matematikken bygger på."
+    emner:
+      - { id: tall-og-regneregler, tittel: "Tall og regneregler" }
+      - { id: algebra-og-likninger, tittel: "Algebra og likninger" }
+      - { id: funksjoner, tittel: "Funksjoner og grafer" }
+      - { id: eksponential-og-logaritme, tittel: "Eksponential- og logaritmefunksjoner" }
+      - { id: trigonometri, tittel: "Trigonometri" }
+      - { id: komplekse-tall, tittel: "Komplekse tall" }
+
+  - id: kalkulus
+    tittel: "Kalkulus"
+    beskrivelse: "Grenseverdier, derivasjon og integrasjon: matematikken for endring."
+    bilde: flate-normal
+    emner:
+      - { id: grenseverdier, tittel: "Grenseverdier og kontinuitet" }
+      - { id: derivasjon, tittel: "Derivasjon" }
+      - { id: anvendelser-derivasjon, tittel: "Anvendelser av derivasjon" }
+      - { id: integrasjon, tittel: "Integrasjon" }
+      - { id: integrasjonsteknikker, tittel: "Integrasjonsteknikker" }
+      - { id: anvendelser-integrasjon, tittel: "Anvendelser av integrasjon" }
+      - { id: folger-og-rekker, tittel: "Følger og rekker" }
+      - { id: taylor, tittel: "Taylorpolynomer og -rekker" }
+      - { id: differensiallikninger, tittel: "Differensiallikninger" }
+
+  - id: linalg
+    tittel: "Lineær algebra"
+    beskrivelse: "Vektorer, matriser og likningssystemer."
+    emner:
+      - { id: vektorer, tittel: "Vektorer" }
+      - { id: matriser, tittel: "Matriser" }
+      - { id: likningssystemer, tittel: "Lineære likningssystemer" }
+      - { id: egenverdier, tittel: "Egenverdier og egenvektorer" }
+
+  - id: statistikk
+    tittel: "Sannsynlighet og statistikk"
+    beskrivelse: "Sannsynlighet, fordelinger og hvordan vi trekker slutninger fra data."
+    emner:
+      - { id: sannsynlighet, tittel: "Sannsynlighet" }
+      - { id: fordelinger, tittel: "Sannsynlighetsfordelinger" }
+      - { id: statistisk-analyse, tittel: "Statistisk analyse" }

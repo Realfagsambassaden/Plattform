@@ -1,0 +1,86 @@
+# matematikkhjelp.no – bygges med samme verktøy og utseende som fysikkhjelp.no (se bygg.sh i denne mappen).
+# Menyen og sidemenyen lages automatisk av verktoy/emner.py og verktoy/fag.py ved hver bygging.
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "*.qmd"
+    - "!kilder/"
+  resources:
+    - assets/
+    - innhold.json
+    - loyper.json
+
+lang: nb
+
+website:
+  title: "matematikkhjelp.no"
+  site-url: "https://matematikkhjelp.no"
+  description: "Matematikk forklart på tavla – videoer, formler, kjørbar kode og oppgaver med hint. En del av Realfagsambassaden."
+  favicon: assets/img/drnormann-logo.png
+  page-navigation: true
+  navbar:
+    title: "matematikkhjelp<span class='dot'>.</span>no"
+    collapse-below: xl
+    left:
+      - text: Emner
+        menu:
+          - href: emner/index.qmd
+            text: "Alle emner"
+          - href: emner/grunnlag/index.qmd
+            text: "Grunnlag"
+          - href: emner/kalkulus/index.qmd
+            text: "Kalkulus"
+          - href: emner/linalg/index.qmd
+            text: "Lineær algebra"
+          - href: emner/statistikk/index.qmd
+            text: "Sannsynlighet og statistikk"
+      - text: Løyper
+        menu:
+          - href: loyper/index.qmd
+            text: "Alle løyper"
+    right:
+      - href: https://fysikkhjelp.no
+        text: fysikkhjelp.no
+      - href: https://realfagsambassaden.no
+        text: "<span class='ra-merke'><span class='ra-tekst'>En del av</span><img src='/assets/img/ra-ikon.png' alt='' class='ra-ikon'><img src='/assets/img/ra-logo-linje.png' alt='Realfagsambassaden' class='ra-ord'></span>"
+        aria-label: "En del av Realfagsambassaden"
+  sidebar:
+    - id: emner
+      title: "Emner"
+      style: docked
+      collapse-level: 1
+      contents:
+        - emner/index.qmd
+        - section: "Løyper"
+          href: loyper/index.qmd
+  page-footer:
+    left: "matematikkhjelp.no · Dr. Normann"
+    right: "Laget med [Quarto](https://quarto.org)"
+
+format:
+  html:
+    theme: [cosmo, assets/tavle.scss]
+    html-math-method: mathjax
+    toc: true
+    toc-title: "På denne siden"
+    toc-depth: 2
+    lightbox: true
+    code-copy: true
+    highlight-style: github-dark
+    include-in-header:
+      - text: |
+          <!-- Adressen til hint-tjeneren (Cloudflare Worker). Samme tjener som fysikkhjelp.no. -->
+          <meta name="fysikkhjelp-hint-api" content="https://hint.fysikkhjelp.no/hint">
+    include-after-body:
+      - text: |
+          <script>
+            // Finn rotmappen til nettstedet ut fra Quartos egne filer, så stiene virker på alle undersider.
+            (function () {
+              var s = document.querySelector('script[src*="site_libs/"]');
+              var root = s ? s.getAttribute('src').split('site_libs/')[0] : '';
+              ['assets/js/loype.js', 'assets/js/kode.js', 'assets/js/oppgaver.js'].forEach(function (p) {
+                var el = document.createElement('script'); el.src = root + p; document.body.appendChild(el);
+              });
+            })();
+          </script>

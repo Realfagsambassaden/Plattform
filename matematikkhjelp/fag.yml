@@ -1,0 +1,4 @@
+# Fagene som hentes inn på matematikkhjelp.no. Ett fag = ett repo laget fra malen Realfagsambassaden/fag-mal,
+# med «nettsted: matematikkhjelp» i fagets egen fag.yml.
+fag: []
+  # - repo: Realfagsambassaden/kalkulus

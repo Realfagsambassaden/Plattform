@@ -103,3 +103,22 @@ Faget bestemmer selv nettsted, navn, kortnavn og status (`skjult`/`arbeid`/`klar
 - `verktoy/emner.py` lager emne- og områdesidene (`emner/`), løypeoversikten (`loyper/index.qmd`), sidemenyen (etter emner) og toppmenyen (Emner ▾ / Løyper ▾), og `loyper.json`.
 - `assets/js/loype.js` viser emnet og «Forrige / Neste» i løypa øverst på hver innholdsside.
 - Egen innledningstekst til et emne: legg en fil i `emner-tekster/<emne-id>.md`.
+
+## 10. matematikkhjelp.no
+
+matematikkhjelp.no ligger i mappen `matematikkhjelp/` og bygges med de samme verktøyene (`verktoy/`) og det samme utseendet (`assets/`) som fysikkhjelp.no. Byggingen kopierer `assets/` inn i mappen, så det er bare ett sted å endre utseendet.
+
+| Fil / mappe | Hva det er |
+|---|---|
+| `matematikkhjelp/bygg.sh` | Bygger siden (`./matematikkhjelp/bygg.sh preview` gir forhåndsvisning på `http://localhost:4201`) |
+| `matematikkhjelp/_quarto.yml` | Innstillinger og meny (menyene lages automatisk) |
+| `matematikkhjelp/index.qmd` | Forsiden |
+| `matematikkhjelp/emner.yml` | Emnekartet for matematikk |
+| `matematikkhjelp/emner-tekster/` | Innledningstekster til emnene |
+| `matematikkhjelp/fag.yml` | Fagene som vises her (fagrepo med `nettsted: matematikkhjelp` i sin egen `fag.yml`) |
+| `matematikkhjelp/loyper/` | Løyper (kurs) |
+| `matematikkhjelp/wrangler.toml` | Opplasting til Cloudflare (Worker-navn `matematikkhjelp`) |
+
+GitHub-automatikken bygger og publiserer matematikkhjelp.no i samme kjøring som fysikkhjelp.no. Domenet kobles til i Cloudflare under *Workers & Pages → matematikkhjelp → Settings → Domains & Routes*.
+
+KI-hintene bruker den samme hint-tjeneren. Den svarer som matematikklærer når forespørselen kommer fra matematikkhjelp.no.

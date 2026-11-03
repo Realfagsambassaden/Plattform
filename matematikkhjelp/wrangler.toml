@@ -1,0 +1,8 @@
+# Oppsett for opplasting av matematikkhjelp.no til Cloudflare (brukes av GitHub-automatikken).
+# Domenet (matematikkhjelp.no og www) kobles til i Cloudflare-dashbordet: Workers & Pages → matematikkhjelp → Settings → Domains & Routes.
+name = "matematikkhjelp"
+compatibility_date = "2024-11-01"
+workers_dev = true
+
+[assets]
+directory = "./_site"
