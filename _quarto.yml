@@ -56,6 +56,9 @@ website:
           - href: larer/index.qmd
             text: "For lærere: design din forelesning"
     right:
+      - href: https://realfagsambassaden.no/doner.html
+        text: "<span class='doner-knapp'>Donér materiale</span>"
+        aria-label: "Donér undervisningsmateriale til Realfagsambassaden"
       - href: dekning.qmd
         text: Dekker vi faget ditt?
       - href: konto/index.qmd
