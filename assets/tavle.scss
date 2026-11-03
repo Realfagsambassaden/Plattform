@@ -1,14 +1,15 @@
 /*-- scss:defaults --*/
 // Tavla: mørk skifer med krittfarger fra Dr. Normanns tegninger.
-$slate:   #0d1110;
-$slate-2: #151b19;
-$line:    #2a3330;
-$chalk:   #ecefe6;
-$dust:    #9aa49e;
-$neon:    #6ef04a;
-$orange:  #f19c2c;
-$cyan:    #56d7b8;
-$yellow:  #eee462;
+// Fargene er !default, så et nettsted kan bytte dem i sin egen tema-fil (se matematikkhjelp/matte.scss).
+$slate:   #0d1110 !default;
+$slate-2: #151b19 !default;
+$line:    #2a3330 !default;
+$chalk:   #ecefe6 !default;
+$dust:    #9aa49e !default;
+$neon:    #6ef04a !default;
+$orange:  #f19c2c !default;
+$cyan:    #56d7b8 !default;
+$yellow:  #eee462 !default;
 
 $web-font-path: "https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800;900&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&family=Architects+Daughter&family=Comic+Neue:ital,wght@0,400;0,700;1,400&display=swap";
 $font-family-sans-serif: "Comic Neue", "Comic Sans MS", "Chalkboard SE", "Nunito Sans", system-ui, sans-serif;

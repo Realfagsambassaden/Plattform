@@ -60,7 +60,7 @@ website:
 
 format:
   html:
-    theme: [cosmo, assets/tavle.scss]
+    theme: [cosmo, assets/tavle.scss, matte.scss]
     html-math-method: mathjax
     toc: true
     toc-title: "På denne siden"
