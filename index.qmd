@@ -18,6 +18,7 @@ page-layout: full
   <div class="hero-scene">
     <img src="assets/img/tegninger/hero-scene.webp" alt="Dr. Normann og Andrea forklarer ivrig, med et skrått kast og radianer tegnet i kritt rundt seg">
   </div>
+  <a class="soster" href="https://matematikkhjelp.no"><span>Søstersiden vår</span><img src="assets/img/mh-logo-linje.png" alt="matematikkhjelp.no"></a>
 </section>
 ```
 

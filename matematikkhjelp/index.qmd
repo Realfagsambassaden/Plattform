@@ -7,6 +7,7 @@ page-layout: full
 ```{=html}
 <section class="hero">
   <div class="hero-tekst">
+    <img class="hero-logo" src="assets/img/mh-logo-stor.png" alt="matematikkhjelp.no">
     <p class="eyebrow">Matematikk på alle nivå!</p>
     <h1>Matematikk <span class="g">forklart</span></h1>
     <p class="lead">Korte videoer, tydelige formler, kode du kan kjøre selv og oppgaver med hint når du står fast. Laget av de som kan det best: ekte realfagsfolk med formidlerglede!</p>
@@ -15,8 +16,9 @@ page-layout: full
     </div>
   </div>
   <div class="hero-scene">
-    <img src="assets/img/tegninger/flate-normal.webp" alt="En krum flate med en normalvektor tegnet i kritt">
+    <img src="assets/img/tegninger/matte-scene.webp" alt="En krum flate med en normalvektor, omgitt av formler tegnet i kritt">
   </div>
+  <a class="soster" href="https://fysikkhjelp.no"><span>Søstersiden vår</span><img src="assets/img/fh-logo-linje.png" alt="fysikkhjelp.no"></a>
 </section>
 ```
 
@@ -34,11 +36,5 @@ Velg løype
     <h3>Kalkulus</h3>
     <p>Grenseverdier, derivasjon og integrasjon, med fullstendige eksempler og oppgaver med hint.</p>
   </div>
-  <a class="track live" href="https://fysikkhjelp.no">
-    <img class="track-bilde" src="assets/img/tegninger/fotball.webp" alt="" loading="lazy">
-    <span class="status">Søsterside</span>
-    <h3>fysikkhjelp.no</h3>
-    <p>Fysikk forklart på samme måte, fra forkurs til ingeniørfysikk.</p>
-  </a>
 </div>
 ```

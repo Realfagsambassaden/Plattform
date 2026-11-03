@@ -378,6 +378,9 @@ format:
           <!-- Brukerkontoer (Supabase). Begge verdiene er offentlige og trygge å ha her. -->
           <meta name="supabase-url" content="https://fwyoldmtjnfxtkdwldzx.supabase.co">
           <meta name="supabase-key" content="sb_publishable_mapCEnSSxrSSwTbBKao6hw_qMOClLSS">
+          <!-- Navn og bakgrunnssett for dette nettstedet (brukes av assets/js) -->
+          <meta name="nettsted-navn" content="fysikkhjelp.no">
+          <meta name="bakgrunn-sett" content="fysikk">
     include-after-body:
       - text: |
           <script>
@@ -385,7 +388,7 @@ format:
             (function () {
               var s = document.querySelector('script[src*="site_libs/"]');
               var root = s ? s.getAttribute('src').split('site_libs/')[0] : '';
-              ['assets/js/konto.js', 'assets/js/loype.js', 'assets/js/kode.js', 'assets/js/oppgaver.js', 'assets/js/forelesning-knapp.js'].forEach(function (p) {
+              ['assets/js/konto.js', 'assets/js/loype.js', 'assets/js/kode.js', 'assets/js/oppgaver.js', 'assets/js/forelesning-knapp.js', 'assets/js/bakgrunn.js'].forEach(function (p) {
                 var el = document.createElement('script'); el.src = root + p; document.body.appendChild(el);
               });
             })();

@@ -1,3 +1,4 @@
+var NETTSTED_NAVN = (document.querySelector('meta[name="nettsted-navn"]') || {}).content || 'fysikkhjelp.no';
 // Forelesningsmodus og «Tilpass innholdet».
 //   larer/forelesning.html#id=<forelesning>            -> vis forelesningen som tavleslides
 //   larer/forelesning.html#id=<forelesning>&rediger=1  -> tilpass: klikk − for å fjerne tekst, definisjoner, løsninger …
@@ -235,7 +236,7 @@
 
     // Bygg innholdet til en slide i en beholder. Trinn 1 (løsning) merkes med data-trinn.
     function bygg(boks, s, ekte) {
-      if (s.type === 'forside') { boks.innerHTML = '<p class="fd-merke">fysikkhjelp.no</p><h1>' + esc(s.tittel) + '</h1><p class="fd-under">' + esc(s.under || '') + '</p>'; return; }
+      if (s.type === 'forside') { boks.innerHTML = '<p class="fd-merke">' + NETTSTED_NAVN + '</p><h1>' + esc(s.tittel) + '</h1><p class="fd-under">' + esc(s.under || '') + '</p>'; return; }
       if (s.type === 'sidetittel') { boks.innerHTML = '<h1>' + esc(s.tittel) + '</h1>'; return; }
       var innhold = el('div', 'fd-innhold');
       if (s.tittel) { var h = el('h2'); h.textContent = s.tittel; boks.appendChild(h); }

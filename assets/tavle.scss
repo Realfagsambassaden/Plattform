@@ -475,3 +475,14 @@ body.har-foredrag { overflow: hidden; }
 .pdf-lenke { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .8rem; margin: .4rem 0 1.4rem; }
 .pdf-lenke span { color: $dust; font-size: .9rem; }
 .kap-del { margin: 2rem 0 0; color: $neon; border: 0; font-size: 1.5rem; }
+
+// Formler i kantene på innholdssidene (assets/js/bakgrunn.js)
+.tavle-kant { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: center / cover no-repeat; opacity: .14; }
+@media (max-width: 1199.98px) { .tavle-kant { display: none; } }
+@media (min-width: 992px) { #quarto-sidebar.sidebar, .sidebar.toc-left { background-color: transparent; } }
+
+// Lenke til søstersiden nederst til høyre i forsidebildet
+.hero .soster { position: absolute; right: 0; bottom: -1rem; z-index: 2; display: inline-flex; align-items: center; gap: .7rem; padding: .55rem 1rem; border: 1px solid $line; border-radius: 14px; background: rgba($slate, .82); color: $dust; text-decoration: none; font-size: .95rem; }
+.hero .soster img { height: 30px; width: auto; }
+.hero .soster:hover { border-color: $neon; color: $chalk; }
+@media (max-width: 767.98px) { .hero .soster { position: static; margin-top: 1.5rem; } }

@@ -20,7 +20,9 @@ website:
   favicon: assets/img/drnormann-logo.png
   page-navigation: true
   navbar:
-    title: "matematikkhjelp<span class='dot'>.</span>no"
+    title: false
+    logo: assets/img/mh-logo-linje.png
+    logo-alt: "matematikkhjelp.no"
     collapse-below: xl
     left:
       - text: Emner
@@ -43,8 +45,10 @@ website:
       - href: https://realfagsambassaden.no/doner.html
         text: "<span class='doner-knapp'>Donér materiale</span>"
         aria-label: "Donér undervisningsmateriale til Realfagsambassaden"
-      - href: https://fysikkhjelp.no
-        text: fysikkhjelp.no
+      - href: dekning.qmd
+        text: Dekker vi faget ditt?
+      - href: konto/index.qmd
+        text: Logg inn
       - href: https://realfagsambassaden.no
         text: "<span class='ra-merke'><span class='ra-tekst'>En del av</span><img src='/assets/img/ra-ikon.png' alt='' class='ra-ikon'><img src='/assets/img/ra-logo-linje.png' alt='Realfagsambassaden' class='ra-ord'></span>"
         aria-label: "En del av Realfagsambassaden"
@@ -75,6 +79,11 @@ format:
       - text: |
           <!-- Adressen til hint-tjeneren (Cloudflare Worker). Samme tjener som fysikkhjelp.no. -->
           <meta name="fysikkhjelp-hint-api" content="https://hint.fysikkhjelp.no/hint">
+          <!-- Brukerkontoer (Supabase), felles for alle nettstedene. Begge verdiene er offentlige. -->
+          <meta name="supabase-url" content="https://fwyoldmtjnfxtkdwldzx.supabase.co">
+          <meta name="supabase-key" content="sb_publishable_mapCEnSSxrSSwTbBKao6hw_qMOClLSS">
+          <meta name="nettsted-navn" content="matematikkhjelp.no">
+          <meta name="bakgrunn-sett" content="matte">
     include-after-body:
       - text: |
           <script>
@@ -82,7 +91,7 @@ format:
             (function () {
               var s = document.querySelector('script[src*="site_libs/"]');
               var root = s ? s.getAttribute('src').split('site_libs/')[0] : '';
-              ['assets/js/loype.js', 'assets/js/kode.js', 'assets/js/oppgaver.js'].forEach(function (p) {
+              ['assets/js/konto.js', 'assets/js/loype.js', 'assets/js/kode.js', 'assets/js/oppgaver.js', 'assets/js/forelesning-knapp.js', 'assets/js/bakgrunn.js'].forEach(function (p) {
                 var el = document.createElement('script'); el.src = root + p; document.body.appendChild(el);
               });
             })();

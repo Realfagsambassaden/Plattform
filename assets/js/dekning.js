@@ -1,3 +1,4 @@
+var NETTSTED_NAVN = (document.querySelector('meta[name="nettsted-navn"]') || {}).content || 'fysikkhjelp.no';
 // «Dekker vi faget ditt?» – sender emnebeskrivelsen til KI-tjeneren og tegner dekningskartet.
 (function vent(n) {
   if (!window.fhKonto && (n || 0) < 100) return setTimeout(function () { vent((n || 0) + 1); }, 50);   // konto.js lastes etter denne
@@ -70,7 +71,7 @@ function start() {
     if (d.oppsummering) h += '<p class="kart-oppsummering">' + esc(d.oppsummering) + '</p>';
     if (d.innlogget) h += veikart(d.temaer);
     else h += '<div class="veikart-laas"><div><p class="eyebrow">Ditt veikart</p><h3>Vil du vite nøyaktig hva du skal lese?</h3>' +
-      '<p>Med en gratis bruker får du et veikart for faget: hvilke sider og oppgaver på fysikkhjelp.no som hører til hvert tema, i riktig rekkefølge. Etter hvert kommer også tester og personlig tilpasning.</p>' +
+      '<p>Med en gratis bruker får du et veikart for faget: hvilke sider og oppgaver på ' + NETTSTED_NAVN + ' som hører til hvert tema, i riktig rekkefølge. Etter hvert kommer også tester og personlig tilpasning.</p>' +
       '<a class="btn-chalk" href="konto/index.html?neste=dekning">Registrer deg gratis</a> <a class="btn-chalk ghost" href="konto/index.html?neste=dekning">Logg inn</a></div></div>';
     h += '<h3 class="kart-overskrift">Temaene i faget</h3>';
     h += '<div class="kart">';
@@ -87,14 +88,14 @@ function start() {
       }
       h += '</div>';
     });
-    h += '</div><p class="muted kart-merk">Kartet er laget av en KI som har sammenlignet emnebeskrivelsen med innholdet på fysikkhjelp.no. Det er et anslag, ikke en garanti. Sjekk alltid pensumlisten fra faglærer.</p>';
+    h += '</div><p class="muted kart-merk">Kartet er laget av en KI som har sammenlignet emnebeskrivelsen med innholdet på ' + NETTSTED_NAVN + '. Det er et anslag, ikke en garanti. Sjekk alltid pensumlisten fra faglærer.</p>';
     ut.innerHTML = h;
     ut.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   // Veikart: temaene i den rekkefølgen emnebeskrivelsen har dem, med sidene som skal leses.
   function veikart(temaer) {
-    var h = '<section class="veikart"><p class="eyebrow">Ditt veikart</p><h3>Slik kan du bruke fysikkhjelp.no i dette faget</h3><ol>';
+    var h = '<section class="veikart"><p class="eyebrow">Ditt veikart</p><h3>Slik kan du bruke ' + NETTSTED_NAVN + ' i dette faget</h3><ol>';
     temaer.forEach(function (t) {
       h += '<li class="' + t.dekning + '"><strong>' + esc(t.tema) + '</strong>';
       if (t.sider.length) h += ' – les ' + t.sider.map(function (s) { return '<a href="' + esc(s.url.replace(/^\//, '')) + '">' + esc(s.tittel) + '</a>'; }).join(', ');
