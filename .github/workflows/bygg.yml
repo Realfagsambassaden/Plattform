@@ -64,6 +64,43 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy
 
+  # matematikkhjelp.no – samme verktøy og utseende som fysikkhjelp.no, egen mappe (matematikkhjelp/).
+  matematikkhjelp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer LaTeX (figurer og PDF-kompendier) og pdftocairo
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends \
+            texlive-latex-base texlive-latex-recommended texlive-latex-extra \
+            texlive-pictures texlive-science texlive-fonts-recommended \
+            texlive-lang-european texlive-xetex lmodern poppler-utils
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: 1.6.42
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Python-pakker
+        run: pip install pyyaml
+
+      - name: Bygg nettsiden
+        run: bash matematikkhjelp/bygg.sh
+
+      - name: Publiser til Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: matematikkhjelp
+          command: deploy
+
   # Realfagsambassaden (paraplysiden) – ren HTML, publiseres direkte uten bygging.
   realfagsambassaden:
     runs-on: ubuntu-latest

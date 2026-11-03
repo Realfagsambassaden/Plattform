@@ -13,3 +13,14 @@
 /ingeniorfysikk/
 __pycache__/
 /_pdf/
+# matematikkhjelp.no – lages automatisk av matematikkhjelp/bygg.sh
+/matematikkhjelp/_site/
+/matematikkhjelp/.quarto/
+/matematikkhjelp/assets/
+/matematikkhjelp/kilder/
+/matematikkhjelp/emner/
+/matematikkhjelp/loyper/index.qmd
+/matematikkhjelp/loyper.json
+/matematikkhjelp/innhold.json
+/matematikkhjelp/_fag.json
+/matematikkhjelp/_pdf/

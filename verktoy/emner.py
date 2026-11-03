@@ -14,6 +14,11 @@ import yaml
 P = Path(sys.argv[1]).resolve()
 E = yaml.safe_load((P / 'emner.yml').read_text(encoding='utf-8'))
 omrader = E['omrader']
+# Navnet på nettstedet (fysikkhjelp.no, matematikkhjelp.no …) hentes fra _quarto.yml, så samme verktøy brukes for alle.
+_m = re.search(r'^  title:\s*"?([^"\n]+)"?\s*$', (P / '_quarto.yml').read_text(encoding='utf-8'), re.M)
+NETTSTED = _m.group(1) if _m else 'nettstedet'
+HAR_DEKNING = (P / 'dekning.qmd').exists()
+HAR_LARER = (P / 'larer' / 'index.qmd').exists()
 emne_info = {}                       # emne-id → (område, emne)
 for o in omrader:
     for e in o['emner']:
@@ -93,7 +98,7 @@ UT.mkdir(exist_ok=True)
 def antall(o): return sum(len(sider_per_emne[e['id']]) for e in o['emner'])
 
 # emner/index.qmd
-q = ['---', 'title: "Emner"', 'subtitle: "Alt stoffet på fysikkhjelp.no, ordnet etter tema. Velg et område og et emne, eller følg en løype."',
+q = ['---', 'title: "Emner"', f'subtitle: "Alt stoffet på {NETTSTED}, ordnet etter tema. Velg et område og et emne, eller følg en løype."',
      'toc: false', 'page-layout: full', '---', '', '```{=html}', '<div class="omrader">']
 for o in omrader:
     n = antall(o); live = n > 0
@@ -141,13 +146,13 @@ for o in omrader:
         (UT / o['id'] / f'{e["id"]}.qmd').write_text('\n'.join(q), encoding='utf-8')
 
 # løyper/index.qmd
-LU = P / 'loyper'
+LU = P / 'loyper'; LU.mkdir(exist_ok=True)
 q = ['---', 'title: "Løyper"', 'subtitle: "En løype er en vei gjennom emnene for et bestemt kurs. Følg en ferdig løype, eller lag din egen."',
      'toc: false', '---', '', '```{=html}', '<div class="loyper">']
 for L in loyper:
     meta = ' · '.join(x for x in (L.get('institusjon'), L.get('emnekode'), f'{len(L["sider"])} sider') if x)
     q.append(f'<a class="loype" href="../{L["oversikt"].replace(".qmd", ".html")}"><span class="status">Løype</span><h3>{L["tittel"]}</h3><p class="loype-meta">{meta}</p><p>{L.get("beskrivelse", "")}</p></a>')
-q.append('<a class="loype egen" href="../dekning.html"><span class="status">Lag din egen</span><h3>Har du et annet kurs?</h3><p>Lim inn emnebeskrivelsen, så finner vi sidene som passer og lager en løype for deg.</p></a>')
+if HAR_DEKNING: q.append('<a class="loype egen" href="../dekning.html"><span class="status">Lag din egen</span><h3>Har du et annet kurs?</h3><p>Lim inn emnebeskrivelsen, så finner vi sidene som passer og lager en løype for deg.</p></a>')
 q += ['</div>', '```', '']
 (LU / 'index.qmd').write_text('\n'.join(q), encoding='utf-8')
 
@@ -173,7 +178,7 @@ for o in omrader:
         sb += [f'                - {s["qmd"]}' for s in ss]
 if uten_emne:
     sb += ['        - section: "Annet"', '          contents:'] + [f'            - {s}' for s, _, _ in uten_emne]
-sb += ['        - section: "Løyper"', '          href: loyper/index.qmd', '          contents:']
+sb += ['        - section: "Løyper"', '          href: loyper/index.qmd'] + (['          contents:'] if loyper else [])
 def kap_blokk(k, inn):
     b = [f'{inn}- section: "{k["tittel"]}"'] + ([f'{inn}  href: {k["href"]}'] if k.get('href') else []) + [f'{inn}  contents:']
     return b + [f'{inn}    - {x}' for x in k['sider']]
@@ -192,8 +197,8 @@ for o in omrader:
 meny += ['      - text: Løyper', '        menu:', '          - href: loyper/index.qmd', '            text: "Alle løyper"']
 for L in loyper:
     meny += [f'          - href: {L["oversikt"]}', f'            text: "{L["tittel"]}"']
-meny += ['          - href: dekning.qmd', '            text: "Lag din egen løype"', '          - text: "---"',
-         '          - href: larer/index.qmd', '            text: "For lærere: design din forelesning"']
+if HAR_DEKNING: meny += ['          - href: dekning.qmd', '            text: "Lag din egen løype"']
+if HAR_LARER: meny += ['          - text: "---"', '          - href: larer/index.qmd', '            text: "For lærere: design din forelesning"']
 
 yml = (P / '_quarto.yml').read_text(encoding='utf-8')
 yml = re.sub(r'\n# >>> fag-sidemeny.*?# <<< fag-sidemeny\n', '\n', yml, flags=re.S)
