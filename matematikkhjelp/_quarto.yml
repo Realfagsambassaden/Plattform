@@ -40,6 +40,9 @@ website:
           - href: loyper/index.qmd
             text: "Alle løyper"
     right:
+      - href: https://realfagsambassaden.no/doner.html
+        text: "<span class='doner-knapp'>Donér materiale</span>"
+        aria-label: "Donér undervisningsmateriale til Realfagsambassaden"
       - href: https://fysikkhjelp.no
         text: fysikkhjelp.no
       - href: https://realfagsambassaden.no
