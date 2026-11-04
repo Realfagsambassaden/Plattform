@@ -136,6 +136,12 @@ for o in omrader:
         tekst = P / 'emner-tekster' / f'{e["id"]}.md'
         if tekst.exists(): q += [tekst.read_text(encoding='utf-8'), '']
         if ss:
+            q.append('Under ser du en oversikt over sidene som behandler emnet.\n')
+            kilder = list(dict.fromkeys(x['kilde'] for x in ss))
+            if len(kilder) > 1:
+                q.append('::: {.callout-tip title="Ser du flere sider om det samme?"}\n'
+                         'Det kan skyldes at de er tilpasset forskjellig nivå. Velg det nivået som passer deg ('
+                         + ', '.join(kilder) + ').\n:::\n')
             q.append('::: {.emne-sider}')
             for s in ss:
                 lp = ', '.join(f'{L["tittel"]} ({i}/{len(L["sider"])})' for L, i in i_loyper(s['qmd']))

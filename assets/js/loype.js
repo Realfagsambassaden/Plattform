@@ -27,6 +27,13 @@
     bar.innerHTML = h;
     var hode = main.querySelector('#title-block-header');
     if (hode) hode.parentNode.insertBefore(bar, hode); else main.insertBefore(bar, main.firstChild);
+    // Forrige / neste nederst på siden, bare når siden er del av en løype
+    if (L && (f || n)) {
+      var bunn = document.createElement('nav'); bunn.className = 'loype-bunn'; bunn.setAttribute('aria-label', 'Forrige og neste i løypa');
+      bunn.innerHTML = (f ? '<a class="lb-forrige" href="' + f.url + '"><span class="lb-merke">← Forrige i ' + esc(L.tittel) + '</span>' + esc(f.tittel) + '</a>' : '<span></span>') +
+                       (n ? '<a class="lb-neste" href="' + n.url + '"><span class="lb-merke">Neste i ' + esc(L.tittel) + ' →</span>' + esc(n.tittel) + '</a>' : '<span></span>');
+      main.appendChild(bunn);
+    }
   }).catch(function () {});
   function esc(s) { var x = document.createElement('div'); x.textContent = s || ''; return x.innerHTML; }
 })();

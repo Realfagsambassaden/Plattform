@@ -18,7 +18,7 @@ website:
   site-url: "https://matematikkhjelp.no"
   description: "Matematikk forklart på tavla – videoer, formler, kjørbar kode og oppgaver med hint. En del av Realfagsambassaden."
   favicon: assets/img/drnormann-logo.png
-  page-navigation: true
+  page-navigation: false  # forrige/neste vises bare i løyper (assets/js/loype.js)
   navbar:
     title: false
     logo: assets/img/mh-logo-linje.png

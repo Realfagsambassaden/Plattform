@@ -487,3 +487,10 @@ body.har-foredrag { overflow: hidden; }
 .hero .soster img { height: 30px; width: auto; }
 .hero .soster:hover { border-color: $neon; color: $chalk; }
 @media (max-width: 767.98px) { .hero .soster { position: static; margin-top: 1.5rem; } }
+
+// Forrige / neste nederst på sider i en løype (assets/js/loype.js)
+.loype-bunn { display: flex; justify-content: space-between; gap: 1rem; margin: 3rem 0 1rem; padding-top: 1.2rem; border-top: 1px solid $line; }
+.loype-bunn a { display: flex; flex-direction: column; gap: .2rem; max-width: 48%; padding: .7rem 1rem; border: 1px solid $line; border-radius: 10px; color: $chalk; text-decoration: none; }
+.loype-bunn a:hover { border-color: $neon; }
+.loype-bunn .lb-neste { text-align: right; margin-left: auto; }
+.loype-bunn .lb-merke { font-size: .8rem; color: $dust; }
