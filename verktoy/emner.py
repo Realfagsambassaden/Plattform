@@ -8,6 +8,7 @@ Grunnmuren er emner.yml (område → emner). Innholdssider kobles til emner fra:
 Løyper er ordnede lister av sider (et kurs, f.eks. TRES0312). Skriver også loyper.json, som
 assets/js/loype.js bruker til «Forrige / Neste» og emnelenken øverst på hver side."""
 import json, re, sys
+from html import escape
 from pathlib import Path
 import yaml
 
@@ -23,6 +24,13 @@ emne_info = {}                       # emne-id → (område, emne)
 for o in omrader:
     for e in o['emner']:
         emne_info[e['id']] = (o, e)
+        # Delemner: listen i emner.yml + «oppgaver» (blandede oppgaver), som finnes i alle emner
+        e['delemner'] = list(e.get('delemner') or []) + [{'id': 'oppgaver', 'tittel': 'Blandede oppgaver'}]
+NIVAER = [('forkurs', 'Forkurs'), ('ingenior', 'Ingeniør'), ('fordypning', 'Fordypning')]
+NIVA_NAVN = dict(NIVAER)
+def topp(t, felt):
+    m = re.search(r'^' + felt + r':\s*"?([\w-]+)"?\s*$', t.split('\n---', 1)[0], re.M)
+    return m.group(1) if m else None
 
 sider_per_emne = {eid: [] for eid in emne_info}   # emne → [side]
 side_emne = {}                                    # qmd-sti → emne-id
@@ -33,10 +41,15 @@ def tittel_av(f):
     m = re.search(r'^title:\s*"?(.*?)"?\s*$', f.read_text(encoding='utf-8'), re.M)
     return m.group(1).replace('\\"', '"') if m else f.stem
 
-def koble(sti, tittel, eid, kilde):
+def koble(sti, tittel, eid, kilde, delemne=None, niva=None):
     if eid not in emne_info:
         print(f'  ADVARSEL: ukjent emne «{eid}» for {sti}'); uten_emne.append((sti, tittel, kilde)); return
-    sider_per_emne[eid].append({'qmd': sti, 'tittel': tittel, 'kilde': kilde})
+    gyldige = {d['id'] for d in emne_info[eid][1]['delemner']}
+    if delemne and delemne not in gyldige:
+        print(f'  ADVARSEL: ukjent delemne «{delemne}» i emnet {eid} for {sti}'); delemne = None
+    if niva and niva not in NIVA_NAVN:
+        print(f'  ADVARSEL: ukjent nivå «{niva}» for {sti}'); niva = None
+    sider_per_emne[eid].append({'qmd': sti, 'tittel': tittel, 'kilde': kilde, 'delemne': delemne, 'niva': niva})
     side_emne[sti] = eid
 
 # ---- løyper (forkurset fra kompendiet)
@@ -50,7 +63,7 @@ for lf in sorted((P / 'loyper').glob('*.yml')):
         for s in c['sider']:
             stem = s['fil'][:-4]; sti = f"forkurs/{c['dir']}/{s['fil']}"
             eid = kob.get(f"{c['dir']}/{stem}") or kob.get(c['dir'])
-            if eid: koble(sti, s['tittel'], eid, L['tittel'])
+            if eid: koble(sti, s['tittel'], eid, L['tittel'], (L.get('delemner') or {}).get(f"{c['dir']}/{stem}"), L.get('niva'))
             else: uten_emne.append((sti, s['tittel'], L['tittel']))
             rekke.append({'qmd': sti, 'tittel': s['tittel'], 'kapittel': f"{c['nr']}. {c['tittel']}"})
     struktur = [{'tittel': None, 'kapitler': [{'tittel': f"{c['nr']}. {c['tittel']}", 'href': f"forkurs/{c['dir']}/index.qmd",
@@ -65,8 +78,9 @@ for f in fag_liste:
     for k in f['kapitler']:
         for s in k['sider']:
             sti = f"{f['kortnavn']}/kapitler/{k['dir']}/{s['fil']}"
-            m = re.search(r'^emne:\s*"?([\w-]+)"?\s*$', (P / sti).read_text(encoding='utf-8'), re.M)
-            if m: koble(sti, s['tittel'], m.group(1), f['tittel'])
+            tekst = (P / sti).read_text(encoding='utf-8')
+            m = re.search(r'^emne:\s*"?([\w-]+)"?\s*$', tekst, re.M)
+            if m: koble(sti, s['tittel'], m.group(1), f['tittel'], topp(tekst, 'delemne'), topp(tekst, 'niva') or f.get('niva'))
             else: uten_emne.append((sti, s['tittel'], f['tittel']))
 
 # ---- løyper som følger et fag fra malen (kilde: fag, fag: <kortnavn>): sidene i fagets rekkefølge
@@ -136,20 +150,44 @@ for o in omrader:
         tekst = P / 'emner-tekster' / f'{e["id"]}.md'
         if tekst.exists(): q += [tekst.read_text(encoding='utf-8'), '']
         if ss:
-            q.append('Under ser du en oversikt over sidene som behandler emnet.\n')
-            kilder = list(dict.fromkeys(x['kilde'] for x in ss))
-            if len(kilder) > 1:
+            q.append('Under ser du en oversikt over sidene som behandler emnet, ordnet etter delemne og nivå.\n')
+            nivaer = [(k, t) for k, t in NIVAER if any(x['niva'] == k for x in ss)]
+            if any(not x['niva'] for x in ss): nivaer.append((None, 'Annet'))
+            if len(nivaer) > 1 or len({x['kilde'] for x in ss}) > 1:
                 q.append('::: {.callout-tip title="Ser du flere sider om det samme?"}\n'
-                         'Det kan skyldes at de er tilpasset forskjellig nivå. Velg det nivået som passer deg ('
-                         + ', '.join(kilder) + ').\n:::\n')
-            q.append('::: {.emne-sider}')
-            for s in ss:
-                lp = ', '.join(f'{L["tittel"]} ({i}/{len(L["sider"])})' for L, i in i_loyper(s['qmd']))
-                q.append(f'- [{s["tittel"]}](../../{s["qmd"]})' + (f' []{{.emne-kilde}}' if False else '') + (f' <span class="emne-kilde">{lp}</span>' if lp else ''))
-            q += [':::', '']
+                         'Det kan skyldes at de er tilpasset forskjellig nivå. Velg det nivået som passer deg: '
+                         '**Forkurs** (lite forkunnskap), **Ingeniør** (første år på ingeniør- og realfag) eller **Fordypning**.\n:::\n')
+            rader = [d for d in e['delemner'] if any(x['delemne'] == d['id'] for x in ss)]
+            if any(not x['delemne'] for x in ss): rader.append({'id': None, 'tittel': 'Andre sider'})
+            def celle(lst):
+                return ''.join(f'<a href="../../{x["qmd"].replace(".qmd", ".html")}">{escape(x["tittel"])}<span class="emne-kilde">{escape(x["kilde"])}</span></a>' for x in lst)
+            h = ['```{=html}', '<div class="niva-tabell-ramme"><table class="niva-tabell"><thead><tr><th>Delemne</th>'
+                 + ''.join(f'<th>{t}</th>' for _, t in nivaer) + '</tr></thead><tbody>']
+            for d in rader:
+                navn = f'<a class="dl-lenke" href="{e["id"]}/{d["id"]}.html">{escape(d["tittel"])}</a>' if d['id'] else escape(d['tittel'])
+                h.append(f'<tr><th scope="row">{navn}</th>' + ''.join(
+                    f'<td data-niva="{t}">' + celle([x for x in ss if x['delemne'] == d['id'] and x['niva'] == k]) + '</td>' for k, t in nivaer) + '</tr>')
+            h += ['</tbody></table></div>', '```', '']
+            q += h
         else:
             q += ['::: {.callout-note title="Kommer"}', 'Vi har ikke stoff om dette emnet ennå. Har du forelesningsnotater du vil dele? [Donér dem her](https://realfagsambassaden.no/doner.html).', ':::', '']
         (UT / o['id'] / f'{e["id"]}.qmd').write_text('\n'.join(q), encoding='utf-8')
+        # Én side per delemne: velg nivå
+        for d in e['delemner']:
+            dss = [x for x in ss if x['delemne'] == d['id']]
+            if not dss: continue
+            (UT / o['id'] / e['id']).mkdir(exist_ok=True)
+            dq = ['---', f'title: "{d["tittel"]}"', f'subtitle: "{e["tittel"]} · {o["tittel"]}"', 'toc: false', '---', '',
+                  f'[← Til emnet {e["tittel"]}](../{e["id"]}.qmd){{.dl-tilbake}}', '']
+            nv = [(k, t) for k, t in NIVAER if any(x['niva'] == k for x in dss)] + ([(None, 'Annet')] if any(not x['niva'] for x in dss) else [])
+            if len(dss) > 1: dq.append('Stoffet finnes på flere nivåer. Velg det som passer deg.\n')
+            dq += ['```{=html}', '<div class="dl-nivaer">']
+            for k, t in nv:
+                dq.append(f'<section class="dl-niva"><h2>{t}</h2>' + ''.join(
+                    f'<a class="dl-kort" href="../../../{x["qmd"].replace(".qmd", ".html")}"><span class="dl-tittel">{escape(x["tittel"])}</span><span class="emne-kilde">{escape(x["kilde"])}</span></a>'
+                    for x in dss if x['niva'] == k) + '</section>')
+            dq += ['</div>', '```', '']
+            (UT / o['id'] / e['id'] / f'{d["id"]}.qmd').write_text('\n'.join(dq), encoding='utf-8')
 
 # løyper/index.qmd
 LU = P / 'loyper'; LU.mkdir(exist_ok=True)
@@ -166,7 +204,13 @@ q += ['</div>', '```', '']
 side_info = {}
 for sti, eid in side_emne.items():
     o, e = emne_info[eid]
-    side_info[html(sti)] = {'emne': e['tittel'], 'emneUrl': f'/emner/{o["id"]}/{e["id"]}.html', 'omrade': o['tittel']}
+    side = next(x for x in sider_per_emne[eid] if x['qmd'] == sti)
+    dl = next((d for d in e['delemner'] if d['id'] == side['delemne']), None)
+    tvillinger = [{'url': html(x['qmd']), 'tittel': x['tittel'], 'kilde': x['kilde'], 'niva': NIVA_NAVN.get(x['niva'], '')}
+                  for x in sider_per_emne[eid] if dl and dl['id'] != 'oppgaver' and x['delemne'] == dl['id'] and x['qmd'] != sti]
+    side_info[html(sti)] = {'emne': e['tittel'], 'emneUrl': f'/emner/{o["id"]}/{e["id"]}.html', 'omrade': o['tittel'],
+                            'delemne': dl['tittel'] if dl else None,
+                            'delemneUrl': f'/emner/{o["id"]}/{e["id"]}/{dl["id"]}.html' if dl else None, 'niva': NIVA_NAVN.get(side['niva'], ''), 'tvillinger': tvillinger}
 (P / 'loyper.json').write_text(json.dumps({
     'loyper': [{'id': L['id'], 'tittel': L['tittel'], 'url': html(L['oversikt']),
                 'sider': [{'url': html(s['qmd']), 'tittel': s['tittel']} for s in L['sider']]} for L in loyper],
@@ -181,7 +225,10 @@ for o in omrader:
         ss = sider_per_emne[e['id']]
         if not ss: continue
         sb += [f'            - section: "{e["tittel"]}"', f'              href: emner/{o["id"]}/{e["id"]}.qmd', '              contents:']
-        sb += [f'                - {s["qmd"]}' for s in ss]
+        for d in e['delemner']:
+            if any(x['delemne'] == d['id'] for x in ss):
+                sb += [f'                - text: "{d["tittel"]}"', f'                  href: emner/{o["id"]}/{e["id"]}/{d["id"]}.qmd']
+        sb += [f'                - {s["qmd"]}' for s in ss if not s['delemne']]
 if uten_emne:
     sb += ['        - section: "Annet"', '          contents:'] + [f'            - {s}' for s, _, _ in uten_emne]
 sb += ['        - section: "Løyper"', '          href: loyper/index.qmd'] + (['          contents:'] if loyper else [])

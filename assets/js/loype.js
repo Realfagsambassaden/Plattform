@@ -17,12 +17,19 @@
     if (!info && !L) return;
     var bar = document.createElement('nav'); bar.className = 'loype-linje'; bar.setAttribute('aria-label', 'Løype og emne');
     var h = '';
-    if (info) h += '<a class="ll-emne" href="' + info.emneUrl + '"><span class="ll-merke">Emne</span>' + esc(info.omrade) + ' › ' + esc(info.emne) + '</a>';
+    if (info) h += '<span class="ll-emne"><span class="ll-merke">Emne</span><a href="' + info.emneUrl + '">' + esc(info.omrade) + ' › ' + esc(info.emne) + '</a>' +
+                   (info.delemne ? ' › <a href="' + info.delemneUrl + '">' + esc(info.delemne) + '</a>' : '') + '</span>' + (info.niva ? '<span class="ll-niva">' + esc(info.niva) + '</span>' : '');
     if (L) {
       var i = L.sider.findIndex(function (s) { return s.url === sti; });
       var f = L.sider[i - 1], n = L.sider[i + 1];
       h += '<span class="ll-loype"><a href="' + L.url + '"><span class="ll-merke">Løype</span>' + esc(L.tittel) + '</a> <span class="ll-pos">' + (i + 1) + ' av ' + L.sider.length + '</span></span>';
       h += '<span class="ll-knapper">' + (f ? '<a href="' + f.url + '" title="' + esc(f.tittel) + '">← Forrige</a>' : '') + (n ? '<a href="' + n.url + '" title="' + esc(n.tittel) + '">Neste →</a>' : '') + '</span>';
+    }
+    // «Samme tema på et annet nivå»: andre sider om samme delemne (fra emner.yml + delemne-merkingen)
+    if (info && info.tvillinger && info.tvillinger.length) {
+      h += '<span class="ll-bytt"><span class="ll-merke">Samme tema på et annet nivå</span>' + info.tvillinger.map(function (t) {
+        return '<a href="' + t.url + '" title="' + esc(t.tittel) + '">' + (t.niva ? '<b>' + esc(t.niva) + '</b> · ' : '') + esc(t.kilde) + '</a>';
+      }).join('') + '</span>';
     }
     bar.innerHTML = h;
     var hode = main.querySelector('#title-block-header');
