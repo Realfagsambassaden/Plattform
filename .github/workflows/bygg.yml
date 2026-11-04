@@ -38,7 +38,7 @@ jobs:
           python-version: "3.12"
 
       - name: Python-pakker
-        run: pip install pyyaml
+        run: pip install pyyaml pillow
 
       - name: Husk ferdige figurer mellom kjøringer
         uses: actions/cache@v4
@@ -81,7 +81,7 @@ jobs:
           python-version: "3.12"
 
       - name: Python-pakker
-        run: pip install pyyaml
+        run: pip install pyyaml pillow
 
       - name: Bygg nettsiden
         run: bash matematikkhjelp/bygg.sh
