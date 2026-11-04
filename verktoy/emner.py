@@ -211,7 +211,18 @@ for sti, eid in side_emne.items():
     side_info[html(sti)] = {'emne': e['tittel'], 'emneUrl': f'/emner/{o["id"]}/{e["id"]}.html', 'omrade': o['tittel'],
                             'delemne': dl['tittel'] if dl else None,
                             'delemneUrl': f'/emner/{o["id"]}/{e["id"]}/{dl["id"]}.html' if dl else None, 'niva': NIVA_NAVN.get(side['niva'], ''), 'tvillinger': tvillinger}
+# Emnerekka: alle sider i menyrekkefølge (område → emne → delemne), brukt til forrige/neste på samme nivå
+emnerekke = []
+for o in omrader:
+    for e in o['emner']:
+        ss = sider_per_emne[e['id']]
+        rekkef = [d['id'] for d in e['delemner']] + [None]
+        for did in rekkef:
+            for x in ss:
+                if x['delemne'] == did:
+                    emnerekke.append({'url': html(x['qmd']), 'tittel': x['tittel'], 'niva': x['niva'] or '', 'omrade': o['tittel'], 'emne': e['tittel']})
 (P / 'loyper.json').write_text(json.dumps({
+    'emnerekke': emnerekke, 'nivanavn': NIVA_NAVN,
     'loyper': [{'id': L['id'], 'tittel': L['tittel'], 'url': html(L['oversikt']),
                 'sider': [{'url': html(s['qmd']), 'tittel': s['tittel']} for s in L['sider']]} for L in loyper],
     'sider': side_info}, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')

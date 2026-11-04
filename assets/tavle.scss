@@ -528,3 +528,21 @@ body.har-foredrag { overflow: hidden; }
 .dl-tilbake { font-size: .9rem; }
 .niva-tabell .dl-lenke { color: $chalk; text-decoration: none; border-bottom: 1px dotted $dust; }
 .niva-tabell .dl-lenke:hover { color: $neon; }
+
+// Nivåknappen øverst på innholdssidene: skråstilt, som «Donér materiale» men mer firkantet (assets/js/loype.js)
+.niva-knapp { position: relative; display: inline-block; }
+.niva-knapp > summary, .niva-knapp.alene { list-style: none; display: inline-block; padding: .3rem .9rem; border: 2px solid $neon; border-radius: 4px; color: $neon; font-weight: 800; letter-spacing: .02em; transform: skewX(-12deg); white-space: nowrap; }
+.niva-knapp > summary::-webkit-details-marker { display: none; }
+.niva-knapp > summary > span, .niva-knapp.alene > span { display: inline-block; transform: skewX(12deg); }
+.niva-knapp > summary { cursor: pointer; }
+.niva-knapp > summary:hover, .niva-knapp[open] > summary { background: $neon; color: $slate; }
+.niva-meny { position: absolute; z-index: 20; top: calc(100% + .4rem); left: 0; min-width: 260px; display: flex; flex-direction: column; gap: .35rem; padding: .7rem; border: 1px solid $line; border-radius: 8px; background: $slate-2; box-shadow: 0 8px 24px rgba(0,0,0,.45); }
+.niva-meny .nm-tittel { font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: $dust; }
+.niva-meny a, .niva-meny .nm-her { padding: .35rem .6rem; border: 1px solid $line; border-radius: 6px; font-size: .9rem; }
+.niva-meny .nm-her { color: $dust; border-style: dashed; }
+.niva-meny a:hover { border-color: $neon; }
+.niva-meny b { color: $neon; }
+.ll-modus { display: inline-flex; align-items: center; gap: .3rem; font-size: .85rem; }
+.ll-modus button { background: none; border: 1px solid $line; border-radius: 6px; color: $dust; padding: .1rem .5rem; }
+.ll-modus button.paa { border-color: $neon; color: $neon; }
+.loype-bunn .lb-videre { border-color: $neon; }

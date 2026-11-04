@@ -1,44 +1,90 @@
-// Løypelinje øverst på innholdssider: emnet siden hører til, og «Forrige / Neste» i løypa du følger.
+// Linja øverst på innholdssider: emne › delemne, nivåknappen (bytt nivå) og «Forrige / Neste».
+// Forrige/neste følger enten løypa du går i, eller emnestrukturen (område → emne → delemne) på samme nivå.
+// Hva som gjelder, huskes fra der du kom fra: en emneside (/emner/…) gir emne, en løypeside gir løype.
 // Data: /loyper.json (lages av verktoy/emner.py ved hver bygging).
 (function () {
   var main = document.querySelector('main#quarto-document-content') || document.querySelector('main');
   if (!main) return;
   var sti = location.pathname.replace(/\/index\.html$/, '/').replace(/\/$/, '/index.html');
   if (!/\.html$/.test(sti)) sti += '.html';
+  var lagre = function (k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} };
+  var hent = function (k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } };
+  if (/\/emner\//.test(sti)) lagre('bla', 'emne');
+  if (/\/loyper\//.test(sti)) lagre('bla', 'loype');
   var root = (function () { var s = document.querySelector('script[src*="site_libs/"]'); return s ? s.getAttribute('src').split('site_libs/')[0] : ''; })();
   fetch(root + 'loyper.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
     if (!d) return;
-    var info = d.sider[sti];
-    var aktiv = null; try { aktiv = sessionStorage.getItem('loype'); } catch (e) {}
     // Står vi på en løypes oversiktsside? Husk den som aktiv løype.
-    d.loyper.forEach(function (L) { if (L.url === sti) { try { sessionStorage.setItem('loype', L.id); } catch (e) {} } });
+    d.loyper.forEach(function (L) { if (L.url === sti) { lagre('loype', L.id); lagre('bla', 'loype'); } });
+    var info = d.sider[sti];
     var treff = d.loyper.filter(function (L) { return L.sider.some(function (s) { return s.url === sti; }); });
-    var L = treff.filter(function (x) { return x.id === aktiv; })[0] || (treff.length === 1 ? treff[0] : null);
+    var L = treff.filter(function (x) { return x.id === hent('loype'); })[0] || (treff.length === 1 ? treff[0] : null);
     if (!info && !L) return;
-    var bar = document.createElement('nav'); bar.className = 'loype-linje'; bar.setAttribute('aria-label', 'Løype og emne');
-    var h = '';
-    if (info) h += '<span class="ll-emne"><span class="ll-merke">Emne</span><a href="' + info.emneUrl + '">' + esc(info.omrade) + ' › ' + esc(info.emne) + '</a>' +
-                   (info.delemne ? ' › <a href="' + info.delemneUrl + '">' + esc(info.delemne) + '</a>' : '') + '</span>' + (info.niva ? '<span class="ll-niva">' + esc(info.niva) + '</span>' : '');
-    if (L) {
-      var i = L.sider.findIndex(function (s) { return s.url === sti; });
-      var f = L.sider[i - 1], n = L.sider[i + 1];
-      h += '<span class="ll-loype"><a href="' + L.url + '"><span class="ll-merke">Løype</span>' + esc(L.tittel) + '</a> <span class="ll-pos">' + (i + 1) + ' av ' + L.sider.length + '</span></span>';
-      h += '<span class="ll-knapper">' + (f ? '<a href="' + f.url + '" title="' + esc(f.tittel) + '">← Forrige</a>' : '') + (n ? '<a href="' + n.url + '" title="' + esc(n.tittel) + '">Neste →</a>' : '') + '</span>';
+
+    // Emnerekka på samme nivå som siden
+    var rekke = d.emnerekke || [], her = null, E = null;
+    rekke.forEach(function (x) { if (x.url === sti) her = x; });
+    if (her) {
+      var samme = rekke.filter(function (x) { return x.niva === her.niva; });
+      var j = samme.findIndex(function (x) { return x.url === sti; });
+      E = { f: samme[j - 1], n: samme[j + 1], niva: (d.nivanavn || {})[her.niva] || '' };
     }
-    // «Samme tema på et annet nivå»: andre sider om samme delemne (fra emner.yml + delemne-merkingen)
-    if (info && info.tvillinger && info.tvillinger.length) {
-      h += '<span class="ll-bytt"><span class="ll-merke">Samme tema på et annet nivå</span>' + info.tvillinger.map(function (t) {
-        return '<a href="' + t.url + '" title="' + esc(t.tittel) + '">' + (t.niva ? '<b>' + esc(t.niva) + '</b> · ' : '') + esc(t.kilde) + '</a>';
-      }).join('') + '</span>';
+    var modus = hent('bla') || (L ? 'loype' : 'emne');
+    if (modus === 'loype' && !L) modus = 'emne';
+    if (modus === 'emne' && !E) modus = 'loype';
+
+    var f = null, n = null, merkeF = '', merkeN = '';
+    if (modus === 'loype' && L) {
+      var i = L.sider.findIndex(function (s) { return s.url === sti; });
+      f = L.sider[i - 1]; n = L.sider[i + 1];
+      merkeF = '← Forrige i ' + L.tittel; merkeN = 'Neste i ' + L.tittel + ' →';
+    } else if (E) {
+      f = E.f; n = E.n;
+      var omr = function (x) { return x.omrade + (E.niva ? ' (' + E.niva + ')' : ''); };
+      merkeF = '← Forrige i ' + (f ? (f.omrade === her.omrade ? omr(her) : f.omrade) : '');
+      merkeN = n ? (n.omrade === her.omrade ? 'Neste i ' + omr(her) + ' →' : 'Videre til ' + n.omrade + ' →') : '';
+    }
+
+    var bar = document.createElement('nav'); bar.className = 'loype-linje'; bar.setAttribute('aria-label', 'Emne, nivå og navigasjon');
+    var h = '';
+    // Nivåknappen: viser nivået, og lar deg bytte til samme delemne på et annet nivå
+    if (info && info.niva) {
+      var tv = info.tvillinger || [];
+      if (tv.length) {
+        h += '<details class="niva-knapp"><summary><span>Nivå: ' + esc(info.niva) + ' ▾</span></summary><div class="niva-meny">' +
+             '<span class="nm-tittel">Samme tema på et annet nivå</span>' +
+             '<span class="nm-her"><b>' + esc(info.niva) + '</b> · denne siden</span>' +
+             tv.map(function (t) { return '<a href="' + t.url + '" title="' + esc(t.tittel) + '"><b>' + esc(t.niva || 'Annet') + '</b> · ' + esc(t.kilde) + '</a>'; }).join('') +
+             '</div></details>';
+      } else {
+        h += '<span class="niva-knapp alene"><span>Nivå: ' + esc(info.niva) + '</span></span>';
+      }
+    }
+    if (info) h += '<span class="ll-emne"><span class="ll-merke">Emne</span><a href="' + info.emneUrl + '">' + esc(info.omrade) + ' › ' + esc(info.emne) + '</a>' +
+                   (info.delemne ? ' › <a href="' + info.delemneUrl + '">' + esc(info.delemne) + '</a>' : '') + '</span>';
+    if (L) {
+      var k = L.sider.findIndex(function (s) { return s.url === sti; });
+      h += '<span class="ll-loype"><a href="' + L.url + '"><span class="ll-merke">Løype</span>' + esc(L.tittel) + '</a> <span class="ll-pos">' + (k + 1) + ' av ' + L.sider.length + '</span></span>';
+    }
+    if (f || n) h += '<span class="ll-knapper">' + (f ? '<a href="' + f.url + '" title="' + esc(f.tittel) + '">← Forrige</a>' : '') + (n ? '<a href="' + n.url + '" title="' + esc(n.tittel) + '">Neste →</a>' : '') + '</span>';
+    // Bla etter løype eller emne (bare når begge finnes)
+    if (L && E) {
+      h += '<span class="ll-modus"><span class="ll-merke">Bla etter</span>' +
+           '<button type="button" data-bla="loype"' + (modus === 'loype' ? ' class="paa"' : '') + '>Løype</button>' +
+           '<button type="button" data-bla="emne"' + (modus === 'emne' ? ' class="paa"' : '') + '>Emne</button></span>';
     }
     bar.innerHTML = h;
+    bar.querySelectorAll('[data-bla]').forEach(function (b) { b.addEventListener('click', function () { lagre('bla', b.getAttribute('data-bla')); location.reload(); }); });
     var hode = main.querySelector('#title-block-header');
     if (hode) hode.parentNode.insertBefore(bar, hode); else main.insertBefore(bar, main.firstChild);
-    // Forrige / neste nederst på siden, bare når siden er del av en løype
-    if (L && (f || n)) {
-      var bunn = document.createElement('nav'); bunn.className = 'loype-bunn'; bunn.setAttribute('aria-label', 'Forrige og neste i løypa');
-      bunn.innerHTML = (f ? '<a class="lb-forrige" href="' + f.url + '"><span class="lb-merke">← Forrige i ' + esc(L.tittel) + '</span>' + esc(f.tittel) + '</a>' : '<span></span>') +
-                       (n ? '<a class="lb-neste" href="' + n.url + '"><span class="lb-merke">Neste i ' + esc(L.tittel) + ' →</span>' + esc(n.tittel) + '</a>' : '<span></span>');
+
+    // Forrige / neste nederst på siden
+    if (f || n) {
+      var bunn = document.createElement('nav'); bunn.className = 'loype-bunn'; bunn.setAttribute('aria-label', 'Forrige og neste');
+      var ferdig = modus === 'emne' && n && her && n.omrade !== her.omrade;
+      bunn.innerHTML = (f ? '<a class="lb-forrige" href="' + f.url + '"><span class="lb-merke">' + esc(merkeF) + '</span>' + esc(f.tittel) + '</a>' : '<span></span>') +
+                       (n ? '<a class="lb-neste' + (ferdig ? ' lb-videre' : '') + '" href="' + n.url + '"><span class="lb-merke">' +
+                            (ferdig ? 'Ferdig med ' + esc(her.omrade) + '? ' : '') + esc(merkeN) + '</span>' + esc(n.tittel) + '</a>' : '<span></span>');
       main.appendChild(bunn);
     }
   }).catch(function () {});
