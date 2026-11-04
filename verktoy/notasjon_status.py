@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Holder orden på hvilke filer som er sjekket mot notasjonsreglene (NOTASJON.md).
 
-Bruk (fra mappen der repoene er klonet ved siden av hverandre, f.eks. plattform/, ingeniorfysikk/, fysikk-forkurs/):
+Bruk (fra mappen der repoene er klonet ved siden av hverandre, f.eks. plattform/, ingeniorfysikk/, fysikk-forkurs/, videoer/):
   python3 plattform/verktoy/notasjon_status.py liste            # usjekkede filer, eldste først
   python3 plattform/verktoy/notasjon_status.py merk <nøkkel> …   # merk filer som sjekket mot gjeldende versjon
 
@@ -34,14 +34,19 @@ def fagrepoer():
 
 
 def filer():
-    """Alt fagstoff som reglene gjelder: sider, emnetekster og videomanus."""
+    """Alt fagstoff som reglene gjelder: sider, emnetekster og videomanus (i repoet videoer)."""
     ut, mangler = [], []
     for r in fagrepoer():
         d = ROT / r
         if not d.exists():
             mangler.append(r); continue
-        ut += sorted(d.glob('kapitler/*/*.qmd')) + sorted(d.glob('video/*/manus.md'))
+        ut += sorted(d.glob('kapitler/*/*.qmd'))
     ut += sorted(P.glob('emner-tekster/*.md')) + sorted(P.glob('matematikkhjelp/emner-tekster/*.md'))
+    v = ROT / 'videoer'                       # videomanus: videoer/<fag>/<mappe>/manus.md
+    if v.exists():
+        ut += sorted(v.glob('*/*/manus.md'))
+    else:
+        mangler.append('videoer')
     return ut, mangler
 
 
