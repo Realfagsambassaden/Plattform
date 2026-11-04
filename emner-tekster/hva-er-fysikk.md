@@ -1,0 +1,2 @@
+<!-- tillegg: Claude -->
+Fysikk er jakten på naturens lover: de få reglene som forklarer alt fra en ball som faller, til strømmen i en lyspære og jorda i bane rundt sola. Her lærer du hvordan fysikere jobber – de observerer, lager en forenklet **modell**, og tester den mot målinger. Du lærer også å gjøre raske **overslag**, slik at du alltid kan sjekke om et svar er rimelig. Start med sidene under, og prøv oppgavene før du ser på løsningen.
