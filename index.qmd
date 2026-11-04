@@ -37,6 +37,18 @@ Velg løype
     <p>For deg som skal begynne på ingeniør- eller realfag. Fra «hva er fysikk?» via kinematikk, krefter og energi til statikk og fluider.</p>
   </a>
   <!-- >>> lopekort (lages av verktoy/forside.py fra fag.yml – ikke rediger mellom disse linjene) -->
+  <a class="track live" href="fysikk-forkurs/index.html">
+    <img class="track-bilde" src="assets/img/tegninger/hallo.webp" alt="" loading="lazy">
+    <span class="status">Løype · under arbeid</span>
+    <h3>Forkurs i fysikk</h3>
+    <p>Fysikk fra grunnen av for deg som mangler fysikk fra videregående – med video, regneeksempler og lite matematikk.</p>
+  </a>
+  <a class="track live" href="ingeniorfysikk/index.html">
+    <img class="track-bilde" src="assets/img/tegninger/skratt-kast.webp" alt="" loading="lazy">
+    <span class="status">Løype · under arbeid</span>
+    <h3>Ingeniørfysikk</h3>
+    <p>Mekanikk for ingeniørstudenter: kinematikk, Newtons lover, energi, bevegelsesmengde og rotasjon.</p>
+  </a>
   <!-- <<< lopekort -->
   <div class="track">
     <img class="track-bilde" src="assets/img/tegninger/flate-normal.webp" alt="" loading="lazy">
