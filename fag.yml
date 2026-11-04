@@ -3,4 +3,5 @@
 # (Forkurset TRES0312 hentes egen vei, fra LaTeX-kompendiet – se bygg.sh.)
 fag:
   - repo: Realfagsambassaden/ingeniorfysikk
+  - repo: Realfagsambassaden/fysikk-forkurs
   # - repo: Realfagsambassaden/fysikk-mekanikk
