@@ -1,0 +1,4 @@
+# Hvilke filer som er sjekket mot notasjonsreglene (NOTASJON.md).
+# Oppdateres av verktoy/notasjon_status.py – ikke rediger for hånd.
+filer: {}
+versjon: 1

@@ -26,6 +26,7 @@ Siden åpnes på `http://localhost:4200`. Første gang tar det noen minutter (fi
 
 | Fil / mappe | Hva det er |
 |---|---|
+| `NOTASJON.md` | Notasjonsregler for alt fagstoff (versjonert). Status for hva som er sjekket: `rutiner/notasjon-status.yml` (`verktoy/notasjon_status.py`) |
 | `bygg.sh` | Gjør om kompendiet og bygger siden (brukes både lokalt og av GitHub) |
 | `_quarto.yml` | Innstillinger: meny, tema, adressen til hint-tjeneren (sidemenyen lages automatisk) |
 | `index.qmd` | Forsiden |
