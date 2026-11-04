@@ -1,4 +1,5 @@
 # Fagene som hentes inn på matematikkhjelp.no. Ett fag = ett repo laget fra malen Realfagsambassaden/fag-mal,
 # med «nettsted: matematikkhjelp» i fagets egen fag.yml.
+# Hvert publisert fag får automatisk et løypekort på forsiden (se ../fag.yml for «tegning:» og «kort:»).
 fag: []
   # - repo: Realfagsambassaden/kalkulus

@@ -36,12 +36,8 @@ Velg løype
     <h3>Forkurs TRES0312</h3>
     <p>For deg som skal begynne på ingeniør- eller realfag. Fra «hva er fysikk?» via kinematikk, krefter og energi til statikk og fluider.</p>
   </a>
-  <a class="track live" href="ingeniorfysikk/index.html">
-    <img class="track-bilde" src="assets/img/tegninger/skratt-kast.webp" alt="" loading="lazy">
-    <span class="status">Løype · under arbeid</span>
-    <h3>Ingeniørfysikk</h3>
-    <p>Mekanikk for ingeniørstudenter: kinematikk, Newtons lover, energi, bevegelsesmengde og rotasjon.</p>
-  </a>
+  <!-- >>> lopekort (lages av verktoy/forside.py fra fag.yml – ikke rediger mellom disse linjene) -->
+  <!-- <<< lopekort -->
   <div class="track">
     <img class="track-bilde" src="assets/img/tegninger/flate-normal.webp" alt="" loading="lazy">
     <span class="status">Løype · kommer på matematikkhjelp.no</span>
@@ -54,6 +50,8 @@ Velg løype
     <h3>Matematikk for ingeniørfysikk</h3>
     <p>Derivasjon, integrasjon, vektorer og differensiallikninger, slik de brukes i ingeniørfysikken.</p>
   </div>
+</div>
+<div class="tracks brede">
   <a class="track live utforsk" href="emner/index.html">
     <img class="track-bilde" src="assets/img/tegninger/kjelke.webp" alt="" loading="lazy">
     <span class="status">Utforsk</span>

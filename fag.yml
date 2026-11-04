@@ -1,7 +1,13 @@
 # Fagene som hentes inn på nettstedene. Ett fag = ett repo laget fra malen Realfagsambassaden/fag-mal.
 # Faget bestemmer selv nettsted, navn og status i sin egen fag.yml.
+# Hvert publisert fag får automatisk et løypekort på forsiden (verktoy/forside.py).
+# Valgfritt per fag: «tegning:» (fil i assets/img/tegninger/, uten .webp) og «kort:» (teksten på kortet).
 # (Forkurset TRES0312 hentes egen vei, fra LaTeX-kompendiet – se bygg.sh.)
 fag:
-  - repo: Realfagsambassaden/ingeniorfysikk
   - repo: Realfagsambassaden/fysikk-forkurs
+    tegning: hallo
+    kort: "Fysikk fra grunnen av for deg som mangler fysikk fra videregående – med video, regneeksempler og lite matematikk."
+  - repo: Realfagsambassaden/ingeniorfysikk
+    tegning: skratt-kast
+    kort: "Mekanikk for ingeniørstudenter: kinematikk, Newtons lover, energi, bevegelsesmengde og rotasjon."
   # - repo: Realfagsambassaden/fysikk-mekanikk
