@@ -21,13 +21,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Hent forkurset (TRES0312)
-        uses: actions/checkout@v4
-        with:
-          repository: kosmoben/TRES0312
-          path: kilder/TRES0312
-          sparse-checkout: TRES0312_Kompendium
-
       - name: Installer LaTeX (TikZ-figurene og PDF-kompendiene) og pdftocairo
         run: |
           sudo apt-get update -qq
@@ -51,7 +44,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .figur-cache
-          key: figurer-${{ hashFiles('kilder/*/TRES0312_Kompendium/files/*.tex', 'kilder/*/TRES0312_Kompendium/amd.sty') }}
+          key: figurer-${{ github.run_id }}
           restore-keys: figurer-
 
       - name: Bygg nettsiden
