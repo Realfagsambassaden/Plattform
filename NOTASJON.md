@@ -1,8 +1,8 @@
 # Notasjon – regler for alt fagstoff
 
-**Versjon: 1** (4. november 2026)
+**Versjon: 2** (4. november 2026)
 
-Disse reglene gjelder alt fagstoff på fysikkhjelp.no og matematikkhjelp.no: sider i fagrepoene, emnetekster, oppgaver og løsninger, figurer og videomanus. De gjelder også donert stoff, som tilpasses når det legges inn. Er du i tvil, følg reglene her foran vanen i et enkelt dokument.
+Disse reglene gjelder alt fagstoff på fysikkhjelp.no og matematikkhjelp.no: sider i fagrepoene, emnetekster, oppgaver og løsninger, figurer, videomanus og alt som vises i videoene (animasjoner og formelbilder). De gjelder også donert stoff, som tilpasses når det legges inn. Er du i tvil, følg reglene her foran vanen i et enkelt dokument.
 
 Når reglene endres, økes versjonsnummeret. Da regnes alt innhold som usjekket og gås gjennom på nytt (se nederst).
 
@@ -30,7 +30,7 @@ Variabler som tilfeldigvis har samme bokstav, står i kursiv som vanlig. For eks
 
 ## 2. Tallverdier vi bruker
 
-- **g = 9,81 m/s²**, med mindre oppgaven oppgir noe annet. Skriv `9{,}81\ \mathrm{m/s^2}`.
+- **g = 9.81 m/s²**, med mindre oppgaven oppgir noe annet. Skriv `9.81\ \mathrm{m/s^2}`.
 - Andre konstanter tas fra tabellen i læreverket eller fra CODATA, med 3–4 gjeldende siffer, med mindre oppgaven oppgir noe annet.
 
 ## 3. Gjeldende siffer
@@ -41,19 +41,26 @@ Gjelder svar i oppgaver, løsninger og eksempler, og tall i teksten ellers.
 2. **Addisjon og subtraksjon:** Svaret får like mange desimaler som verdien med færrest desimaler.
 3. **Mellomregning:** Behold minst ett–to ekstra siffer, og rund av bare i sluttsvaret. Skriv ikke avrundede mellomsvar videre som om de var eksakte.
 4. **Eksakte tall** begrenser ikke antall siffer. Det gjelder telling, definisjoner og rene tall i formler, som ½ eller 2π.
-5. **Konstanter** som g = 9,81 m/s² (3 siffer) teller med som oppgitte verdier.
-6. **Tvetydige tall:** Bruk standardform når antall siffer ellers blir uklart, for eksempel $1{,}20\cdot10^3\ \mathrm{m}$ og ikke «1200 m».
+5. **Konstanter** som g = 9.81 m/s² (3 siffer) teller med som oppgitte verdier.
+6. **Tvetydige tall:** Bruk standardform når antall siffer ellers blir uklart, for eksempel $1.20\ \mathrm{km}$ eller $1.20\cdot10^3\ \mathrm{m}$ og ikke «1200 m».
 7. Avrund ikke unødig hardt. Har dataene 3 gjeldende siffer, skal svaret ha 3.
 
 ## 4. Tall, enheter og formler
 
-- **Desimalkomma:** `2{,}5` (krøllparentesene hindrer ekstra mellomrom). Ikke desimalpunktum i fagstoff. I kjørbar Python brukes punktum, som språket krever.
-- **Tusenskille** brukes ikke i formler. Bruk standardform: `1{,}2\cdot10^3`.
-- **Enheter** står oppreist med mellomrom fra tallet: `9{,}81\ \mathrm{m/s^2}`, `3{,}0\ \mathrm{kWh}`.
+- **Desimaltegn er punktum:** `1.00`, `9.81`, `2.5`. Det gjelder overalt: i formler, i løpende tekst, i tabeller, figurer, kode og videoer. Skriv aldri desimalkomma (`2{,}5` eller «2,5»).
+- **Tusenskille** brukes ikke. Bruk dekadisk prefiks eller standardform: `1.2\ \mathrm{km}`, `1.2\cdot10^3`.
+- **Enheter** står oppreist med mellomrom fra tallet: `9.81\ \mathrm{m/s^2}`, `3.0\ \mathrm{kWh}`. Mellom tall og enhet brukes `\ ` i formler og vanlig mellomrom i tekst.
 - **Differensialer** står oppreist: `\mathrm{d}t`, `\frac{\mathrm{d}v}{\mathrm{d}t}`.
 - **Gangetegn:** `\cdot`. Bruk `\times` bare for kryssprodukt.
 - **Vektorer** med pil: `\vec F`. Komponenter: `[x, y]`.
 - **Sluttsvar** dobbelt understreket: `\underline{\underline{…}}`.
+
+## 4b. SI-enheter og dekadiske prefikser
+
+- **SI-enheter** brukes der det er naturlig: m, kg, s, A, K, mol, cd, og avledede enheter som N, J, W, Pa, C, V, Ω, Hz. Ikke-SI-enheter (km/h, kWh, bar, °C, L, min, h) kan brukes når de er naturlige i sammenhengen, men regn om til SI før du setter inn i formler.
+- **Dekadiske prefikser** brukes for å holde tallene håndterlige, helst med tallverdi mellom 0.1 og 1000: $4.2\ \mathrm{kJ}$ i stedet for $4200\ \mathrm{J}$, $35\ \mathrm{mA}$ i stedet for $0.035\ \mathrm{A}$, $1.2\ \mathrm{MJ}$ i stedet for $1.2\cdot10^6\ \mathrm{J}$. Vanlige prefikser: p, n, µ (`\mathrm{\mu}`), m, c (bare i cm), k, M, G, T. Standardform brukes når det ikke finnes et naturlig prefiks, eller for svært store og små tall (atomære og astronomiske størrelser).
+- Prefikset skrives tett inntil enheten: `\mathrm{km}`, `\mathrm{\mu s}`, `\mathrm{kN}`.
+- **siunitx (LaTeX-pakken):** Nettsidene bruker MathJax, som ikke støtter siunitx. I `.qmd`- og `.md`-filer skrives enhetene derfor med `\mathrm{…}` som over. I TikZ-figurer (`figurer/*.tex`) og annet ren LaTeX kan `\qty{9.81}{m/s^2}` og `\unit{…}` fra siunitx brukes. Resultatet skal se likt ut.
 
 ## 5. Faste symboler
 
@@ -72,9 +79,11 @@ Bruk samme symbol for samme størrelse på tvers av sider og fag.
 
 - `rutiner/notasjon-status.yml` viser hvilke filer som er sjekket, mot hvilken versjon av reglene, og innholdet (git-blob) som ble sjekket.
 - En fil er **usjekket** når den mangler i statusfila, er sjekket mot en eldre versjon, eller har endret seg siden sjekken.
-- Nattjobben går gjennom usjekkede filer hver natt og retter dem etter reglene. Når et tall endres (f.eks. g = 9,8 → 9,81), regnes alle svar som avhenger av det ut på nytt.
+- Nattjobben går gjennom usjekkede filer hver natt og retter dem etter reglene. Når et tall endres (f.eks. g = 9.8 → 9.81), regnes alle svar som avhenger av det ut på nytt.
 - **Nye regler:** Øk versjonsnummeret øverst og skriv en linje i endringsloggen under. Da er alt usjekket, og nattjobben går gjennom alt innholdet på nytt.
 
 ## Endringslogg
+
+- **Versjon 2** (4. november 2026): Desimaltegn er punktum (1.00), også i tekst og video. SI-enheter der det er naturlig, og dekadiske prefikser. Om siunitx: kan brukes i ren LaTeX, men ikke på nettsidene.
 
 - **Versjon 1** (4. november 2026): Naturkonstanter oppreist, g = 9,81 m/s², regler for gjeldende siffer, og samling av eksisterende regler for tall, enheter og symboler.
