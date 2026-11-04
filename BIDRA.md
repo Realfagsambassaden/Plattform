@@ -68,7 +68,7 @@ Når GitHub er koblet til, kan Claude lese repoet, gjøre endringer og åpne pul
 - **Si hvilket repo og hvilken nettside** det gjelder, for eksempel: «I Realfagsambassaden/Plattform: skriv et utkast til emneteksten for emnet Kinematikk, og lag en pull request.»
 - **Be om en pull request**, ikke at Claude skriver rett til `main`. Da kan endringen ses over før den publiseres.
 - **Se over resultatet** før du ber om godkjenning. Les gjennom endringene i pull requesten, og sjekk fagstoff, formler og lenker selv.
-- **Fortell Claude om denne fila.** Be Claude lese `BIDRA.md` og `LESMEG.md` først. Da følger den de samme reglene som alle andre.
+- **Reglene følger med repoet.** Claude og andre KI-verktøy leser [AGENTS.md](AGENTS.md) (Claude leser `CLAUDE.md`, som peker dit). Derfra går det videre til [NOTASJON.md](NOTASJON.md) og [SKRIVEREGLER.md](SKRIVEREGLER.md). Bruker du et verktøy som ikke finner fila selv, be det lese `AGENTS.md` først.
 
 ## 6. Regler
 
@@ -77,6 +77,7 @@ Når GitHub er koblet til, kan Claude lese repoet, gjøre endringer og åpne pul
 - **Ingen hemmeligheter i repoet.** API-nøkler og passord ligger som «secrets» i GitHub og Cloudflare, aldri i filene. Ser du en nøkkel i en fil, si fra med en gang.
 - **Ingen personopplysninger.** Navn, e-postadresser og innsendt materiale fra brukere hører ikke hjemme i dette repoet. Repoet er offentlig.
 - **Notasjon.** Følg [NOTASJON.md](NOTASJON.md): naturkonstanter i rett skrift (f.eks. $\mathrm{g}$), $\mathrm{g} = 9.81\ \mathrm{m/s^2}$ om ikke annet er oppgitt, punktum som desimaltegn, SI-enheter med dekadiske prefikser, og regler for gjeldende siffer.
+- **Skriveregler.** Oppbygging av sider, oppgaver og løsninger, tone, merking og kontroll står i [SKRIVEREGLER.md](SKRIVEREGLER.md).
 - **Kildehenvisning og rettigheter.** Bruk bare bilder, tekst og videoer som vi har lov til å bruke, og oppgi kilden.
 
 ## 7. Vanlige oppgaver
