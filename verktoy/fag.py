@@ -96,6 +96,7 @@ for post in liste:
     q += ['```{=html}', f'<p class="forkurs-tall">→ {len(kapitler)} kapitler, {tot_o} oppgaver, {tot_v} videoer</p>'] + [h for h in html if h] + ['```', '']
     (ut / 'index.qmd').write_text('\n'.join(q), encoding='utf-8')
     fag_ut.append({'kortnavn': kort, 'tittel': meta['tittel'], 'status': meta.get('status'), 'kapitler': kapitler,
+                   'repo_navn': repo.rstrip('/').split('/')[-1], 'tegning': meta.get('tegning'),
                    'beskrivelse': meta.get('beskrivelse', ''), 'bilde': f'{kort}/{meta["bilde"]}' if meta.get('bilde') else None})
     print(f'{repo}: {meta["tittel"]} → /{kort}/ ({sum(len(k["sider"]) for k in kapitler)} sider)')
 

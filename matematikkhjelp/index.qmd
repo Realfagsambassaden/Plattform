@@ -30,6 +30,8 @@ Velg løype
 
 ```{=html}
 <div class="tracks">
+  <!-- >>> lopekort (lages av verktoy/forside.py fra fag.yml – ikke rediger mellom disse linjene) -->
+  <!-- <<< lopekort -->
   <div class="track">
     <img class="track-bilde" src="assets/img/tegninger/skratt-kast.webp" alt="" loading="lazy">
     <span class="status">Løype · kommer</span>
