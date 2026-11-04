@@ -55,7 +55,42 @@ def figur(m, figurer):
     return f'![]({pdf}){{width={bredde:.1f}cm fig-align="center"}}'
 
 
-def side_til_md(tekst, kap, teller, losninger, figurer):
+def andre_bilder(t, sidemappe, td):
+    """Bilder som ikke er TikZ-figurer fra figurer/: PNG/JPG brukes direkte, SVG gjøres om til PDF
+    (rsvg-convert), WebP til PNG. «Video kommer»-plassholdere tas bort."""
+    t = re.sub(r'^!\[Video kommer\]\([^)]*\)(\{[^}]*\})?\s*$', '', t, flags=re.M)
+    def bytt(m):
+        sti, stil = m.group(2), m.group(3) or ''
+        if sti.startswith(('figurer/', 'http')) or sidemappe is None: return m.group(0)
+        fil = (sidemappe / sti).resolve()
+        if not fil.exists(): return '*[Figur]*'
+        px = re.search(r'width:\s*(\d+)px', stil)
+        bredde = f'{{width={min(12.0, int(px.group(1)) * 0.022):.1f}cm fig-align="center"}}' if px else '{width=8.0cm fig-align="center"}'
+        ut = td / 'bilder'; ut.mkdir(exist_ok=True)
+        if fil.suffix == '.svg':
+            if not shutil.which('rsvg-convert'): return '*[Figur]*'
+            mål = ut / (fil.parent.name + '-' + fil.stem + '.pdf')
+            if not mål.exists():
+                r = subprocess.run(['rsvg-convert', '-f', 'pdf', '-o', str(mål), str(fil)], capture_output=True)
+                if r.returncode: return '*[Figur]*'
+        elif fil.suffix.lower() in ('.webp', '.png', '.jpg', '.jpeg'):
+            # Lagres på nytt som enkel PNG: xelatex klarer ikke alle PNG-varianter
+            from PIL import Image
+            mål = ut / (fil.parent.name + '-' + fil.stem + '.png')
+            if not mål.exists():
+                bilde = Image.open(fil)
+                if bilde.mode not in ('RGB', 'RGBA', 'L'): bilde = bilde.convert('RGBA')
+                bilde.save(mål)
+        elif fil.suffix.lower() == '.pdf':
+            mål = fil
+        else:
+            return '*[Figur]*'
+        rel = mål.relative_to(td) if str(mål).startswith(str(td)) else mål
+        return f'![{m.group(1)}]({rel}){bredde}'
+    return re.sub(r'!\[([^\]]*)\]\(([^)\s]+)\)(\{[^}]*\})?', bytt, t)
+
+
+def side_til_md(tekst, kap, teller, losninger, figurer, sidemappe=None, td=None):
     t = re.sub(r'```\{=html\}.*?```', '', tekst, flags=re.S)
     t = re.sub(r'<!--.*?-->', '', t, flags=re.S)
     t = re.sub(r'\{\{<\s*video\s+(\S+)\s*>\}\}', lambda m: '```{=latex}\n\\videoqr{' + m.group(1) + '}\n```', t)
@@ -63,6 +98,7 @@ def side_til_md(tekst, kap, teller, losninger, figurer):
     t = re.sub(r'^(:{3,})\s*\{\.callout-(\w+)([^}]*)\}', lambda m: f'{m.group(1)} {{.merk type="{m.group(2)}"{m.group(3)}}}', t, flags=re.M)
     t = t.replace('{.python .kjor}', '{.python}').replace('{.text .utskrift}', '{.text}')
     t = re.sub(r'!\[[^\]]*\]\((?:\.\./)*bilder/([\w-]+)\.svg\)(\{[^}]*\})?', lambda m: figur(m, figurer), t)
+    if td is not None: t = andre_bilder(t, sidemappe, td)
     t = re.sub(r'^(#{2,5}) ', lambda m: '#' * (len(m.group(1)) + 1) + ' ', t, flags=re.M)   # ## -> ### (siden selv er ##)
     # Oppgaver: nummerer, og flytt løsningen bakerst i kapitlet
     linjer = t.split('\n'); ut = []; i = 0
@@ -118,11 +154,11 @@ def main():
             fm, kropp = frontmatter((kap / 'index.qmd').read_text(encoding='utf-8')) if (kap / 'index.qmd').exists() else ({}, '')
             teller = [0]; losninger = []
             deler.append(f'# {fm.get("title", kap.name)}\n')
-            deler.append(side_til_md(kropp, kn, teller, losninger, figurer))
+            deler.append(side_til_md(kropp, kn, teller, losninger, figurer, kap, td))
             for side in sorted(f for f in kap.glob('*.qmd') if f.name != 'index.qmd'):
                 sfm, skropp = frontmatter(side.read_text(encoding='utf-8'))
                 deler.append(f'\n## {sfm.get("title", side.stem)}\n')
-                deler.append(side_til_md(skropp, kn, teller, losninger, figurer))
+                deler.append(side_til_md(skropp, kn, teller, losninger, figurer, kap, td))
             if losninger:
                 deler.append('\n## Løsningsforslag {.unnumbered}\n')
                 for nr, tt, los in losninger:
