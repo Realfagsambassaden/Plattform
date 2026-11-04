@@ -34,6 +34,8 @@ Emneteksten skrives i Markdown. Matematikk skrives med `$...$`, og en YouTube-vi
 
 Se [`emner-tekster/arbeid-og-energi.md`](emner-tekster/arbeid-og-energi.md) for et eksempel.
 
+**Delemner og nivåer.** Hvert emne er delt i noen få delemner (se `delemner` under emnet i `emner.yml`). Hver side merkes med emne og delemne øverst i fila (`emne: kinematikk` og `delemne: konstant-akselerasjon`), og får nivået til faget sitt: *Forkurs*, *Ingeniør* eller *Fordypning*. Sider om samme delemne på ulike nivåer kobles automatisk sammen. Emnesiden viser en tabell med delemner og nivåer, og hver side får en knapp for å bytte nivå.
+
 **Mangler et emne?** Foreslå det i en *issue* på GitHub, eller legg det til i `emner.yml` i en pull request. Skriv hvilket område det hører til.
 
 **Har du forelesningsnotater eller annet ferdig materiale?** Send det inn via [realfagsambassaden.no/doner.html](https://realfagsambassaden.no/doner.html), så finner kjerneteamet ut hvor det passer.
