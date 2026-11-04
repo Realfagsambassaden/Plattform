@@ -546,3 +546,16 @@ body.har-foredrag { overflow: hidden; }
 .ll-modus button { background: none; border: 1px solid $line; border-radius: 6px; color: $dust; padding: .1rem .5rem; }
 .ll-modus button.paa { border-color: $neon; color: $neon; }
 .loype-bunn .lb-videre { border-color: $neon; }
+
+// Områdesidene: ett kort per emne med delemnene, som i sidemenyen (verktoy/emner.py)
+.emne-kort { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; margin: 1.5rem 0 2.5rem; }
+.emne-kort .ek { padding: 1rem 1.2rem; border: 1px solid $line; border-radius: 12px; background: rgba($slate, .6); }
+.emne-kort .ek h2 { font-size: 1.25rem; margin: 0 0 .6rem; border: 0; padding: 0; }
+.emne-kort .ek h2 a { color: $chalk; text-decoration: none; }
+.emne-kort .ek h2 a:hover { color: $neon; }
+.emne-kort .ek ul { list-style: none; padding: 0; margin: 0; }
+.emne-kort .ek li { padding: .3rem 0; border-top: 1px dashed $line; display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
+.emne-kort .ek li a { color: $chalk; text-decoration: none; margin-right: auto; }
+.emne-kort .ek li a:hover { color: $neon; }
+.emne-kort .ek-niva { font-size: .7rem; padding: .05rem .4rem; border: 1px solid $neon; border-radius: 3px; color: $neon; transform: skewX(-12deg); }
+.emne-kort .ek.tom { opacity: .55; }
