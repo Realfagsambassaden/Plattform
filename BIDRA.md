@@ -77,6 +77,7 @@ Når GitHub er koblet til, kan Claude lese repoet, gjøre endringer og åpne pul
 - **Ingen hemmeligheter i repoet.** API-nøkler og passord ligger som «secrets» i GitHub og Cloudflare, aldri i filene. Ser du en nøkkel i en fil, si fra med en gang.
 - **Ingen personopplysninger.** Navn, e-postadresser og innsendt materiale fra brukere hører ikke hjemme i dette repoet. Repoet er offentlig.
 - **Notasjon.** Følg [NOTASJON.md](NOTASJON.md): naturkonstanter i rett skrift (f.eks. $\mathrm{g}$), $\mathrm{g} = 9.81\ \mathrm{m/s^2}$ om ikke annet er oppgitt, punktum som desimaltegn, SI-enheter med dekadiske prefikser, og regler for gjeldende siffer.
+- **Skriv kursnøytralt.** Samme side kan brukes i flere fag og løyper. Skriv aldri «i dette faget», «i kurset», «i pensum» eller «i forrige kapittel». Vis heller til nivå: «På forkursnivå …», «På ingeniørnivå …». Se [AGENTS.md](AGENTS.md).
 - **Kildehenvisning og rettigheter.** Bruk bare bilder, tekst og videoer som vi har lov til å bruke, og oppgi kilden.
 
 ## 7. Vanlige oppgaver
