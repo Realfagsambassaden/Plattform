@@ -56,7 +56,8 @@ for post in liste:
         kapitler.append({'dir': kap.name, 'tittel': tittel(kap / 'index.qmd') if (kap / 'index.qmd').exists() else kap.name, 'del': dl.group(1) if dl else '',
                          'har_index': (kap / 'index.qmd').exists(), 'sider': [{'fil': s.name, 'tittel': tittel(s)} for s in sider]})
     # oversiktsside
-    q = ['---', f'title: "{meta["tittel"]}"', f'subtitle: "{meta.get("beskrivelse", "")}"', 'toc: false', 'page-layout: full', '---', '', banner]
+    q = ['---', f'title: "{meta["tittel"]}"', f'subtitle: "{meta.get("beskrivelse", "")}"', 'toc: false', 'page-layout: full'] + \
+        ([f'aliases: {json.dumps(meta["aliases"])}'] if meta.get('aliases') else []) + ['---', '', banner]
     if meta.get('bilde') and (mappe / meta['bilde']).exists(): q.append(f'![]({meta["bilde"]}){{.kommer-bilde}}\n')
     if meta.get('ansvarlig'): q.append(f'*Ansvarlig: {meta["ansvarlig"]}*\n')
     # PDF-kompendium (fag.yml: pdf: …). Lages hver gang nettsiden bygges; feiler det, bygges nettsiden likevel.

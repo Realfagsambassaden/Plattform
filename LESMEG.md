@@ -2,7 +2,9 @@
 
 > Ny medarbeider? Les [BIDRA.md](BIDRA.md) først.
 
-Dette repoet er selve nettsiden. Innholdet hentes fra fagrepoene (foreløpig `kosmoben/TRES0312`). Du skriver i LaTeX i fagrepoet som før, pusher, og et par minutter senere er fysikkhjelp.no oppdatert.
+Dette repoet er selve nettsiden. Innholdet hentes fra fagrepoene i `fag.yml`.
+
+> **November 2026:** Forkurset (tidligere LaTeX-kompendiet `kosmoben/TRES0312`) er flyttet inn i fagrepoet `Realfagsambassaden/fysikk-forkurs` og skrives nå der. Kompendiet hentes ikke lenger inn. Avsnittene under om LaTeX-konvertering (`verktoy/convert.py`, `verktoy/meny.py`, `verktoy/tillegg/`) gjelder bare historikken.
 
 ## 1. Vanlig arbeidsflyt
 

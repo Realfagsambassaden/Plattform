@@ -93,7 +93,11 @@ omrader:
           - { id: rulling, tittel: "Kraftmoment og rulling" }
           - { id: dreieimpuls, tittel: "Dreieimpuls" }
       - { id: gravitasjon, tittel: "Gravitasjon" }
-      - { id: svingninger, tittel: "Svingninger" }
+      - id: svingninger
+        tittel: "Svingninger"
+        delemner:
+          - { id: harmoniske, tittel: "Harmoniske svingninger" }
+          - { id: pendel, tittel: "Fjær og pendel" }
 
   - id: fluider
     tittel: "Fluidmekanikk"
@@ -117,11 +121,13 @@ omrader:
         delemner:
           - { id: indre-energi, tittel: "Indre energi, varme og temperatur" }
           - { id: kalorimetri, tittel: "Faseoverganger og kalorimetri" }
+          - { id: varmetransport, tittel: "Varmetransport" }
       - id: termodynamikk
         tittel: "Termodynamikkens lover"
         delemner:
           - { id: forste-lov, tittel: "Termodynamikkens 1. lov" }
           - { id: prosesser, tittel: "Prosesser og pV-diagram" }
+          - { id: andre-lov, tittel: "Termodynamikkens 2. lov" }
       - id: gasser
         tittel: "Gasser og kinetisk teori"
         delemner:
@@ -150,6 +156,7 @@ omrader:
           - { id: strom-spenning, tittel: "Strøm og spenning" }
           - { id: motstand, tittel: "Motstand og Ohms lov" }
           - { id: kirchhoff, tittel: "Kirchhoffs lover" }
+          - { id: emf, tittel: "Elektromotorisk spenning og indre resistans" }
           - { id: effekt, tittel: "Elektrisk effekt" }
       - { id: magnetisme, tittel: "Magnetisme og induksjon" }
 
@@ -157,7 +164,11 @@ omrader:
     tittel: "Bølger og optikk"
     beskrivelse: "Bølger, lyd og lys."
     emner:
-      - { id: bolger-og-lyd, tittel: "Bølger og lyd" }
+      - id: bolger-og-lyd
+        tittel: "Bølger og lyd"
+        delemner:
+          - { id: bolger, tittel: "Bølger og bølgeegenskaper" }
+          - { id: straling, tittel: "Stråling og drivhuseffekten" }
       - { id: optikk, tittel: "Optikk" }
 
   - id: moderne
@@ -167,5 +178,10 @@ omrader:
     emner:
       - { id: relativitet, tittel: "Relativitetsteori" }
       - { id: kvantefysikk, tittel: "Kvantefysikk" }
-      - { id: atom-og-kjerne, tittel: "Atom- og kjernefysikk" }
+      - id: atom-og-kjerne
+        tittel: "Atom- og kjernefysikk"
+        delemner:
+          - { id: atomet, tittel: "Atomets oppbygning" }
+          - { id: radioaktivitet, tittel: "Radioaktivitet og stråling" }
+          - { id: kjerneenergi, tittel: "Kjernereaksjoner og kjerneenergi" }
       - { id: kosmologi, tittel: "Kosmologi" }

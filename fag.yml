@@ -8,7 +8,7 @@ fag:
   - repo: Realfagsambassaden/fysikk-forkurs
     niva: forkurs
     tegning: hallo
-    kort: "Fysikk fra grunnen av for deg som mangler fysikk fra videregående – med video, regneeksempler og lite matematikk."
+    kort: "Fysikk fra grunnen av for deg som skal begynne på ingeniør- eller realfag. Bygger på TRES0312 ved NTNU og dekker hele forkurspensumet, med video, regneeksempler og oppgaver med hint."
   - repo: Realfagsambassaden/ingeniorfysikk
     niva: ingenior
     tegning: skratt-kast
