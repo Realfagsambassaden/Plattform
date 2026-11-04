@@ -137,12 +137,24 @@ def i_loyper(sti):
 
 for o in omrader:
     (UT / o['id']).mkdir(exist_ok=True)
-    q = ['---', f'title: "{o["tittel"]}"', f'subtitle: "{o.get("beskrivelse", "")}"', 'toc: false', '---', '']
+    # Områdesiden: samme struktur som sidemenyen (emne → delemner), med nivåene som finnes for hvert delemne
+    q = ['---', f'title: "{o["tittel"]}"', f'subtitle: "{o.get("beskrivelse", "")}"', 'toc: false', 'page-layout: full', '---', '',
+         '```{=html}', '<div class="emne-kort">']
     for e in o['emner']:
         ss = sider_per_emne[e['id']]
-        q.append(f'## [{e["tittel"]}]({e["id"]}.qmd)\n')
-        q += [f'- [{s["tittel"]}](../../{s["qmd"]})' for s in ss] if ss else ['*Kommer.*']
-        q.append('')
+        q.append(f'<section class="ek{"" if ss else " tom"}"><h2><a href="{e["id"]}.html">{escape(e["tittel"])}</a>' + ('' if ss else ' <em class="pill off">kommer</em>') + '</h2>')
+        if ss:
+            q.append('<ul>')
+            for d in e['delemner']:
+                dss = [x for x in ss if x['delemne'] == d['id']]
+                if not dss: continue
+                nv = [t for k, t in NIVAER if any(x['niva'] == k for x in dss)]
+                q.append(f'<li><a href="{e["id"]}/{d["id"]}.html">{escape(d["tittel"])}</a>' + ''.join(f'<span class="ek-niva">{t}</span>' for t in nv) + '</li>')
+            for x in ss:
+                if not x['delemne']: q.append(f'<li><a href="../../{x["qmd"].replace(".qmd", ".html")}">{escape(x["tittel"])}</a></li>')
+            q.append('</ul>')
+        q.append('</section>')
+    q += ['</div>', '```', '']
     (UT / o['id'] / 'index.qmd').write_text('\n'.join(q), encoding='utf-8')
     for e in o['emner']:
         ss = sider_per_emne[e['id']]
