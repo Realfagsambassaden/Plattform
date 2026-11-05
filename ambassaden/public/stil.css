@@ -47,6 +47,7 @@ a.plattform{color:var(--kritt);text-decoration:none}a.plattform:hover{border-col
 .bilder{position:relative;width:150px}
 .foto{width:150px;height:150px;border-radius:50%;object-fit:cover;border:3px solid var(--neon);box-shadow:0 0 0 6px rgba(110,240,74,.12),0 0 28px rgba(110,240,74,.25)}
 .ikon{position:absolute;right:-26px;bottom:-22px;width:84px;transform:rotate(-6deg);filter:drop-shadow(0 0 6px rgba(0,0,0,.8))}
+.ikon.bred{width:104px;right:-22px;bottom:-36px}
 .profil h3{font-size:1.4rem;margin-top:.3rem}
 .rolle{font-family:"Architects Daughter",cursive;color:var(--neon);margin:0 0 .6rem}
 .profil p:last-child{margin:0}
