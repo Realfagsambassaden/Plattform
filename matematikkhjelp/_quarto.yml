@@ -67,14 +67,18 @@ website:
 
 format:
   html:
-    theme: [cosmo, assets/tavle.scss, matte.scss]
+    theme:
+      dark: [cosmo, assets/tavle.scss, matte.scss]
+      light: [cosmo, assets/tavle.scss, matte-lys.scss]
     html-math-method: mathjax
     toc: true
     toc-title: "På denne siden"
     toc-depth: 2
     lightbox: true
     code-copy: true
-    highlight-style: github-dark
+    highlight-style:
+      dark: github-dark
+      light: github
     include-in-header:
       - text: |
           <!-- Adressen til hint-tjeneren (Cloudflare Worker). Samme tjener som fysikkhjelp.no. -->

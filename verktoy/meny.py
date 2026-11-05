@@ -26,7 +26,7 @@ for c in toc:
     if c.get('videoer'): meta.append(f"{c['videoer']} videoer")
     if n_opp: meta.append(f"{n_opp} oppgaver")
     q.append(f'<div class="kapittel{"" if live else " arbeid"}">')
-    q.append(f'  <a class="kap-hode" href="{c["dir"]}/index.html"><span class="kap-nr">{c["nr"]}</span><span class="kap-navn">{c["tittel"]}</span>'
+    q.append(f'  <a class="kap-hode" href="{c["dir"]}/index.html"><span class="kap-navn">{c["tittel"]}</span>'
              + ('' if live else '<em class="pill off">under arbeid</em>') + '</a>')
     b = BILDER.get(c['dir'].split('-', 1)[1])
     if b: q.append(f'  <a href="{c["dir"]}/index.html" tabindex="-1" aria-hidden="true"><img class="kap-bilde" src="../assets/img/tegninger/{b}.webp" alt="" loading="lazy"></a>')
@@ -43,7 +43,7 @@ q += ['</div>', '```', '']
 lines = ['  sidebar:', '    - id: forkurs', '      title: "Forkurs (TRES)"', '      style: docked', '      collapse-level: 1',
          '      contents:', '        - forkurs/index.qmd']
 for c in toc:
-    lines.append(f'        - section: "{c["nr"]}. {c["tittel"]}"')
+    lines.append(f'        - section: "{c["tittel"]}"')
     lines.append(f'          href: forkurs/{c["dir"]}/index.qmd')
     lines.append('          contents:')
     for s in c['sider']:

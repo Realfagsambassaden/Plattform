@@ -1,0 +1,17 @@
+/*-- scss:defaults --*/
+// Lys modus for fysikkhjelp.no: hvitt papir med mørk tusj.
+// Brukes som «light»-tema i _quarto.yml. Overstyrer fargene i assets/tavle.scss.
+$modus:   light;
+$slate:   #fbfaf6;   // bakgrunn
+$slate-2: #f0f2ec;   // bokser og kodeblokker
+$line:    #d6dbd2;   // streker og rammer
+$chalk:   #1c2320;   // tekst
+$dust:    #56615b;   // dempet tekst
+$neon:    #1c8a2c;   // hovedfarge
+$cyan:    #0b7b6b;
+$orange:  #b05f08;
+$yellow:  #776600;
+$rosa:    #c0343d;
+$on-neon: #ffffff;
+
+/*-- scss:rules --*/

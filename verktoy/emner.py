@@ -65,8 +65,8 @@ for lf in sorted((P / 'loyper').glob('*.yml')):
             eid = kob.get(f"{c['dir']}/{stem}") or kob.get(c['dir'])
             if eid: koble(sti, s['tittel'], eid, L['tittel'], (L.get('delemner') or {}).get(f"{c['dir']}/{stem}"), L.get('niva'))
             else: uten_emne.append((sti, s['tittel'], L['tittel']))
-            rekke.append({'qmd': sti, 'tittel': s['tittel'], 'kapittel': f"{c['nr']}. {c['tittel']}"})
-    struktur = [{'tittel': None, 'kapitler': [{'tittel': f"{c['nr']}. {c['tittel']}", 'href': f"forkurs/{c['dir']}/index.qmd",
+            rekke.append({'qmd': sti, 'tittel': s['tittel'], 'kapittel': c['tittel']})
+    struktur = [{'tittel': None, 'kapitler': [{'tittel': c['tittel'], 'href': f"forkurs/{c['dir']}/index.qmd",
                   'sider': [f"forkurs/{c['dir']}/{s['fil']}" for s in c['sider']]} for c in toc]}]
     loyper.append({**{k: L.get(k) for k in ('id', 'tittel', 'institusjon', 'emnekode', 'beskrivelse')},
                    'oversikt': 'forkurs/index.qmd', 'sider': rekke, 'struktur': struktur})
@@ -95,7 +95,7 @@ for lf in sorted((P / 'loyper').glob('*.yml')):
     for i, k in enumerate(f['kapitler'], 1):
         if not struktur or struktur[-1]['tittel'] != (k.get('del') or None):
             struktur.append({'tittel': k.get('del') or None, 'kapitler': []})
-        struktur[-1]['kapitler'].append({'tittel': f"{i}. {k['tittel']}",
+        struktur[-1]['kapitler'].append({'tittel': k['tittel'],
             'href': f"{f['kortnavn']}/kapitler/{k['dir']}/index.qmd" if k.get('har_index') else None,
             'sider': [f"{f['kortnavn']}/kapitler/{k['dir']}/{s['fil']}" for s in k['sider']]})
     loyper.append({**{k: L.get(k) for k in ('id', 'tittel', 'institusjon', 'emnekode', 'beskrivelse')},

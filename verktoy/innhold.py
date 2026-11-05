@@ -29,7 +29,7 @@ def les_side(fil, url, del_, kapittel):
 toc_f = P / 'forkurs' / '_innhold.json'
 if toc_f.exists():
     for c in json.loads(toc_f.read_text(encoding='utf-8')):
-        kap = f"{c['nr']}. {c['tittel']}" + ('' if c['status'] == 'klar' else ' (under arbeid)')
+        kap = c['tittel'] + ('' if c['status'] == 'klar' else ' (under arbeid)')
         for s in c['sider']:
             f = P / 'forkurs' / c['dir'] / s['fil']
             sider.append(les_side(f, f"/forkurs/{c['dir']}/{s['fil'].replace('.qmd', '.html')}", 'Forkurs', kap))
