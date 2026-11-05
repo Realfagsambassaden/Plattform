@@ -1,4 +1,52 @@
 # Hvilke filer som er sjekket mot notasjonsreglene (NOTASJON.md).
 # Oppdateres av verktoy/notasjon_status.py – ikke rediger for hånd.
-filer: {}
-versjon: 1
+filer:
+  ingeniorfysikk/kapitler/01-introduksjon/01-hva-er-fysikk.qmd:
+    blob: 73779f3d8ec1185c8cfad538e6aea0d94ef2cd20
+    dato: '2026-11-05'
+    versjon: 2
+  ingeniorfysikk/kapitler/01-introduksjon/02-enheter.qmd:
+    blob: 49385c73e3f6d324aaf035745c2a746a96ff5643
+    dato: '2026-11-05'
+    versjon: 2
+  ingeniorfysikk/kapitler/01-introduksjon/03-signifikante-sifre.qmd:
+    blob: 32884805fb6ba0bc8a4d047d290acbc90b5a1886
+    dato: '2026-11-05'
+    versjon: 2
+  ingeniorfysikk/kapitler/01-introduksjon/04-vektorer.qmd:
+    blob: bbead169f6160ef5ffb6ffb8428e82c834091f01
+    dato: '2026-11-05'
+    versjon: 2
+  ingeniorfysikk/kapitler/01-introduksjon/index.qmd:
+    blob: 288e79e7e1a22f030455cea5f8eda5f6fadbf0a1
+    dato: '2026-11-05'
+    versjon: 2
+  ingeniorfysikk/kapitler/02-kinematikk/01-posisjon-fart-akselerasjon.qmd:
+    blob: 0571b20e01e5a350c2f258b15a057afad5ad73e9
+    dato: '2026-11-05'
+    versjon: 2
+  ingeniorfysikk/kapitler/02-kinematikk/02-konstant-akselerasjon.qmd:
+    blob: ff7f92676b54275e78d52422164791dc58f174e6
+    dato: '2026-11-05'
+    versjon: 2
+  ingeniorfysikk/kapitler/02-kinematikk/03-skratt-kast.qmd:
+    blob: 4ca7f97fb5129b4584c0ada3c1a068b4c7d7c7b0
+    dato: '2026-11-05'
+    versjon: 2
+  ingeniorfysikk/kapitler/02-kinematikk/04-sirkelbevegelse.qmd:
+    blob: afc5a7168957d65de3faebf7ff431b7126b2de41
+    dato: '2026-11-05'
+    versjon: 2
+  ingeniorfysikk/kapitler/02-kinematikk/index.qmd:
+    blob: 2c20880b481666a2a06d91940b63944f5543f237
+    dato: '2026-11-05'
+    versjon: 2
+  plattform/emner-tekster/arbeid-og-energi.md:
+    blob: 87208138c9df648273ceba258069d31593bee5b0
+    dato: '2026-11-05'
+    versjon: 2
+  plattform/emner-tekster/hva-er-fysikk.md:
+    blob: 2c83ba9bf784e6f162912073c7c300bbf1490d2d
+    dato: '2026-11-05'
+    versjon: 2
+versjon: 2
