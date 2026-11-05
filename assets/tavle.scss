@@ -617,3 +617,7 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .kort > ul > li:has(a):hover > strong:first-child > a, .kort > ul > li:has(a):hover > p:first-child > strong:first-child > a { color: $neon; }
 .kort > ul > li > strong:first-child > a:focus-visible { outline: none; }
 .kort > ul > li:has(a:focus-visible) { outline: 2px solid $neon; outline-offset: 2px; }
+// Lenkekort får en pil, så de skilles fra kort som bare er informasjon.
+.kort > ul > li:has(> strong:first-child > a), .kort > ul > li:has(> p:first-child > strong:first-child > a) { padding-right: 2.2rem; }
+.kort > ul > li:has(> strong:first-child > a)::after, .kort > ul > li:has(> p:first-child > strong:first-child > a)::after { content: "→"; position: absolute; top: .75rem; right: .95rem; color: $neon; font-weight: 800; font-size: 1.1rem; transition: transform .15s ease; }
+.kort > ul > li:has(a):hover::after { transform: translateX(3px); }
