@@ -74,7 +74,7 @@ Boksene (`callout-note` for definisjoner, `.graa`, `.eksempel` med `.losning`, `
 
 - **Unngå lange, vanlige punktlister.** Bruk en TikZ-figur når innholdet er en sammenheng (en syklus, en kjede, før/etter), eller en av disse boksene:
   - `::: {.steg}` rundt en nummerert liste: stegene vises som kort med piler imellom (for oppskrifter og strategier).
-  - `::: {.kort}` rundt en punktliste: punktene vises som kort i et rutenett. Start hvert punkt med et **uthevet** stikkord, som blir overskrift. Gjør stikkordet til en lenke (`- **[Tittel](side.qmd)** tekst`), så blir hele kortet klikkbart. Kort som viser til sider (f.eks. på kapittelforsider) skal alltid være lenker.
+  - `::: {.kort}` rundt en punktliste: punktene vises som kort i et rutenett. Start hvert punkt med et **uthevet** stikkord, som blir overskrift. Gjør stikkordet til en lenke (`- **[Tittel](side.qmd)** tekst`), så blir hele kortet klikkbart. Kort som viser til sider (f.eks. på kapittelforsider) skal alltid være lenker. Lenkekort får automatisk en pil (→), så de skilles fra kort som bare er informasjon.
   Begge blir vanlige lister i PDF-en.
 - **Ingen kapittelnummer på nettsidene.** Samme side kan ligge i løyper der andre kapitler mangler, så nettsidene viser aldri «kapittel 3» eller «3.2». Ikke skriv nummer i titler eller tekst. PDF-kompendiet for et fag eller en løype nummereres automatisk.
 - **Lys og mørk modus.** Nettsidene har en bryter for lys og mørk modus, så figurer må fungere i begge:
