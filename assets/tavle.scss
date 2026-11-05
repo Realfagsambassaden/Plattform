@@ -10,6 +10,9 @@ $neon:    #6ef04a !default;
 $orange:  #f19c2c !default;
 $cyan:    #56d7b8 !default;
 $yellow:  #eee462 !default;
+$rosa:    #ff8a8f !default;   // eksempler
+$on-neon: #0b130a !default;   // tekst på knapper i hovedfargen
+$modus:   dark !default;      // dark eller light (lys modus settes i assets/lys.scss)
 
 $web-font-path: "https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800;900&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&family=Architects+Daughter&family=Comic+Neue:ital,wght@0,400;0,700;1,400&display=swap";
 $font-family-sans-serif: "Comic Neue", "Comic Sans MS", "Chalkboard SE", "Nunito Sans", system-ui, sans-serif;
@@ -44,7 +47,7 @@ $input-bg: $slate-2;
 $input-color: $chalk;
 
 /*-- scss:rules --*/
-:root { color-scheme: dark; }
+:root { color-scheme: $modus; }
 body { background: $slate; }
 h1, h2, h3, h4 { text-wrap: balance; color: $chalk; }
 h1.title { font-weight: 900; letter-spacing: -0.02em; }
@@ -68,7 +71,7 @@ mjx-container { color: $chalk; }
 .hero .lead { margin-top: 1.2rem; font-size: 1.15rem; max-width: 34ch; }
 .hero .note { margin-top: 1rem; font-family: "Architects Daughter", cursive; color: $yellow; font-size: 1.15rem; display: inline-block; transform: rotate(-1.5deg); }
 .cta { display: flex; gap: .75rem; margin-top: 1.6rem; flex-wrap: wrap; }
-.btn-chalk { display: inline-flex; align-items: center; padding: .8rem 1.25rem; border-radius: 8px; font: 800 .95rem/1 $headings-font-family; text-decoration: none; border: 2px solid $neon; background: $neon; color: #0b130a !important; }
+.btn-chalk { display: inline-flex; align-items: center; padding: .8rem 1.25rem; border-radius: 8px; font: 800 .95rem/1 $headings-font-family; text-decoration: none; border: 2px solid $neon; background: $neon; color: $on-neon !important; }
 .btn-chalk.ghost { background: transparent; color: $chalk !important; border-color: $line; }
 .btn-chalk.ghost:hover { border-color: $dust; }
 .board { position: relative; background: $slate-2; border: 1px solid $line; border-radius: 10px; padding: 1.3rem; min-width: 0; }
@@ -100,13 +103,13 @@ mjx-container { color: $chalk; }
 .topics li > a { border-color: mix($neon, $line, 55%); }
 .topics li > a:hover { background: rgba($neon, .08); }
 .pill { font: 700 11px/1 $headings-font-family; letter-spacing: .08em; text-transform: uppercase; padding: 5px 8px; border-radius: 99px; white-space: nowrap; font-style: normal; }
-.pill.on { background: $neon; color: #0b130a; }
+.pill.on { background: $neon; color: $on-neon; }
 .pill.off { color: $dust; border: 1px solid $line; }
 
 // ---------- emneside ----------
 .video-card { display: block; position: relative; border-radius: 10px; overflow: hidden; border: 1px solid $line; margin: 1rem 0 .4rem; }
 .video-card img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; margin: 0; }
-.video-card .play { position: absolute; right: 1rem; bottom: 1rem; background: $neon; color: #0b130a; font: 800 .9rem/1 $headings-font-family; padding: .7rem 1rem; border-radius: 8px; }
+.video-card .play { position: absolute; right: 1rem; bottom: 1rem; background: $neon; color: $on-neon; font: 800 .9rem/1 $headings-font-family; padding: .7rem 1rem; border-radius: 8px; }
 .formel { background: $slate-2; border: 1px solid $line; border-radius: 10px; padding: .6rem 1.1rem; margin: 1rem 0; overflow-x: auto; }
 .formel > p:first-child { font-family: "Architects Daughter", cursive; color: $dust; margin: 0; font-size: .95rem; }
 
@@ -115,7 +118,7 @@ mjx-container { color: $chalk; }
 .kode-boks .kode-topp { display: flex; justify-content: space-between; align-items: center; gap: .6rem; padding: .45rem .7rem; border-bottom: 1px solid $line; font: 600 12px/1 $headings-font-family; letter-spacing: .08em; text-transform: uppercase; color: $dust; }
 .kode-boks .kode-knapper { display: flex; gap: .4rem; }
 .kode-boks button { font: 700 13px/1 $headings-font-family; border-radius: 6px; padding: .5rem .8rem; border: 1px solid $line; background: transparent; color: $chalk; cursor: pointer; }
-.kode-boks button.kjor { background: $neon; border-color: $neon; color: #0b130a; }
+.kode-boks button.kjor { background: $neon; border-color: $neon; color: $on-neon; }
 .kode-boks button:disabled { opacity: .6; cursor: progress; }
 .kode-boks textarea { display: block; width: 100%; min-height: 8rem; resize: vertical; border: 0; background: $slate-2; color: $chalk; font: 14px/1.55 ui-monospace, "SF Mono", Menlo, Consolas, monospace; padding: .9rem 1rem; tab-size: 4; outline: none; }
 .kode-boks .kode-ut { border-top: 1px dashed $line; padding: .7rem 1rem; font: 13.5px/1.5 ui-monospace, Menlo, Consolas, monospace; white-space: pre-wrap; color: $chalk; }
@@ -139,9 +142,9 @@ mjx-container { color: $chalk; }
 .oppg-verktoy button:disabled, .hint-panel button:disabled { opacity: .6; cursor: progress; }
 .losning { margin-top: .8rem; padding-left: .9rem; border-left: 2px solid $cyan; }
 .eksempel.eks-skjult:not(.eks-apen) > .losning { display: none; }
-.eksempel > .losning { border-left-color: #ff8a8f; }
-.eks-vis { font: 700 13px/1 $headings-font-family; border-radius: 6px; padding: .55rem .85rem; margin: .5rem 0 .2rem; border: 1px solid mix(#ff8a8f, $line, 60%); background: transparent; color: #ff8a8f; cursor: pointer; }
-.eks-vis:hover { background: rgba(255, 138, 143, .08); }
+.eksempel > .losning { border-left-color: $rosa; }
+.eks-vis { font: 700 13px/1 $headings-font-family; border-radius: 6px; padding: .55rem .85rem; margin: .5rem 0 .2rem; border: 1px solid mix($rosa, $line, 60%); background: transparent; color: $rosa; cursor: pointer; }
+.eks-vis:hover { background: rgba($rosa, .08); }
 .hint-panel { margin-top: .8rem; display: grid; gap: .5rem; }
 .hint-panel label { font-size: .9rem; color: $dust; }
 .hint-panel textarea { width: 100%; min-height: 4.2rem; border-radius: 8px; border: 1px solid $line; background: $slate-2; color: $chalk; padding: .6rem .8rem; font: inherit; font-size: .95rem; }
@@ -162,7 +165,7 @@ mjx-container { color: $chalk; }
 .spm .spm-tittel { display: block; font-weight: 700; color: $yellow; margin-bottom: .4rem; font-family: "Architects Daughter", cursive; font-size: 1.1rem; }
 .spq { text-align: center; font-size: 1.15rem; }
 .eksempel { border-left: 3px solid #e04b52; padding: .3rem 0 .3rem 1rem; margin: 1.4rem 0 .6rem; }
-.eksempel .eks-tittel { display: block; font-weight: 700; font-style: italic; color: #ff8a8f; margin-bottom: .3rem; }
+.eksempel .eks-tittel { display: block; font-weight: 700; font-style: italic; color: $rosa; margin-bottom: .3rem; }
 .callout.svar { margin-top: .2rem; }
 .graa { background: rgba($chalk, .07); border: 1px solid $line; border-radius: 10px; padding: .4rem 1.2rem; margin: 1rem auto; width: fit-content; max-width: 100%; overflow-x: auto; }
 .figurtekst { display: block; text-align: center; font-size: .92rem; color: $dust; margin: -.3rem auto 1.2rem; max-width: 60ch; }
@@ -214,11 +217,11 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 .konto-ingress { color: $dust; font-size: .95rem; }
 .konto-skjema { display: flex; flex-direction: column; gap: .8rem; }
 .konto-skjema label { display: flex; flex-direction: column; gap: .3rem; font-weight: 700; }
-.konto-skjema input, .dekning input, .dekning textarea { background: rgba(255,255,255,.04); border: 1px solid $line; border-radius: 8px; color: $chalk; padding: .6rem .7rem; font: inherit; font-weight: 400; width: 100%; }
+.konto-skjema input, .dekning input, .dekning textarea { background: rgba($chalk,.04); border: 1px solid $line; border-radius: 8px; color: $chalk; padding: .6rem .7rem; font: inherit; font-weight: 400; width: 100%; }
 .konto-skjema input:focus, .dekning input:focus, .dekning textarea:focus { outline: 2px solid rgba($neon, .6); border-color: transparent; }
 .konto-hjelp { font-size: .85rem; color: $dust; margin: -.4rem 0 0; }
 .konto-melding, .dekning-melding { margin: 0; min-height: 1.2em; color: $neon; }
-.konto-melding.feil, .dekning-melding.feil { color: #ff8a80; }
+.konto-melding.feil, .dekning-melding.feil { color: $rosa; }
 .konto-lenker { font-size: .9rem; margin: 0; }
 .profil-hei { font-size: 1.3rem; }
 .profil { max-width: none; }
@@ -246,7 +249,7 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 .flis { padding: .7rem 1rem; border-radius: 8px; border: 1px solid; }
 .flis.god, .kart-flis.god { border-color: rgba($neon, .6); background: rgba($neon, .08); }
 .flis.delvis, .kart-flis.delvis { border-color: rgba($yellow, .6); background: rgba($yellow, .07); }
-.flis.ingen, .kart-flis.ingen { border-color: $line; background: rgba(255,255,255,.02); }
+.flis.ingen, .kart-flis.ingen { border-color: $line; background: rgba($chalk,.02); }
 .kart-hode { margin-top: 2rem; }
 .kart-hode h2 { margin-top: .2rem; }
 .kart-kilde { font-size: .85rem; word-break: break-all; }
@@ -254,7 +257,7 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 .kart-tall { display: flex; flex-direction: column; }
 .kart-tall .stort { font: 700 2.6rem/1 $headings-font-family; color: $neon; }
 .kart-tall span:last-child { color: $dust; font-size: .9rem; }
-.kart-stolpe { flex: 1; min-width: 220px; height: 14px; border-radius: 7px; overflow: hidden; display: flex; background: rgba(255,255,255,.05); }
+.kart-stolpe { flex: 1; min-width: 220px; height: 14px; border-radius: 7px; overflow: hidden; display: flex; background: rgba($chalk,.05); }
 .kart-stolpe .god { background: $neon; } .kart-stolpe .delvis { background: $yellow; } .kart-stolpe .ingen { background: transparent; }
 .kart-forklaring { list-style: none; padding: 0; margin: 0; display: flex; gap: 1rem; flex-wrap: wrap; font-size: .9rem; color: $dust; width: 100%; }
 .kart-forklaring i { display: inline-block; width: .8em; height: .8em; border-radius: 2px; margin-right: .35em; vertical-align: -1px; }
@@ -378,7 +381,7 @@ body { overflow-x: clip; }
 .loype.egen { border-style: dashed; border-color: mix($yellow, $line, 60%); background: transparent; }
 .loype.egen .status { color: $yellow; }
 .loype-meta { font-family: "Architects Daughter", cursive; color: $neon !important; }
-.loype-linje { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.2rem; padding: .55rem .9rem; margin: 0 0 1rem; border: 1px solid $line; border-radius: 10px; font-size: .92rem; background: rgba(255,255,255,.02); }
+.loype-linje { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.2rem; padding: .55rem .9rem; margin: 0 0 1rem; border: 1px solid $line; border-radius: 10px; font-size: .92rem; background: rgba($chalk,.02); }
 .loype-linje a { color: $chalk; text-decoration: none; }
 .loype-linje a:hover { color: $neon; }
 .ll-merke { font: 700 10px/1 $headings-font-family; letter-spacing: .1em; text-transform: uppercase; color: $neon; margin-right: .45rem; }
@@ -442,11 +445,11 @@ body.har-foredrag { overflow: hidden; }
 .fd-rediger-knapper { display: flex; gap: .5rem; }
 .fd-r-sidetittel { margin: 2.2rem 0 .6rem; color: $neon; font-size: 1.35rem; }
 .fd-r-sidetittel small { color: $dust; font-size: .8rem; font-weight: 400; margin-left: .4rem; }
-.fd-r-rad { display: flex; gap: .7rem; align-items: flex-start; padding: .35rem 0; border-top: 1px dashed rgba(255,255,255,.06); }
+.fd-r-rad { display: flex; gap: .7rem; align-items: flex-start; padding: .35rem 0; border-top: 1px dashed rgba($chalk,.06); }
 .fd-r-innhold { flex: 1; min-width: 0; }
 .fd-r-innhold > :last-child { margin-bottom: 0; }
 .fd-r-knapp { flex: none; width: 2rem; height: 2rem; border-radius: 50%; border: 1px solid $line; background: transparent; color: $chalk; font: 700 1.1rem/1 $headings-font-family; cursor: pointer; margin-top: .15rem; }
-.fd-r-knapp:hover { border-color: #ff8a8f; color: #ff8a8f; }
+.fd-r-knapp:hover { border-color: $rosa; color: $rosa; }
 .fd-r-knapp:disabled { opacity: .3; cursor: default; }
 .fd-r-rad.av .fd-r-innhold { opacity: .28; max-height: 4.5em; overflow: hidden; -webkit-mask-image: linear-gradient(#000 40%, transparent); mask-image: linear-gradient(#000 40%, transparent); }
 .fd-r-rad.av .fd-r-knapp { border-color: $neon; color: $neon; }
@@ -559,3 +562,50 @@ body.har-foredrag { overflow: hidden; }
 .emne-kort .ek li a:hover { color: $neon; }
 .emne-kort .ek-niva { font-size: .7rem; padding: .05rem .4rem; border: 1px solid $neon; border-radius: 3px; color: $neon; transform: skewX(-12deg); }
 .emne-kort .ek.tom { opacity: .55; }
+
+// ---------- lys og mørk modus ----------
+// Strektegninger (TikZ og skannede figurer) er tegnet svart på gjennomsiktig bakgrunn.
+// I mørk modus snus de til lyse streker; fargene beholder tonen (hue-rotate).
+// Fotografier merkes {.foto} og snus aldri. Fargerike figurer merkes {.farge} og snus heller ikke.
+img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
+@if $modus == dark {
+  img.kompendium-bilde:not(.foto):not(.farge) { filter: invert(1) hue-rotate(180deg) brightness(1.05); }
+}
+@if $modus == light {
+  // Lys-arket er alltid lastet (Quarto legger mørkt ark oppå), så reglene her må bare gjelde i lys modus.
+  body.quarto-light {
+    // Tikz-figurene vises som de er tegnet.
+    img.tikz-fig { filter: none; }
+    // Krittegninger og logoer er lyse streker laget for tavla. På lyst papir snus de til mørke streker.
+    img[src*="tegninger/"]:not([src*="hero-scene"]), .kap-bilde, .tavle-kant, .hero::before, .board img, .board canvas, .kommer-bilde,
+    .navbar-brand img, .ra-merke img, img[src*="-ikon.png"], img[src*="logo"] { filter: invert(1) hue-rotate(180deg); }
+    .tavle-kant { opacity: .10; }
+    // Forsidebildet har fotografier, som ikke skal snus. Krittstrekene får en mørk kant i stedet.
+    img[src*="hero-scene"] { filter: drop-shadow(0 0 1px rgba(0,0,0,.7)) drop-shadow(0 0 1px rgba(0,0,0,.5)); }
+    .profil-ikon { filter: invert(1) hue-rotate(180deg) drop-shadow(0 0 3px rgba(0,0,0,.25)); }
+    .profil-foto { box-shadow: 0 0 0 6px rgba($neon, .12); }
+    .quarto-video { background: #000; }
+    .kode-boks .kode-ut img { background: transparent; }
+  }
+}
+// Bryteren for lys/mørk modus i menyen
+.quarto-color-scheme-toggle .bi::before { filter: none; }
+
+// ---------- steg og kort (i stedet for vanlige punktlister) ----------
+// ::: {.steg}  rundt en nummerert liste: stegene vises som kort med pil imellom.
+// ::: {.kort}  rundt en punktliste: punktene vises som kort i et rutenett. Første **uthevede** ord blir overskrift.
+.steg > ol { list-style: none; counter-reset: steg; display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 1.5rem; padding: 0; margin: 1.3rem 0 1.5rem; }
+.steg > ol > li { counter-increment: steg; position: relative; padding: 2.3rem 1rem .9rem; border: 1px solid $line; border-radius: 12px; background: $slate-2; margin: 0; line-height: 1.45; }
+.steg > ol > li::before { content: counter(steg); position: absolute; top: .65rem; left: 1rem; width: 1.6rem; height: 1.6rem; border-radius: 50%; display: grid; place-items: center; font: 800 .9rem/1 $headings-font-family; background: $neon; color: $on-neon; }
+.steg > ol > li:not(:last-child)::after { content: "→"; position: absolute; right: -1.25rem; top: 50%; transform: translateY(-50%); color: $neon; font-weight: 800; font-size: 1.2rem; }
+.steg > ol > li > p { margin: 0 0 .4rem; }
+.steg > ol > li > p:last-child { margin-bottom: 0; }
+.steg.syklus > ol > li:last-child::after { content: "↺"; right: .6rem; top: .9rem; transform: none; font-size: 1rem; }
+@media (max-width: 640px) { .steg > ol > li:not(:last-child)::after { content: "↓"; right: 50%; top: auto; bottom: -1.45rem; transform: translateX(50%); } }
+.kort > ul { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: .9rem; padding: 0; margin: 1.2rem 0 1.4rem; }
+.kort > ul > li { margin: 0; padding: .8rem 1rem .85rem; border: 1px solid $line; border-left: 4px solid $neon; border-radius: 10px; background: rgba($chalk, .03); line-height: 1.45; }
+.kort > ul > li:nth-child(4n+2) { border-left-color: $cyan; }
+.kort > ul > li:nth-child(4n+3) { border-left-color: $orange; }
+.kort > ul > li:nth-child(4n+4) { border-left-color: $yellow; }
+.kort > ul > li > strong:first-child, .kort > ul > li > p:first-child > strong:first-child { display: block; margin-bottom: .25rem; color: $chalk; font-size: 1.02rem; }
+.kort > ul > li > p { margin: 0; }

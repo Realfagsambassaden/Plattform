@@ -94,6 +94,7 @@ def side_til_md(tekst, kap, teller, losninger, figurer, sidemappe=None, td=None)
     t = re.sub(r'```\{=html\}.*?```', '', tekst, flags=re.S)
     t = re.sub(r'<!--.*?-->', '', t, flags=re.S)
     t = re.sub(r'\{\{<\s*video\s+(\S+)\s*>\}\}', lambda m: '```{=latex}\n\\videoqr{' + m.group(1) + '}\n```', t)
+    t = re.sub(r'^!\[[^\]]*\]\([^)]*video-kommer\.png\)(\{[^}]*\})?\s*$', '', t, flags=re.M)   # plassholder for video: ikke med i PDF
     # Callout-bokser blir egne bokser (Quarto sine krever ekstra pakker)
     t = re.sub(r'^(:{3,})\s*\{\.callout-(\w+)([^}]*)\}', lambda m: f'{m.group(1)} {{.merk type="{m.group(2)}"{m.group(3)}}}', t, flags=re.M)
     t = t.replace('{.python .kjor}', '{.python}').replace('{.text .utskrift}', '{.text}')

@@ -88,7 +88,7 @@ for post in liste:
         hode = f'kapitler/{k["dir"]}/index.html' if k['har_index'] else f'kapitler/{k["dir"]}/{k["sider"][0]["fil"].replace(".qmd", ".html")}'
         meta_ = ' · '.join(x for x in [f'{v} video{"er" if v != 1 else ""}' if v else '', f'{o} oppgave{"r" if o != 1 else ""}' if o else ''] if x)
         html += ['<div class="kapittel">',
-                 f'  <a class="kap-hode" href="{hode}"><span class="kap-nr">{i}</span><span class="kap-navn">{k["tittel"]}</span></a>',
+                 f'  <a class="kap-hode" href="{hode}"><span class="kap-navn">{k["tittel"]}</span></a>',
                  f'  <a href="{hode}" tabindex="-1" aria-hidden="true"><img class="kap-bilde" src="../assets/img/tegninger/{tegning}.webp" alt="" loading="lazy"></a>',
                  f'  <p class="kap-meta">{meta_}</p>' if meta_ else '', '  <ul>']
         html += [f'    <li><a href="kapitler/{k["dir"]}/{s_["fil"].replace(".qmd", ".html")}">{s_["tittel"]}</a></li>' for s_ in k['sider']]

@@ -70,6 +70,18 @@ Samme side kan brukes i flere fag og løyper. Derfor skal teksten på en innhold
 
 Boksene (`callout-note` for definisjoner, `.graa`, `.eksempel` med `.losning`, `:::: {.oppgaver}` med `.oppgave`), video (`{{< video URL >}}`), kjørbar Python (` ```{.python .kjor}`) og figurer er vist i `fag-mal/kapitler/01-forste-kapittel/01-eksempelside.qmd`. Figurer tegnes med TikZ i fagrepoets `figurer/` og lages med `python3 figurer/lag.py`.
 
+### Punktlister, nummerering og figurer
+
+- **Unngå lange, vanlige punktlister.** Bruk en TikZ-figur når innholdet er en sammenheng (en syklus, en kjede, før/etter), eller en av disse boksene:
+  - `::: {.steg}` rundt en nummerert liste: stegene vises som kort med piler imellom (for oppskrifter og strategier).
+  - `::: {.kort}` rundt en punktliste: punktene vises som kort i et rutenett. Start hvert punkt med et **uthevet** stikkord, som blir overskrift.
+  Begge blir vanlige lister i PDF-en.
+- **Ingen kapittelnummer på nettsidene.** Samme side kan ligge i løyper der andre kapitler mangler, så nettsidene viser aldri «kapittel 3» eller «3.2». Ikke skriv nummer i titler eller tekst. PDF-kompendiet for et fag eller en løype nummereres automatisk.
+- **Lys og mørk modus.** Nettsidene har en bryter for lys og mørk modus, så figurer må fungere i begge:
+  - TikZ-figurer tegnes svart på gjennomsiktig bakgrunn og settes inn med `{.tikz-fig}`. De snus automatisk i mørk modus. Bruk farger fra `_mal.tex`, ikke hvit fyll som bakgrunn.
+  - Skannede figurer (`{.kompendium-bilde}`) skal **aldri ha hvit bakgrunn**. Strektegninger gjøres gjennomsiktige med `python3 verktoy/hvit_til_alfa.py bilde.png` og snus i mørk modus. Fargerike figurer (f.eks. SI-enhetene) gjøres gjennomsiktige med `verktoy/fjern_bakgrunn.py` og merkes `{.kompendium-bilde .farge}`, slik at de ikke snus. Fotografier merkes `{.kompendium-bilde .foto}`.
+  - Ikke henvis til farger i teksten («den røde pila»), fordi fargene endres litt mellom modusene. Bruk navn eller symboler.
+
 ### Merking, rettigheter og personvern
 
 - Stoff skrevet av en KI merkes `<!-- tillegg: Claude -->` foran. Donert stoff merkes `<!-- fra notatene -->`; behold den merkingen. Retter du feil i donert stoff, skriv en kort kommentar om hva som er endret.
