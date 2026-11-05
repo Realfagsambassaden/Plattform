@@ -28,6 +28,7 @@ omrader:
           - { id: gjeldende-siffer, tittel: "Gjeldende siffer" }
           - { id: standardform, tittel: "Standardform" }
           - { id: usikkerhet, tittel: "Måleusikkerhet og beregning" }
+          - { id: forsok-og-rapport, tittel: "Forsøk og rapport" }
       - id: matematiske-verktoy
         tittel: "Matematiske verktøy"
         delemner:
@@ -43,6 +44,13 @@ omrader:
         tittel: "Modellering og problemløsning"
         delemner:
           - { id: modellering, tittel: "Matematisk modellering" }
+          - { id: regresjon, tittel: "Grafer og regresjon" }
+      - id: programmering
+        tittel: "Fysikk og programmering"
+        delemner:
+          - { id: python, tittel: "Python i fysikk" }
+          - { id: plotting, tittel: "Plotting av data og funksjoner" }
+          - { id: numeriske-metoder, tittel: "Numerisk løsning av bevegelse" }
 
   - id: mekanikk
     tittel: "Mekanikk"
@@ -92,7 +100,11 @@ omrader:
           - { id: treghetsmoment, tittel: "Treghetsmoment og rotasjonsenergi" }
           - { id: rulling, tittel: "Kraftmoment og rulling" }
           - { id: dreieimpuls, tittel: "Dreieimpuls" }
-      - { id: gravitasjon, tittel: "Gravitasjon" }
+      - id: gravitasjon
+        tittel: "Gravitasjon"
+        delemner:
+          - { id: gravitasjonsloven, tittel: "Newtons gravitasjonslov" }
+          - { id: satellitter, tittel: "Satellitter og planetbaner" }
       - id: svingninger
         tittel: "Svingninger"
         delemner:
@@ -168,7 +180,12 @@ omrader:
         tittel: "Bølger og lyd"
         delemner:
           - { id: bolger, tittel: "Bølger og bølgeegenskaper" }
-          - { id: straling, tittel: "Stråling og drivhuseffekten" }
+      - id: straling
+        tittel: "Stråling og drivhuseffekt"
+        delemner:
+          - { id: em-straling, tittel: "Elektromagnetisk stråling" }
+          - { id: varmestraling, tittel: "Varmestråling" }
+          - { id: drivhuseffekt, tittel: "Drivhuseffekten og klima" }
       - { id: optikk, tittel: "Optikk" }
 
   - id: moderne
@@ -182,6 +199,7 @@ omrader:
         tittel: "Atom- og kjernefysikk"
         delemner:
           - { id: atomet, tittel: "Atomets oppbygning" }
+          - { id: spektre, tittel: "Spektre og energinivåer" }
           - { id: radioaktivitet, tittel: "Radioaktivitet og stråling" }
           - { id: kjerneenergi, tittel: "Kjernereaksjoner og kjerneenergi" }
       - { id: kosmologi, tittel: "Kosmologi" }

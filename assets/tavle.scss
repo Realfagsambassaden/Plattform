@@ -621,3 +621,5 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .kort > ul > li:has(> strong:first-child > a), .kort > ul > li:has(> p:first-child > strong:first-child > a) { padding-right: 2.2rem; }
 .kort > ul > li:has(> strong:first-child > a)::after, .kort > ul > li:has(> p:first-child > strong:first-child > a)::after { content: "→"; position: absolute; top: .75rem; right: .95rem; color: $neon; font-weight: 800; font-size: 1.1rem; transition: transform .15s ease; }
 .kort > ul > li:has(a):hover::after { transform: translateX(3px); }
+// Lange ord i smale kort deles i stedet for å flyte ut av kortet.
+.kort > ul > li, .steg > ol > li { hyphens: auto; overflow-wrap: break-word; }
