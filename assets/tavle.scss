@@ -609,3 +609,11 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .kort > ul > li:nth-child(4n+4) { border-left-color: $yellow; }
 .kort > ul > li > strong:first-child, .kort > ul > li > p:first-child > strong:first-child { display: block; margin-bottom: .25rem; color: $chalk; font-size: 1.02rem; }
 .kort > ul > li > p { margin: 0; }
+// Kort med lenke i overskriften: hele kortet blir klikkbart.
+.kort > ul > li:has(> strong:first-child > a), .kort > ul > li:has(> p:first-child > strong:first-child > a) { position: relative; transition: transform .15s ease, border-color .15s ease, background .15s ease; }
+.kort > ul > li > strong:first-child > a, .kort > ul > li > p:first-child > strong:first-child > a { color: $chalk; text-decoration: none; font-weight: 700; }
+.kort > ul > li > strong:first-child > a::after, .kort > ul > li > p:first-child > strong:first-child > a::after { content: ""; position: absolute; inset: 0; border-radius: 10px; }
+.kort > ul > li:has(a):hover { transform: translateY(-2px); background: rgba($neon, .07); border-color: rgba($neon, .55); }
+.kort > ul > li:has(a):hover > strong:first-child > a, .kort > ul > li:has(a):hover > p:first-child > strong:first-child > a { color: $neon; }
+.kort > ul > li > strong:first-child > a:focus-visible { outline: none; }
+.kort > ul > li:has(a:focus-visible) { outline: 2px solid $neon; outline-offset: 2px; }
