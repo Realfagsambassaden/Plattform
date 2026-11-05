@@ -47,7 +47,7 @@ a.plattform{color:var(--kritt);text-decoration:none}a.plattform:hover{border-col
 .bilder{position:relative;width:150px}
 .foto{width:150px;height:150px;border-radius:50%;object-fit:cover;border:3px solid var(--neon);box-shadow:0 0 0 6px rgba(110,240,74,.12),0 0 28px rgba(110,240,74,.25)}
 .ikon{position:absolute;right:-26px;bottom:-22px;width:84px;transform:rotate(-6deg);filter:drop-shadow(0 0 6px rgba(0,0,0,.8))}
-.ikon.bred{width:104px;right:-22px;bottom:-36px}
+.ikon.bred{width:112px;right:-30px;bottom:-30px}
 .profil h3{font-size:1.4rem;margin-top:.3rem}
 .rolle{font-family:"Architects Daughter",cursive;color:var(--neon);margin:0 0 .6rem}
 .profil p:last-child{margin:0}
@@ -93,3 +93,11 @@ a.plattform{color:var(--kritt);text-decoration:none}a.plattform:hover{border-col
 .doner-kort strong{color:var(--kritt);font-size:1.25rem;display:block;margin-bottom:.2rem}
 .doner-kort img{width:110px;flex:none}
 @media (max-width:700px){.doner-topp,.felt-rad{grid-template-columns:1fr}.doner-bilde{max-width:150px}}
+@font-face{font-family:"Nanum Brush Script";src:url(fonter/nanum-brush.woff) format("woff");font-display:swap}
+/* Ambassadørene, diffust i bakgrunnen bak forsideteksten */
+.hero::after{content:"";position:absolute;z-index:-1;top:0;bottom:0;right:-6vw;width:min(1100px,92%);background:url(img/ambassadorer-bakgrunn.webp) right center/contain no-repeat;opacity:.32;filter:blur(1.5px) contrast(1.05);-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 38%);mask-image:linear-gradient(90deg,transparent 0,#000 38%);pointer-events:none}
+.hero-tekst{position:relative;text-shadow:0 2px 18px rgba(13,17,16,.9)}
+.hero h1{font-size:clamp(2.4rem,5.6vw,4.4rem);letter-spacing:-.01em}
+.hero h1 .kamp{display:block;font:400 1.45em/.95 "Nanum Brush Script","Comic Neue",cursive;color:var(--neon);transform:rotate(-3deg);transform-origin:left;-webkit-text-stroke:1.5px var(--neon);margin-top:.2em;text-shadow:0 0 18px rgba(110,240,74,.55),0 0 2px rgba(110,240,74,.9)}
+.hero h1 .kamp svg{display:block;width:min(480px,85%);height:22px;margin-top:-.15em}
+@media (max-width:560px){.hero::after{opacity:.18;width:100%;right:0}}
