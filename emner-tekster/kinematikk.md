@@ -1,0 +1,2 @@
+<!-- tillegg: Claude -->
+Kinematikk handler om *hvordan* ting beveger seg: hvor de er, hvor fort de går, og hvor raskt farten endrer seg. Vi beskriver bevegelsen med tre størrelser, posisjon, hastighet og akselerasjon, og ser hvordan de henger sammen. Når akselerasjonen er konstant, som i fritt fall eller ved jevn bremsing, kan fire bevegelseslikninger løse nesten alle oppgaver. Til slutt deler vi bevegelse i to dimensjoner, som et skrått kast, i en vannrett og en loddrett del. Kinematikk er grunnlaget for Newtons lover, der vi spør *hvorfor* ting beveger seg som de gjør.
