@@ -20,6 +20,20 @@ def tittel(f):
     m = re.search(r'^title:\s*"?(.*?)"?\s*$', f.read_text(encoding='utf-8'), re.M)
     return m.group(1) if m else f.stem
 
+def merk_bokser(t):
+    """Legger til klassen .sporsmal eller .definisjon på callout-bokser ut fra tittelen (se AGENTS.md, «Farger»)."""
+    def rep(m):
+        hode, klasser, rest = m.group(1), m.group(2), m.group(3)
+        tm = re.search(r'title="([^"]*)"', rest)
+        if not tm or re.search(r'\.(sporsmal|definisjon)\b', klasser + rest): return m.group(0)
+        tit = tm.group(1).strip()
+        if re.match(r'(?i)definisjon', tit): ny = ' .definisjon'
+        elif re.search(r'(?i)ettertanke|tenk selv|spørsmål|\?$', tit): ny = ' .sporsmal'
+        else: return m.group(0)
+        return f'{hode}{{{klasser}{ny}{rest}}}'
+    return re.sub(r'^(:{3,}\s*)\{(\.callout-\w+)([^}\n]*)\}', rep, t, flags=re.M)
+
+
 for post in liste:
     if post.get('sti'):   # fag som ligger i plattformen selv (f.eks. mens det venter på eget repo)
         repo = post['sti']; mappe = P / post['sti']
@@ -38,6 +52,9 @@ for post in liste:
     if ut.exists(): shutil.rmtree(ut)
     shutil.copytree(mappe / 'kapitler', ut / 'kapitler')
     if (mappe / 'bilder').exists(): shutil.copytree(mappe / 'bilder', ut / 'bilder')
+    for f in (ut / 'kapitler').rglob('*.qmd'):   # boksfarger ut fra tittelen: spørsmål → .sporsmal (gul), definisjon → .definisjon (grønn)
+        t = f.read_text(encoding='utf-8'); u = merk_bokser(t)
+        if u != t: f.write_text(u, encoding='utf-8')
     for f in (ut / 'kapitler').rglob('*.qmd'):   # sikkerhetsnett: løsningen i eksempler skjules bak «Vis løsning»
         t = f.read_text(encoding='utf-8'); u = skjul_eksempellosninger(t)
         if u != t: f.write_text(u, encoding='utf-8')

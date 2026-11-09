@@ -10,7 +10,8 @@ $neon:    #6ef04a !default;
 $orange:  #f19c2c !default;
 $cyan:    #56d7b8 !default;
 $yellow:  #eee462 !default;
-$rosa:    #ff8a8f !default;   // eksempler
+$rosa:    #ff8a8f !default;   // feilmeldinger
+$eksempel: $yellow !default; // eksempler: gult, som «EKSEMPEL» i videoene
 $on-neon: #0b130a !default;   // tekst på knapper i hovedfargen
 $modus:   dark !default;      // dark eller light (lys modus settes i assets/lys.scss)
 
@@ -41,7 +42,8 @@ $footer-bg: $slate;
 $footer-fg: $dust;
 $toc-color: $dust;
 $callout-color-note: $cyan;
-$callout-color-tip: $neon;
+$callout-color-tip: $cyan;          // tips og merknader: turkis
+$callout-color-important: $neon;    // viktige resultater: grønn (definisjoner får .definisjon, se under)
 $callout-color-warning: $orange;
 $input-bg: $slate-2;
 $input-color: $chalk;
@@ -50,6 +52,8 @@ $input-color: $chalk;
 :root { color-scheme: $modus; }
 body { background: $slate; }
 h1, h2, h3, h4 { text-wrap: balance; color: $chalk; }
+// Overskrifter på innholdssidene er oransje, som titlene på tavla i videoene.
+#title-block-header h1.title, main section.level2 > h2, main section.level3 > h3, main section.level4 > h4 { color: $orange; }
 h1.title { font-weight: 900; letter-spacing: -0.02em; }
 a { text-underline-offset: 3px; }
 .navbar { border-bottom: 1px solid $line; }
@@ -142,9 +146,9 @@ mjx-container { color: $chalk; }
 .oppg-verktoy button:disabled, .hint-panel button:disabled { opacity: .6; cursor: progress; }
 .losning { margin-top: .8rem; padding-left: .9rem; border-left: 2px solid $cyan; }
 .eksempel.eks-skjult:not(.eks-apen) > .losning { display: none; }
-.eksempel > .losning { border-left-color: $rosa; }
-.eks-vis { font: 700 13px/1 $headings-font-family; border-radius: 6px; padding: .55rem .85rem; margin: .5rem 0 .2rem; border: 1px solid mix($rosa, $line, 60%); background: transparent; color: $rosa; cursor: pointer; }
-.eks-vis:hover { background: rgba($rosa, .08); }
+.eksempel > .losning { border-left-color: $eksempel; }
+.eks-vis { font: 700 13px/1 $headings-font-family; border-radius: 6px; padding: .55rem .85rem; margin: .5rem 0 .2rem; border: 1px solid mix($eksempel, $line, 60%); background: transparent; color: $eksempel; cursor: pointer; }
+.eks-vis:hover { background: rgba($eksempel, .08); }
 .hint-panel { margin-top: .8rem; display: grid; gap: .5rem; }
 .hint-panel label { font-size: .9rem; color: $dust; }
 .hint-panel textarea { width: 100%; min-height: 4.2rem; border-radius: 8px; border: 1px solid $line; background: $slate-2; color: $chalk; padding: .6rem .8rem; font: inherit; font-size: .95rem; }
@@ -164,8 +168,23 @@ mjx-container { color: $chalk; }
 .spm { background: $slate-2; border: 1px solid $line; border-radius: 12px; padding: 1rem 1.2rem .4rem; margin: 1.2rem 0; }
 .spm .spm-tittel { display: block; font-weight: 700; color: $yellow; margin-bottom: .4rem; font-family: "Architects Daughter", cursive; font-size: 1.1rem; }
 .spq { text-align: center; font-size: 1.15rem; }
-.eksempel { border-left: 3px solid #e04b52; padding: .3rem 0 .3rem 1rem; margin: 1.4rem 0 .6rem; }
-.eksempel .eks-tittel { display: block; font-weight: 700; font-style: italic; color: $rosa; margin-bottom: .3rem; }
+// Punktlister og nummererte lister: grønne prikker og tall (gule i spørsmålsbokser).
+main ul > li::marker, main ol > li::marker { color: $neon; font-weight: 700; }
+.spm li::marker, .callout.sporsmal li::marker { color: $yellow; }
+// Bokser: spørsmål og ettertanke er gule, definisjoner og viktige resultater grønne (klassene settes av verktoy/fag.py ut fra tittelen).
+@mixin boks-farge($c, $ikon) {
+  border-left-color: $c !important;
+  > .callout-header { background-color: mix($c, $slate, 22%) !important; }
+  .callout-icon::before { background-image: none !important; background-color: $c; -webkit-mask: url($ikon) center / contain no-repeat; mask: url($ikon) center / contain no-repeat; }
+}
+$ikon-sporsmal: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/></svg>';
+$ikon-definisjon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/></svg>';
+.callout.sporsmal { @include boks-farge($yellow, $ikon-sporsmal); }
+.callout.definisjon { @include boks-farge($neon, $ikon-definisjon); }
+.spm { border-left: 3px solid $yellow; }
+.eksempel { border-left: 3px solid $eksempel; padding: .3rem 0 .3rem 1rem; margin: 1.4rem 0 .6rem; }
+.eksempel > p:first-child > strong:first-child { color: $eksempel; }
+.eksempel .eks-tittel { display: block; font-weight: 700; font-style: italic; color: $eksempel; margin-bottom: .3rem; }
 .callout.svar { margin-top: .2rem; }
 .graa { background: rgba($chalk, .07); border: 1px solid $line; border-radius: 10px; padding: .4rem 1.2rem; margin: 1rem auto; width: fit-content; max-width: 100%; overflow-x: auto; }
 .figurtekst { display: block; text-align: center; font-size: .92rem; color: $dust; margin: -.3rem auto 1.2rem; max-width: 60ch; }
