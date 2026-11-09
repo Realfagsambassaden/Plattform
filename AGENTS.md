@@ -82,6 +82,23 @@ Boksene (`callout-note` for definisjoner, `.graa`, `.eksempel` med `.losning`, `
   - Skannede figurer (`{.kompendium-bilde}`) skal **aldri ha hvit bakgrunn**. Strektegninger gjøres gjennomsiktige med `python3 verktoy/hvit_til_alfa.py bilde.png` og snus i mørk modus. Fargerike figurer (f.eks. SI-enhetene) gjøres gjennomsiktige med `verktoy/fjern_bakgrunn.py` og merkes `{.kompendium-bilde .farge}`, slik at de ikke snus. Fotografier merkes `{.kompendium-bilde .foto}`.
   - Ikke henvis til farger i teksten («den røde pila»), fordi fargene endres litt mellom modusene. Bruk navn eller symboler.
 
+### Farger og bokser (samme fargespråk som tavla i videoene)
+
+Fargene settes av stilarket (`assets/tavle.scss`, lys modus i `assets/lys.scss`). Skriv aldri farger inn i sidene selv; velg riktig boks, så kommer fargen av seg selv.
+
+| Hva | Farge | Slik skriver du det |
+|---|---|---|
+| Overskrifter (sidetittel, `##`, `###`) | oransje | vanlige overskrifter |
+| Eksempler | gul | `::: {.eksempel}` med `**Eksempel: Navn.**` først |
+| Spørsmål, «Til ettertanke», «Tenk selv» | gul | `::: {.callout-tip title="Til ettertanke"}` – tittel med *ettertanke*, *tenk selv*, *spørsmål* eller som slutter med «?» blir gul automatisk (klassen `.sporsmal`). Kapitlenes `::: {.spm}` er også gul. |
+| Definisjoner | grønn | `::: {.callout-note title="Definisjon: …"}` – tittel som starter med «Definisjon» blir grønn automatisk (klassen `.definisjon`) |
+| Viktige resultater og regler | grønn | `::: {.callout-important title="…"}` |
+| Tips og merknader | turkis | `::: {.callout-tip}` / `::: {.callout-note}` |
+| Advarsler, «Under arbeid» | oransje | `::: {.callout-warning}` |
+| Prikker og tall i lister | grønn (gul i spørsmålsbokser) | vanlige lister |
+
+Klassene `.sporsmal` og `.definisjon` settes av `verktoy/fag.py` ut fra tittelen. De kan også skrives direkte, f.eks. `::: {.callout-note .sporsmal title="Hva tror du?"}`.
+
 ### Merking, rettigheter og personvern
 
 - Stoff skrevet av en KI merkes `<!-- tillegg: Claude -->` foran. Donert stoff merkes `<!-- fra notatene -->`; behold den merkingen. Retter du feil i donert stoff, skriv en kort kommentar om hva som er endret.
