@@ -11,11 +11,56 @@ omrader:
     tittel: "Grunnlag"
     beskrivelse: "Tall, algebra og funksjoner: verktøyene resten av matematikken bygger på."
     temaer:
-      - { id: tall-og-regneregler, tittel: "Tall og regneregler" }
-      - { id: algebra-og-likninger, tittel: "Algebra og likninger" }
-      - { id: funksjoner, tittel: "Funksjoner og grafer" }
-      - { id: eksponential-og-logaritme, tittel: "Eksponential- og logaritmefunksjoner" }
-      - { id: trigonometri, tittel: "Trigonometri" }
+      - id: tall-og-regneregler
+        tittel: "Tall og regneregler"
+        undertemaer:
+          - { id: tallregning, tittel: "Tall og regnerekkefølge" }
+          - { id: brokregning, tittel: "Brøkregning" }
+          - { id: bokstavregning, tittel: "Bokstavregning og parenteser" }
+          - { id: potenser, tittel: "Potenser og potensregler" }
+          - { id: standardform, tittel: "Tall på standardform" }
+          - { id: rotter, tittel: "Røtter og brøkeksponenter" }
+      - id: algebra-og-likninger
+        tittel: "Algebra og likninger"
+        undertemaer:
+          - { id: likninger, tittel: "Likninger" }
+          - { id: formler, tittel: "Formler" }
+          - { id: likningssett, tittel: "Likningssett" }
+          - { id: faktorisering, tittel: "Kvadratsetningene og faktorisering" }
+          - { id: rasjonale-uttrykk, tittel: "Rasjonale uttrykk og likninger" }
+          - { id: andregradslikninger, tittel: "Andregradslikninger" }
+          - { id: polynomer, tittel: "Polynomer og polynomdivisjon" }
+          - { id: ulikheter, tittel: "Ulikheter" }
+          - { id: intervall-og-mengder, tittel: "Intervaller og mengder" }
+      - id: funksjoner
+        tittel: "Funksjoner og grafer"
+        undertemaer:
+          - { id: rette-linjer, tittel: "Rette linjer" }
+          - { id: grafisk-losning, tittel: "Graftegning og grafisk løsning" }
+          - { id: funksjonsbegrepet, tittel: "Funksjonsbegrepet" }
+          - { id: andregradsfunksjoner, tittel: "Andregradsfunksjoner" }
+          - { id: potens-og-rotfunksjoner, tittel: "Potens- og rotfunksjoner" }
+      - id: eksponential-og-logaritme
+        tittel: "Eksponential- og logaritmefunksjoner"
+        undertemaer:
+          - { id: logaritmer, tittel: "Logaritmer" }
+          - { id: eksponentiallikninger, tittel: "Eksponential- og logaritmelikninger" }
+          - { id: ln-og-e, tittel: "Den naturlige logaritmen og e" }
+          - { id: drofting, tittel: "Drøfting av eksponential- og logaritmefunksjoner" }
+      - id: geometri
+        tittel: "Geometri"
+        undertemaer:
+          - { id: pytagoras, tittel: "Pytagorassetningen" }
+          - { id: romfigurer, tittel: "Areal og volum" }
+      - id: trigonometri
+        tittel: "Trigonometri"
+        undertemaer:
+          - { id: rettvinklet, tittel: "Sinus, cosinus og tangens i rettvinklede trekanter" }
+          - { id: trekantsetninger, tittel: "Arealsetningen, sinussetningen og cosinussetningen" }
+          - { id: radianer-og-enhetssirkelen, tittel: "Radianer og enhetssirkelen" }
+          - { id: trigonometriske-likninger, tittel: "Trigonometriske likninger og ulikheter" }
+          - { id: trigonometriske-formler, tittel: "Trigonometriske formler" }
+          - { id: trigonometriske-funksjoner, tittel: "Trigonometriske funksjoner" }
       - { id: komplekse-tall, tittel: "Komplekse tall" }
 
   - id: kalkulus
@@ -23,13 +68,51 @@ omrader:
     beskrivelse: "Grenseverdier, derivasjon og integrasjon: matematikken for endring."
     bilde: flate-normal
     temaer:
-      - { id: grenseverdier, tittel: "Grenseverdier og kontinuitet" }
-      - { id: derivasjon, tittel: "Derivasjon" }
-      - { id: anvendelser-derivasjon, tittel: "Anvendelser av derivasjon" }
-      - { id: integrasjon, tittel: "Integrasjon" }
-      - { id: integrasjonsteknikker, tittel: "Integrasjonsteknikker" }
-      - { id: anvendelser-integrasjon, tittel: "Anvendelser av integrasjon" }
-      - { id: folger-og-rekker, tittel: "Følger og rekker" }
+      - id: grenseverdier
+        tittel: "Grenseverdier og kontinuitet"
+        undertemaer:
+          - { id: grenseverdier, tittel: "Grenseverdier" }
+          - { id: kontinuitet, tittel: "Kontinuitet" }
+          - { id: asymptoter, tittel: "Asymptoter" }
+      - id: derivasjon
+        tittel: "Derivasjon"
+        undertemaer:
+          - { id: vekstfart, tittel: "Vekstfart og den deriverte" }
+          - { id: tangenter, tittel: "Tangenter og normaler" }
+          - { id: derivasjonsregler, tittel: "Derivasjonsregler" }
+          - { id: kjerneregelen, tittel: "Sammensatte funksjoner og kjerneregelen" }
+          - { id: produkt-og-kvotient, tittel: "Produkt- og kvotientregelen" }
+          - { id: eksponential-og-trig, tittel: "Derivasjon av eksponential-, logaritme- og trigonometriske funksjoner" }
+      - id: anvendelser-derivasjon
+        tittel: "Anvendelser av derivasjon"
+        undertemaer:
+          - { id: fart-og-akselerasjon, tittel: "Fart og akselerasjon" }
+          - { id: drofting, tittel: "Funksjonsdrøfting" }
+          - { id: optimering, tittel: "Optimering" }
+      - id: integrasjon
+        tittel: "Integrasjon"
+        undertemaer:
+          - { id: ubestemt-integral, tittel: "Ubestemt integral" }
+          - { id: bestemt-integral, tittel: "Bestemt integral og fundamentalsetningen" }
+          - { id: areal, tittel: "Areal ved integrasjon" }
+      - id: integrasjonsteknikker
+        tittel: "Integrasjonsteknikker"
+        undertemaer:
+          - { id: numerisk, tittel: "Numerisk integrasjon" }
+          - { id: variabelskifte, tittel: "Variabelskifte" }
+          - { id: delvis, tittel: "Delvis integrasjon" }
+          - { id: delbrok, tittel: "Delbrøkoppspalting" }
+      - id: anvendelser-integrasjon
+        tittel: "Anvendelser av integrasjon"
+        undertemaer:
+          - { id: volum, tittel: "Integrasjon og volum" }
+      - id: folger-og-rekker
+        tittel: "Følger og rekker"
+        undertemaer:
+          - { id: tallfolger, tittel: "Tallfølger og rekker" }
+          - { id: aritmetiske, tittel: "Aritmetiske følger og rekker" }
+          - { id: geometriske, tittel: "Geometriske følger og rekker" }
+          - { id: uendelige, tittel: "Uendelige rekker" }
       - { id: taylor, tittel: "Taylorpolynomer og -rekker" }
       - { id: differensiallikninger, tittel: "Differensiallikninger" }
 
@@ -37,7 +120,16 @@ omrader:
     tittel: "Lineær algebra"
     beskrivelse: "Vektorer, matriser og likningssystemer."
     temaer:
-      - { id: vektorer, tittel: "Vektorer" }
+      - id: vektorer
+        tittel: "Vektorer"
+        undertemaer:
+          - { id: vektorer-i-planet, tittel: "Vektorer i planet" }
+          - { id: dekomponering, tittel: "Parallelle vektorer og dekomponering" }
+          - { id: skalarprodukt, tittel: "Skalarproduktet" }
+          - { id: parameterframstilling, tittel: "Parameterframstilling og bevegelse" }
+          - { id: vektorer-i-rommet, tittel: "Vektorer i rommet" }
+          - { id: vektorprodukt, tittel: "Vektorproduktet" }
+          - { id: linjer-og-plan, tittel: "Linjer og plan i rommet" }
       - { id: matriser, tittel: "Matriser" }
       - { id: likningssystemer, tittel: "Lineære likningssystemer" }
       - { id: egenverdier, tittel: "Egenverdier og egenvektorer" }

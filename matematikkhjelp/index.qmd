@@ -31,6 +31,12 @@ Velg løype
 ```{=html}
 <div class="tracks">
   <!-- >>> lopekort (lages av verktoy/forside.py fra fag.yml – ikke rediger mellom disse linjene) -->
+  <a class="track live" href="matte-forkurs/index.html">
+    <img class="track-bilde" src="assets/img/tegninger/matte-scene.webp" alt="" loading="lazy">
+    <span class="status">Løype · under arbeid</span>
+    <h3>Forkurs i matematikk</h3>
+    <p>Matematikk fra grunnen av for deg som skal begynne på ingeniør- eller realfag: algebra, funksjoner, derivasjon, trigonometri, vektorer og integrasjon, med eksempler og oppgaver med hint.</p>
+  </a>
   <!-- <<< lopekort -->
   <div class="track">
     <img class="track-bilde" src="assets/img/tegninger/skratt-kast.webp" alt="" loading="lazy">
