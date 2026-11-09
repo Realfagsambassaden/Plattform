@@ -50,11 +50,25 @@ for post in liste:
             for f in [kap / 'index.qmd', *sider]:
                 if f.exists():
                     t = f.read_text(encoding='utf-8')
+                    if 'title="Under arbeid"' in t: continue   # siden/kapitlet har allerede sin egen advarsel
                     t = re.sub(r'^(---\n.*?\n---\n)', lambda m: m.group(1) + '\n' + banner, t, count=1, flags=re.S)
                     f.write_text(t, encoding='utf-8')
         dl = re.search(r'^del:\s*"?(.*?)"?\s*$', (kap / 'index.qmd').read_text(encoding='utf-8'), re.M) if (kap / 'index.qmd').exists() else None
         kapitler.append({'dir': kap.name, 'tittel': tittel(kap / 'index.qmd') if (kap / 'index.qmd').exists() else kap.name, 'del': dl.group(1) if dl else '',
                          'har_index': (kap / 'index.qmd').exists(), 'sider': [{'fil': s.name, 'tittel': tittel(s)} for s in sider]})
+    # Kapittelforsidene får «Begynn kapitlet →» (første side) og «← Forrige kapittel» nederst, i samme stil som forrige/neste.
+    for j, k in enumerate(kapitler):
+        if not k['har_index'] or not k['sider']: continue
+        fi = ut / 'kapitler' / k['dir'] / 'index.qmd'
+        forr = kapitler[j - 1] if j else None
+        if forr: fl, ft, fm = f'../{forr["dir"]}/index.html' if forr['har_index'] else f'../{forr["dir"]}/{forr["sider"][-1]["fil"].replace(".qmd", ".html")}', forr['tittel'], '← Forrige kapittel'
+        else: fl, ft, fm = '../../index.html', meta['tittel'], '← Tilbake til oversikten'
+        s0 = k['sider'][0]
+        nav = ('\n\n```{=html}\n<nav class="loype-bunn kapittel-start" aria-label="Begynn kapitlet">'
+               f'<a class="lb-forrige" href="{fl}"><span class="lb-merke">{fm}</span>{ft}</a>'
+               f'<a class="lb-neste lb-videre" href="{s0["fil"].replace(".qmd", ".html")}"><span class="lb-merke">Begynn kapitlet →</span>{s0["tittel"]}</a>'
+               '</nav>\n```\n')
+        fi.write_text(fi.read_text(encoding='utf-8').rstrip() + nav, encoding='utf-8')
     # oversiktsside
     q = ['---', f'title: "{meta["tittel"]}"', f'subtitle: "{meta.get("beskrivelse", "")}"', 'toc: false', 'page-layout: full'] + \
         ([f'aliases: {json.dumps(meta["aliases"])}'] if meta.get('aliases') else []) + ['---', '', banner]
