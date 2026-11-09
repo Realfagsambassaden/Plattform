@@ -1,13 +1,16 @@
-# Emnekartet for matematikkhjelp.no – grunnmuren for alt stoff.
-# Område → emner. Rekkefølgen her er rekkefølgen på nettsiden.
-# Sider kobles til emner med «emne: <id>» øverst i en .qmd-fil (fag fra malen), eller i loyper/*.yml.
+# Temakartet for matematikkhjelp.no – grunnmuren for alt stoff.
+# Område → temaer → undertemaer. Rekkefølgen her er rekkefølgen på nettsiden.
+# Sider kobles til et tema med «tema: <id>» og «undertema: <id>» øverst i en .qmd-fil (og eventuelt «niva:»).
+# Temasiden viser en tabell undertema × nivå (forkurs, ingenior, fordypning). Undertemaet «oppgaver»
+# (blandede oppgaver) finnes automatisk i alle temaer.
 # «bilde» er en tegning i assets/img/tegninger/ (valgfritt).
+# Vi sier «tema», ikke «emne», fordi «emne» også betyr et kurs (emnekode, emnebeskrivelse).
 
 omrader:
   - id: grunnlag
     tittel: "Grunnlag"
     beskrivelse: "Tall, algebra og funksjoner: verktøyene resten av matematikken bygger på."
-    emner:
+    temaer:
       - { id: tall-og-regneregler, tittel: "Tall og regneregler" }
       - { id: algebra-og-likninger, tittel: "Algebra og likninger" }
       - { id: funksjoner, tittel: "Funksjoner og grafer" }
@@ -19,7 +22,7 @@ omrader:
     tittel: "Kalkulus"
     beskrivelse: "Grenseverdier, derivasjon og integrasjon: matematikken for endring."
     bilde: flate-normal
-    emner:
+    temaer:
       - { id: grenseverdier, tittel: "Grenseverdier og kontinuitet" }
       - { id: derivasjon, tittel: "Derivasjon" }
       - { id: anvendelser-derivasjon, tittel: "Anvendelser av derivasjon" }
@@ -33,7 +36,7 @@ omrader:
   - id: linalg
     tittel: "Lineær algebra"
     beskrivelse: "Vektorer, matriser og likningssystemer."
-    emner:
+    temaer:
       - { id: vektorer, tittel: "Vektorer" }
       - { id: matriser, tittel: "Matriser" }
       - { id: likningssystemer, tittel: "Lineære likningssystemer" }
@@ -42,7 +45,7 @@ omrader:
   - id: statistikk
     tittel: "Sannsynlighet og statistikk"
     beskrivelse: "Sannsynlighet, fordelinger og hvordan vi trekker slutninger fra data."
-    emner:
+    temaer:
       - { id: sannsynlighet, tittel: "Sannsynlighet" }
       - { id: fordelinger, tittel: "Sannsynlighetsfordelinger" }
       - { id: statistisk-analyse, tittel: "Statistisk analyse" }

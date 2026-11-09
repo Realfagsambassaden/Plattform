@@ -1,53 +1,53 @@
-# Emnekartet for fysikkhjelp.no – grunnmuren for alt stoff.
-# Område → emner. Rekkefølgen her er rekkefølgen på nettsiden.
-# Sider kobles til emner i loyper/*.yml (forkurset) eller med «emne:» øverst i en .qmd-fil (fag fra malen).
+# Temakartet for fysikkhjelp.no – grunnmuren for alt stoff.
+# Område → temaer → undertemaer. Rekkefølgen her er rekkefølgen på nettsiden.
+# Sider kobles til et tema med «tema: <id>» og «undertema: <id>» øverst i en .qmd-fil (og eventuelt «niva:»).
+# Temasiden viser en tabell undertema × nivå (forkurs, ingenior, fordypning). Undertemaet «oppgaver»
+# (blandede oppgaver) finnes automatisk i alle temaer.
 # «bilde» er en tegning i assets/img/tegninger/ (valgfritt).
-# «delemner» deler et emne i mindre biter. Hver side merkes med «delemne: <id>» (og eventuelt «niva:»),
-# og emnesiden viser en tabell delemne × nivå (forkurs, ingenior, fordypning). Delemnet «oppgaver»
-# (blandede oppgaver) finnes automatisk i alle emner.
+# Vi sier «tema», ikke «emne», fordi «emne» også betyr et kurs (emnekode, emnebeskrivelse).
 
 omrader:
   - id: grunnlag
     tittel: "Grunnlag og verktøy"
     beskrivelse: "Hva fysikk er, størrelser og enheter, og matematikken vi trenger."
     bilde: sau-maling
-    emner:
+    temaer:
       - id: hva-er-fysikk
         tittel: "Hva er fysikk?"
-        delemner:
+        undertemaer:
           - { id: hva-er-fysikk, tittel: "Hva er fysikk" }
           - { id: overslag, tittel: "Overslag og størrelsesordener" }
       - id: storrelser-og-enheter
         tittel: "Størrelser og enheter"
-        delemner:
+        undertemaer:
           - { id: si, tittel: "Fysiske størrelser og SI" }
           - { id: enhetsregning, tittel: "Å regne med enheter" }
       - id: maling-og-usikkerhet
         tittel: "Tall, måling og usikkerhet"
-        delemner:
+        undertemaer:
           - { id: gjeldende-siffer, tittel: "Gjeldende siffer" }
           - { id: standardform, tittel: "Standardform" }
           - { id: usikkerhet, tittel: "Måleusikkerhet og beregning" }
           - { id: forsok-og-rapport, tittel: "Forsøk og rapport" }
       - id: matematiske-verktoy
         tittel: "Matematiske verktøy"
-        delemner:
+        undertemaer:
           - { id: algebra, tittel: "Likninger og algebra" }
           - { id: funksjoner, tittel: "Funksjoner og grafer" }
           - { id: trigonometri, tittel: "Trigonometri" }
       - id: vektorer
         tittel: "Vektorer"
-        delemner:
+        undertemaer:
           - { id: dekomponering, tittel: "Vektorer og dekomponering" }
           - { id: vektorregning, tittel: "Regning med vektorer" }
       - id: modellering
         tittel: "Modellering og problemløsning"
-        delemner:
+        undertemaer:
           - { id: modellering, tittel: "Matematisk modellering" }
           - { id: regresjon, tittel: "Grafer og regresjon" }
       - id: programmering
         tittel: "Fysikk og programmering"
-        delemner:
+        undertemaer:
           - { id: python, tittel: "Python i fysikk" }
           - { id: plotting, tittel: "Plotting av data og funksjoner" }
           - { id: numeriske-metoder, tittel: "Numerisk løsning av bevegelse" }
@@ -56,58 +56,58 @@ omrader:
     tittel: "Mekanikk"
     beskrivelse: "Bevegelse, krefter, energi og likevekt."
     bilde: kjelke
-    emner:
+    temaer:
       - id: kinematikk
         tittel: "Kinematikk"
-        delemner:
+        undertemaer:
           - { id: posisjon-fart-akselerasjon, tittel: "Posisjon, fart og akselerasjon" }
           - { id: konstant-akselerasjon, tittel: "Konstant akselerasjon" }
           - { id: to-dimensjoner, tittel: "Bevegelse i to dimensjoner" }
       - id: sirkelbevegelse
         tittel: "Sirkelbevegelse"
-        delemner:
+        undertemaer:
           - { id: sentripetal, tittel: "Sentripetalakselerasjon" }
           - { id: sirkel-krefter, tittel: "Krefter i sirkelbevegelse" }
       - id: newtons-lover
         tittel: "Newtons lover og krefter"
-        delemner:
+        undertemaer:
           - { id: newtons-lover, tittel: "Newtons lover" }
           - { id: krefter-i-planet, tittel: "Krefter i planet" }
           - { id: friksjon-fjaer-snorer, tittel: "Friksjon, fjær og snorer" }
           - { id: luftmotstand, tittel: "Luftmotstand" }
       - id: bevegelsesmengde
         tittel: "Bevegelsesmengde og støt"
-        delemner:
+        undertemaer:
           - { id: kraftstot, tittel: "Bevegelsesmengde og kraftstøt" }
           - { id: kollisjoner, tittel: "Bevaring og kollisjoner" }
       - id: arbeid-og-energi
         tittel: "Arbeid og energi"
-        delemner:
+        undertemaer:
           - { id: arbeid, tittel: "Arbeid" }
           - { id: energiformer, tittel: "Kinetisk og potensiell energi" }
           - { id: energibevaring, tittel: "Energibevaring og energitap" }
           - { id: effekt, tittel: "Effekt" }
       - id: statikk
         tittel: "Likevekt og kraftmoment"
-        delemner:
+        undertemaer:
           - { id: kraftlikevekt, tittel: "Kraftlikevekt" }
           - { id: kraftmoment, tittel: "Kraftmoment og rotasjonslikevekt" }
           - { id: massesenter, tittel: "Massesenter" }
       - id: rotasjon
         tittel: "Rotasjon og spinn"
-        delemner:
+        undertemaer:
           - { id: rotasjonskinematikk, tittel: "Rotasjonskinematikk" }
           - { id: treghetsmoment, tittel: "Treghetsmoment og rotasjonsenergi" }
           - { id: rulling, tittel: "Kraftmoment og rulling" }
           - { id: dreieimpuls, tittel: "Dreieimpuls" }
       - id: gravitasjon
         tittel: "Gravitasjon"
-        delemner:
+        undertemaer:
           - { id: gravitasjonsloven, tittel: "Newtons gravitasjonslov" }
           - { id: satellitter, tittel: "Satellitter og planetbaner" }
       - id: svingninger
         tittel: "Svingninger"
-        delemner:
+        undertemaer:
           - { id: harmoniske, tittel: "Harmoniske svingninger" }
           - { id: pendel, tittel: "Fjær og pendel" }
 
@@ -115,10 +115,10 @@ omrader:
     tittel: "Fluidmekanikk"
     beskrivelse: "Trykk, oppdrift og strømning i væsker og gasser."
     bilde: hydraulikk
-    emner:
+    temaer:
       - id: hydrostatikk
         tittel: "Trykk og oppdrift"
-        delemner:
+        undertemaer:
           - { id: trykk, tittel: "Trykk og Pascals lov" }
           - { id: oppdrift, tittel: "Oppdrift og Arkimedes' lov" }
       - { id: stromning, tittel: "Strømning og Bernoulli" }
@@ -127,44 +127,44 @@ omrader:
     tittel: "Termofysikk"
     beskrivelse: "Temperatur, varme, gasser og termodynamikkens lover."
     bilde: rakett
-    emner:
+    temaer:
       - id: temperatur-og-varme
         tittel: "Temperatur og varme"
-        delemner:
+        undertemaer:
           - { id: indre-energi, tittel: "Indre energi, varme og temperatur" }
           - { id: kalorimetri, tittel: "Faseoverganger og kalorimetri" }
           - { id: varmetransport, tittel: "Varmetransport" }
       - id: termodynamikk
         tittel: "Termodynamikkens lover"
-        delemner:
+        undertemaer:
           - { id: forste-lov, tittel: "Termodynamikkens 1. lov" }
           - { id: prosesser, tittel: "Prosesser og pV-diagram" }
           - { id: andre-lov, tittel: "Termodynamikkens 2. lov" }
       - id: gasser
         tittel: "Gasser og kinetisk teori"
-        delemner:
+        undertemaer:
           - { id: idealgass, tittel: "Idealgass" }
 
   - id: elektromagnetisme
     tittel: "Elektromagnetisme"
     beskrivelse: "Ladning, felt, strøm, kretser og magnetisme."
     bilde: e-felt
-    emner:
+    temaer:
       - id: elektrisk-felt
         tittel: "Ladning og elektrisk felt"
-        delemner:
+        undertemaer:
           - { id: ladning, tittel: "Elektrisk ladning" }
           - { id: coulomb, tittel: "Coulombs lov" }
           - { id: felt, tittel: "Elektrisk felt" }
           - { id: homogent-felt, tittel: "Ladning i homogent felt" }
       - id: elektrisk-potensial
         tittel: "Elektrisk potensial"
-        delemner:
+        undertemaer:
           - { id: potensiell-energi, tittel: "Elektrisk potensiell energi" }
           - { id: potensial, tittel: "Potensial og spenning" }
       - id: kretser
         tittel: "Strøm og kretser"
-        delemner:
+        undertemaer:
           - { id: strom-spenning, tittel: "Strøm og spenning" }
           - { id: motstand, tittel: "Motstand og Ohms lov" }
           - { id: kirchhoff, tittel: "Kirchhoffs lover" }
@@ -175,14 +175,14 @@ omrader:
   - id: bolger
     tittel: "Bølger og optikk"
     beskrivelse: "Bølger, lyd og lys."
-    emner:
+    temaer:
       - id: bolger-og-lyd
         tittel: "Bølger og lyd"
-        delemner:
+        undertemaer:
           - { id: bolger, tittel: "Bølger og bølgeegenskaper" }
       - id: straling
         tittel: "Stråling og drivhuseffekt"
-        delemner:
+        undertemaer:
           - { id: em-straling, tittel: "Elektromagnetisk stråling" }
           - { id: varmestraling, tittel: "Varmestråling" }
           - { id: drivhuseffekt, tittel: "Drivhuseffekten og klima" }
@@ -192,12 +192,12 @@ omrader:
     tittel: "Moderne fysikk"
     beskrivelse: "Relativitet, kvantefysikk og universet."
     bilde: euler-lagrange
-    emner:
+    temaer:
       - { id: relativitet, tittel: "Relativitetsteori" }
       - { id: kvantefysikk, tittel: "Kvantefysikk" }
       - id: atom-og-kjerne
         tittel: "Atom- og kjernefysikk"
-        delemner:
+        undertemaer:
           - { id: atomet, tittel: "Atomets oppbygning" }
           - { id: spektre, tittel: "Spektre og energinivåer" }
           - { id: radioaktivitet, tittel: "Radioaktivitet og stråling" }

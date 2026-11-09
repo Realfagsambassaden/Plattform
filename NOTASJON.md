@@ -2,7 +2,7 @@
 
 **Versjon: 2** (4. november 2026)
 
-Disse reglene gjelder alt fagstoff på fysikkhjelp.no og matematikkhjelp.no: sider i fagrepoene, emnetekster, oppgaver og løsninger, figurer, videomanus og alt som vises i videoene (animasjoner og formelbilder). De gjelder også donert stoff, som tilpasses når det legges inn. Er du i tvil, følg reglene her foran vanen i et enkelt dokument.
+Disse reglene gjelder alt fagstoff på fysikkhjelp.no og matematikkhjelp.no: sider i fagrepoene, tematekster, oppgaver og løsninger, figurer, videomanus og alt som vises i videoene (animasjoner og formelbilder). De gjelder også donert stoff, som tilpasses når det legges inn. Er du i tvil, følg reglene her foran vanen i et enkelt dokument.
 
 Når reglene endres, økes versjonsnummeret. Da regnes alt innhold som usjekket og gås gjennom på nytt (se nederst).
 

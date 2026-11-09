@@ -5,8 +5,8 @@ Denne rutinen følges når Claude behandler en donasjon. Fagansvarlig godkjenner
 
 ## 1. Les og kartlegg
 - Les alle filene (PDF, LaTeX, bilder av håndskrift, lysbilder).
-- Lag en innholdsliste: hvilke temaer dekkes, og hvilke **emner** i `emner.yml` hører de til?
-- Sammenlign med det som allerede finnes under de samme emnene (se `innhold.json`). Merk: nytt / overlapper / bedre forklart enn det vi har.
+- Lag en innholdsliste: hvilke temaer dekkes, og hvilke **temaer** i `tema.yml` hører de til?
+- Sammenlign med det som allerede finnes under de samme temaene (se `innhold.json`). Merk: nytt / overlapper / bedre forklart enn det vi har.
 
 ## 2. Fyll ut det som mangler
 Donerte notater er nesten alltid ufullstendige. De er skrevet for en forelesning, ikke for selvstudium. Claude fyller derfor ut:
@@ -14,7 +14,7 @@ Donerte notater er nesten alltid ufullstendige. De er skrevet for en forelesning
 - **Forklaringer** rundt formler: hva betyr symbolene, hvorfor gjør vi dette, når gjelder det.
 - **Figurer** som er nevnt eller tydelig trengs, tegnet i krittstil/Dashman (ikke kopiert fra lærebøker).
 - **Eksempler og oppgaver med fullstendig løsning**, så KI-hintene fungerer.
-- **Manglende emnekobling og metadata** (emne, titler, rekkefølge), og en løype hvis notatene følger et bestemt kurs.
+- **Manglende temakobling og metadata** (tema, undertema, titler, rekkefølge), og en løype hvis notatene følger et bestemt kurs.
 - Retting av åpenbare skrivefeil og fortegnsfeil (markeres for fagansvarlig).
 
 ## 3. Skill tydelig mellom giver og Claude
@@ -23,7 +23,7 @@ Donerte notater er nesten alltid ufullstendige. De er skrevet for en forelesning
 - Claude legger ikke til påstander utover etablert lærebokfysikk, og skriver i PR-en hvor den har vært usikker.
 
 ## 4. Lag forslaget
-- Nye sider og endringer legges som pull request i riktig fag-/emnerepo, med forhåndsvisning.
+- Nye sider og endringer legges som pull request i riktig fagrepo, med forhåndsvisning.
 - PR-beskrivelsen har: oppsummering, hva som er nytt vs. overlapp, liste over Claude-tillegg, åpne spørsmål til giveren.
 - Kreditering lagres i metadata (`bidrag:` i toppen av sidene), ikke som navn i selve teksten.
 

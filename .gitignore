@@ -7,7 +7,7 @@
 /_to_delete/
 /innhold.json
 /_fag.json
-/emner/
+/tema/
 /loyper/index.qmd
 /loyper.json
 /ingeniorfysikk/
@@ -19,7 +19,7 @@ __pycache__/
 /matematikkhjelp/.quarto/
 /matematikkhjelp/assets/
 /matematikkhjelp/kilder/
-/matematikkhjelp/emner/
+/matematikkhjelp/tema/
 /matematikkhjelp/loyper/index.qmd
 /matematikkhjelp/loyper.json
 /matematikkhjelp/innhold.json

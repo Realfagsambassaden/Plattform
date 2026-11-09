@@ -1,5 +1,5 @@
 # matematikkhjelp.no – bygges med samme verktøy og utseende som fysikkhjelp.no (se bygg.sh i denne mappen).
-# Menyen og sidemenyen lages automatisk av verktoy/emner.py og verktoy/fag.py ved hver bygging.
+# Menyen og sidemenyen lages automatisk av verktoy/tema.py og verktoy/fag.py ved hver bygging.
 project:
   type: website
   output-dir: _site

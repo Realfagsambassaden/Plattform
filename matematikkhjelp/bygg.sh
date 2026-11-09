@@ -13,7 +13,7 @@ rm -rf "$HER/assets"; cp -R "$ROT/assets" "$HER/assets"
 
 python3 "$ROT/verktoy/fag.py" "$HER" matematikkhjelp
 python3 "$ROT/verktoy/forside.py" "$HER"
-python3 "$ROT/verktoy/emner.py" "$HER"
+python3 "$ROT/verktoy/tema.py" "$HER"
 python3 "$ROT/verktoy/innhold.py" "$HER"
 
 cd "$HER"

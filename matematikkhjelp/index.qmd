@@ -12,7 +12,7 @@ page-layout: full
     <h1>Matematikk <span class="g">forklart</span></h1>
     <p class="lead">Korte videoer, tydelige formler, kode du kan kjøre selv og oppgaver med hint når du står fast. Laget av de som kan det best: ekte realfagsfolk med formidlerglede!</p>
     <div class="cta">
-      <a class="btn-chalk" href="emner/index.html">Se emnene</a>
+      <a class="btn-chalk" href="tema/index.html">Se temaene</a>
     </div>
   </div>
   <div class="hero-scene">
