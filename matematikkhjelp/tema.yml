@@ -134,6 +134,78 @@ omrader:
       - { id: likningssystemer, tittel: "Lineære likningssystemer" }
       - { id: egenverdier, tittel: "Egenverdier og egenvektorer" }
 
+  - id: flervariabel
+    tittel: "Flervariabel analyse"
+    beskrivelse: "Integraler i flere dimensjoner, vektorfelt og integralsetningene til Green, Gauss og Stokes."
+    temaer:
+      - id: dobbeltintegraler
+        tittel: "Dobbeltintegraler"
+        undertemaer:
+          - { id: rektangler, tittel: "Dobbeltintegraler over rektangler" }
+          - { id: generelle-omrader, tittel: "Dobbeltintegraler over generelle områder" }
+          - { id: polarkoordinater, tittel: "Dobbeltintegraler i polarkoordinater" }
+          - { id: variabelbytte, tittel: "Variabelbytte og jacobideterminanten" }
+          - { id: anvendelser, tittel: "Masse, tyngdepunkt og middelverdi" }
+          - { id: numerisk, tittel: "Numerisk beregning av dobbeltintegraler" }
+      - id: trippelintegraler
+        tittel: "Trippelintegraler"
+        undertemaer:
+          - { id: kartesiske, tittel: "Trippelintegraler i kartesiske koordinater" }
+          - { id: sylinderkoordinater, tittel: "Sylinderkoordinater" }
+          - { id: kulekoordinater, tittel: "Kulekoordinater" }
+          - { id: anvendelser, tittel: "Tyngdepunkt og treghetsmoment" }
+          - { id: numerisk, tittel: "Numerisk beregning av trippelintegraler" }
+      - id: kurve-og-flateintegraler
+        tittel: "Kurve- og flateintegraler"
+        undertemaer:
+          - { id: linjeintegraler, tittel: "Linjeintegraler av funksjoner" }
+          - { id: parametriske-flater, tittel: "Parametriske flater og tangentplan" }
+          - { id: flateintegraler, tittel: "Flateintegraler" }
+      - id: vektorfelt
+        tittel: "Vektorfelt"
+        undertemaer:
+          - { id: vektorfelt, tittel: "Vektorfelt og gradientfelt" }
+          - { id: divergens-og-curl, tittel: "Divergens og curl" }
+          - { id: linjeintegraler, tittel: "Linjeintegraler av vektorfelt" }
+          - { id: konservative, tittel: "Konservative felt og potensialer" }
+      - id: integralsetninger
+        tittel: "Integralsetningene"
+        undertemaer:
+          - { id: fluks, tittel: "Fluks" }
+          - { id: green, tittel: "Greens teorem" }
+          - { id: gauss, tittel: "Divergenssetningen" }
+          - { id: stokes, tittel: "Stokes' teorem" }
+
+  - id: pde-og-numerikk
+    tittel: "PDE-er og numeriske metoder"
+    beskrivelse: "Partielle differensiallikninger og hvordan vi løser dem med datamaskin: endelige differanser og endelig volum-metoden."
+    temaer:
+      - id: partielle-differensiallikninger
+        tittel: "Partielle differensiallikninger"
+        undertemaer:
+          - { id: typer, tittel: "Varme-, bølge- og Laplace-likningen" }
+          - { id: betingelser, tittel: "Rand- og initialbetingelser" }
+          - { id: separasjon, tittel: "Separasjon av variabler" }
+          - { id: bevaringslover, tittel: "Bevaringslover" }
+      - id: endelige-differanser
+        tittel: "Endelige differanser"
+        undertemaer:
+          - { id: deriverte, tittel: "Differanser for deriverte" }
+          - { id: randverdiproblem, tittel: "Randverdiproblemer med Dirichlet-betingelser" }
+          - { id: iterasjon, tittel: "Jacobi- og Gauss–Seidel-iterasjon" }
+          - { id: neumann, tittel: "Neumann-betingelser og fiktiv rand" }
+          - { id: laplace-poisson, tittel: "Laplace- og Poisson-likningen i 2D" }
+          - { id: varmelikningen, tittel: "Varmelikningen og stabilitet" }
+          - { id: bolgelikningen, tittel: "Bølgelikningen og leapfrog" }
+      - id: endelig-volum
+        tittel: "Endelig volum-metoden"
+        undertemaer:
+          - { id: kontrollvolum, tittel: "Kontrollvolum og bevaring" }
+          - { id: diffusjon-1d, tittel: "Diffusjon i én dimensjon" }
+          - { id: kilder-og-rand, tittel: "Kildeledd og fluks på randen" }
+          - { id: diffusjon-2d, tittel: "Diffusjon i to dimensjoner" }
+          - { id: tidsavhengig, tittel: "Tidsavhengige problemer" }
+
   - id: statistikk
     tittel: "Sannsynlighet og statistikk"
     beskrivelse: "Sannsynlighet, fordelinger og hvordan vi trekker slutninger fra data."
