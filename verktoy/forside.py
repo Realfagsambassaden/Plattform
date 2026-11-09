@@ -7,7 +7,7 @@ Bruk: python3 forside.py <prosjektmappe>   (kjøres av bygg.sh etter fag.py)
       tegning: hallo            # bilde fra assets/img/tegninger/ (uten .webp)
       kort: "Tekst på kortet"   # ellers brukes beskrivelsen fra fagets egen fag.yml
 - skriver kortene inn i index.qmd mellom <!-- >>> lopekort --> og <!-- <<< lopekort -->
-Kort som ikke er fag (Forkurs TRES0312, «kommer»-kort, Alle emner, Lag din egen løype) står fast i index.qmd."""
+Kort som ikke er fag (Forkurs TRES0312, «kommer»-kort, Alle temaer, Lag din egen løype) står fast i index.qmd."""
 import html, json, re, sys
 from pathlib import Path
 import yaml

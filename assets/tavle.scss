@@ -100,7 +100,7 @@ mjx-container { color: $chalk; }
 .about { display: grid; grid-template-columns: 170px 1fr; gap: 1.8rem; align-items: center; border-top: 1px solid $line; padding-top: 2.5rem; margin-top: 3.5rem; }
 .about img { width: 150px; }
 
-// ---------- emneoversikt ----------
+// ---------- temaoversikt ----------
 .topics { list-style: none; padding: 0; margin: .8rem 0 2rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: .6rem; }
 .topics li > a, .topics li > span { display: flex; justify-content: space-between; align-items: center; gap: .6rem; padding: .75rem .9rem; border-radius: 8px; border: 1px solid $line; text-decoration: none; font-weight: 600; color: $chalk; }
 .topics li > span { color: $dust; border-style: dashed; }
@@ -110,7 +110,7 @@ mjx-container { color: $chalk; }
 .pill.on { background: $neon; color: $on-neon; }
 .pill.off { color: $dust; border: 1px solid $line; }
 
-// ---------- emneside ----------
+// ---------- temaside ----------
 .video-card { display: block; position: relative; border-radius: 10px; overflow: hidden; border: 1px solid $line; margin: 1rem 0 .4rem; }
 .video-card img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; margin: 0; }
 .video-card .play { position: absolute; right: 1rem; bottom: 1rem; background: $neon; color: $on-neon; font: 800 .9rem/1 $headings-font-family; padding: .7rem 1rem; border-radius: 8px; }
@@ -372,7 +372,7 @@ body { overflow-x: clip; }
 }
 .hero-logo { display: block; width: min(380px, 75%); height: auto; margin: 0 0 1.4rem -8px; }
 
-// ---------- emner og løyper ----------
+// ---------- temaer og løyper ----------
 .omrader { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin-top: 1rem; }
 .omrade { border: 1px solid mix($neon, $line, 45%); border-radius: 14px; padding: 1.1rem 1.2rem; min-width: 0; }
 .omrade.tomt { border-style: dashed; border-color: $line; }
@@ -386,11 +386,11 @@ body { overflow-x: clip; }
 .omrade li a:hover { color: $neon; }
 .omrade li a.tom { color: $dust; opacity: .65; }
 .omrade .ant { font-size: .75rem; color: $neon; border: 1px solid mix($neon, $line, 50%); border-radius: 99px; padding: 0 .4rem; margin-left: .2rem; }
-.emne-sider ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: .5rem; }
-.emne-sider li { border: 1px solid $line; border-radius: 10px; padding: .7rem 1rem; }
-.emne-sider li a { font-weight: 700; color: $chalk; text-decoration: none; }
-.emne-sider li a:hover { color: $neon; }
-.emne-kilde { display: block; font-size: .85rem; color: $dust; }
+.tema-sider ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: .5rem; }
+.tema-sider li { border: 1px solid $line; border-radius: 10px; padding: .7rem 1rem; }
+.tema-sider li a { font-weight: 700; color: $chalk; text-decoration: none; }
+.tema-sider li a:hover { color: $neon; }
+.tema-kilde { display: block; font-size: .85rem; color: $dust; }
 .loyper { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem; }
 .loype { display: flex; flex-direction: column; gap: .4rem; border: 1px solid mix($neon, $line, 55%); background: rgba($neon, .04); border-radius: 14px; padding: 1.2rem; text-decoration: none; color: $chalk; }
 .loype:hover { border-color: $neon; }
@@ -524,7 +524,7 @@ body.har-foredrag { overflow: hidden; }
 .ll-bytt a:hover { border-color: $neon; }
 .ll-bytt b { color: $neon; font-weight: 700; }
 
-// Emnesidene: tabell delemne × nivå (verktoy/emner.py)
+// Temasidene: tabell undertema × nivå (verktoy/tema.py)
 .niva-tabell-ramme { overflow-x: auto; margin: 1rem 0 2rem; }
 .niva-tabell { width: 100%; border-collapse: separate; border-spacing: 0; }
 .niva-tabell th, .niva-tabell td { padding: .6rem .75rem; border-bottom: 1px solid $line; vertical-align: top; text-align: left; }
@@ -532,7 +532,7 @@ body.har-foredrag { overflow: hidden; }
 .niva-tabell tbody th { width: 26%; font-weight: 700; color: $chalk; }
 .niva-tabell td a { display: block; margin: 0 0 .45rem; padding: .45rem .6rem; border: 1px solid $line; border-radius: 8px; color: $chalk; text-decoration: none; line-height: 1.3; }
 .niva-tabell td a:hover { border-color: $neon; }
-.niva-tabell .emne-kilde { display: block; font-size: .8rem; color: $dust; margin-top: .15rem; }
+.niva-tabell .tema-kilde { display: block; font-size: .8rem; color: $dust; margin-top: .15rem; }
 @media (max-width: 767.98px) {
   .niva-tabell thead { display: none; }
   .niva-tabell tr, .niva-tabell th, .niva-tabell td { display: block; width: 100%; }
@@ -540,13 +540,13 @@ body.har-foredrag { overflow: hidden; }
   .niva-tabell td::before { content: attr(data-niva); display: block; font-size: .75rem; color: $neon; text-transform: uppercase; margin-bottom: .3rem; }
 }
 
-// Delemnesider: velg nivå (verktoy/emner.py)
+// Undertemasider: velg nivå (verktoy/tema.py)
 .dl-nivaer { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; margin: 1.2rem 0 2rem; }
 .dl-niva h2 { font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; color: $neon; margin: 0 0 .6rem; border: 0; }
 .dl-kort { display: block; margin-bottom: .6rem; padding: .8rem 1rem; border: 1px solid $line; border-radius: 10px; color: $chalk; text-decoration: none; }
 .dl-kort:hover { border-color: $neon; }
 .dl-kort .dl-tittel { display: block; font-weight: 700; }
-.dl-kort .emne-kilde { display: block; font-size: .85rem; color: $dust; margin-top: .2rem; }
+.dl-kort .tema-kilde { display: block; font-size: .85rem; color: $dust; margin-top: .2rem; }
 .dl-tilbake { font-size: .9rem; }
 .niva-tabell .dl-lenke { color: $chalk; text-decoration: none; border-bottom: 1px dotted $dust; }
 .niva-tabell .dl-lenke:hover { color: $neon; }
@@ -569,18 +569,18 @@ body.har-foredrag { overflow: hidden; }
 .ll-modus button.paa { border-color: $neon; color: $neon; }
 .loype-bunn .lb-videre { border-color: $neon; }
 
-// Områdesidene: ett kort per emne med delemnene, som i sidemenyen (verktoy/emner.py)
-.emne-kort { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; margin: 1.5rem 0 2.5rem; }
-.emne-kort .ek { padding: 1rem 1.2rem; border: 1px solid $line; border-radius: 12px; background: rgba($slate, .6); }
-.emne-kort .ek h2 { font-size: 1.25rem; margin: 0 0 .6rem; border: 0; padding: 0; }
-.emne-kort .ek h2 a { color: $chalk; text-decoration: none; }
-.emne-kort .ek h2 a:hover { color: $neon; }
-.emne-kort .ek ul { list-style: none; padding: 0; margin: 0; }
-.emne-kort .ek li { padding: .3rem 0; border-top: 1px dashed $line; display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
-.emne-kort .ek li a { color: $chalk; text-decoration: none; margin-right: auto; }
-.emne-kort .ek li a:hover { color: $neon; }
-.emne-kort .ek-niva { font-size: .7rem; padding: .05rem .4rem; border: 1px solid $neon; border-radius: 3px; color: $neon; transform: skewX(-12deg); }
-.emne-kort .ek.tom { opacity: .55; }
+// Områdesidene: ett kort per tema med undertemaene, som i sidemenyen (verktoy/tema.py)
+.tema-kort { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; margin: 1.5rem 0 2.5rem; }
+.tema-kort .ek { padding: 1rem 1.2rem; border: 1px solid $line; border-radius: 12px; background: rgba($slate, .6); }
+.tema-kort .ek h2 { font-size: 1.25rem; margin: 0 0 .6rem; border: 0; padding: 0; }
+.tema-kort .ek h2 a { color: $chalk; text-decoration: none; }
+.tema-kort .ek h2 a:hover { color: $neon; }
+.tema-kort .ek ul { list-style: none; padding: 0; margin: 0; }
+.tema-kort .ek li { padding: .3rem 0; border-top: 1px dashed $line; display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
+.tema-kort .ek li a { color: $chalk; text-decoration: none; margin-right: auto; }
+.tema-kort .ek li a:hover { color: $neon; }
+.tema-kort .ek-niva { font-size: .7rem; padding: .05rem .4rem; border: 1px solid $neon; border-radius: 3px; color: $neon; transform: skewX(-12deg); }
+.tema-kort .ek.tom { opacity: .55; }
 
 // ---------- lys og mørk modus ----------
 // Strektegninger (TikZ og skannede figurer) er tegnet svart på gjennomsiktig bakgrunn.

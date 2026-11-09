@@ -98,14 +98,14 @@ fag:
 
 Faget bestemmer selv nettsted, navn, kortnavn og status (`skjult`/`arbeid`/`klar`) i sin egen `fag.yml`. `verktoy/fag.py` henter det inn ved hver bygging, lager oversiktsside, sidemeny og menypunkt. Hvert fag-repo «ringer på» plattformen når det endres (organisasjons-hemmeligheten `PLATTFORM_TOKEN`).
 
-## 9. Emner og løyper
+## 9. Temaer og løyper
 
-- **Emner er grunnmuren.** `emner.yml` lister områder (Mekanikk, Fluidmekanikk …) og emner (Kinematikk, Arbeid og energi …). Alt stoff hører til et emne.
-- **Løyper** er kurs lagt oppå emnene, f.eks. Forkurs TRES0312. `loyper/forkurs-tres0312.yml` kobler kompendiets sider til emner (kapittel = standard, kapittel/side = unntak).
-- Fag fra malen merker hver side med `emne:` øverst i fila.
-- `verktoy/emner.py` lager emne- og områdesidene (`emner/`), løypeoversikten (`loyper/index.qmd`), sidemenyen (etter emner) og toppmenyen (Emner ▾ / Løyper ▾), og `loyper.json`.
-- `assets/js/loype.js` viser emnet og «Forrige / Neste» i løypa øverst på hver innholdsside.
-- Egen innledningstekst til et emne: legg en fil i `emner-tekster/<emne-id>.md`.
+- **Temaer er grunnmuren.** `tema.yml` lister områder (Mekanikk, Fluidmekanikk …), temaer (Kinematikk, Arbeid og energi …) og undertemaer. Alt stoff hører til et tema. (Vi sier ikke «emne», fordi det også betyr et kurs.)
+- **Løyper** er kurs lagt oppå temaene, f.eks. «Forkurs i fysikk». En løype følger et fag (`loyper/*.yml`).
+- Fag fra malen merker hver side med `tema:` og `undertema:` øverst i fila (de gamle navnene `emne:`/`delemne:` godtas fortsatt).
+- `verktoy/tema.py` lager tema- og områdesidene (`tema/`, med videresending fra de gamle adressene under `/emner/`), løypeoversikten (`loyper/index.qmd`), sidemenyen (etter temaer) og toppmenyen (Temaer ▾ / Løyper ▾), og `loyper.json`.
+- `assets/js/loype.js` viser temaet og «Forrige / Neste» i løypa øverst på hver innholdsside.
+- Egen innledningstekst til et tema: legg en fil i `tema-tekster/<tema-id>.md`.
 
 ## 10. matematikkhjelp.no
 
@@ -116,8 +116,8 @@ matematikkhjelp.no ligger i mappen `matematikkhjelp/` og bygges med de samme ver
 | `matematikkhjelp/bygg.sh` | Bygger siden (`./matematikkhjelp/bygg.sh preview` gir forhåndsvisning på `http://localhost:4201`) |
 | `matematikkhjelp/_quarto.yml` | Innstillinger og meny (menyene lages automatisk) |
 | `matematikkhjelp/index.qmd` | Forsiden |
-| `matematikkhjelp/emner.yml` | Emnekartet for matematikk |
-| `matematikkhjelp/emner-tekster/` | Innledningstekster til emnene |
+| `matematikkhjelp/tema.yml` | Temakartet for matematikk |
+| `matematikkhjelp/tema-tekster/` | Innledningstekster til temaene |
 | `matematikkhjelp/fag.yml` | Fagene som vises her (fagrepo med `nettsted: matematikkhjelp` i sin egen `fag.yml`) |
 | `matematikkhjelp/loyper/` | Løyper (kurs) |
 | `matematikkhjelp/wrangler.toml` | Opplasting til Cloudflare (Worker-navn `matematikkhjelp`) |

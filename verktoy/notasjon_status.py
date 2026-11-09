@@ -34,14 +34,14 @@ def fagrepoer():
 
 
 def filer():
-    """Alt fagstoff som reglene gjelder: sider, emnetekster og videomanus (i repoet videoer)."""
+    """Alt fagstoff som reglene gjelder: sider, tematekster og videomanus (i repoet videoer)."""
     ut, mangler = [], []
     for r in fagrepoer():
         d = ROT / r
         if not d.exists():
             mangler.append(r); continue
         ut += sorted(d.glob('kapitler/*/*.qmd'))
-    ut += sorted(P.glob('emner-tekster/*.md')) + sorted(P.glob('matematikkhjelp/emner-tekster/*.md'))
+    ut += sorted(P.glob('tema-tekster/*.md')) + sorted(P.glob('matematikkhjelp/tema-tekster/*.md'))
     v = ROT / 'videoer'                       # videomanus: videoer/<fag>/<mappe>/manus.md
     if v.exists():
         ut += sorted(v.glob('*/*/manus.md'))

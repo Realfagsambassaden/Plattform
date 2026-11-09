@@ -9,9 +9,9 @@ Instruksene skal ligge her i repoet, ikke bare i en chat eller et prosjektdokume
 | Hva | Hvor |
 |---|---|
 | fysikkhjelp.no og realfagsambassaden.no | `Realfagsambassaden/Plattform` (dette repoet). realfagsambassaden.no ligger i `ambassaden/`. |
-| matematikkhjelp.no | `Plattform/matematikkhjelp/` (eget `emner.yml`, `fag.yml`, forside) |
-| Emnekartet | `emner.yml` (fysikk) og `matematikkhjelp/emner.yml`: område → emne → delemne |
-| Emnetekster | `emner-tekster/<emne-id>.md` (og `matematikkhjelp/emner-tekster/`) |
+| matematikkhjelp.no | `Plattform/matematikkhjelp/` (eget `tema.yml`, `fag.yml`, forside) |
+| Temakartet | `tema.yml` (fysikk) og `matematikkhjelp/tema.yml`: område → tema → undertema |
+| Tematekster | `tema-tekster/<tema-id>.md` (og `matematikkhjelp/tema-tekster/`) |
 | Fag (lærestoff) | Egne repoer, listet i `fag.yml`: `fysikk-forkurs` (Forkurs i fysikk, forkursnivå), `ingeniorfysikk` (ingeniørnivå). Nye fag lages fra `Realfagsambassaden/fag-mal`. |
 | Løyper (kurs) | `loyper/*.yml` |
 | Notasjon | [`NOTASJON.md`](NOTASJON.md) – fasit for all notasjon |
@@ -26,20 +26,21 @@ Forkurset ble tidligere skrevet i LaTeX (`kosmoben/TRES0312`). Fra november 2026
 - **Alt som havner på `main`, publiseres automatisk** (3–25 minutter). Derfor går alle endringer via en gren og en pull request mot `main`, også når agenten fletter selv.
 - Flett selv bare når læreren har bedt om det, eller når rutinen for oppgaven sier det (se prosjektdokumentet for nattjobben). Ellers: lag PR-en og la læreren se over.
 - Hent repoer med `add_repo` (eier `Realfagsambassaden`, tilgang `push`). Bruk `gh api repos/...` (REST); GraphQL (`gh pr list/create`) virker ikke fra øktene. Grener kan ikke slettes, og repoer kan ikke opprettes fra øktene.
-- **Ikke rediger genererte filer:** `_site/`, `emner/`, `kilder/`, `innhold.json`, `loyper.json`, `_fag.json`, menyene i `_quarto.yml` og løypekortene mellom `<!-- >>> lopekort -->`-merkene i `index.qmd`.
+- **Ikke rediger genererte filer:** `_site/`, `tema/`, `kilder/`, `innhold.json`, `loyper.json`, `_fag.json`, menyene i `_quarto.yml` og løypekortene mellom `<!-- >>> lopekort -->`-merkene i `index.qmd`.
 - Bygg og sjekk lokalt når det er mulig (`./bygg.sh`, `./matematikkhjelp/bygg.sh`), og se på resultatet før du leverer.
 
-## 3. Innholdsmodell: emne → delemne → nivå
+## 3. Innholdsmodell: tema → undertema → nivå
 
-- Alt stoff er ordnet etter **emne** og **delemne** (i `emner.yml`), ikke etter kurs. Delemnet `oppgaver` (blandede oppgaver) finnes i alle emner.
+- Alt stoff er ordnet etter **tema** og **undertema** (i `tema.yml`), ikke etter kurs. Undertemaet `oppgaver` (blandede oppgaver) finnes i alle temaer.
+- **Si «tema», ikke «emne».** «Emne» betyr også et kurs (emnekode, emnebeskrivelse), så ordet brukes bare om kurs. De gamle feltnavnene `emne:` og `delemne:` godtas fortsatt av byggeverktøyet, men nye sider skal bruke `tema:` og `undertema:`.
 - Hver side har nivå **Forkurs**, **Ingeniør** eller **Fordypning** (`forkurs`, `ingenior`, `fordypning`). Nivået arves fra faget (`niva:` i `fag.yml` her i Plattform) og kan overstyres med `niva:` øverst på siden.
 - Hver side starter slik:
 
   ```yaml
   ---
   title: "Konstant akselerasjon"
-  emne: kinematikk
-  delemne: konstant-akselerasjon
+  tema: kinematikk
+  undertema: konstant-akselerasjon
   ---
   ```
 
@@ -55,7 +56,7 @@ Samme side kan brukes i flere fag og løyper. Derfor skal teksten på en innhold
 
 - **Ikke skriv:** «I dette faget ser vi kun på …», «i dette kurset», «i pensum», «i kompendiet», «TRES0312», «NTNU», «på eksamen», «i forrige kapittel», «som i eksempel 3.2», «se kapittel 4».
 - **Skriv heller med nivå:** «På forkursnivå ser vi kun på …», «På ingeniørnivå bruker vi …». Nivåene er en struktur som finnes på nettsiden.
-- Vis til andre temaer med navn («Vi har sett under *vektorer* at …»), eventuelt med lenke til delemnesiden (`/emner/<område>/<emne>/<delemne>.html`), ikke med kapittel- eller eksempelnummer.
+- Vis til andre temaer med navn («Vi har sett under *vektorer* at …»), eventuelt med lenke til undertemasiden (`/tema/<område>/<tema>/<undertema>.html`), ikke med kapittel- eller eksempelnummer.
 - Kapittelforsider (`index.qmd` i et fag) og løypefiler kan nevne faget eller kurset.
 
 ### Pedagogikk og språk
@@ -113,7 +114,7 @@ Klassene `.sporsmal` og `.definisjon` settes av `verktoy/fag.py` ut fra tittelen
 ## 6. Kontroll før levering
 
 1. Regn ut alle tallsvar på nytt.
-2. Sjekk at front matter har `title`, `emne` og `delemne`, at de finnes i `emner.yml`, og at `:::`-åpninger og -lukkinger går opp.
+2. Sjekk at front matter har `title`, `tema` og `undertema`, at de finnes i `tema.yml`, og at `:::`-åpninger og -lukkinger går opp.
 3. Sjekk at alle bilder det lenkes til, finnes.
 4. Sjekk teksten mot reglene for kursnøytral tekst og notasjon.
 5. Les siden én gang som en student.

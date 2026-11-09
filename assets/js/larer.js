@@ -18,7 +18,7 @@
   function bygg(sider, lj, tilgang) {
     var info = lj.sider || {};
     var omrRekke = [], emneRekke = {};
-    sider.forEach(function (s) { var i = info[s.url]; s.emne = i ? i.emne : 'Annet'; s.omrade = i ? i.omrade : 'Annet'; });
+    sider.forEach(function (s) { var i = info[s.url]; s.emne = i ? i.tema : 'Annet'; s.omrade = i ? i.omrade : 'Annet'; });
     var f = fhLarer.utkast() || ny();
     function ny() { return { id: 'f' + Date.now().toString(36), navn: 'Min forelesning', sider: [] }; }
 

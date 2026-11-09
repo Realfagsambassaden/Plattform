@@ -8,35 +8,35 @@ Realfagsambassaden har tre nettsider, og alle bygges fra dette repoet (**Plattfo
 
 | Nettside | Hvor den ligger i repoet | Hva den er |
 |---|---|---|
-| **fysikkhjelp.no** | Hele repoet, utenom `ambassaden/` | Fagnettsiden: emner, løyper, videoer, kjørbar kode og oppgaver med KI-hint. Bygges med Quarto. |
-| **matematikkhjelp.no** | `matematikkhjelp/` | Matematikknettsiden. Samme verktøy og utseende som fysikkhjelp.no, men med eget emnekart (`matematikkhjelp/emner.yml`) og egne emnetekster (`matematikkhjelp/emner-tekster/`). |
+| **fysikkhjelp.no** | Hele repoet, utenom `ambassaden/` | Fagnettsiden: temaer, løyper, videoer, kjørbar kode og oppgaver med KI-hint. Bygges med Quarto. |
+| **matematikkhjelp.no** | `matematikkhjelp/` | Matematikknettsiden. Samme verktøy og utseende som fysikkhjelp.no, men med eget temakart (`matematikkhjelp/tema.yml`) og egne tematekster (`matematikkhjelp/tema-tekster/`). |
 | **realfagsambassaden.no** | `ambassaden/` | Samlesiden: enkle HTML-sider (`public/`) og en liten tjeneste som tar imot donasjoner (`worker.js`). |
 
 Organisasjonen har også repoer for fag (`fag-mal`, `ingeniorfysikk`) og et privat repo for innsendt materiale (`donasjoner`). Disse og forkurset (TRES0312) tas hånd om av kjerneteamet.
 
 En mer teknisk beskrivelse av mappene og byggingen står i [LESMEG.md](LESMEG.md).
 
-## 2. Hva vi ønsker bidrag til: emner
+## 2. Hva vi ønsker bidrag til: temaer
 
-Alt stoff på fysikkhjelp.no er bygget opp rundt **emner**, for eksempel «Kinematikk», «Arbeid og energi» og «Trykk og oppdrift». Emnene er grunnmuren. **Løypene** (kursene på nettstedet) legges oppå emnene og lages av kjerneteamet. Som bidragsyter jobber du med emnene, ikke med løyper eller fag.
+Alt stoff på fysikkhjelp.no er bygget opp rundt **temaer**, for eksempel «Kinematikk», «Arbeid og energi» og «Trykk og oppdrift». Temaene er grunnmuren. **Løypene** (kursene på nettstedet) legges oppå temaene og lages av kjerneteamet. Som bidragsyter jobber du med temaene, ikke med løyper eller fag.
 
-**Slik bidrar du til et emne:**
+**Slik bidrar du til et tema:**
 
-1. **Finn emnet** i [`emner.yml`](emner.yml) (fysikk) eller [`matematikkhjelp/emner.yml`](matematikkhjelp/emner.yml) (matematikk). Hvert emne har en `id`, for eksempel `arbeid-og-energi`.
-2. **Skriv emneteksten** i fila `emner-tekster/<emne-id>.md`, for eksempel `emner-tekster/arbeid-og-energi.md`. For matematikk bruker du `matematikkhjelp/emner-tekster/<emne-id>.md`. Finnes fila, bygger du videre på den. Finnes den ikke, lager du den. Teksten vises øverst på emnesiden.
+1. **Finn temaet** i [`tema.yml`](tema.yml) (fysikk) eller [`matematikkhjelp/tema.yml`](matematikkhjelp/tema.yml) (matematikk). Hvert tema har en `id`, for eksempel `arbeid-og-energi`.
+2. **Skriv tematekst** i fila `tema-tekster/<tema-id>.md`, for eksempel `tema-tekster/arbeid-og-energi.md`. For matematikk bruker du `matematikkhjelp/tema-tekster/<tema-id>.md`. Finnes fila, bygger du videre på den. Finnes den ikke, lager du den. Teksten vises øverst på temasiden.
 3. **Send inn endringen** som en pull request (se avsnitt 4).
 
-Emneteksten skrives i Markdown. Matematikk skrives med `$...$`, og en YouTube-video legges inn slik:
+Tematekst skrives i Markdown. Matematikk skrives med `$...$`, og en YouTube-video legges inn slik:
 
 ```
 {{< video https://www.youtube.com/watch?v=... >}}
 ```
 
-Se [`emner-tekster/arbeid-og-energi.md`](emner-tekster/arbeid-og-energi.md) for et eksempel.
+Se [`tema-tekster/arbeid-og-energi.md`](tema-tekster/arbeid-og-energi.md) for et eksempel.
 
-**Delemner og nivåer.** Hvert emne er delt i noen få delemner (se `delemner` under emnet i `emner.yml`). Hver side merkes med emne og delemne øverst i fila (`emne: kinematikk` og `delemne: konstant-akselerasjon`), og får nivået til faget sitt: *Forkurs*, *Ingeniør* eller *Fordypning*. Sider om samme delemne på ulike nivåer kobles automatisk sammen. Emnesiden viser en tabell med delemner og nivåer, og hver side får en knapp for å bytte nivå.
+**Undertemaer og nivåer.** Hvert tema er delt i noen få undertemaer (se `undertemaer` under temaet i `tema.yml`). Hver side merkes med tema og undertema øverst i fila (`tema: kinematikk` og `undertema: konstant-akselerasjon`), og får nivået til faget sitt: *Forkurs*, *Ingeniør* eller *Fordypning*. Sider om samme undertema på ulike nivåer kobles automatisk sammen. Temasiden viser en tabell med undertemaer og nivåer, og hver side får en knapp for å bytte nivå.
 
-**Mangler et emne?** Foreslå det i en *issue* på GitHub, eller legg det til i `emner.yml` i en pull request. Skriv hvilket område det hører til.
+**Mangler et tema?** Foreslå det i en *issue* på GitHub, eller legg det til i `tema.yml` i en pull request. Skriv hvilket område det hører til.
 
 **Har du forelesningsnotater eller annet ferdig materiale?** Send det inn via [realfagsambassaden.no/doner.html](https://realfagsambassaden.no/doner.html), så finner kjerneteamet ut hvor det passer.
 
@@ -53,7 +53,7 @@ Se [`emner-tekster/arbeid-og-energi.md`](emner-tekster/arbeid-og-energi.md) for 
 
 Alt som havner på `main`, publiseres automatisk til nettsidene etter noen minutter. Derfor går alle endringer via en **pull request** som blir sett over før den slås sammen.
 
-1. **Lag en egen gren** (branch) med et beskrivende navn, for eksempel `rett-skrivefeil-forside` eller `nytt-emne-bolger`.
+1. **Lag en egen gren** (branch) med et beskrivende navn, for eksempel `rett-skrivefeil-forside` eller `nytt-tema-bolger`.
 2. **Gjør endringene** og lagre dem (commit) med en kort melding om hva du har gjort.
 3. **Åpne en pull request** mot `main`. Skriv kort hva som er endret og hvorfor.
 4. **Vent på godkjenning.** Noen ser over endringen og slår den sammen (merge).
@@ -65,7 +65,7 @@ Redigerer du i nettleseren, gjør GitHub punkt 1–3 for deg. Velg «Create a ne
 
 Når GitHub er koblet til, kan Claude lese repoet, gjøre endringer og åpne pull requests for deg.
 
-- **Si hvilket repo og hvilken nettside** det gjelder, for eksempel: «I Realfagsambassaden/Plattform: skriv et utkast til emneteksten for emnet Kinematikk, og lag en pull request.»
+- **Si hvilket repo og hvilken nettside** det gjelder, for eksempel: «I Realfagsambassaden/Plattform: skriv et utkast til tematekst for temaet Kinematikk, og lag en pull request.»
 - **Be om en pull request**, ikke at Claude skriver rett til `main`. Da kan endringen ses over før den publiseres.
 - **Se over resultatet** før du ber om godkjenning. Les gjennom endringene i pull requesten, og sjekk fagstoff, formler og lenker selv.
 - **Fortell Claude om denne fila.** Be Claude lese `BIDRA.md` og `LESMEG.md` først. Da følger den de samme reglene som alle andre.
@@ -73,7 +73,7 @@ Når GitHub er koblet til, kan Claude lese repoet, gjøre endringer og åpne pul
 ## 6. Regler
 
 - **Ikke skriv rett til `main`.** Bruk alltid en gren og en pull request.
-- **Ikke rediger filer som lages automatisk.** Det gjelder blant annet `_site/`, `forkurs/`, `emner/`, `kilder/` og `innhold.json` (se `.gitignore`). Endringer der blir overskrevet ved neste bygging.
+- **Ikke rediger filer som lages automatisk.** Det gjelder blant annet `_site/`, `forkurs/`, `tema/`, `kilder/` og `innhold.json` (se `.gitignore`). Endringer der blir overskrevet ved neste bygging.
 - **Ingen hemmeligheter i repoet.** API-nøkler og passord ligger som «secrets» i GitHub og Cloudflare, aldri i filene. Ser du en nøkkel i en fil, si fra med en gang.
 - **Ingen personopplysninger.** Navn, e-postadresser og innsendt materiale fra brukere hører ikke hjemme i dette repoet. Repoet er offentlig.
 - **Notasjon.** Følg [NOTASJON.md](NOTASJON.md): naturkonstanter i rett skrift (f.eks. $\mathrm{g}$), $\mathrm{g} = 9.81\ \mathrm{m/s^2}$ om ikke annet er oppgitt, punktum som desimaltegn, SI-enheter med dekadiske prefikser, og regler for gjeldende siffer.
@@ -84,8 +84,8 @@ Når GitHub er koblet til, kan Claude lese repoet, gjøre endringer og åpne pul
 
 | Oppgave | Hvor |
 |---|---|
-| Skrive eller forbedre teksten til et emne | `emner-tekster/<emne-id>.md` |
-| Foreslå et nytt emne | `emner.yml`, eller en *issue* på GitHub |
+| Skrive eller forbedre teksten til et tema | `tema-tekster/<tema-id>.md` |
+| Foreslå et nytt tema | `tema.yml`, eller en *issue* på GitHub |
 | Rette en skrivefeil på forsiden til fysikkhjelp.no | `index.qmd` |
 | Rette en skrivefeil på realfagsambassaden.no | `ambassaden/public/` |
 | Dele forelesningsnotater eller annet materiale | [realfagsambassaden.no/doner.html](https://realfagsambassaden.no/doner.html) |

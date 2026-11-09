@@ -12,7 +12,7 @@ export FIG_CACHE="${FIG_CACHE:-$HER/.figur-cache}"
 
 python3 "$HER/verktoy/fag.py" "$HER" fysikkhjelp
 python3 "$HER/verktoy/forside.py" "$HER"
-python3 "$HER/verktoy/emner.py" "$HER"
+python3 "$HER/verktoy/tema.py" "$HER"
 python3 "$HER/verktoy/innhold.py" "$HER"
 
 cd "$HER"

@@ -35,7 +35,7 @@ Velg løype
     <img class="track-bilde" src="assets/img/tegninger/hallo.webp" alt="" loading="lazy">
     <span class="status">Løype · under arbeid</span>
     <h3>Forkurs i fysikk</h3>
-    <p>Fysikk fra grunnen av for deg som mangler fysikk fra videregående – med video, regneeksempler og lite matematikk.</p>
+    <p>Fysikk fra grunnen av for deg som skal begynne på ingeniør- eller realfag. Bygger på TRES0312 ved NTNU og dekker hele forkurspensumet, med video, regneeksempler og oppgaver med hint.</p>
   </a>
   <a class="track live" href="ingeniorfysikk/index.html">
     <img class="track-bilde" src="assets/img/tegninger/skratt-kast.webp" alt="" loading="lazy">
@@ -58,10 +58,10 @@ Velg løype
   </div>
 </div>
 <div class="tracks brede">
-  <a class="track live utforsk" href="emner/index.html">
+  <a class="track live utforsk" href="tema/index.html">
     <img class="track-bilde" src="assets/img/tegninger/kjelke.webp" alt="" loading="lazy">
     <span class="status">Utforsk</span>
-    <h3>Alle emner</h3>
+    <h3>Alle temaer</h3>
     <p>Alt stoffet ordnet etter tema: mekanikk, fluider, termofysikk, elektromagnetisme og mer.</p>
   </a>
   <a class="track live egen" href="dekning.html">
