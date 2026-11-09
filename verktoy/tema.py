@@ -31,7 +31,7 @@ for o in omrader:
 NIVAER = [('forkurs', 'Forkurs'), ('ingenior', 'Ingeniør'), ('fordypning', 'Fordypning')]
 NIVA_NAVN = dict(NIVAER)
 def topp(t, felt):
-    m = re.search(r'^' + felt + r':\s*"?([\w-]+)"?\s*$', t.split('\n---', 1)[0], re.M)
+    m = re.search(r'^' + felt + r':\s*"?([\w-]+)"?\s*(#.*)?$', t.split('\n---', 1)[0], re.M)
     return m.group(1) if m else None
 
 sider_per_tema = {eid: [] for eid in tema_info}   # tema → [side]
