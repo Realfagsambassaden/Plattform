@@ -24,7 +24,10 @@ function studieStart() {
 
   // ---------------------------------------------------------------- formler
   // Gjengir den delen av LaTeX som spørsmålene bruker (variabler i kursiv, konstanter og enheter oppreist, jf. NOTASJON.md).
-  var SYM = { cdot: '·', Delta: 'Δ', pi: 'π', theta: 'θ', mu: 'μ', omega: 'ω', alpha: 'α', tau: 'τ', eta: 'η', varepsilon: 'ε', int: '∫', hbar: 'ħ' };
+  var SYM = { cdot: '·', Delta: 'Δ', pi: 'π', theta: 'θ', mu: 'μ', omega: 'ω', alpha: 'α', tau: 'τ', eta: 'η', varepsilon: 'ε', int: '∫', hbar: 'ħ',
+    approx: '≈', times: '×', Rightarrow: '⇒', rightarrow: '→', to: '→', leq: '≤', geq: '≥', le: '≤', ge: '≥', neq: '≠', pm: '±', infty: '∞', circ: '°',
+    sum: 'Σ', sigma: 'σ', rho: 'ρ', lambda: 'λ', phi: 'φ', varphi: 'φ', gamma: 'γ', beta: 'β', epsilon: 'ε', Omega: 'Ω', ldots: '…', dots: '…',
+    quad: ' ', qquad: '  ', left: '', right: '', displaystyle: '' };
   var FUNK = { sin: 1, cos: 1, tan: 1 };
   function mat(s, rett) {
     var o = '', i = 0;
@@ -46,9 +49,10 @@ function studieStart() {
         if (!m) { i++; o += ' '; continue; }
         var n = m[0]; i += n.length;
         if (n === 'mathrm' || n === 'text') o += mat(arg(), true);
-        else if (n === 'frac') { var a = arg(), b = arg(); o += mat(a, rett) + '/' + mat(b, rett); }
+        else if (n === 'frac') { var a = arg(), b = arg(); o += '<span class="st-brok"><span>' + mat(a, rett) + '</span><span>' + mat(b, rett) + '</span></span>'; }
         else if (n === 'sqrt') o += '√(' + mat(arg(), rett) + ')';
         else if (n === 'vec') o += mat(arg(), rett) + '⃗';
+        else if (n === 'underline' || n === 'boxed') o += mat(arg(), rett);
         else if (FUNK[n]) o += ' ' + n + ' ';
         else o += SYM[n] || n;
       } else if (c === '^' || c === '_') { i++; var t = c === '^' ? 'sup' : 'sub'; o += '<' + t + '>' + mat(arg(), rett) + '</' + t + '>'; }
@@ -57,7 +61,13 @@ function studieStart() {
     }
     return o;
   }
-  var tx = function (s) { return String(s || '').split('$').map(function (d, i) { return i % 2 ? '<span class="st-mat">' + mat(d) + '</span>' : esc(d); }).join(''); };
+  // Tekst med formler: $$ … $$ (og \[ … \]) blir en formel på egen linje, $ … $ en formel i teksten.
+  function txLinje(s) { return s.split('$').map(function (d, i) { return i % 2 ? '<span class="st-mat">' + mat(d) + '</span>' : esc(d).replace(/\s*\n\s*/g, ' '); }).join(''); }
+  var tx = function (s) {
+    return String(s || '').replace(/\\\[([\s\S]*?)\\\]/g, function (_, f) { return '$$' + f + '$$'; }).split('$$').map(function (d, i) {
+      return i % 2 ? '<div class="st-formel">' + mat(d.trim()) + '</div>' : txLinje(d.trim());
+    }).join('');
+  };
 
   // ---------------------------------------------------------------- data
   var nokkel = function (t) { return NETTSTED + '/' + t; };
@@ -379,11 +389,11 @@ function studieStart() {
       if (a) {
         var kl = a.type === 'riktig' ? '' : (a.type === 'regnefeil' ? 'r' : 'n');
         var ti = a.type === 'riktig' ? 'Riktig!' : (a.type === 'regnefeil' ? 'Riktig tanke, men regnefeil.' : 'Ikke riktig.');
-        fb = '<div class="st-fb ' + kl + '"><b>' + ti + '</b><p>' + tx(x.forklaring) + '</p></div>';
+        fb = '<div class="st-fb ' + kl + '"><b>' + ti + '</b><div class="st-avsnitt">' + tx(x.forklaring) + '</div></div>';
         var kis = q.kiSvar;
         if (kis && !kis.feil) {
           var kt = { riktig: 'KI: Riktig fysikk og riktig regning.', regnefeil: 'KI: Riktig tankegang, men en regnefeil.', begrep: 'KI: Her bør du se på fysikken igjen.', uklar: 'KI: Klarte ikke å lese besvarelsen.' }[kis.vurdering];
-          fb += '<div class="st-fb ki"><b>' + kt + '</b><p>' + tx(kis.tilbakemelding) + '</p>' + (kis.vurdering !== 'uklar' ? '<p class="st-sm">Denne vurderingen teller i kunnskapsprofilen din.</p>' : '') + '</div>';
+          fb += '<div class="st-fb ki"><b>' + kt + '</b><div class="st-avsnitt">' + tx(kis.tilbakemelding) + '</div>' + (kis.vurdering !== 'uklar' ? '<p class="st-sm">Denne vurderingen teller i kunnskapsprofilen din.</p>' : '') + '</div>';
         } else {
           fb += '<h3>Vis hvordan du tenkte</h3><p class="st-sm">Valgfritt. Ta bilde av utregningen eller forklar med egne ord, så vurderer KI om du har forstått fysikken. Bildet lagres ikke.</p>' +
             '<textarea id="st-forklaring" placeholder="Forklar hvordan du tenkte …">' + esc(q.tekst || '') + '</textarea>' +
@@ -417,7 +427,7 @@ function studieStart() {
       }).join('') || '<p class="st-ind">Velg temaer på løypa først.</p>';
       var kr = T.kiRad, kiDel = !kr ? '<p><button type="button" class="st-btn g" data-h="rad">Få personlig råd fra KI</button></p>'
         : kr.venter ? '<p class="st-ind">KI skriver rådene dine …</p>' : kr.feil ? '<p class="st-feil">' + esc(kr.feil) + '</p>'
-        : '<div class="st-fb ki">' + kr.tekst.split(/\n\s*\n/).map(function (p) { return '<p>' + tx(p) + '</p>'; }).join('') + '</div>';
+        : '<div class="st-fb ki">' + kr.tekst.split(/\n\s*\n/).map(function (p) { return '<div class="st-avsnitt">' + tx(p) + '</div>'; }).join('') + '</div>';
       return '<h2 class="st-h1">Kunnskapsprofil</h2><p class="st-sm"><b>Forståelse</b> er viktigst. <b>Presisjon</b> viser om du regner riktig når tanken er riktig. <b>Hurtighet</b> er minst viktig, men kan gi deg bedre tid på eksamen.</p>' +
         bl + '<h2>Slik forbereder du deg til eksamen</h2>' + regelRad() + kiDel;
     },

@@ -38,6 +38,9 @@ toc: false
 .studie textarea { min-height: 80px; }
 .studie .st-sporsmal { font-size: 1.1rem; margin: .5rem 0 .6rem; }
 .studie .st-mat { white-space: nowrap; }
+.studie .st-brok { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .85em; margin: 0 .12em; line-height: 1.15; }
+.studie .st-brok > span + span { border-top: 1px solid currentColor; }
+.studie .st-formel { display: block; text-align: center; margin: .45rem 0; font-size: 1.08em; }
 .studie .st-alt { display: block; width: 100%; text-align: left; background: rgba(127,127,127,.06); border: 2px solid var(--bs-border-color); border-radius: 10px; color: inherit; padding: .6rem .8rem; margin: .45rem 0; }
 .studie .st-alt:hover:not(:disabled) { border-color: var(--bs-primary); }
 .studie .st-alt.ok { border-color: var(--bs-success, #6ef04a); }
@@ -45,7 +48,7 @@ toc: false
 .studie .st-mrk { display: inline-block; font-size: .75rem; font-weight: 700; border-radius: 20px; padding: .05rem .55rem; border: 1px solid currentColor; }
 .studie .st-mrk.lett { color: var(--bs-info); } .studie .st-mrk.middels { color: var(--bs-warning); } .studie .st-mrk.vanskelig { color: var(--bs-danger); }
 .studie .st-fb { border-left: 4px solid var(--bs-primary); background: rgba(127,127,127,.06); border-radius: 0 8px 8px 0; padding: .55rem .8rem; margin: .7rem 0; }
-.studie .st-fb p { margin: .3rem 0; }
+.studie .st-fb p, .studie .st-avsnitt { margin: .3rem 0; }
 .studie .st-fb.r { border-color: var(--bs-warning); } .studie .st-fb.n { border-color: var(--bs-danger); } .studie .st-fb.ki { border-color: var(--bs-info); }
 .studie .st-vedlegg { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0; }
 .studie .st-vedlegg input[type=file] { display: none; }
