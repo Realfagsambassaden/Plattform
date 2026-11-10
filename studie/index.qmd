@@ -114,6 +114,10 @@ toc: false
 .studie .st-spred > .st-rad { flex-wrap: wrap; gap: .4rem; }
 .studie .st-spred select { max-width: 14rem; }
 .studie .st-spred .st-riktig { border-color: var(--st-f); }
+.studie .st-varrad { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+.studie .st-var { display: inline-flex; gap: .3rem; align-items: center; flex-wrap: wrap; }
+.studie .st-var .st-felt { padding: .2rem .4rem; }
+.studie .st-eks { border-left: 3px solid var(--st-f); padding: .2rem .7rem; }
 .studie .st-pakrevd { font-size: .75rem; font-weight: 700; color: #eee462; border: 1px solid #eee462; border-radius: 999px; padding: .05rem .5rem; vertical-align: middle; }
 .studie .st-feltsett legend { font-weight: 700; font-size: 1rem; padding: 0 .4rem; width: auto; float: none; margin: 0; }
 .studie .st-piller { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .6rem; }
