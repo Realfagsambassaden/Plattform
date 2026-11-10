@@ -62,6 +62,8 @@ Samme side kan brukes i flere fag og løyper. Derfor skal teksten på en innhold
 
 ### Pedagogikk og språk
 
+- **Det pedagogiske er viktigst.** En side er god når en student som ikke kan faget fra før, forstår *og* husker stoffet etterpå. Bygg opp fra det konkrete til det generelle, vis hvorfor resultatet er rimelig (en tolkning, et grensetilfelle, en enhetssjekk), og la eksemplene øke i vanskelighet.
+- **Vis, ikke bare fortell.** Grafisk innhold gjør seg nesten alltid: en TikZ-figur av situasjonen, en graf, en skisse av rutenettet, et plott fra Python som studenten kan endre selv. Lag figurer der det går an, og helst minst én per side. Figuren skal forklare noe (krefter, geometri, sammenhenger, hva som skjer når en parameter endres), ikke bare pynte. Se på hver figur før du bruker den.
 - Klart bokmål, aktive setninger, én idé om gangen, korte avsnitt. Forklar *hvorfor*, ikke bare *hvordan*. Begynn gjerne med et konkret fenomen.
 - Skriv til noen som ikke kan faget fra før. Treff samme tone som eksisterende sider på samme nivå.
 - Norske fagord framfor engelske lånord.
