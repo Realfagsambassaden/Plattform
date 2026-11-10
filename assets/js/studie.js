@@ -418,9 +418,7 @@ function studieStart() {
         }).join('') +
         '<h3>Ukens quiz</h3><p class="st-ind">Du starter på nivå <b>' + NIV[niva(t)] + '</b>, og nivået følger svarene dine. ' +
         (dag ? 'Du får ' + PER_DAG + ' spørsmål om dagen (' + iDag(t) + ' tatt i dag).' : 'Du får ' + OKT + ' spørsmål' + (T.inn.repetisjon ? ' og opptil ' + REP + ' repetisjonsspørsmål' : '') + '.') + '</p>' +
-        '<p><button type="button" class="st-btn" data-h="quiz" data-t="' + t + '">Start quiz</button></p>' +
-        '<h3>Hvor vanskelig var ukens tema?</h3>' + skala(t) +
-        '<p class="st-sm">Faglæreren din ser bare samletall for kurset, og bare når minst 5 har svart.</p>';
+        '<p><button type="button" class="st-btn" data-h="quiz" data-t="' + t + '">Start quiz</button></p>';
     },
     ferdigIdag: function () {
       return '<h2 class="st-h1">Dagens spørsmål er tatt</h2><p>Du har svart på ' + PER_DAG + ' spørsmål i ' + esc(tittel(T.t)) + ' i dag. Kom tilbake i morgen!</p>' +
@@ -456,7 +454,8 @@ function studieStart() {
       var q = T.q, r = q.res, c = function (t) { return r.filter(function (x) { return x === t; }).length; };
       return '<h2 class="st-h1">Quizzen er ferdig</h2><p class="st-hand">' + c('riktig') + ' av ' + r.length + ' riktige</p>' +
         '<div class="st-kort"><div class="st-rad"><span>Riktig</span><b>' + c('riktig') + '</b></div><div class="st-rad"><span>Riktig tanke, regnefeil</span><b>' + c('regnefeil') + '</b></div><div class="st-rad"><span>Må jobbes mer med</span><b>' + c('begrep') + '</b></div></div>' +
-        '<p>Neste gang starter du på nivå <b>' + NIV[niva(q.tema)] + '</b>.</p><h3>Hvor vanskelig var ukens tema?</h3>' + skala(q.tema) +
+        '<p>Neste gang starter du på nivå <b>' + NIV[niva(q.tema)] + '</b>.</p><h3>Hvor vanskelig var dette temaet?</h3>' + skala(q.tema) +
+        '<p class="st-sm">Faglæreren din ser bare samletall for kurset, og bare når minst 5 har svart.</p>' +
         '<p style="margin-top:1rem"><button type="button" class="st-btn" data-h="ga" data-v="profil">Se kunnskapsprofilen</button> <button type="button" class="st-btn g" data-h="ga" data-v="hjem">Til løypa</button></p>';
     },
     profil: function () {
