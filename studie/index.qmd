@@ -66,6 +66,8 @@ toc: false
   border-radius: 10px; padding: .6rem 1rem; z-index: 1000; max-width: 90vw; box-shadow: 0 4px 18px rgba(0,0,0,.35); }
 .studie .st-varsel.feil { border-color: var(--bs-danger); }
 .studie details summary { cursor: pointer; margin-top: .3rem; }
+.studie .st-kort > label.st-sm { display: block; margin: .6rem 0 .3rem; }
+.studie .st-kort .st-rad .st-btn { white-space: nowrap; flex: none; }
 </style>
 <script src="../assets/js/studie.js"></script>
 ```
