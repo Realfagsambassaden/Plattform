@@ -227,7 +227,7 @@ async function dekning(request, env, b, h) {
 
   // 3. spør KI-en
   const melding = `EMNEBESKRIVELSE${kilde ? ` (fra ${kilde})` : ""}:\n${tekst.slice(0, 24000)}\n\nSIDER PÅ ${navn.toUpperCase()} (id|del – kapittel|tittel|innhold):\n${liste}`;
-  const raa = await spor(env, SYSTEM_DEKNING.replaceAll("fysikkhjelp.no", navn), melding, 3000);
+  const raa = await spor(env, SYSTEM_DEKNING.replaceAll("fysikkhjelp.no", navn), melding, 8000);
   const r = lesJson(raa);
   if (!r) throw feil("Klarte ikke å lage kartet denne gangen. Prøv igjen.", 502);
   if (r.feil) throw feil(r.feil, 422);

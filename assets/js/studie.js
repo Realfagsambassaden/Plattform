@@ -64,7 +64,12 @@ function studieStart() {
   var valgt = function () { return (T.inn.valgt || []).filter(function (x) { return x.indexOf(NETTSTED + '/') === 0; }).map(function (x) { return x.slice(NETTSTED.length + 1); }).filter(function (t) { return S[t]; }); };
   var niva = function (t) { var n = (T.inn.niva || {})[nokkel(t)]; return typeof n === 'number' ? n : 1; };
   var eff = function (s) { var v = s.ki && s.ki.vurdering; return v === 'riktig' || v === 'regnefeil' || v === 'begrep' ? v : s.type; };
-  var temaUrl = function (t, u) { return '../tema/' + S[t].omrade + '/' + t + (u ? '/' + u : '') + '.html'; };
+  // Undertemasider finnes bare når det er stoff om dem (se verktoy/tema.py). FINNES lages fra loyper.json.
+  var FINNES = null;
+  var temaUrl = function (t, u) {
+    var sti = '/tema/' + S[t].omrade + '/' + t + (u ? '/' + u : '') + '.html';
+    return u && FINNES && !FINNES[sti] ? null : '..' + sti;
+  };
   var tittel = function (t) { return S[t] ? S[t].tittel : t; };
 
   function feilmelding(e) {
@@ -132,7 +137,7 @@ function studieStart() {
     var r = profilRader();
     if (!r.length) return '<p class="st-ind">Ta en quiz, så får du råd her.</p>';
     function min(kk, g) { return r.filter(function (x) { return x.s[kk] != null && x.s[kk] < g; }).sort(function (a, b) { return a.s[kk] - b.s[kk]; }).slice(0, 2); }
-    function nv(x) { return '<a href="' + temaUrl(x.t, x.u) + '">' + esc(S[x.t].undertemaer[x.u]) + '</a>'; }
+    function nv(x) { return '<a href="' + (temaUrl(x.t, x.u) || temaUrl(x.t)) + '">' + esc(S[x.t].undertemaer[x.u]) + '</a>'; }
     var f = min('f', 0.7), p = min('p', 0.7), h = min('h', 0.6), o = '';
     if (f.length) o += '<p><b>Først:</b> Gå gjennom teori og videoer i ' + f.map(nv).join(' og ') + '. Her er det forståelsen som mangler, og den betyr mest.</p>';
     if (p.length) o += '<p><b>Deretter:</b> Du tenker riktig i ' + p.map(nv).join(' og ') + ', men regner feil. Regn oppgaver for hånd, og kontroller enheter og overslag.</p>';
@@ -354,7 +359,11 @@ function studieStart() {
     uke: function () {
       var t = T.t, nr = valgt().indexOf(t) + 1, u = S[t].undertemaer, dag = T.inn.modus === 'dag';
       return '<button type="button" class="st-tilbake" data-h="ga" data-v="hjem">← Løypa</button><h2 class="st-h1">Uke ' + nr + ': ' + esc(tittel(t)) + '</h2>' +
-        '<h3>Undertemaer</h3>' + Object.keys(u).map(function (id) { return '<a class="st-kort" href="' + temaUrl(t, id) + '"><div class="st-rad"><span>' + esc(u[id]) + '</span><span class="st-sm">Lærestoff og video →</span></div></a>'; }).join('') +
+        '<h3>Undertemaer</h3>' + Object.keys(u).map(function (id) {
+          var url = temaUrl(t, id);
+          return url ? '<a class="st-kort" href="' + url + '"><div class="st-rad"><span>' + esc(u[id]) + '</span><span class="st-sm">Lærestoff og video →</span></div></a>'
+                     : '<div class="st-kort st-tom"><div class="st-rad"><span>' + esc(u[id]) + '</span><span class="st-sm">Lærestoff kommer</span></div></div>';
+        }).join('') +
         '<h3>Ukens quiz</h3><p class="st-ind">Du starter på nivå <b>' + NIV[niva(t)] + '</b>, og nivået følger svarene dine. ' +
         (dag ? 'Du får ' + PER_DAG + ' spørsmål om dagen (' + iDag(t) + ' tatt i dag).' : 'Du får ' + OKT + ' spørsmål' + (T.inn.repetisjon ? ' og opptil ' + REP + ' repetisjonsspørsmål' : '') + '.') + '</p>' +
         '<p><button type="button" class="st-btn" data-h="quiz" data-t="' + t + '">Start quiz</button></p>' +
@@ -530,9 +539,13 @@ function studieStart() {
   if (!window.fhKonto || !window.fhKonto.sattOpp) { rot.innerHTML = '<p class="st-ind">Innlogging er ikke satt opp ennå.</p>'; return; }
   Promise.all([
     fetch('sporsmal.json').then(function (r) { if (!r.ok) throw new Error('Fant ikke spørsmålene.'); return r.json(); }),
+    fetch('../loyper.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }).then(function (d) {
+      if (!d || !d.sider) return;   // uten oversikten lenker vi til alle undertemaer
+      FINNES = {}; Object.keys(d.sider).forEach(function (k) { var u = d.sider[k].undertemaUrl; if (u) FINNES[u] = 1; });
+    }),
     window.fhKonto(),
   ]).then(function (r) {
-    S = r[0].struktur; Q = r[0].sporsmal; T.omrader = r[0].omrader || {}; k = r[1];
+    S = r[0].struktur; Q = r[0].sporsmal; T.omrader = r[0].omrader || {}; k = r[2];
     return k.auth.getSession();
   }).then(function (r) {
     var sesjon = r.data.session;

@@ -21,6 +21,7 @@ toc: false
   padding: .75rem .9rem; margin: .5rem 0; color: inherit; text-decoration: none; }
 .studie button.st-kort:hover, .studie a.st-kort:hover { border-color: var(--bs-primary); }
 .studie .st-kort.st-viktig { border-color: var(--bs-primary); }
+.studie .st-kort.st-tom { opacity: .65; }
 .studie .st-kort p { margin: .35rem 0; }
 .studie .st-rad { display: flex; justify-content: space-between; align-items: center; gap: .6rem; }
 .studie .st-btn { display: inline-flex; align-items: center; gap: .3rem; background: var(--bs-primary); color: var(--bs-body-bg) !important; border: 2px solid var(--bs-primary);
