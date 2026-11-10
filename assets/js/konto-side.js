@@ -40,7 +40,7 @@ function start() {
         var mal = { dekning: '../dekning.html', larer: '../larer/index.html', studie: '../studie/index.html' }[neste];
         if (mal) { location.href = mal; return; }
         vis('mal-inne');
-        rot.querySelector('.profil-navn').textContent = sesjon.user.email;
+        visNavn(k, sesjon);
         fyllMinSide(k, sesjon);
         rot.querySelector('[data-handling="ut"]').onclick = function () { k.auth.signOut().then(function () { tegn(null); }); };
       } else tegnUte(k);
@@ -80,15 +80,18 @@ function start() {
     };
 
     // Rollevalg ved registrering: student er standard. Underviser krever en personlig kode fra administratoren.
-    function visKode() { var u = skjema.querySelector('input[name="rolle"]:checked').value === 'underviser'; skjema.querySelectorAll('.konto-kode').forEach(function (el) { el.hidden = !u; }); skjema.kode.required = false; }
+    // (matematikkhjelp.no har ikke rollevalg; der er alle studenter.)
+    function rolleValgt() { var r = skjema.querySelector('input[name="rolle"]:checked'); return r ? r.value : 'student'; }
+    function visKode() { if (!skjema.kode) return; var u = rolleValgt() === 'underviser'; skjema.querySelectorAll('.konto-kode').forEach(function (el) { el.hidden = !u; }); skjema.kode.required = false; }
     skjema.querySelectorAll('input[name="rolle"]').forEach(function (r) { r.onchange = visKode; });
     visKode();
 
     skjema.onsubmit = function (ev) {
       ev.preventDefault();
       var knapp = skjema.querySelector('button[type="submit"]'); knapp.disabled = true;
-      var data = { email: skjema.epost.value.trim(), password: skjema.passord.value };
-      var underviser = fane === 'ny' && skjema.querySelector('input[name="rolle"]:checked').value === 'underviser';
+      var data = { email: skjema.epost.value.trim(), password: skjema.passord.value }, navn = fane === 'ny' && skjema.navn ? skjema.navn.value.trim() : '';
+      if (fane === 'ny' && skjema.navn && !navn) { knapp.disabled = false; melding('Skriv navnet ditt.', true); skjema.navn.focus(); return; }
+      var underviser = fane === 'ny' && rolleValgt() === 'underviser';
       var kode = underviser ? skjema.kode.value.trim().toUpperCase() : '';
       var info = underviser ? skjema.info.value.trim() : '';
       var sjekk = underviser && kode ? k.rpc('sjekk_underviserkode', { k: kode }).then(function (r) {
@@ -97,7 +100,7 @@ function start() {
       }) : Promise.resolve();
       var p = sjekk.then(function () {
         return fane === 'ny'
-          ? k.auth.signUp(Object.assign(data, { options: { data: kode ? { underviserkode: kode } : underviser ? { be_om_underviser: 'true', underviser_info: info } : {}, emailRedirectTo: location.origin + location.pathname + (neste ? '?neste=' + neste : '') } }))
+          ? k.auth.signUp(Object.assign(data, { options: { data: Object.assign({ navn: navn }, kode ? { underviserkode: kode } : underviser ? { be_om_underviser: 'true', underviser_info: info } : {}), emailRedirectTo: location.origin + location.pathname + (neste ? '?neste=' + neste : '') } }))
           : k.auth.signInWithPassword(data);
       }).catch(function (e) { return { error: e }; });
       p.then(function (r) {
@@ -111,6 +114,22 @@ function start() {
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var dato = function (d) { return d ? new Date(d).toLocaleDateString('nb-NO', { day: 'numeric', month: 'short', year: 'numeric' }) : ''; };
 
+  // Navnet vises i stedet for e-post. Mangler det (eldre kontoer), ber vi om det.
+  function visNavn(k, sesjon) {
+    var el = rot.querySelector('.profil-navn'), skj = rot.querySelector('.profil-navnskjema'), knapp = rot.querySelector('.profil-endrenavn');
+    el.textContent = sesjon.user.email;
+    if (!skj) return;
+    var sett = function (navn) { el.textContent = navn ? navn.split(/\s+/)[0] : sesjon.user.email; skj.navn.value = navn; skj.hidden = !!navn; };
+    k.from('profiler').select('navn').eq('id', sesjon.user.id).maybeSingle().then(function (r) { sett(((r && r.data && r.data.navn) || '').trim()); }, function () {});
+    if (knapp) knapp.onclick = function () { skj.hidden = !skj.hidden; if (!skj.hidden) skj.navn.focus(); };
+    skj.onsubmit = function (ev) {
+      ev.preventDefault();
+      var navn = skj.navn.value.trim(), m = skj.querySelector('.profil-navnmelding');
+      if (!navn) { m.textContent = 'Skriv navnet ditt.'; return; }
+      k.rpc('sett_navn', { n: navn }).then(function (r) { if (r.error) throw r.error; m.textContent = ''; sett(navn); })
+        .catch(function (e) { m.textContent = 'Fikk ikke lagret: ' + (e.message || e); });
+    };
+  }
   // Min side er todelt: studentdel for alle, underviserdel for godkjente undervisere, og administrasjon for administratoren.
   function fyllMinSide(k, sesjon) {
     if (!rot.querySelector('.profil-rolle')) return; // Enklere Min side (f.eks. matematikkhjelp.no) har ingen rolledel.

@@ -49,7 +49,10 @@ html.fk-tidfast.fk-delt .fokus .fk-hoved { width: calc(100% - var(--fk-tid) - va
 .fokus .fk-punkt { display: block; width: 100%; text-align: left; background: none; border: 0; border-left: 3px solid transparent; color: inherit; font: inherit; font-size: .93rem; padding: .25rem .5rem; border-radius: 0 6px 6px 0; cursor: pointer; }
 .fokus .fk-punkt:hover { background: rgba(127,127,127,.12); }
 .fokus .fk-punkt.her { border-left-color: var(--bs-primary); background: rgba(127,127,127,.16); font-weight: 700; }
-.fokus .fk-punkt.krav { color: var(--bs-warning); }
+.fokus .fk-punkt.krav { display: flex; gap: .5rem; align-items: center; border: 2px solid #ff8a8f; border-left-width: 6px; border-radius: 8px; background: rgba(255,138,143,.1); margin: .35rem 0; padding: .35rem .5rem; }
+.fokus .fk-punkt.krav.ok { border-color: var(--bs-primary); background: rgba(127,127,127,.08); }
+.fokus .fk-punkt.krav.her { box-shadow: 0 0 0 2px var(--bs-primary); }
+.fokus .fk-flagg { font-size: 1.25rem; }
 .fokus .fk-punkt.mangler { opacity: .6; }
 .fokus .fk-frist, .fokus .fk-sm { font-size: .78rem; color: var(--bs-secondary-color); }
 .fokus .fk-kravinn { flex: 1; display: flex; }

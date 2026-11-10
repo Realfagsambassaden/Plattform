@@ -148,6 +148,11 @@ html.fh-innebygd .studie .st-faner { display: none; }   /* i fokusvisningens arb
 .studie .st-tl-notat { color: var(--bs-secondary-color); font-style: italic; margin: .2rem 0; }
 .studie .st-tl-krav { display: inline-block; font-size: .8rem; color: var(--bs-warning); margin-right: .6rem; background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
 .studie a.st-tl-ut { text-decoration: none; color: inherit; } .studie a.st-tl-ut:hover { border-color: var(--bs-primary); color: var(--bs-primary); }
+.studie .st-tl-flagg { display: flex; gap: .6rem; align-items: center; width: 100%; text-align: left; margin: .4rem 0; padding: .45rem .7rem; border: 2px solid #ff8a8f; border-left-width: 6px;
+  border-radius: 10px; background: rgba(255,138,143,.1); color: inherit; font: inherit; cursor: pointer; }
+.studie .st-tl-flagg:hover { background: rgba(255,138,143,.2); }
+.studie .st-tl-flagg.ok { border-color: var(--st-f); background: rgba(127,127,127,.08); }
+.studie .st-tl-flaggikon { font-size: 1.4rem; }
 .studie .st-tl-frist { color: #ff8a8f; font-weight: 700; margin-top: .2rem; }
 @media (max-width: 900px) { .studie .st-modrad { grid-template-columns: 1fr; } .studie .st-sidenotat { position: static; } .studie .st-tl-uke { grid-template-columns: 1fr; gap: .2rem; } }
 .studie .st-pakrevd { font-size: .75rem; font-weight: 700; color: #eee462; border: 1px solid #eee462; border-radius: 999px; padding: .05rem .5rem; vertical-align: middle; }

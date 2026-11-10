@@ -88,9 +88,9 @@ function fokusStart() {
         }
         if (x.uke !== forrigeUke) { forrigeUke = x.uke; html += '<div class="fk-uke">Uke ' + x.uke + '</div>' + besk.filter(function (y) { return y.uke === x.uke; }).map(beskHtml).join(''); }
       }
-      var kl = 'fk-punkt' + (i === her ? ' her' : '') + (x.type === 'krav' ? ' krav' : '') + (x.type === 'ut' && !x.url ? ' mangler' : '');
+      var kl = 'fk-punkt' + (i === her ? ' her' : '') + (x.type === 'krav' ? ' krav' + (godkjent(x.o) ? ' ok' : '') : '') + (x.type === 'ut' && !x.url ? ' mangler' : '');
       html += '<button type="button" class="' + kl + '" data-h="ga" data-i="' + i + '">' +
-        (x.type === 'krav' ? (godkjent(x.o) ? '✓ ' : '📝 ') + esc(x.tittel) + (x.o.frist ? ' <span class="fk-frist">frist ' + dato(x.o.frist) + '</span>' : '') : esc(x.tittel) + (x.url ? '' : ' <span class="fk-sm">(kommer)</span>')) + '</button>';
+        (x.type === 'krav' ? '<span class="fk-flagg">' + (godkjent(x.o) ? '✓' : '🚩') + '</span><span><b>Arbeidskrav: ' + esc(x.tittel) + '</b><br><span class="fk-frist">' + (x.o.frist ? 'frist ' + dato(x.o.frist) : 'ingen frist') + (godkjent(x.o) ? ' · godkjent' : '') + '</span></span>' : esc(x.tittel) + (x.url ? '' : ' <span class="fk-sm">(kommer)</span>')) + '</button>';
     });
     rot.querySelector('.fk-rull').innerHTML = html || '<p class="fk-tom">Faget har ingen moduler ennå.</p>';
     var aktiv = rot.querySelector('.fk-punkt.her'); if (aktiv) aktiv.scrollIntoView({ block: 'nearest' });
