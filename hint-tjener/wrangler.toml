@@ -1,13 +1,21 @@
+# KI-tjeneren (hint, dekningskart og studieappen). Publiseres av GitHub-automatikken (.github/workflows/bygg.yml,
+# jobben «hint-tjener») hver gang noe flettes til main.
+# Hemmeligheten ANTHROPIC_API_KEY legges inn som GitHub-hemmelighet i repoet og settes på workeren ved publisering.
 name = "fysikkhjelp-hint"
 main = "worker.js"
 compatibility_date = "2025-01-01"
+workers_dev = true
 
-# Valgfritt: begrens antall hint per bruker. Lag en KV-navnerom med
-#   npx wrangler kv namespace create HINT_KV
+# Egen adresse. Cloudflare lager DNS-oppføringen selv, fordi fysikkhjelp.no ligger i samme konto.
+routes = [{ pattern = "hint.fysikkhjelp.no", custom_domain = true }]
+
+# Offentlige verdier (de samme som står i _quarto.yml). Brukes for å sjekke at brukeren er logget inn.
+[vars]
+SUPABASE_URL = "https://fwyoldmtjnfxtkdwldzx.supabase.co"
+SUPABASE_ANON_KEY = "sb_publishable_mapCEnSSxrSSwTbBKao6hw_qMOClLSS"
+
+# Valgfritt: begrens antall forespørsler per bruker. Lag et KV-navnerom i Cloudflare (Storage & databases → KV),
 # og lim inn id-en under (fjern #-tegnene).
 # [[kv_namespaces]]
 # binding = "HINT_KV"
 # id = "LIM-INN-ID-HER"
-
-# Egen adresse (hint.fysikkhjelp.no) når domenet ligger i Cloudflare:
-# routes = [{ pattern = "hint.fysikkhjelp.no/hint", custom_domain = false, zone_name = "fysikkhjelp.no" }]

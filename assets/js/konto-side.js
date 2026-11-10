@@ -36,7 +36,7 @@ function start() {
     function tegn(sesjon) {
       if (gjenoppretter && sesjon) return tegnNyttPassord(k);
       if (sesjon) {
-        var mal = { dekning: '../dekning.html', larer: '../larer/index.html' }[neste];
+        var mal = { dekning: '../dekning.html', larer: '../larer/index.html', studie: '../studie/index.html' }[neste];
         if (mal) { location.href = mal; return; }
         vis('mal-inne');
         rot.querySelector('.profil-navn').textContent = sesjon.user.email;

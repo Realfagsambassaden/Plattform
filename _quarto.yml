@@ -9,6 +9,7 @@ project:
     - assets/
     - innhold.json
     - loyper.json
+    - studie/sporsmal.json
 
 lang: nb
 
