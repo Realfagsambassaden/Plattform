@@ -460,7 +460,24 @@ function studieStart() {
   var utNavn = function (id) { var p = id.split('/'), t = K[p[1]]; return t ? (t.undertemaer[p[2]] || p[2]) : p[2]; };
   var utTema = function (id) { var t = K[id.split('/')[1]]; return t ? t.tittel : id.split('/')[1]; };
   function nyId() { return Math.random().toString(36).slice(2, 10); }
-  function medId(l) { (l || []).forEach(function (m) { if (!m.id) m.id = nyId(); }); return l; }
+  // Hver modul har en fast id (for notater) og en liste med beskjeder [{tekst, tid}]. Gammelt felt «beskjed» gjøres om.
+  function medId(l) { (l || []).forEach(function (m) { if (!m.id) m.id = nyId(); if (!Array.isArray(m.beskjeder)) m.beskjeder = []; if ((m.beskjed || '').trim()) m.beskjeder.push({ tekst: m.beskjed, tid: '' }); delete m.beskjed; }); return l; }
+  function alleBeskjeder(m) { var l = (m.beskjeder || []).slice(); if ((m.beskjed || '').trim()) l.push({ tekst: m.beskjed, tid: '' }); return l.sort(function (a, b) { return (b.tid || '').localeCompare(a.tid || ''); }); }
+  function klokke(d) { return d.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit' }); }
+  function sendBeskjed(mi) {
+    var f = T.fag, m = f.u.moduler[mi], t = ((f.nyBeskjed || {})[m.id] || '').trim();
+    if (!t) return varsle('Skriv beskjeden først.', true);
+    m.beskjeder = m.beskjeder || []; m.beskjeder.push({ tekst: t, tid: new Date().toISOString() }); f.nyBeskjed[m.id] = '';
+    clearTimeout(f.tid); tegn();
+    lagreUtkast().then(function () { if (!f.lagreFeil) varsle(f.c.status === 'publisert' ? 'Beskjeden er publisert. Studentene ser den nå.' : 'Beskjeden er lagret. Studentene ser den når faget er publisert.'); tegn(); });
+  }
+  function slettBeskjed(mi, i) {
+    var f = T.fag, n = mi + ':' + i;
+    if (f.slettBesk !== n) { f.slettBesk = n; return tegn(); }
+    f.slettBesk = null; var m = f.u.moduler[mi], l = alleBeskjeder(m), x = l[i];
+    m.beskjeder = (m.beskjeder || []).filter(function (y) { return y !== x; }); tegn();
+    lagreUtkast().then(function () { if (!f.lagreFeil) varsle('Beskjeden er slettet.'); });
+  }
   function fraFag(c) {
     return { navn: c.navn, emnebeskrivelse: c.emnebeskrivelse || '', laringsutbytte: c.laringsutbytte || '', ramme: Object.assign(STD_RAMME(), c.ramme || {}),
       elementer: Object.assign({}, STD_ELEM, c.elementer || {}), moduler: medId((c.moduler || []).length ? JSON.parse(JSON.stringify(c.moduler)) : fraTemaer(c.temaer || [])) };
@@ -471,12 +488,17 @@ function studieStart() {
       return { navn: kt.tittel, uker: [{ undertemaer: Object.keys(kt.undertemaer).slice(0, 4).map(function (u) { return x + '/' + u; }), notat: '' }] }; }).filter(Boolean);
   }
   // Private notater (bare fageieren) lagres i kurs_notat, adskilt fra fagraden som studentene kan lese.
-  function lagreNotater() {
-    var f = T.fag; clearTimeout(f.notTid);
+  function notStatus(tekst, feil) {
+    T.fag.notStatus = { t: tekst, feil: !!feil };
+    document.querySelectorAll('.st-notstatus').forEach(function (el) { el.textContent = tekst; el.classList.toggle('st-feil', !!feil); });
+  }
+  function lagreNotater(naa) {
+    var f = T.fag; clearTimeout(f.notTid); notStatus('Lagrer …');
     f.notTid = setTimeout(function () {
       k.from('kurs_notat').upsert({ kurs: f.c.id, notater: f.notater || {}, endret: new Date().toISOString() }).then(sjekk)
-        .catch(function (e) { varsle('Notatet ble ikke lagret: ' + feilmelding(e), true); });
-    }, 1000);
+        .then(function () { notStatus('Lagret kl. ' + klokke(new Date()) + ' ✓'); if (naa) varsle('Notatet er lagret.'); })
+        .catch(function (e) { notStatus('Ikke lagret!', true); varsle('Notatet ble ikke lagret: ' + feilmelding(e), true); });
+    }, naa ? 0 : 1000);
   }
   function planlagreFag() {
     var f = T.fag; f.lagrer = true; clearTimeout(f.tid);
@@ -616,8 +638,13 @@ function studieStart() {
             '<button type="button" class="st-ikon" data-h="slettUke" data-m="' + mi + '" data-u="' + wi + '" aria-label="Slett uke ' + uke + '">✕</button></div>';
         }).join('') +
         '<div class="st-modfot"><button type="button" class="st-btn g liten" data-h="nyUke" data-m="' + mi + '">+ Uke</button></div></section>' +
-        '<aside class="st-sidenotat"><label class="st-sm">📣 Beskjed til studentene<textarea class="st-felt" rows="2" data-felt="beskjed" data-m="' + mi + '" maxlength="500" placeholder="Vises for studentene i denne modulen">' + esc(m.beskjed || '') + '</textarea></label>' +
-        '<label class="st-sm">🔒 Notat (bare du ser det)<textarea class="st-felt" rows="2" data-notat="' + esc(m.id) + '" maxlength="2000" placeholder="Egne notater til modulen">' + esc((f.notater || {})[m.id] || '') + '</textarea></label></aside></div>' +
+        '<div class="st-sidenotat"><div class="st-sideboks"><b class="st-sm">📣 Beskjeder til studentene</b>' +
+        alleBeskjeder(m).map(function (b, bi) { return '<div class="st-besk"><span class="st-sm">' + (b.tid ? dato(b.tid) + ' kl. ' + klokke(new Date(b.tid)) : '') + '</span><div>' + esc(b.tekst) + '</div>' +
+          '<button type="button" class="st-lenke st-sm" data-h="slettBeskjed" data-m="' + mi + '" data-i="' + bi + '">' + (f.slettBesk === mi + ':' + bi ? 'Bekreft sletting' : 'Slett') + '</button></div>'; }).join('') +
+        '<textarea class="st-felt" rows="2" data-nybeskjed="' + esc(m.id) + '" maxlength="500" placeholder="Ny beskjed …">' + esc((f.nyBeskjed || {})[m.id] || '') + '</textarea>' +
+        '<button type="button" class="st-btn liten" data-h="sendBeskjed" data-m="' + mi + '">' + (c.status === 'publisert' ? 'Publiser beskjed' : 'Lagre beskjed') + '</button></div>' +
+        '<div class="st-sideboks"><b class="st-sm">🔒 Notat (bare du ser det)</b><textarea class="st-felt" rows="3" data-notat="' + esc(m.id) + '" maxlength="2000" placeholder="Egne notater til modulen">' + esc((f.notater || {})[m.id] || '') + '</textarea>' +
+        '<div class="st-rad"><span class="st-sm st-notstatus' + (f.notStatus && f.notStatus.feil ? ' st-feil' : '') + '">' + (f.notStatus ? f.notStatus.t : 'Lagres automatisk') + '</span><button type="button" class="st-btn g liten" data-h="lagreNotat">Lagre</button></div></div></div></div>' +
         '<div class="st-pil" aria-hidden="true">↓</div>';
     }).join('');
     o += '<button type="button" class="st-nymodul" data-h="nyModul">+ Ny modul</button></div></div>';
@@ -1156,8 +1183,9 @@ function studieStart() {
   // Beskjeder fra underviseren og fagets tidslinje for studenten.
   function studentFagTillegg(d) {
     var c = d.kursinfo || {}, mods = c.moduler || [], o = '';
-    var besk = mods.filter(function (m) { return (m.beskjed || '').trim(); });
-    if (besk.length) o += '<p class="st-sm" style="margin-top:.6rem"><b>Beskjeder fra faglæreren</b></p>' + besk.map(function (m) { return '<div class="st-tl-beskjed">📣 <b>' + esc(m.navn) + ':</b> ' + esc(m.beskjed) + '</div>'; }).join('');
+    var besk = []; mods.forEach(function (m) { alleBeskjeder(m).forEach(function (b) { besk.push({ m: m, b: b }); }); });
+    besk.sort(function (x, y) { return (y.b.tid || '').localeCompare(x.b.tid || ''); });
+    if (besk.length) o += '<p class="st-sm" style="margin-top:.6rem"><b>Beskjeder fra faglæreren</b></p>' + besk.map(function (x) { return '<div class="st-tl-beskjed">📣 ' + (x.b.tid ? '<span class="st-sm">' + dato(x.b.tid) + ' · </span>' : '') + '<b>' + esc(x.m.navn) + ':</b> ' + esc(x.b.tekst) + '</div>'; }).join('');
     if (mods.length && (c.elementer || {}).tidslinje !== false) {
       var apen = T.tid && T.tid[d.kurs];
       o += '<p><button type="button" class="st-btn g liten" data-h="tidStudent" data-id="' + d.kurs + '">' + (apen ? 'Skjul tidslinjen' : 'Se tidslinjen for faget') + '</button></p>';
@@ -1243,7 +1271,7 @@ function studieStart() {
         var dekker = krav.filter(function (o) { var ids = kravIder(o); return w.undertemaer.some(function (id) { return ids.indexOf(id) >= 0; }); });
         rader.push('<li class="st-tl-uke" style="border-color:' + farge + '">' +
           '<div class="st-tl-tid"><b>Uke ' + nr + '</b>' + (start ? '<span class="st-sm">kal.uke ' + (((start + nr - 2) % 52) + 1) + ' · ' + dato0.toLocaleDateString('nb-NO', { day: 'numeric', month: 'short', timeZone: 'UTC' }) + '</span>' : '') + '</div>' +
-          '<div class="st-tl-inn">' + (wi === 0 ? '<div class="st-tl-modul" style="color:' + farge + '">Modul ' + (mi + 1) + ': ' + esc(m.navn) + '</div>' + (m.beskjed ? '<div class="st-tl-beskjed">📣 ' + esc(m.beskjed) + '</div>' : '') + (notater && notater[m.id] ? '<div class="st-tl-notat">🔒 ' + esc(notater[m.id]) + '</div>' : '') : '') +
+          '<div class="st-tl-inn">' + (wi === 0 ? '<div class="st-tl-modul" style="color:' + farge + '">Modul ' + (mi + 1) + ': ' + esc(m.navn) + '</div>' + alleBeskjeder(m).map(function (b) { return '<div class="st-tl-beskjed">📣 ' + (b.tid ? '<span class="st-sm">' + dato(b.tid) + ':</span> ' : '') + esc(b.tekst) + '</div>'; }).join('') + (notater && notater[m.id] ? '<div class="st-tl-notat">🔒 ' + esc(notater[m.id]) + '</div>' : '') : '') +
           (w.undertemaer.length ? '<div>' + w.undertemaer.map(function (id) { return '<span class="st-tl-ut">' + esc(utNavnKort(id)) + '</span>'; }).join('') + '</div>' : '<div class="st-sm">' + (w.notat ? '' : 'Ingen undertemaer') + '</div>') +
           (w.notat ? '<div class="st-sm">' + esc(w.notat) + '</div>' : '') + (samlingTekst(r, el) ? '<div class="st-sm">' + samlingTekst(r, el) + '</div>' : '') +
           dekker.filter(function (o) { return frister.indexOf(o) < 0; }).map(function (o) { return '<span class="st-tl-krav">Arbeidskrav: ' + esc(o.tittel) + '</span>'; }).join('') +
@@ -1279,6 +1307,7 @@ function studieStart() {
       avbrytKi: function () { T.fag.bekreftKi = false; tegn(); },
       kiEndre: function () { kiOppsett(true); }, angreKi: angreKi,
       tidslinje: function () { T.fag.tidslinje = !T.fag.tidslinje; tegn(); },
+      sendBeskjed: function () { sendBeskjed(+d.m); }, slettBeskjed: function () { slettBeskjed(+d.m, +d.i); }, lagreNotat: function () { lagreNotater(true); },
       kravStolpe: function () { var o = (T.ovelser || []).find(function (x) { return x.id === d.id; }); T.fag.fane = 'ovinger'; nyttKrav(o); rot.scrollIntoView({ block: 'start' }); },
       tidStudent: function () { T.tid = T.tid || {}; T.tid[d.id] = !T.tid[d.id]; tegn(); },
       sparFjernFil: function () { var sp = kiSpar(); sp.vedlegg = null; sp.filnavn = ''; tegn(); },
@@ -1374,12 +1403,12 @@ function studieStart() {
       if (el.dataset.kk === 'grunnlag') { T.fag.kiKviss.grunnlag = el.value; return; }
     }
     if (T.fag && el.dataset && el.dataset.spar) { kiSpar().tekst = el.value; return; }
+    if (T.fag && el.dataset && el.dataset.nybeskjed) { T.fag.nyBeskjed = T.fag.nyBeskjed || {}; T.fag.nyBeskjed[el.dataset.nybeskjed] = el.value; return; }
     if (T.fag && el.dataset && el.dataset.notat) { T.fag.notater = T.fag.notater || {}; T.fag.notater[el.dataset.notat] = el.value; lagreNotater(); return; }
     var felt = el.dataset && el.dataset.felt; if (!T.fag || !felt || felt === 'leggUT') return;
     var u = T.fag.u;
     if (felt === 'mod') u.moduler[+el.dataset.m].navn = el.value;
     else if (felt === 'notat') u.moduler[+el.dataset.m].uker[+el.dataset.u].notat = el.value;
-    else if (felt === 'beskjed') u.moduler[+el.dataset.m].beskjed = el.value;
     else if (felt.indexOf('ramme.') === 0) { var n = parseInt(el.value, 10); u.ramme[felt.slice(6)] = isNaN(n) ? '' : Math.max(0, Math.min(felt === 'ramme.lengde' ? 600 : felt === 'ramme.startuke' ? 53 : 52, n)); }
     else u[felt] = el.value;
     planlagreFag();

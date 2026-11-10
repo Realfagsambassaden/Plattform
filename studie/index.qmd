@@ -124,7 +124,12 @@ toc: false
 .studie .st-kravkol { position: relative; flex: none; align-self: stretch; }
 .studie .st-modkol { flex: 1; min-width: 0; }
 .studie .st-modrad { display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: .7rem; align-items: start; }
+.studie .st-modrad > .st-modul { width: 100%; min-width: 0; margin: 0; }
+.studie .st-modrad > .st-sidenotat { width: auto; margin: 0; float: none; }
 .studie .st-sidenotat { display: flex; flex-direction: column; gap: .5rem; position: sticky; top: 4.5rem; }
+.studie .st-sideboks { border: 1px solid var(--bs-border-color); border-radius: 10px; padding: .5rem .6rem; display: flex; flex-direction: column; gap: .35rem; }
+.studie .st-besk { border-left: 3px solid var(--st-f); padding: .1rem .5rem; font-size: .9rem; }
+.studie .st-lenke { background: none; border: 0; padding: 0; color: var(--bs-secondary-color); text-decoration: underline; cursor: pointer; }
 .studie .st-sidenotat textarea { margin-top: .2rem; font-size: .9rem; }
 .studie .st-kravstolpe { position: absolute; width: 28px; border: 2px solid; border-radius: 14px; background: rgba(127,127,127,.12); padding: .4rem 0; cursor: pointer;
   display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: .74rem; font-weight: 700; }
