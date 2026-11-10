@@ -116,8 +116,9 @@ function studieStart() {
       k.from('studie_ukevurdering').select('*').eq('eier', bruker.id).then(sjekk),
       k.from('kurs_deltaker').select('kurs, samtykke_innsyn, pameldt, kursinfo:kurs ( id, navn, krev_innsyn, temaer, beskrivelse )').eq('student', bruker.id).then(sjekk),
       k.from('kurs').select('*').eq('eier', bruker.id).order('opprettet').then(sjekk),
-      k.from('ovelser').select('*').order('opprettet').then(sjekk),
-      k.from('studie_quiz').select('*').eq('eier', bruker.id).then(sjekk),
+      // Øvinger kom senere: mangler tabellene (SQL ikke kjørt ennå), virker resten likevel.
+      k.from('ovelser').select('*').order('opprettet').then(sjekk).catch(function () { return []; }),
+      k.from('studie_quiz').select('*').eq('eier', bruker.id).then(sjekk).catch(function () { return []; }),
     ]).then(function (r) {
       T.ovelser = r[5] || []; T.quizer = r[6] || [];
       T.inn = r[0] || { valgt: [], modus: 'alle', repetisjon: true, varsler: true, niva: {} };
