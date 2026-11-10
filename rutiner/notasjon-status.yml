@@ -1,6 +1,66 @@
 # Hvilke filer som er sjekket mot notasjonsreglene (NOTASJON.md).
 # Oppdateres av verktoy/notasjon_status.py – ikke rediger for hånd.
 filer:
+  flervariabel-kalkulus/kapitler/01-dobbeltintegraler/02-generelle-omrader.qmd:
+    blob: a207bb821c1fdc09b19b749c5388b86af286d408
+    dato: '2026-11-10'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/01-dobbeltintegraler/03-polarkoordinater.qmd:
+    blob: 1cd22a190c47c137587be740dcbd723263930f7d
+    dato: '2026-11-10'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/01-dobbeltintegraler/04-variabelbytte.qmd:
+    blob: 794f845181d70c400581248c00838d08ac02da5d
+    dato: '2026-11-10'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/01-dobbeltintegraler/05-anvendelser.qmd:
+    blob: 8e779835277c9e84ac0a43cab76bed6c46ac6a99
+    dato: '2026-11-10'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/01-dobbeltintegraler/06-numerisk-dobbeltintegral.qmd:
+    blob: 378f7c6411a706b63b7945aba1ade9414050cbbd
+    dato: '2026-11-10'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/01-dobbeltintegraler/07-oppgaver.qmd:
+    blob: 45703c0dfe6f24bf981299902359cbfca9d95b10
+    dato: '2026-11-10'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/01-dobbeltintegraler/index.qmd:
+    blob: 15fe8b1bd7181e62288f64e79436248ae552b25c
+    dato: '2026-11-10'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/02-trippelintegraler/01-trippelintegraler.qmd:
+    blob: a7b54de710ac7278bccbc8b1cf416e60ec694397
+    dato: '2026-11-10'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/02-trippelintegraler/02-sylinderkoordinater.qmd:
+    blob: 1212f436c50f8114b133b9f957227aa33a11d4bf
+    dato: '2026-11-10'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/02-trippelintegraler/03-kulekoordinater.qmd:
+    blob: 7883d9459d92b7da9e5e1c64651d93f05a00193b
+    dato: '2026-11-10'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/02-trippelintegraler/04-treghetsmoment.qmd:
+    blob: 58a777ebd648b09462a454611768f3d16a043a80
+    dato: '2026-11-10'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/02-trippelintegraler/05-numerisk-trippelintegral.qmd:
+    blob: 880357b432bc1cc0a74dae278d2481efa55d1b3e
+    dato: '2026-11-10'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/02-trippelintegraler/06-oppgaver.qmd:
+    blob: 6f9a659ccfa950fc9efdeac6a98d5c01eb9fce19
+    dato: '2026-11-10'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/02-trippelintegraler/index.qmd:
+    blob: 2b78b9ac926e368177996adb7bf7f66e995df76e
+    dato: '2026-11-10'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/03-kurver-og-flater/01-linjeintegraler.qmd:
+    blob: 58c2698c3d1832fc18324daf1cd434a4b1c693cc
+    dato: '2026-11-10'
+    versjon: 2
   ingeniorfysikk/kapitler/01-introduksjon/01-hva-er-fysikk.qmd:
     blob: 0fe6f15762a24c56203ab9722fd81a69748b93be
     dato: '2026-11-09'
