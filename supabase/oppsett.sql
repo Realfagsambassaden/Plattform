@@ -389,6 +389,16 @@ grant select, insert, update, delete on public.ovelser to authenticated;
 grant select, insert on public.studie_quiz to authenticated;
 revoke all on public.ovelser, public.studie_quiz from anon;
 
+-- Arbeidskrav (fagbyggeren steg 2): et arbeidskrav kan avgrenses til enkelte undertemaer, bruke spørsmålsbanken
+-- eller fagets egne spørsmål (laget av underviseren eller KI), og kreve at studenten forklarer svaret skriftlig/muntlig.
+-- sporsmal: [{"tekst":"…","riktig":"…","feil":[{"svar":"…","type":"regnefeil|begrep"}],"forklaring":"…","undertema":"…","vanskelighet":"middels"}]
+-- NB: Svarene sjekkes i nettleseren (som for spørsmålsbanken), så fasiten er ikke hemmelig for en teknisk flink student.
+alter table public.ovelser add column if not exists undertemaer text[] not null default '{}' check (cardinality(undertemaer) <= 20);
+alter table public.ovelser add column if not exists kilde text not null default 'bank' check (kilde in ('bank', 'egne'));
+alter table public.ovelser add column if not exists sporsmal jsonb not null default '[]'::jsonb check (jsonb_typeof(sporsmal) = 'array' and pg_column_size(sporsmal) < 60000);
+alter table public.ovelser add column if not exists svarform text not null default 'valgfri' check (svarform in ('valgfri', 'skriftlig', 'muntlig', 'begge'));
+alter table public.ovelser add column if not exists beskrivelse text not null default '' check (char_length(beskrivelse) <= 2000);
+
 -- Godkjenning for alle påmeldte i et fag (bare for faglærer): én rad per student og øving.
 create or replace function public.kurs_godkjenning(k uuid)
   returns table (student uuid, epost text, ovelse uuid, godkjent boolean, beste int, forsok int)

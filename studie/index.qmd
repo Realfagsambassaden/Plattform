@@ -108,6 +108,13 @@ toc: false
 @media (max-width: 600px) { .studie .st-to { grid-template-columns: 1fr; } }
 .studie .st-to textarea { min-height: 120px; margin-top: .3rem; }
 .studie .st-feltsett { border: 1px solid var(--bs-border-color); border-radius: 12px; padding: .7rem 1rem; margin: .8rem 0; }
+.studie .st-kibox { border: 1px dashed var(--bs-primary); border-radius: 12px; padding: .7rem 1rem; margin: .6rem 0 1rem; }
+.studie .st-kibox textarea { margin: .5rem 0; }
+.studie .st-spred { border: 1px solid var(--bs-border-color); border-radius: 12px; padding: .6rem .8rem; margin: .6rem 0; display: flex; flex-direction: column; gap: .4rem; }
+.studie .st-spred > .st-rad { flex-wrap: wrap; gap: .4rem; }
+.studie .st-spred select { max-width: 14rem; }
+.studie .st-spred .st-riktig { border-color: var(--st-f); }
+.studie .st-pakrevd { font-size: .75rem; font-weight: 700; color: #eee462; border: 1px solid #eee462; border-radius: 999px; padding: .05rem .5rem; vertical-align: middle; }
 .studie .st-feltsett legend { font-weight: 700; font-size: 1rem; padding: 0 .4rem; width: auto; float: none; margin: 0; }
 .studie .st-piller { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .6rem; }
 .studie .st-pille { border: 1px solid var(--bs-border-color); border-radius: 20px; padding: .25rem .8rem; }

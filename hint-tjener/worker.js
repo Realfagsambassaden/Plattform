@@ -3,6 +3,8 @@
 //   POST /vurder   – studieappen: vurderer studentens forklaring (tekst og/eller bilde) til et quizspørsmål. Krever innlogging.
 //   POST /rad      – studieappen: personlig råd om eksamensforberedelse ut fra kunnskapsprofilen. Krever innlogging.
 //   POST /fagforslag – fagbyggeren: forslag til moduler og uker ut fra emnebeskrivelse og læringsutbytte. Bare for undervisere.
+//   POST /kvisslag – fagbyggeren: flervalgsspørsmål til et arbeidskrav, eventuelt ut fra underviserens egne oppgaver
+//                    (tekst, bilde eller PDF). Bare for undervisere. Ingenting lagres i tjenesten.
 //   POST /dekning  – dekningskart: hvor godt dekker fysikkhjelp.no et emne? Åpent for alle;
 //                    innloggede brukere får i tillegg sidene/veikartet.
 // API-nøkler ligger som hemmeligheter i Cloudflare og vises aldri på nettsiden.
@@ -113,6 +115,55 @@ Norsk bokmål.
 Svar KUN med gyldig JSON:
 {"moduler":[{"navn":"…","uker":[{"undertemaer":["id"],"notat":""}]}],"kommentar":"…"}`;
 
+const SYSTEM_KVISS = `Du er en erfaren fysikklærer og lager flervalgsspørsmål til et obligatorisk arbeidskrav på NETTSTED.
+Du får tema, eventuelt undertemaer, ønsket antall og vanskelighetsgrad, og kanskje underviserens egne oppgaver (tekst, bilde eller PDF).
+Har du fått egne oppgaver: lag spørsmålene ut fra dem (samme fysikk og omtrent samme tall), og bruk dem i rekkefølge så langt det går.
+
+Hvert spørsmål:
+- "tekst": kort oppgavetekst med tall og enheter. Formler i LaTeX mellom $ … $.
+- "riktig": det riktige svaret (kort, med enhet).
+- "feil": nøyaktig 3 gale svar som avslører typiske feil: {"svar":"…","type":"regnefeil"} for riktig fysikk men feil regning
+  (glemt kvadrat, feil enhet, fortegn), og {"svar":"…","type":"begrep"} for feil fysikk. Minst ett av hver type.
+- "forklaring": 1–2 setninger med løsningen, formel i $ … $.
+- "undertema": id-en til undertemaet spørsmålet hører til (fra listen), ellers "".
+- "vanskelighet": "lett", "middels" eller "vanskelig".
+Bruk bare enkel LaTeX: \\frac{}{}, ^, _, \\cdot, \\sqrt{}, greske bokstaver, \\mathrm{} for enheter.
+Regn ut svarene nøye; et galt fasitsvar er det verste som kan skje. Norsk bokmål.
+
+Svar KUN med gyldig JSON: {"sporsmal":[{"tekst":"…","riktig":"…","feil":[{"svar":"…","type":"regnefeil"}],"forklaring":"…","undertema":"","vanskelighet":"middels"}]}`;
+
+async function kvisslag(request, env, b, h) {
+  const bruker = await innloggetBruker(request, env);
+  if (!bruker) return json({ feil: "Du må være logget inn." }, 401, h);
+  if (!(await erUnderviser(request, env))) return json({ feil: "Bare godkjente undervisere kan lage spørsmål med KI." }, 403, h);
+  if (!(await innenforGrense(env, `kviss:${bruker.id}:${new Date().toISOString().slice(0, 10)}`, 40, 90000)))
+    return json({ feil: "Du har laget mange spørsmål i dag. Prøv igjen i morgen." }, 429, h);
+  const antall = Math.max(1, Math.min(10, parseInt(b.antall, 10) || 6));
+  const niva = ["lett", "middels", "vanskelig", "blandet"].includes(b.vanskelighet) ? b.vanskelighet : "blandet";
+  const ut = (Array.isArray(b.undertemaer) ? b.undertemaer.slice(0, 20) : []).filter((x) => x && typeof x.id === "string")
+    .map((x) => ({ id: kort(x.id, 80), tittel: kort(x.tittel, 120) }));
+  const vedlegg = lesVedlegg(b.vedlegg);
+  if (b.vedlegg && !vedlegg) return json({ feil: "Vedlegget må være et bilde (JPEG, PNG, WebP) eller en PDF på under 4 MB." }, 400, h);
+  const melding = `Tema: ${kort(b.tema, 120)}\nUndertemaer (id | tittel):\n${ut.map((x) => `${x.id} | ${x.tittel}`).join("\n") || "(hele temaet)"}\n` +
+    `Antall spørsmål: ${antall}\nVanskelighet: ${niva}\n\nUnderviserens egne oppgaver:\n${kort(b.grunnlag, 8000) || (vedlegg ? "(se vedlegget)" : "(ingen – lag egne)")}`;
+  const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_KVISS.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000, vedlegg));
+  const gyldigeUt = new Set(ut.map((x) => x.id));
+  const sp = (r && Array.isArray(r.sporsmal) ? r.sporsmal : []).slice(0, antall).map((x) => {
+    const feil = (Array.isArray(x && x.feil) ? x.feil : []).slice(0, 3).map((f) => ({ svar: kort(f && f.svar, 200), type: f && f.type === "regnefeil" ? "regnefeil" : "begrep" })).filter((f) => f.svar);
+    return { tekst: kort(x && x.tekst, 1500), riktig: kort(x && x.riktig, 200), feil, forklaring: kort(x && x.forklaring, 1500),
+      undertema: gyldigeUt.has(x && x.undertema) ? x.undertema : "", vanskelighet: ["lett", "middels", "vanskelig"].includes(x && x.vanskelighet) ? x.vanskelighet : "middels" };
+  }).filter((x) => x.tekst && x.riktig && x.feil.length >= 2);
+  if (!sp.length) throw feil("Fikk ingen brukbare spørsmål fra KI denne gangen. Prøv igjen.", 502);
+  return json({ sporsmal: sp }, 200, h);
+}
+
+// Vedlegg fra underviseren: bilde eller PDF (som data-URL). Lagres ikke.
+function lesVedlegg(d) {
+  const m = /^data:(image\/(?:jpeg|png|webp)|application\/pdf);base64,([A-Za-z0-9+/=]+)$/.exec(String(d || ""));
+  if (!m || m[2].length > 5.5e6) return null;
+  return { type: m[1], data: m[2] };
+}
+
 async function erUnderviser(request, env) {
   const token = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
   if (!token || !env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) return false;
@@ -186,6 +237,7 @@ export default {
       if (sti.endsWith("/vurder")) return await vurder(request, env, b, h);
       if (sti.endsWith("/rad")) return await rad(request, env, b, h);
       if (sti.endsWith("/fagforslag")) return await fagforslag(request, env, b, h);
+      if (sti.endsWith("/kvisslag")) return await kvisslag(request, env, b, h);
       return await hint(request, env, b, h);
     } catch (e) {
       return json({ feil: e.brukermelding || "Tjenesten er midlertidig utilgjengelig. Prøv igjen om litt." }, e.status || 502, h);
@@ -405,7 +457,7 @@ async function spor(env, system, melding, maksTokens, bilde) {
     method: "POST",
     headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
     body: JSON.stringify({ model: modell, max_tokens: maksTokens, system, messages: [{ role: "user", content: bilde
-      ? [{ type: "image", source: { type: "base64", media_type: bilde.type, data: bilde.data } }, { type: "text", text: melding }]
+      ? [{ type: bilde.type === "application/pdf" ? "document" : "image", source: { type: "base64", media_type: bilde.type, data: bilde.data } }, { type: "text", text: melding }]
       : melding }] }),
   });
   if (!r.ok) throw new Error("KI " + r.status);
