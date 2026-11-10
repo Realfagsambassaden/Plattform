@@ -246,12 +246,26 @@ begin
 end $$;
 
 -- Ny bruker: lag profil. Ble en gyldig underviserkode oppgitt ved registrering, blir brukeren underviser.
+-- Navn (vises i appen og for faglæreren i stedet for e-post). Settes ved registrering og kan endres på Min side.
+alter table public.profiler add column if not exists navn text not null default '' check (char_length(navn) <= 80);
+create or replace function public.sett_navn(n text) returns boolean
+  language plpgsql security definer set search_path = public as
+$$
+begin
+  if auth.uid() is null then return false; end if;
+  insert into profiler (id, navn) values (auth.uid(), left(trim(coalesce(n, '')), 80))
+    on conflict (id) do update set navn = left(trim(coalesce(n, '')), 80);
+  return true;
+end $$;
+revoke execute on function public.sett_navn(text) from public, anon;
+grant execute on function public.sett_navn(text) to authenticated;
+
 create or replace function public.ny_bruker() returns trigger
   language plpgsql security definer set search_path = public as
 $$
 declare k text := upper(trim(coalesce(new.raw_user_meta_data ->> 'underviserkode', '')));
 begin
-  insert into profiler (id) values (new.id) on conflict (id) do nothing;
+  insert into profiler (id, navn) values (new.id, left(trim(coalesce(new.raw_user_meta_data ->> 'navn', '')), 80)) on conflict (id) do nothing;
   if k <> '' then
     update underviserkoder set brukt_av = new.id, brukt = now() where kode = k and brukt_av is null;
     if found then update profiler set rolle = 'underviser' where id = new.id; end if;
@@ -298,11 +312,11 @@ create policy "egne forelesninger: lage" on public.forelesninger for insert to a
 -- Returtypen er endret siden første versjon, derfor «drop» først.
 drop function if exists public.kurs_deltakere(uuid);
 create function public.kurs_deltakere(k uuid)
-  returns table (student uuid, epost text, pameldt timestamptz, svar int, sist_aktiv timestamptz,
+  returns table (student uuid, epost text, navn text, pameldt timestamptz, svar int, sist_aktiv timestamptz,
                  forstaelse numeric, presisjon numeric, hurtighet numeric)
   language sql stable security definer set search_path = public, auth as
 $$
-  select d.student, u.email::text, d.pameldt, count(x.id)::int, max(x.opprettet),
+  select d.student, u.email::text, coalesce((select p.navn from profiler p where p.id = d.student), ''), d.pameldt, count(x.id)::int, max(x.opprettet),
          round(sum(case when x.eff <> 'begrep' then x.w else 0 end) / nullif(sum(x.w), 0), 3),
          round(count(x.id) filter (where x.eff = 'riktig')::numeric / nullif(count(x.id) filter (where x.eff <> 'begrep'), 0), 3),
          round(count(x.id) filter (where x.eff = 'riktig' and x.tid_s <= x.forventet_s)::numeric / nullif(count(x.id) filter (where x.eff = 'riktig'), 0), 3)
@@ -422,11 +436,13 @@ revoke all on public.kurs_notat from anon;
 alter table public.ovelser add column if not exists beskrivelse text not null default '' check (char_length(beskrivelse) <= 2000);
 
 -- Godkjenning for alle påmeldte i et fag (bare for faglærer): én rad per student og øving.
-create or replace function public.kurs_godkjenning(k uuid)
-  returns table (student uuid, epost text, ovelse uuid, godkjent boolean, beste int, forsok int)
+-- Returtypen har fått navn, derfor «drop» først.
+drop function if exists public.kurs_godkjenning(uuid);
+create function public.kurs_godkjenning(k uuid)
+  returns table (student uuid, epost text, navn text, ovelse uuid, godkjent boolean, beste int, forsok int)
   language sql stable security definer set search_path = public, auth as
 $$
-  select d.student, u.email::text, o.id,
+  select d.student, u.email::text, coalesce((select p.navn from profiler p where p.id = d.student), ''), o.id,
          coalesce(bool_or(q.riktige >= o.krav and (o.frist is null or q.fullfort <= o.frist)), false),
          max(q.riktige)::int, count(q.id)::int
     from kurs c join kurs_deltaker d on d.kurs = c.id join auth.users u on u.id = d.student
@@ -476,7 +492,7 @@ create or replace function public.ny_bruker() returns trigger
 $$
 declare k text := upper(trim(coalesce(new.raw_user_meta_data ->> 'underviserkode', '')));
 begin
-  insert into profiler (id) values (new.id) on conflict (id) do nothing;
+  insert into profiler (id, navn) values (new.id, left(trim(coalesce(new.raw_user_meta_data ->> 'navn', '')), 80)) on conflict (id) do nothing;
   if k <> '' then
     update underviserkoder set brukt_av = new.id, brukt = now() where kode = k and brukt_av is null;
     if found then update profiler set rolle = 'underviser' where id = new.id; return new; end if;

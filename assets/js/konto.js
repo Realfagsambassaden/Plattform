@@ -1,6 +1,17 @@
 // Brukerkontoer (Supabase). Lastes på alle sider.
 // - Oppdaterer «Logg inn» i menyen til «Min side» når du er innlogget (uten å laste Supabase-biblioteket).
 // - window.fhKonto() gir et løfte om Supabase-klienten, for sidene som trenger den (konto, dekning).
+// Sider som vises inne i fokusvisningen (en iframe på samme nettsted) vises uten meny, sidemeny og bunntekst.
+(function () {
+  var innebygd = false; try { innebygd = window.self !== window.top && window.top.location.origin === location.origin; } catch (e) {}
+  if (!innebygd) return;
+  document.documentElement.classList.add('fh-innebygd');
+  var st = document.createElement('style');
+  st.textContent = 'html.fh-innebygd #quarto-header, html.fh-innebygd header.headroom, html.fh-innebygd .nav-footer, html.fh-innebygd footer.footer,' +
+    'html.fh-innebygd #quarto-sidebar, html.fh-innebygd .quarto-sidebar-toggle, html.fh-innebygd .loype-linje, html.fh-innebygd .loype-bunn { display: none !important; }' +
+    'html.fh-innebygd body { padding-top: 0 !important; } html.fh-innebygd #quarto-content { margin-top: .5rem !important; }';
+  document.head.appendChild(st);
+})();
 (function () {
   var URL_ = (document.querySelector('meta[name="supabase-url"]') || {}).content || '';
   var NOKKEL = (document.querySelector('meta[name="supabase-key"]') || {}).content || '';
