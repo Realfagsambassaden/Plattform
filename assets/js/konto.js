@@ -19,6 +19,23 @@
   }
   oppdaterMeny(harSesjon());
 
+  // Undervisere ser ikke «Dekker vi faget ditt?» øverst i menyen (den er for studenter).
+  // Rollen hentes rett fra databasen med brukerens nøkkel, uten å laste Supabase-biblioteket, og huskes per bruker.
+  function visRolle(rolle) {
+    var u = rolle === 'underviser' || rolle === 'admin';
+    document.querySelectorAll('.navbar a.nav-link[href*="dekning"]').forEach(function (a) { (a.closest('li') || a).style.display = u ? 'none' : ''; });
+  }
+  function hentRolle(sesjon) {
+    if (!sesjon || !sesjon.user || !sesjon.access_token) { try { localStorage.removeItem('fh-rolle'); } catch (e) {} return visRolle(null); }
+    try { var lagret = JSON.parse(localStorage.getItem('fh-rolle') || 'null'); if (lagret && lagret.id === sesjon.user.id) visRolle(lagret.rolle); } catch (e) {}
+    if (sesjon.expires_at && sesjon.expires_at * 1000 < Date.now()) return;
+    fetch(URL_ + '/rest/v1/rpc/min_rolle', { method: 'POST', headers: { apikey: NOKKEL, Authorization: 'Bearer ' + sesjon.access_token, 'Content-Type': 'application/json' }, body: '{}' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (rolle) { if (typeof rolle !== 'string') return; visRolle(rolle); try { localStorage.setItem('fh-rolle', JSON.stringify({ id: sesjon.user.id, rolle: rolle })); } catch (e) {} })
+      .catch(function () {});
+  }
+  if (sattOpp) { var sesjon0 = null; try { sesjon0 = JSON.parse(localStorage.getItem(lagringsnavn) || 'null'); } catch (e) {} hentRolle(sesjon0); }
+
   var klientLofte = null;
   window.fhKonto = function () {
     if (!sattOpp) return Promise.reject(new Error('ikke-satt-opp'));
@@ -28,7 +45,7 @@
       s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
       s.onload = function () {
         var k = window.supabase.createClient(URL_, NOKKEL, { auth: { persistSession: true, detectSessionInUrl: true, flowType: 'implicit' } });
-        k.auth.onAuthStateChange(function (_hendelse, sesjon) { oppdaterMeny(!!sesjon); });
+        k.auth.onAuthStateChange(function (hendelse, sesjon) { oppdaterMeny(!!sesjon); if (hendelse !== 'TOKEN_REFRESHED') hentRolle(sesjon); });
         ok(k);
       };
       s.onerror = function () { nei(new Error('lasting')); };
