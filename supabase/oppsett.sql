@@ -154,14 +154,7 @@ create or replace function public.finn_kurs(k text)
   language sql stable security definer set search_path = public as
   $$ select id, navn, krev_innsyn from kurs where kode = upper(trim(k)) $$;
 
--- Deltakere med e-post, bare for kurs som krever innsyn, og bare dem som har godtatt.
-create or replace function public.kurs_deltakere(k uuid)
-  returns table (student uuid, epost text, pameldt timestamptz)
-  language sql stable security definer set search_path = public, auth as
-  $$ select d.student, u.email::text, d.pameldt
-       from kurs_deltaker d join kurs c on c.id = d.kurs join auth.users u on u.id = d.student
-      where d.kurs = k and c.eier = auth.uid() and c.krev_innsyn and d.samtykke_innsyn
-      order by u.email $$;
+-- Studentlisten (kurs_deltakere) står under «Roller» lenger ned.
 
 -- Anonym oversikt for faglærer: per tema. Tall vises bare når minst 5 studenter har svart.
 create or replace function public.kurs_oversikt(k uuid)
@@ -197,6 +190,219 @@ grant select, insert, update, delete on public.studie_innstillinger, public.stud
                                          public.kurs, public.kurs_deltaker to authenticated;
 revoke all on public.studie_innstillinger, public.studie_svar, public.studie_ukevurdering, public.kurs, public.kurs_deltaker from anon;
 revoke execute on function public.er_kurseier(uuid), public.er_deltaker(uuid), public.kurs_krever_innsyn(uuid), public.har_innsyn(uuid),
-  public.finn_kurs(text), public.kurs_deltakere(uuid), public.kurs_oversikt(uuid), public.kurs_antall(uuid) from public, anon;
+  public.finn_kurs(text), public.kurs_oversikt(uuid), public.kurs_antall(uuid) from public, anon;
 grant execute on function public.er_kurseier(uuid), public.er_deltaker(uuid), public.kurs_krever_innsyn(uuid), public.har_innsyn(uuid),
-  public.finn_kurs(text), public.kurs_deltakere(uuid), public.kurs_oversikt(uuid), public.kurs_antall(uuid) to authenticated;
+  public.finn_kurs(text), public.kurs_oversikt(uuid), public.kurs_antall(uuid) to authenticated;
+
+-- =====================================================================
+-- Roller: student (standard), underviser (godkjent av administrator) og admin.
+-- Undervisere godkjennes med en personlig underviserkode som administratoren lager på Min side.
+-- Gjør deg selv til administrator én gang (bytt e-posten, ikke legg den i repoet):
+--   insert into public.profiler (id, rolle) select id, 'admin' from auth.users where email = 'din@epost.no'
+--   on conflict (id) do update set rolle = 'admin';
+-- =====================================================================
+
+create table if not exists public.profiler (
+  id        uuid primary key references auth.users (id) on delete cascade,
+  rolle     text not null default 'student' check (rolle in ('student', 'underviser', 'admin')),
+  opprettet timestamptz not null default now()
+);
+
+create table if not exists public.underviserkoder (
+  kode      text primary key check (kode ~ '^[A-Z0-9]{10}$'),
+  navn      text not null check (char_length(navn) between 1 and 120),   -- hvem koden er til
+  opprettet timestamptz not null default now(),
+  brukt_av  uuid references auth.users (id) on delete set null,
+  brukt     timestamptz
+);
+
+create or replace function public.min_rolle() returns text
+  language sql stable security definer set search_path = public as
+  $$ select coalesce((select rolle from profiler where id = auth.uid()), 'student') $$;
+create or replace function public.er_admin() returns boolean
+  language sql stable security definer set search_path = public as
+  $$ select public.min_rolle() = 'admin' $$;
+create or replace function public.er_underviser() returns boolean
+  language sql stable security definer set search_path = public as
+  $$ select public.min_rolle() in ('underviser', 'admin') $$;
+
+-- Sjekk en kode før registrering (ledig og gyldig). Kodene er tilfeldige med 10 tegn, så de kan ikke gjettes.
+create or replace function public.sjekk_underviserkode(k text) returns boolean
+  language sql stable security definer set search_path = public as
+  $$ select exists (select 1 from underviserkoder where kode = upper(trim(k)) and brukt_av is null) $$;
+
+-- Ta i bruk en kode (innlogget). Gir rollen underviser. Admin beholder admin.
+create or replace function public.bli_underviser(k text) returns boolean
+  language plpgsql security definer set search_path = public as
+$$
+begin
+  if auth.uid() is null then return false; end if;
+  update underviserkoder set brukt_av = auth.uid(), brukt = now()
+   where kode = upper(trim(k)) and brukt_av is null;
+  if not found then return false; end if;
+  insert into profiler (id, rolle) values (auth.uid(), 'underviser')
+    on conflict (id) do update set rolle = case when profiler.rolle = 'admin' then 'admin' else 'underviser' end;
+  return true;
+end $$;
+
+-- Ny bruker: lag profil. Ble en gyldig underviserkode oppgitt ved registrering, blir brukeren underviser.
+create or replace function public.ny_bruker() returns trigger
+  language plpgsql security definer set search_path = public as
+$$
+declare k text := upper(trim(coalesce(new.raw_user_meta_data ->> 'underviserkode', '')));
+begin
+  insert into profiler (id) values (new.id) on conflict (id) do nothing;
+  if k <> '' then
+    update underviserkoder set brukt_av = new.id, brukt = now() where kode = k and brukt_av is null;
+    if found then update profiler set rolle = 'underviser' where id = new.id; end if;
+  end if;
+  return new;
+end $$;
+drop trigger if exists ny_bruker on auth.users;
+create trigger ny_bruker after insert on auth.users for each row execute function public.ny_bruker();
+insert into public.profiler (id) select id from auth.users on conflict (id) do nothing;
+
+-- Administrator: oversikt over undervisere og mulighet til å trekke tilbake tilgangen.
+create or replace function public.admin_undervisere()
+  returns table (id uuid, epost text, rolle text, kode_til text, siden timestamptz)
+  language sql stable security definer set search_path = public, auth as
+  $$ select p.id, u.email::text, p.rolle, c.navn, coalesce(c.brukt, p.opprettet)
+       from profiler p join auth.users u on u.id = p.id left join underviserkoder c on c.brukt_av = p.id
+      where public.er_admin() and p.rolle in ('underviser', 'admin') order by u.email $$;
+create or replace function public.sett_student(b uuid) returns boolean
+  language plpgsql security definer set search_path = public as
+$$
+begin
+  if not public.er_admin() or b = auth.uid() then return false; end if;
+  update profiler set rolle = 'student' where id = b and rolle = 'underviser';
+  return found;
+end $$;
+
+alter table public.profiler        enable row level security;
+alter table public.underviserkoder enable row level security;
+drop policy if exists "profiler: egen" on public.profiler;
+create policy "profiler: egen" on public.profiler for select to authenticated using (id = auth.uid() or public.er_admin());
+drop policy if exists "underviserkoder: admin" on public.underviserkoder;
+create policy "underviserkoder: admin" on public.underviserkoder for all to authenticated using (public.er_admin()) with check (public.er_admin());
+grant select on public.profiler to authenticated;
+grant select, insert, delete on public.underviserkoder to authenticated;
+revoke all on public.profiler, public.underviserkoder from anon;
+
+-- Bare undervisere kan lage kurs og forelesninger.
+drop policy if exists "kurs: lage" on public.kurs;
+create policy "kurs: lage" on public.kurs for insert to authenticated with check (eier = auth.uid() and public.er_underviser());
+drop policy if exists "egne forelesninger: lage" on public.forelesninger;
+create policy "egne forelesninger: lage" on public.forelesninger for insert to authenticated with check (eier = auth.uid() and public.er_underviser());
+
+-- Studentlisten i et kurs med innsyn: e-post, påmeldt, antall svar, sist aktiv og samlet profil.
+-- Returtypen er endret siden første versjon, derfor «drop» først.
+drop function if exists public.kurs_deltakere(uuid);
+create function public.kurs_deltakere(k uuid)
+  returns table (student uuid, epost text, pameldt timestamptz, svar int, sist_aktiv timestamptz,
+                 forstaelse numeric, presisjon numeric, hurtighet numeric)
+  language sql stable security definer set search_path = public, auth as
+$$
+  select d.student, u.email::text, d.pameldt, count(x.id)::int, max(x.opprettet),
+         round(sum(case when x.eff <> 'begrep' then x.w else 0 end) / nullif(sum(x.w), 0), 3),
+         round(count(x.id) filter (where x.eff = 'riktig')::numeric / nullif(count(x.id) filter (where x.eff <> 'begrep'), 0), 3),
+         round(count(x.id) filter (where x.eff = 'riktig' and x.tid_s <= x.forventet_s)::numeric / nullif(count(x.id) filter (where x.eff = 'riktig'), 0), 3)
+    from kurs_deltaker d join kurs c on c.id = d.kurs join auth.users u on u.id = d.student
+    left join (select a.*, case when a.ki ->> 'vurdering' in ('riktig', 'regnefeil', 'begrep') then a.ki ->> 'vurdering' else a.type end eff,
+                      case a.vanskelighet when 'lett' then 1 when 'middels' then 1.5 else 2 end w
+                 from studie_svar a) x on x.eier = d.student
+   where d.kurs = k and c.eier = auth.uid() and c.krev_innsyn and d.samtykke_innsyn
+   group by d.student, u.email, d.pameldt
+   order by u.email
+$$;
+
+revoke execute on function public.min_rolle(), public.er_admin(), public.er_underviser(), public.bli_underviser(text),
+  public.admin_undervisere(), public.sett_student(uuid), public.kurs_deltakere(uuid), public.ny_bruker() from public, anon;
+grant execute on function public.min_rolle(), public.er_admin(), public.er_underviser(), public.bli_underviser(text),
+  public.admin_undervisere(), public.sett_student(uuid), public.kurs_deltakere(uuid) to authenticated;
+grant execute on function public.sjekk_underviserkode(text) to anon, authenticated;
+
+-- Fag (tabellen kurs): underviseren velger temaene i rekkefølge. De blir studentenes løype når de melder seg på.
+alter table public.kurs add column if not exists temaer jsonb not null default '[]'::jsonb;
+alter table public.kurs add column if not exists beskrivelse text not null default '' check (char_length(beskrivelse) <= 2000);
+
+-- Statistikk per tema og undertema for et fag: hva studentene har forstått. Bare med minst 5 studenter per rad.
+create or replace function public.kurs_statistikk(k uuid)
+  returns table (nettsted text, tema text, undertema text, studenter int, svar int, forstaelse numeric, presisjon numeric, hurtighet numeric)
+  language sql stable security definer set search_path = public as
+$$
+  with deltakere as (select d.student from kurs_deltaker d join kurs c on c.id = d.kurs where d.kurs = k and c.eier = auth.uid()),
+  x as (select a.*, case when a.ki ->> 'vurdering' in ('riktig', 'regnefeil', 'begrep') then a.ki ->> 'vurdering' else a.type end eff,
+               case a.vanskelighet when 'lett' then 1 when 'middels' then 1.5 else 2 end w
+          from studie_svar a join deltakere d on d.student = a.eier)
+  select x.nettsted, x.tema, x.undertema, count(distinct x.eier)::int, count(*)::int,
+         case when count(distinct x.eier) >= 5 then round(sum(case when eff <> 'begrep' then w else 0 end) / sum(w), 3) end,
+         case when count(distinct x.eier) >= 5 then round(count(*) filter (where eff = 'riktig')::numeric / nullif(count(*) filter (where eff <> 'begrep'), 0), 3) end,
+         case when count(distinct x.eier) >= 5 then round(count(*) filter (where eff = 'riktig' and tid_s <= forventet_s)::numeric / nullif(count(*) filter (where eff = 'riktig'), 0), 3) end
+    from x group by 1, 2, 3
+$$;
+revoke execute on function public.kurs_statistikk(uuid) from public, anon;
+grant execute on function public.kurs_statistikk(uuid) to authenticated;
+
+-- =====================================================================
+-- Obligatoriske øvinger i et fag: «ta quiz i tema X og få minst «krav» av «antall» riktige», eventuelt innen en frist.
+-- Hver fullførte quiz lagres i studie_quiz. En øving er godkjent når studenten har en quiz for øvingen som oppfyller kravet
+-- innen fristen. Faglærer ser godkjenningen for alle påmeldte (det står i påmeldingen), uavhengig av innsyn i profilen.
+-- =====================================================================
+create table if not exists public.ovelser (
+  id        uuid primary key default gen_random_uuid(),
+  kurs      uuid not null references public.kurs (id) on delete cascade,
+  tittel    text not null check (char_length(tittel) between 1 and 120),
+  tema      text not null check (char_length(tema) <= 120),          -- «nettsted/tema»
+  antall    smallint not null default 6 check (antall between 1 and 20),
+  krav      smallint not null check (krav >= 1),
+  frist     timestamptz,
+  opprettet timestamptz not null default now(),
+  check (krav <= antall)
+);
+create table if not exists public.studie_quiz (
+  id       bigint generated always as identity primary key,
+  eier     uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  nettsted text not null default 'fysikkhjelp',
+  tema     text not null check (char_length(tema) <= 80),
+  ovelse   uuid references public.ovelser (id) on delete set null,
+  antall   smallint not null check (antall between 1 and 30),
+  riktige  smallint not null check (riktige between 0 and antall),
+  fullfort timestamptz not null default now()
+);
+create index if not exists studie_quiz_eier on public.studie_quiz (eier, ovelse);
+
+alter table public.ovelser     enable row level security;
+alter table public.studie_quiz enable row level security;
+drop policy if exists "ovelser: lese"  on public.ovelser;
+drop policy if exists "ovelser: eier" on public.ovelser;
+create policy "ovelser: lese" on public.ovelser for select to authenticated using (public.er_kurseier(kurs) or public.er_deltaker(kurs));
+create policy "ovelser: eier" on public.ovelser for all to authenticated using (public.er_kurseier(kurs)) with check (public.er_kurseier(kurs));
+-- Quizresultater: studenten lager og leser sine egne. De kan ikke endres i ettertid. Tidspunktet settes av databasen.
+drop policy if exists "studie_quiz: lese" on public.studie_quiz;
+drop policy if exists "studie_quiz: lage" on public.studie_quiz;
+create policy "studie_quiz: lese" on public.studie_quiz for select to authenticated using (eier = auth.uid() or public.har_innsyn(eier));
+create policy "studie_quiz: lage" on public.studie_quiz for insert to authenticated with check (eier = auth.uid());
+create or replace function public.studie_quiz_tid() returns trigger language plpgsql as $$ begin new.fullfort := now(); return new; end $$;
+drop trigger if exists studie_quiz_tid on public.studie_quiz;
+create trigger studie_quiz_tid before insert on public.studie_quiz for each row execute function public.studie_quiz_tid();
+grant select, insert, update, delete on public.ovelser to authenticated;
+grant select, insert on public.studie_quiz to authenticated;
+revoke all on public.ovelser, public.studie_quiz from anon;
+
+-- Godkjenning for alle påmeldte i et fag (bare for faglærer): én rad per student og øving.
+create or replace function public.kurs_godkjenning(k uuid)
+  returns table (student uuid, epost text, ovelse uuid, godkjent boolean, beste int, forsok int)
+  language sql stable security definer set search_path = public, auth as
+$$
+  select d.student, u.email::text, o.id,
+         coalesce(bool_or(q.riktige >= o.krav and (o.frist is null or q.fullfort <= o.frist)), false),
+         max(q.riktige)::int, count(q.id)::int
+    from kurs c join kurs_deltaker d on d.kurs = c.id join auth.users u on u.id = d.student
+    join ovelser o on o.kurs = c.id
+    left join studie_quiz q on q.eier = d.student and q.ovelse = o.id
+   where c.id = k and c.eier = auth.uid()
+   group by d.student, u.email, o.id
+   order by u.email
+$$;
+revoke execute on function public.kurs_godkjenning(uuid) from public, anon;
+grant execute on function public.kurs_godkjenning(uuid) to authenticated;

@@ -19,6 +19,13 @@ toc: false
       <label>E-post <input type="email" name="epost" autocomplete="email" required></label>
       <label>Passord <input type="password" name="passord" autocomplete="current-password" minlength="8" required></label>
       <p class="konto-hjelp" data-for="ny">Minst 8 tegn.</p>
+      <fieldset class="konto-rolle" data-for="ny">
+        <legend>Jeg registrerer meg som</legend>
+        <label class="konto-valg"><input type="radio" name="rolle" value="student" checked> Student</label>
+        <label class="konto-valg"><input type="radio" name="rolle" value="underviser"> Underviser</label>
+        <label class="konto-kode" hidden>Underviserkode <input type="text" name="kode" autocomplete="off" maxlength="12" placeholder="10 tegn"></label>
+        <p class="konto-hjelp konto-kode" hidden>Undervisere godkjennes foreløpig av administratoren. Du får en personlig kode som bare kan brukes én gang.</p>
+      </fieldset>
       <button type="submit" class="btn-chalk">Logg inn</button>
       <p class="konto-melding" role="status"></p>
       <p class="konto-lenker" data-for="inn"><a href="#" data-handling="glemt">Glemt passordet?</a></p>
@@ -39,29 +46,99 @@ toc: false
 
 <template id="mal-inne">
   <div class="profil">
-    <p class="profil-hei">Hei, <span class="profil-navn"></span>!</p>
+    <p class="profil-hei">Hei, <span class="profil-navn"></span>! <span class="profil-rolle"></span></p>
+
+    <h2 class="profil-del">Studentdel</h2>
     <div class="profil-kort">
-      <a class="track live" href="../dekning.html">
-        <span class="status">Klar</span>
-        <h3>Dekker vi faget ditt?</h3>
-        <p>Lim inn emnebeskrivelsen til faget du skal ta, og få et kart over hva fysikkhjelp.no dekker.</p>
-      </a>
-      <a class="track live" href="../larer/index.html">
-        <span class="status">For lærere · test</span>
-        <h3>Design din forelesning</h3>
-        <p>Plukk sider, eksempler og oppgaver, sett dem i din rekkefølge og vis dem som tavleslides. Lagres på kontoen din.</p>
-      </a>
       <a class="track live" href="../studie/index.html">
         <span class="status">Ny · test</span>
         <h3>Test deg selv</h3>
         <p>Velg temaer, få en løype uke for uke, ta quizer tilpasset nivået ditt og se kunnskapsprofilen din.</p>
       </a>
+      <a class="track live" href="../studie/index.html#fag">
+        <span class="status">Fag og øvinger</span>
+        <h3>Fagene dine</h3>
+        <p>Meld deg på et fag med koden fra faglæreren, og se hvilke obligatoriske øvinger som er godkjent.</p>
+      </a>
+      <a class="track live" href="../dekning.html">
+        <span class="status">Klar</span>
+        <h3>Dekker vi faget ditt?</h3>
+        <p>Lim inn emnebeskrivelsen til faget du skal ta, og få et kart over hva fysikkhjelp.no dekker.</p>
+      </a>
       <div class="track"><span class="status">Kommer</span><h3>Estimert karakter</h3><p>Et anslag på hvor du ligger an før eksamen.</p></div>
       <div class="track"><span class="status">Kommer</span><h3>Veiledning</h3><p>Bestill veiledning med Dr. Normann.</p></div>
     </div>
+
+    <div class="profil-underviser" hidden>
+      <h2 class="profil-del">Underviserdel</h2>
+      <div class="profil-fagliste"></div>
+      <div class="profil-kort">
+        <a class="track live" href="../studie/index.html#fag">
+          <span class="status">Fag</span>
+          <h3>Lag og design fag</h3>
+          <p>Velg temaer i rekkefølge, lag obligatoriske øvinger, og følg studentene og statistikken.</p>
+        </a>
+        <a class="track live" href="../larer/index.html">
+          <span class="status">Forelesning</span>
+          <h3>Design din forelesning</h3>
+          <p>Plukk sider, eksempler og oppgaver, sett dem i din rekkefølge og vis dem som tavleslides.</p>
+        </a>
+        <a class="track live" href="../studie/index.html#eksempel">
+          <span class="status">Eksempelmodus</span>
+          <h3>Se appen som student</h3>
+          <p>Prøv studieappen som en fiktiv student med ferdige svar. Ingenting lagres.</p>
+        </a>
+      </div>
+    </div>
+
+    <div class="profil-blivunderviser konto-boks" hidden>
+      <h3>Er du underviser?</h3>
+      <p class="konto-ingress">Skriv inn den personlige underviserkoden du har fått av administratoren.</p>
+      <form class="konto-skjema konto-rad">
+        <input type="text" name="kode" autocomplete="off" maxlength="12" placeholder="Underviserkode" required>
+        <button type="submit" class="btn-chalk">Bli underviser</button>
+      </form>
+      <p class="konto-melding" role="status"></p>
+    </div>
+
+    <div class="profil-admin" hidden>
+      <h2 class="profil-del">Administrator</h2>
+      <div class="konto-boks">
+        <h3>Underviserkoder</h3>
+        <p class="konto-ingress">Lag en personlig kode til hver underviser du godkjenner. Koden kan bare brukes én gang, enten ved registrering eller på Min side.</p>
+        <form class="konto-skjema konto-rad admin-ny">
+          <input type="text" name="navn" maxlength="120" placeholder="Hvem er koden til?" required>
+          <button type="submit" class="btn-chalk">Lag kode</button>
+        </form>
+        <p class="konto-melding admin-melding" role="status"></p>
+        <div class="admin-koder"></div>
+      </div>
+      <div class="konto-boks">
+        <h3>Undervisere</h3>
+        <div class="admin-undervisere"></div>
+      </div>
+    </div>
+
     <p class="profil-ut"><button type="button" class="btn-chalk ghost" data-handling="ut">Logg ut</button></p>
   </div>
 </template>
+
+<style>
+.konto-rolle { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .35rem; }
+.konto-rolle legend { font-weight: 700; font-size: 1rem; margin-bottom: .2rem; }
+.konto-skjema .konto-valg { flex-direction: row; align-items: center; gap: .5rem; font-weight: 400; }
+.konto-skjema .konto-valg input { width: auto; }
+.konto-rad { flex-direction: row; flex-wrap: wrap; } .konto-rad input { flex: 1 1 220px; width: auto; }
+.profil-rolle { font-size: .8rem; font-weight: 700; border: 1px solid currentColor; border-radius: 20px; padding: .1rem .6rem; color: var(--bs-primary); vertical-align: middle; }
+.profil-del { margin-top: 2rem; }
+.profil-fagliste ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem; }
+.profil-fagliste a { display: inline-block; border: 1px solid var(--bs-border-color); border-radius: 20px; padding: .3rem .9rem; text-decoration: none; }
+.profil-admin .konto-boks, .profil-blivunderviser { margin: 1rem 0; }
+.admin-tabell { width: 100%; border-collapse: collapse; font-size: .92rem; margin-top: .8rem; }
+.admin-tabell th, .admin-tabell td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid var(--bs-border-color); }
+.admin-tabell .kode { font-family: monospace; letter-spacing: .08em; font-weight: 700; }
+.admin-tabell button { background: none; border: 1px solid var(--bs-border-color); border-radius: 6px; color: inherit; padding: .15rem .5rem; font-size: .85rem; }
+</style>
 
 <script src="../assets/js/konto-side.js"></script>
 ```

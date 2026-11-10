@@ -82,8 +82,33 @@ toc: false
   border-radius: 10px; padding: .6rem 1rem; z-index: 1000; max-width: 90vw; box-shadow: 0 4px 18px rgba(0,0,0,.35); }
 .studie .st-varsel.feil { border-color: var(--bs-danger); }
 .studie details summary { cursor: pointer; margin-top: .3rem; }
+.studie .st-tabell-ramme { overflow-x: auto; margin: .5rem 0; }
+.studie .st-tabell { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.studie .st-tabell th, .studie .st-tabell td { text-align: left; padding: .45rem .5rem; border-bottom: 1px solid var(--bs-border-color); vertical-align: middle; }
+.studie .st-tabell th { font-size: .82rem; color: var(--bs-secondary-color); white-space: nowrap; }
+.studie .st-klikk { cursor: pointer; } .studie .st-klikk:hover, .studie .st-klikk:focus { background: rgba(127,127,127,.1); outline: none; }
+.studie .st-sorter { background: none; border: 0; padding: 0; color: inherit; font: inherit; font-weight: 700; cursor: pointer; }
+.studie .st-sorter.pa { text-decoration: underline; }
+.studie .st-minibar { width: 60px; height: 6px; background: var(--bs-border-color); border-radius: 3px; overflow: hidden; }
+.studie .st-minibar i { display: block; height: 100%; } .studie .st-minibar i.f { background: var(--st-f); } .studie .st-minibar i.p { background: var(--st-p); } .studie .st-minibar i.h { background: var(--st-h); }
+.studie .st-underfaner { display: flex; gap: .4rem; margin: .8rem 0 .6rem; flex-wrap: wrap; }
+.studie .st-underfaner button { background: none; border: 1px solid var(--bs-border-color); border-radius: 20px; padding: .3rem .9rem; color: inherit; font-weight: 700; }
+.studie .st-underfaner button[aria-selected="true"] { border-color: var(--bs-primary); color: var(--bs-primary); }
+.studie .st-temaliste { padding-left: 1.4rem; } .studie .st-temaliste li { margin: .3rem 0; }
+.studie .st-temaliste li > span:first-child { display: inline-block; min-width: 55%; }
+.studie .st-knapper .st-btn { margin-left: .2rem; }
+.studie select { width: 100%; background: var(--bs-body-bg); color: inherit; border: 1px solid var(--bs-border-color); border-radius: 8px; padding: .45rem .6rem; font: inherit; }
+.studie input#st-fagnavn { width: 100%; background: transparent; color: inherit; border: 1px solid var(--bs-border-color); border-radius: 8px; padding: .45rem .6rem; font: inherit; }
+.studie .st-eksempel { background: rgba(241,156,44,.15); border: 1px solid var(--bs-warning); border-radius: 10px; padding: .55rem .85rem; margin-bottom: .8rem; }
+.studie details.st-kort > summary { margin: 0; }
+.studie .st-ovelse { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .6rem; padding: .45rem 0; border-top: 1px solid var(--bs-border-color); }
+.studie .st-ovelse .st-sm { flex-basis: 100%; }
+.studie .st-status { font-size: .8rem; font-weight: 700; border-radius: 20px; padding: .05rem .55rem; border: 1px solid currentColor; white-space: nowrap; }
+.studie .st-status.ok { color: var(--bs-primary); } .studie .st-status.nei { color: var(--bs-secondary-color); }
+.studie input.st-felt { width: 100%; background: transparent; color: inherit; border: 1px solid var(--bs-border-color); border-radius: 8px; padding: .45rem .6rem; font: inherit; color-scheme: dark light; }
 .studie .st-kort > label.st-sm { display: block; margin: .6rem 0 .3rem; }
 .studie .st-kort .st-rad .st-btn { white-space: nowrap; flex: none; }
 </style>
+<script src="../assets/js/xlsx-lite.js"></script>
 <script src="../assets/js/studie.js"></script>
 ```
