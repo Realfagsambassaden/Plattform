@@ -56,6 +56,7 @@ function studieStart() {
         else if (FUNK[n]) o += ' ' + n + ' ';
         else o += SYM[n] || n;
       } else if (c === '^' || c === '_') { i++; var t = c === '^' ? 'sup' : 'sub'; o += '<' + t + '>' + mat(arg(), rett) + '</' + t + '>'; }
+      else if (c === '{' || c === '}') i++; // grupper, f.eks. desimalkomma 2{,}5, vises uten klammer
       else if (/[A-Za-z]/.test(c)) { o += rett ? c : '<i>' + c + '</i>'; i++; }
       else { o += esc(c); i++; }
     }
