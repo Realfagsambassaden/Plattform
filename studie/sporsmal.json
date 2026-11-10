@@ -1,0 +1,7252 @@
+{
+"omrader": {
+"grunnlag": "Grunnlag og verktøy",
+"mekanikk": "Mekanikk",
+"fluider": "Fluidmekanikk",
+"termofysikk": "Termofysikk",
+"elektromagnetisme": "Elektromagnetisme",
+"bolger": "Bølger og optikk",
+"moderne": "Moderne fysikk"
+},
+"struktur": {
+"kinematikk": {
+"omrade": "mekanikk",
+"tittel": "Kinematikk",
+"undertemaer": {
+"posisjon-fart-akselerasjon": "Posisjon, fart og akselerasjon",
+"konstant-akselerasjon": "Konstant akselerasjon",
+"to-dimensjoner": "Bevegelse i to dimensjoner"
+}
+},
+"sirkelbevegelse": {
+"omrade": "mekanikk",
+"tittel": "Sirkelbevegelse",
+"undertemaer": {
+"sentripetal": "Sentripetalakselerasjon",
+"sirkel-krefter": "Krefter i sirkelbevegelse"
+}
+},
+"newtons-lover": {
+"omrade": "mekanikk",
+"tittel": "Newtons lover og krefter",
+"undertemaer": {
+"newtons-lover": "Newtons lover",
+"krefter-i-planet": "Krefter i planet",
+"friksjon-fjaer-snorer": "Friksjon, fjær og snorer",
+"luftmotstand": "Luftmotstand"
+}
+},
+"bevegelsesmengde": {
+"omrade": "mekanikk",
+"tittel": "Bevegelsesmengde og støt",
+"undertemaer": {
+"kraftstot": "Bevegelsesmengde og kraftstøt",
+"kollisjoner": "Bevaring og kollisjoner"
+}
+},
+"arbeid-og-energi": {
+"omrade": "mekanikk",
+"tittel": "Arbeid og energi",
+"undertemaer": {
+"arbeid": "Arbeid",
+"energiformer": "Kinetisk og potensiell energi",
+"energibevaring": "Energibevaring og energitap",
+"effekt": "Effekt"
+}
+},
+"statikk": {
+"omrade": "mekanikk",
+"tittel": "Likevekt og kraftmoment",
+"undertemaer": {
+"kraftlikevekt": "Kraftlikevekt",
+"kraftmoment": "Kraftmoment og rotasjonslikevekt",
+"massesenter": "Massesenter"
+}
+},
+"rotasjon": {
+"omrade": "mekanikk",
+"tittel": "Rotasjon og spinn",
+"undertemaer": {
+"rotasjonskinematikk": "Rotasjonskinematikk",
+"treghetsmoment": "Treghetsmoment og rotasjonsenergi",
+"rulling": "Kraftmoment og rulling",
+"dreieimpuls": "Dreieimpuls"
+}
+},
+"gravitasjon": {
+"omrade": "mekanikk",
+"tittel": "Gravitasjon",
+"undertemaer": {
+"gravitasjonsloven": "Newtons gravitasjonslov",
+"satellitter": "Satellitter og planetbaner"
+}
+},
+"svingninger": {
+"omrade": "mekanikk",
+"tittel": "Svingninger",
+"undertemaer": {
+"harmoniske": "Harmoniske svingninger",
+"pendel": "Fjær og pendel"
+}
+},
+"elektrisk-felt": {
+"omrade": "elektromagnetisme",
+"tittel": "Ladning og elektrisk felt",
+"undertemaer": {
+"ladning": "Elektrisk ladning",
+"coulomb": "Coulombs lov",
+"felt": "Elektrisk felt",
+"homogent-felt": "Ladning i homogent felt"
+}
+},
+"elektrisk-potensial": {
+"omrade": "elektromagnetisme",
+"tittel": "Elektrisk potensial",
+"undertemaer": {
+"potensiell-energi": "Elektrisk potensiell energi",
+"potensial": "Potensial og spenning"
+}
+},
+"kretser": {
+"omrade": "elektromagnetisme",
+"tittel": "Strøm og kretser",
+"undertemaer": {
+"strom-spenning": "Strøm og spenning",
+"motstand": "Motstand og Ohms lov",
+"kirchhoff": "Kirchhoffs lover",
+"emf": "Elektromotorisk spenning og indre resistans",
+"effekt": "Elektrisk effekt"
+}
+}
+},
+"sporsmal": [
+{
+"id": "kinematikk-001",
+"tema": "kinematikk",
+"undertema": "posisjon-fart-akselerasjon",
+"vanskelighet": "lett",
+"forventet_tid_s": 40,
+"tekst": "En bil kjører 150 km på 2.0 h. Hva er gjennomsnittsfarten?",
+"riktig": "75 km/h",
+"feil": [
+{
+"svar": "300 km/h",
+"type": "regnefeil"
+},
+{
+"svar": "7.5 km/h",
+"type": "regnefeil"
+},
+{
+"svar": "150 km/h",
+"type": "begrep"
+}
+],
+"forklaring": "$v = s/t = 150\\ \\mathrm{km} / 2.0\\ \\mathrm{h}$."
+},
+{
+"id": "kinematikk-002",
+"tema": "kinematikk",
+"undertema": "posisjon-fart-akselerasjon",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva forteller stigningstallet i en graf av fart mot tid?",
+"riktig": "Akselerasjonen",
+"feil": [
+{
+"svar": "Strekningen",
+"type": "begrep"
+},
+{
+"svar": "Farten",
+"type": "begrep"
+},
+{
+"svar": "Tiden",
+"type": "begrep"
+}
+],
+"forklaring": "Stigningstallet er endring i fart per tid, og det er akselerasjonen."
+},
+{
+"id": "kinematikk-003",
+"tema": "kinematikk",
+"undertema": "konstant-akselerasjon",
+"vanskelighet": "lett",
+"forventet_tid_s": 40,
+"tekst": "En vogn starter fra ro og har akselerasjonen 2.0 m/s² i 5.0 s. Hva er farten etterpå?",
+"riktig": "10 m/s",
+"feil": [
+{
+"svar": "25 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 m/s",
+"type": "begrep"
+},
+{
+"svar": "7.0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$v = at = 2.0\\cdot 5.0\\ \\mathrm{m/s}$."
+},
+{
+"id": "kinematikk-004",
+"tema": "kinematikk",
+"undertema": "konstant-akselerasjon",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En stein slippes fra 20 m høyde. Hvor lang tid tar fallet uten luftmotstand?",
+"riktig": "2.0 s",
+"feil": [
+{
+"svar": "4.1 s",
+"type": "regnefeil"
+},
+{
+"svar": "1.4 s",
+"type": "regnefeil"
+},
+{
+"svar": "0.49 s",
+"type": "regnefeil"
+}
+],
+"forklaring": "$t = \\sqrt{2h/\\mathrm{g}}$."
+},
+{
+"id": "kinematikk-005",
+"tema": "kinematikk",
+"undertema": "konstant-akselerasjon",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En bil som kjører i 20 m/s, bremser med 4.0 m/s². Hvor lang er bremselengden?",
+"riktig": "50 m",
+"feil": [
+{
+"svar": "100 m",
+"type": "regnefeil"
+},
+{
+"svar": "5.0 m",
+"type": "regnefeil"
+},
+{
+"svar": "80 m",
+"type": "begrep"
+}
+],
+"forklaring": "$s = v_0^2/(2a) = 400/8.0\\ \\mathrm{m}$."
+},
+{
+"id": "kinematikk-006",
+"tema": "kinematikk",
+"undertema": "konstant-akselerasjon",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En bil holder 30 m/s og passerer en politibil som står stille. Politibilen akselererer straks med 3.0 m/s². Hvor lang tid tar det før den tar igjen bilen?",
+"riktig": "20 s",
+"feil": [
+{
+"svar": "10 s",
+"type": "begrep"
+},
+{
+"svar": "40 s",
+"type": "regnefeil"
+},
+{
+"svar": "15 s",
+"type": "regnefeil"
+}
+],
+"forklaring": "Samme strekning: $30t = \\frac{1}{2}\\cdot 3.0\\ t^2$. Etter 10 s har de bare samme fart."
+},
+{
+"id": "kinematikk-007",
+"tema": "kinematikk",
+"undertema": "to-dimensjoner",
+"vanskelighet": "middels",
+"forventet_tid_s": 40,
+"tekst": "En ball kastes horisontalt. Hva skjer med den horisontale farten uten luftmotstand?",
+"riktig": "Den er konstant",
+"feil": [
+{
+"svar": "Den øker",
+"type": "begrep"
+},
+{
+"svar": "Den avtar",
+"type": "begrep"
+},
+{
+"svar": "Den blir null når ballen faller",
+"type": "begrep"
+}
+],
+"forklaring": "Ingen kraft virker horisontalt, så det er ingen akselerasjon i den retningen."
+},
+{
+"id": "kinematikk-008",
+"tema": "kinematikk",
+"undertema": "to-dimensjoner",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "En ball kastes med 20 m/s i 30° over horisontalen fra flatt underlag. Hvor lenge er den i lufta?",
+"riktig": "2.0 s",
+"feil": [
+{
+"svar": "1.0 s",
+"type": "regnefeil"
+},
+{
+"svar": "3.5 s",
+"type": "regnefeil"
+},
+{
+"svar": "4.1 s",
+"type": "begrep"
+}
+],
+"forklaring": "$t = 2v_0\\sin\\theta/\\mathrm{g}$."
+},
+{
+"id": "kinematikk-009",
+"tema": "kinematikk",
+"undertema": "to-dimensjoner",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En ball kastes horisontalt med 8.0 m/s fra 5.0 m høyde. Hvor langt unna lander den, målt horisontalt?",
+"riktig": "8.1 m",
+"feil": [
+{
+"svar": "5.7 m",
+"type": "regnefeil"
+},
+{
+"svar": "16 m",
+"type": "regnefeil"
+},
+{
+"svar": "40 m",
+"type": "begrep"
+}
+],
+"forklaring": "$t = \\sqrt{2h/\\mathrm{g}}$ og $x = v_0 t$."
+},
+{
+"id": "sirkelbevegelse-010",
+"tema": "sirkelbevegelse",
+"undertema": "sentripetal",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Et legeme går i jevn sirkelbevegelse. Hvilken retning har akselerasjonen?",
+"riktig": "Inn mot sentrum",
+"feil": [
+{
+"svar": "I fartsretningen",
+"type": "begrep"
+},
+{
+"svar": "Ut fra sentrum",
+"type": "begrep"
+},
+{
+"svar": "Den er null fordi farten er konstant",
+"type": "begrep"
+}
+],
+"forklaring": "Fartsretningen endrer seg hele tiden, og akselerasjonen peker mot sentrum."
+},
+{
+"id": "sirkelbevegelse-011",
+"tema": "sirkelbevegelse",
+"undertema": "sentripetal",
+"vanskelighet": "lett",
+"forventet_tid_s": 40,
+"tekst": "Et legeme har farten 10 m/s i en sirkel med radius 5.0 m. Hva er sentripetalakselerasjonen?",
+"riktig": "20 m/s²",
+"feil": [
+{
+"svar": "2.0 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "50 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "0 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$a = v^2/r$."
+},
+{
+"id": "sirkelbevegelse-012",
+"tema": "sirkelbevegelse",
+"undertema": "sentripetal",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En kule går rundt i en sirkel med radius 0.50 m og perioden 2.0 s. Hva er banefarten?",
+"riktig": "1.6 m/s",
+"feil": [
+{
+"svar": "3.1 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0.79 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0.25 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$v = 2\\pi r/T$."
+},
+{
+"id": "sirkelbevegelse-013",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Hvilken kraft gir sentripetalkraften når en bil svinger på en flat vei?",
+"riktig": "Friksjonen mellom dekk og vei",
+"feil": [
+{
+"svar": "Tyngdekraften",
+"type": "begrep"
+},
+{
+"svar": "Normalkraften",
+"type": "begrep"
+},
+{
+"svar": "En egen sentrifugalkraft",
+"type": "begrep"
+}
+],
+"forklaring": "Bare friksjonen virker horisontalt inn mot sentrum av svingen."
+},
+{
+"id": "sirkelbevegelse-014",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En bil på 1200 kg kjører i 20 m/s gjennom en sving med radius 80 m. Hvor stor sentripetalkraft trengs?",
+"riktig": "6.0 kN",
+"feil": [
+{
+"svar": "0.30 kN",
+"type": "regnefeil"
+},
+{
+"svar": "12 kN",
+"type": "regnefeil"
+},
+{
+"svar": "Ingen, fordi farten er konstant",
+"type": "begrep"
+}
+],
+"forklaring": "$F = mv^2/r$."
+},
+{
+"id": "sirkelbevegelse-015",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "middels",
+"forventet_tid_s": 40,
+"tekst": "En bil kjører over en bakketopp. Hvordan er normalkraften sammenliknet med tyngden på toppen?",
+"riktig": "Mindre enn tyngden",
+"feil": [
+{
+"svar": "Større enn tyngden",
+"type": "begrep"
+},
+{
+"svar": "Lik tyngden",
+"type": "begrep"
+},
+{
+"svar": "Alltid null",
+"type": "begrep"
+}
+],
+"forklaring": "Summen av kreftene må peke nedover mot sentrum, så $G > N$."
+},
+{
+"id": "sirkelbevegelse-016",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "En bøtte svinges i en loddrett sirkel med radius 1.0 m. Hva er minste fart på toppen for at vannet skal bli i bøtta?",
+"riktig": "3.1 m/s",
+"feil": [
+{
+"svar": "9.8 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "4.4 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "På grensen er $N = 0$, så $m\\mathrm{g} = mv^2/r$."
+},
+{
+"id": "sirkelbevegelse-017",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En flat sving har radius 50 m, og det statiske friksjonstallet er 0.60. Hva er største fart uten å skli?",
+"riktig": "17 m/s",
+"feil": [
+{
+"svar": "29 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "24 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "Kan ikke beregnes uten massen",
+"type": "begrep"
+}
+],
+"forklaring": "$\\mu_s m\\mathrm{g} = mv^2/r$, og massen forkortes."
+},
+{
+"id": "sirkelbevegelse-018",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En friksjonsfri, dosert sving har radius 100 m og er laget for 20 m/s. Hvilken doseringsvinkel trengs?",
+"riktig": "22°",
+"feil": [
+{
+"svar": "68°",
+"type": "regnefeil"
+},
+{
+"svar": "24°",
+"type": "regnefeil"
+},
+{
+"svar": "0°",
+"type": "begrep"
+}
+],
+"forklaring": "$\\tan\\theta = v^2/(r\\mathrm{g})$."
+},
+{
+"id": "newtons-lover-019",
+"tema": "newtons-lover",
+"undertema": "newtons-lover",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Et legeme beveger seg med konstant fart i rett linje. Hva er summen av kreftene?",
+"riktig": "Null",
+"feil": [
+{
+"svar": "Større enn null i fartsretningen",
+"type": "begrep"
+},
+{
+"svar": "Lik tyngden",
+"type": "begrep"
+},
+{
+"svar": "Lik masse ganger fart",
+"type": "begrep"
+}
+],
+"forklaring": "Newtons 1. lov: uten akselerasjon er kraftsummen null."
+},
+{
+"id": "newtons-lover-020",
+"tema": "newtons-lover",
+"undertema": "newtons-lover",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Et legeme på 5.0 kg påvirkes av en kraftsum på 10 N. Hva er akselerasjonen?",
+"riktig": "2.0 m/s²",
+"feil": [
+{
+"svar": "50 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "0.50 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "10 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$a = F/m$."
+},
+{
+"id": "newtons-lover-021",
+"tema": "newtons-lover",
+"undertema": "newtons-lover",
+"vanskelighet": "middels",
+"forventet_tid_s": 30,
+"tekst": "Jorda trekker på et eple. Hvordan er eplets kraft på Jorda sammenliknet med det?",
+"riktig": "Like stor, motsatt rettet",
+"feil": [
+{
+"svar": "Mye mindre",
+"type": "begrep"
+},
+{
+"svar": "Mye større",
+"type": "begrep"
+},
+{
+"svar": "Eplet trekker ikke på Jorda",
+"type": "begrep"
+}
+],
+"forklaring": "Newtons 3. lov gjelder uansett masse."
+},
+{
+"id": "newtons-lover-022",
+"tema": "newtons-lover",
+"undertema": "krefter-i-planet",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En kloss glir på et friksjonsfritt skråplan med vinkel 30°. Hva er akselerasjonen?",
+"riktig": "4.9 m/s²",
+"feil": [
+{
+"svar": "8.5 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "2.5 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "9.8 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$a = \\mathrm{g}\\sin\\theta$."
+},
+{
+"id": "newtons-lover-023",
+"tema": "newtons-lover",
+"undertema": "krefter-i-planet",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En kloss glir ned et skråplan med vinkel 30°, og $\\mu_k = 0.20$. Hva er akselerasjonen?",
+"riktig": "3.2 m/s²",
+"feil": [
+{
+"svar": "2.9 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "6.6 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "4.9 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$a = \\mathrm{g}(\\sin\\theta - \\mu_k\\cos\\theta)$."
+},
+{
+"id": "newtons-lover-024",
+"tema": "newtons-lover",
+"undertema": "friksjon-fjaer-snorer",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En fjær med stivhet 200 N/m strekkes 0.10 m. Hva er fjærkraften?",
+"riktig": "20 N",
+"feil": [
+{
+"svar": "2.0 kN",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 N",
+"type": "regnefeil"
+},
+{
+"svar": "200 N",
+"type": "begrep"
+}
+],
+"forklaring": "$F = kx$."
+},
+{
+"id": "newtons-lover-025",
+"tema": "newtons-lover",
+"undertema": "friksjon-fjaer-snorer",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En kasse på 10 kg glir på et horisontalt golv med $\\mu_k = 0.30$. Hvor stor er friksjonskraften?",
+"riktig": "29 N",
+"feil": [
+{
+"svar": "3.0 N",
+"type": "regnefeil"
+},
+{
+"svar": "33 N",
+"type": "regnefeil"
+},
+{
+"svar": "98 N",
+"type": "begrep"
+}
+],
+"forklaring": "$f = \\mu_k m\\mathrm{g}$."
+},
+{
+"id": "newtons-lover-026",
+"tema": "newtons-lover",
+"undertema": "friksjon-fjaer-snorer",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Lodd på 3.0 kg og 1.0 kg henger i hver sin ende av en snor over en lett, friksjonsfri trinse. Hva er snordraget?",
+"riktig": "15 N",
+"feil": [
+{
+"svar": "7.4 N",
+"type": "regnefeil"
+},
+{
+"svar": "9.8 N",
+"type": "begrep"
+},
+{
+"svar": "29 N",
+"type": "begrep"
+}
+],
+"forklaring": "$a = \\mathrm{g}/2$, og $S = 1.0\\ \\mathrm{kg}\\cdot(\\mathrm{g}+a)$."
+},
+{
+"id": "newtons-lover-027",
+"tema": "newtons-lover",
+"undertema": "luftmotstand",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En fallskjermhopper på 80 kg har luftmotstanden $L = kv^2$ med $k = 0.25$ kg/m. Hva er terminalfarten?",
+"riktig": "56 m/s",
+"feil": [
+{
+"svar": "40 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "3.1 km/s",
+"type": "regnefeil"
+},
+{
+"svar": "Farten øker uten grense",
+"type": "begrep"
+}
+],
+"forklaring": "Ved terminalfart er $kv^2 = m\\mathrm{g}$."
+},
+{
+"id": "bevegelsesmengde-028",
+"tema": "bevegelsesmengde",
+"undertema": "kraftstot",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Hva er bevegelsesmengden til et legeme på 2.0 kg med farten 3.0 m/s?",
+"riktig": "6.0 kg m/s",
+"feil": [
+{
+"svar": "1.5 kg m/s",
+"type": "regnefeil"
+},
+{
+"svar": "9.0 kg m/s",
+"type": "regnefeil"
+},
+{
+"svar": "5.0 kg m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$p = mv$."
+},
+{
+"id": "bevegelsesmengde-029",
+"tema": "bevegelsesmengde",
+"undertema": "kraftstot",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En kraft på 10 N virker i 3.0 s. Hvor stort er kraftstøtet?",
+"riktig": "30 N s",
+"feil": [
+{
+"svar": "3.3 N s",
+"type": "regnefeil"
+},
+{
+"svar": "0.30 kN s",
+"type": "regnefeil"
+},
+{
+"svar": "13 N s",
+"type": "begrep"
+}
+],
+"forklaring": "$I = Ft$."
+},
+{
+"id": "bevegelsesmengde-030",
+"tema": "bevegelsesmengde",
+"undertema": "kraftstot",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En ball på 0.15 kg med farten 20 m/s stoppes på 0.010 s. Hvor stor er middelkraften?",
+"riktig": "0.30 kN",
+"feil": [
+{
+"svar": "30 N",
+"type": "regnefeil"
+},
+{
+"svar": "3.0 kN",
+"type": "regnefeil"
+},
+{
+"svar": "3.0 kg m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$F = \\Delta p/\\Delta t$."
+},
+{
+"id": "bevegelsesmengde-031",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva er alltid bevart i et støt i et isolert system?",
+"riktig": "Bevegelsesmengden",
+"feil": [
+{
+"svar": "Den kinetiske energien",
+"type": "begrep"
+},
+{
+"svar": "Farten til hvert legeme",
+"type": "begrep"
+},
+{
+"svar": "Bevegelsesmengden til hvert legeme",
+"type": "begrep"
+}
+],
+"forklaring": "Indre krefter endrer ikke den samlede bevegelsesmengden."
+},
+{
+"id": "bevegelsesmengde-032",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En vogn på 2.0 kg med farten 4.0 m/s treffer en vogn på 2.0 kg i ro, og de henger sammen. Hva er farten etterpå?",
+"riktig": "2.0 m/s",
+"feil": [
+{
+"svar": "4.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "8.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$mv = (m+m)V$."
+},
+{
+"id": "bevegelsesmengde-033",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "middels",
+"forventet_tid_s": 40,
+"tekst": "To like kuler støter elastisk og sentralt, og den ene ligger i ro. Hva skjer?",
+"riktig": "Den første stopper, den andre får farten",
+"feil": [
+{
+"svar": "Begge fortsetter med halv fart",
+"type": "begrep"
+},
+{
+"svar": "Den første spretter tilbake med samme fart",
+"type": "begrep"
+},
+{
+"svar": "Begge stopper",
+"type": "begrep"
+}
+],
+"forklaring": "Bevegelsesmengde og kinetisk energi er bevart bare med denne løsningen."
+},
+{
+"id": "bevegelsesmengde-034",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "En vogn på 2.0 kg med farten 4.0 m/s treffer en vogn på 2.0 kg i ro, og de henger sammen. Hvor mye kinetisk energi går tapt?",
+"riktig": "8.0 J",
+"feil": [
+{
+"svar": "16 J",
+"type": "regnefeil"
+},
+{
+"svar": "4.0 J",
+"type": "regnefeil"
+},
+{
+"svar": "0 J",
+"type": "begrep"
+}
+],
+"forklaring": "Før: 16 J. Etter: $\\frac{1}{2}\\cdot 4.0\\cdot 2.0^2 = 8.0\\ \\mathrm{J}$."
+},
+{
+"id": "bevegelsesmengde-035",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "Et gevær på 4.0 kg skyter ut en kule på 10 g med farten 400 m/s. Hva er rekylfarten?",
+"riktig": "1.0 m/s",
+"feil": [
+{
+"svar": "1.0 km/s",
+"type": "regnefeil"
+},
+{
+"svar": "0.10 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$MV = mv$, med $m = 0.010\\ \\mathrm{kg}$."
+},
+{
+"id": "bevegelsesmengde-036",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Et legeme på 3.0 kg med 4.0 m/s mot øst og et på 1.0 kg med 12 m/s mot nord støter og henger sammen. Hva er farten etterpå?",
+"riktig": "4.2 m/s",
+"feil": [
+{
+"svar": "6.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "17 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "Begge har 12 kg m/s, vinkelrett på hverandre: $p = \\sqrt{12^2+12^2}$, og $V = p/4.0$."
+},
+{
+"id": "arbeid-og-energi-037",
+"tema": "arbeid-og-energi",
+"undertema": "arbeid",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En kraft på 20 N flytter en kasse 3.0 m i kraftens retning. Hvor stort er arbeidet?",
+"riktig": "60 J",
+"feil": [
+{
+"svar": "6.7 J",
+"type": "regnefeil"
+},
+{
+"svar": "23 J",
+"type": "begrep"
+},
+{
+"svar": "0 J",
+"type": "begrep"
+}
+],
+"forklaring": "$W = Fs$."
+},
+{
+"id": "arbeid-og-energi-038",
+"tema": "arbeid-og-energi",
+"undertema": "arbeid",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En kraft på 50 N virker 60° på bevegelsesretningen over 10 m. Hvor stort er arbeidet?",
+"riktig": "0.25 kJ",
+"feil": [
+{
+"svar": "0.43 kJ",
+"type": "regnefeil"
+},
+{
+"svar": "25 J",
+"type": "regnefeil"
+},
+{
+"svar": "0.50 kJ",
+"type": "begrep"
+}
+],
+"forklaring": "$W = Fs\\cos\\theta$."
+},
+{
+"id": "arbeid-og-energi-039",
+"tema": "arbeid-og-energi",
+"undertema": "energiformer",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Hva er den kinetiske energien til et legeme på 2.0 kg med farten 3.0 m/s?",
+"riktig": "9.0 J",
+"feil": [
+{
+"svar": "18 J",
+"type": "regnefeil"
+},
+{
+"svar": "3.0 J",
+"type": "regnefeil"
+},
+{
+"svar": "6.0 J",
+"type": "begrep"
+}
+],
+"forklaring": "$E_k = \\frac{1}{2}mv^2$."
+},
+{
+"id": "arbeid-og-energi-040",
+"tema": "arbeid-og-energi",
+"undertema": "energiformer",
+"vanskelighet": "middels",
+"forventet_tid_s": 30,
+"tekst": "Farten til en bil dobles. Hvor mange ganger større blir den kinetiske energien?",
+"riktig": "4 ganger",
+"feil": [
+{
+"svar": "8 ganger",
+"type": "regnefeil"
+},
+{
+"svar": "2 ganger",
+"type": "begrep"
+},
+{
+"svar": "Den er uendret",
+"type": "begrep"
+}
+],
+"forklaring": "$E_k$ er proporsjonal med $v^2$."
+},
+{
+"id": "arbeid-og-energi-041",
+"tema": "arbeid-og-energi",
+"undertema": "energibevaring",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En kloss slippes og faller 5.0 m uten luftmotstand. Hva er farten nederst?",
+"riktig": "9.9 m/s",
+"feil": [
+{
+"svar": "7.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "98 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "Kan ikke beregnes uten massen",
+"type": "begrep"
+}
+],
+"forklaring": "$m\\mathrm{g}h = \\frac{1}{2}mv^2$, og massen forkortes."
+},
+{
+"id": "arbeid-og-energi-042",
+"tema": "arbeid-og-energi",
+"undertema": "energibevaring",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En kjelke på 20 kg starter fra ro 10 m over bunnen og har farten 12 m/s nederst. Hvor mye mekanisk energi er tapt?",
+"riktig": "0.52 kJ",
+"feil": [
+{
+"svar": "1.4 kJ",
+"type": "regnefeil"
+},
+{
+"svar": "3.4 kJ",
+"type": "regnefeil"
+},
+{
+"svar": "0 J",
+"type": "begrep"
+}
+],
+"forklaring": "Tap $= m\\mathrm{g}h - \\frac{1}{2}mv^2$."
+},
+{
+"id": "arbeid-og-energi-043",
+"tema": "arbeid-og-energi",
+"undertema": "energibevaring",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En fjær med stivhet 500 N/m er presset sammen 0.20 m og skyter ut en kloss på 0.50 kg. Hva er utgangsfarten?",
+"riktig": "6.3 m/s",
+"feil": [
+{
+"svar": "4.5 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "40 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "20 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$\\frac{1}{2}kx^2 = \\frac{1}{2}mv^2$."
+},
+{
+"id": "arbeid-og-energi-044",
+"tema": "arbeid-og-energi",
+"undertema": "effekt",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En motor gjør et arbeid på 0.60 kJ på 20 s. Hva er effekten?",
+"riktig": "30 W",
+"feil": [
+{
+"svar": "12 kW",
+"type": "regnefeil"
+},
+{
+"svar": "0.033 W",
+"type": "regnefeil"
+},
+{
+"svar": "0.60 kW",
+"type": "begrep"
+}
+],
+"forklaring": "$P = W/t$."
+},
+{
+"id": "arbeid-og-energi-045",
+"tema": "arbeid-og-energi",
+"undertema": "effekt",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En kran med virkningsgrad 75 % løfter 500 kg opp 12 m på 30 s. Hvor stor effekt må tilføres?",
+"riktig": "2.6 kW",
+"feil": [
+{
+"svar": "2.0 kW",
+"type": "regnefeil"
+},
+{
+"svar": "1.5 kW",
+"type": "regnefeil"
+},
+{
+"svar": "4.9 kW",
+"type": "begrep"
+}
+],
+"forklaring": "$P = m\\mathrm{g}h/(t\\eta)$."
+},
+{
+"id": "statikk-046",
+"tema": "statikk",
+"undertema": "kraftlikevekt",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva kreves for at et stivt legeme skal være i likevekt?",
+"riktig": "Både kraftsummen og momentsummen er null",
+"feil": [
+{
+"svar": "Bare at kraftsummen er null",
+"type": "begrep"
+},
+{
+"svar": "Bare at momentsummen er null",
+"type": "begrep"
+},
+{
+"svar": "At tyngden er null",
+"type": "begrep"
+}
+],
+"forklaring": "Kraftsummen hindrer forflytning, momentsummen hindrer rotasjon."
+},
+{
+"id": "statikk-047",
+"tema": "statikk",
+"undertema": "kraftlikevekt",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "En lampe på 5.0 kg henger i to snorer som begge danner 30° med loddlinjen. Hva er kraften i hver snor?",
+"riktig": "28 N",
+"feil": [
+{
+"svar": "25 N",
+"type": "regnefeil"
+},
+{
+"svar": "49 N",
+"type": "regnefeil"
+},
+{
+"svar": "57 N",
+"type": "regnefeil"
+}
+],
+"forklaring": "$2S\\cos 30° = m\\mathrm{g}$."
+},
+{
+"id": "statikk-048",
+"tema": "statikk",
+"undertema": "kraftmoment",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En kraft på 20 N virker vinkelrett på en arm med lengde 0.50 m. Hvor stort er kraftmomentet?",
+"riktig": "10 N m",
+"feil": [
+{
+"svar": "40 N m",
+"type": "regnefeil"
+},
+{
+"svar": "2.5 N m",
+"type": "regnefeil"
+},
+{
+"svar": "20 N m",
+"type": "begrep"
+}
+],
+"forklaring": "$\\tau = Fr$."
+},
+{
+"id": "statikk-049",
+"tema": "statikk",
+"undertema": "kraftmoment",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Et barn på 30 kg sitter 2.0 m fra vippepunktet. Hvor langt fra vippepunktet må et barn på 40 kg sitte på den andre siden?",
+"riktig": "1.5 m",
+"feil": [
+{
+"svar": "2.7 m",
+"type": "regnefeil"
+},
+{
+"svar": "1.0 m",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 m",
+"type": "begrep"
+}
+],
+"forklaring": "$m_1 r_1 = m_2 r_2$."
+},
+{
+"id": "statikk-050",
+"tema": "statikk",
+"undertema": "kraftmoment",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En jevn bjelke på 20 kg og 4.0 m hviler på støtter i begge ender, A og B. En person på 60 kg står 1.0 m fra A. Hvor stor er kraften fra støtten i B?",
+"riktig": "0.25 kN",
+"feil": [
+{
+"svar": "0.54 kN",
+"type": "regnefeil"
+},
+{
+"svar": "0.15 kN",
+"type": "regnefeil"
+},
+{
+"svar": "0.39 kN",
+"type": "begrep"
+}
+],
+"forklaring": "Moment om A: $4.0 N_B = (20\\cdot 2.0 + 60\\cdot 1.0)\\mathrm{g}$."
+},
+{
+"id": "statikk-051",
+"tema": "statikk",
+"undertema": "kraftmoment",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En lett bom er hengslet i veggen. I enden henger 10 kg, og en snor fra enden til veggen danner 30° med bommen. Hva er snordraget?",
+"riktig": "0.20 kN",
+"feil": [
+{
+"svar": "0.11 kN",
+"type": "regnefeil"
+},
+{
+"svar": "49 N",
+"type": "regnefeil"
+},
+{
+"svar": "98 N",
+"type": "begrep"
+}
+],
+"forklaring": "Moment om hengslet: $S\\sin 30° = m\\mathrm{g}$."
+},
+{
+"id": "statikk-052",
+"tema": "statikk",
+"undertema": "massesenter",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "To like masser ligger i $x = 0$ og $x = 2.0$ m. Hvor er massesenteret?",
+"riktig": "1.0 m",
+"feil": [
+{
+"svar": "2.0 m",
+"type": "regnefeil"
+},
+{
+"svar": "0.50 m",
+"type": "regnefeil"
+},
+{
+"svar": "0 m",
+"type": "begrep"
+}
+],
+"forklaring": "Med like masser ligger det midt mellom dem."
+},
+{
+"id": "statikk-053",
+"tema": "statikk",
+"undertema": "massesenter",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En masse på 1.0 kg ligger i $x = 0$ og en på 3.0 kg i $x = 4.0$ m. Hvor er massesenteret?",
+"riktig": "3.0 m",
+"feil": [
+{
+"svar": "1.0 m",
+"type": "regnefeil"
+},
+{
+"svar": "12 m",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 m",
+"type": "begrep"
+}
+],
+"forklaring": "$x = (1.0\\cdot 0 + 3.0\\cdot 4.0)/4.0$."
+},
+{
+"id": "statikk-054",
+"tema": "statikk",
+"undertema": "massesenter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "En jevn stav på 2.0 kg og 1.0 m har en masse på 1.0 kg festet i høyre ende. Hvor langt fra venstre ende er massesenteret?",
+"riktig": "0.67 m",
+"feil": [
+{
+"svar": "0.33 m",
+"type": "regnefeil"
+},
+{
+"svar": "0.75 m",
+"type": "regnefeil"
+},
+{
+"svar": "0.50 m",
+"type": "begrep"
+}
+],
+"forklaring": "$x = (2.0\\cdot 0.50 + 1.0\\cdot 1.0)/3.0$."
+},
+{
+"id": "rotasjon-055",
+"tema": "rotasjon",
+"undertema": "rotasjonskinematikk",
+"vanskelighet": "lett",
+"forventet_tid_s": 40,
+"tekst": "Et hjul roterer 2.0 omdreininger per sekund. Hva er vinkelfarten?",
+"riktig": "13 rad/s",
+"feil": [
+{
+"svar": "6.3 rad/s",
+"type": "regnefeil"
+},
+{
+"svar": "3.1 rad/s",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 rad/s",
+"type": "begrep"
+}
+],
+"forklaring": "$\\omega = 2\\pi f$."
+},
+{
+"id": "rotasjon-056",
+"tema": "rotasjon",
+"undertema": "rotasjonskinematikk",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Et hjul starter fra ro med vinkelakselerasjonen 2.0 rad/s². Hvor stor vinkel dreier det på 5.0 s?",
+"riktig": "25 rad",
+"feil": [
+{
+"svar": "50 rad",
+"type": "regnefeil"
+},
+{
+"svar": "5.0 rad",
+"type": "regnefeil"
+},
+{
+"svar": "10 rad",
+"type": "begrep"
+}
+],
+"forklaring": "$\\theta = \\frac{1}{2}\\alpha t^2$."
+},
+{
+"id": "rotasjon-057",
+"tema": "rotasjon",
+"undertema": "treghetsmoment",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En punktmasse på 2.0 kg går i en sirkel med radius 3.0 m. Hva er treghetsmomentet?",
+"riktig": "18 kg m²",
+"feil": [
+{
+"svar": "12 kg m²",
+"type": "regnefeil"
+},
+{
+"svar": "36 kg m²",
+"type": "regnefeil"
+},
+{
+"svar": "6.0 kg m²",
+"type": "begrep"
+}
+],
+"forklaring": "$I = mr^2$."
+},
+{
+"id": "rotasjon-058",
+"tema": "rotasjon",
+"undertema": "treghetsmoment",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "En kompakt sylinder ($I = \\frac{1}{2}MR^2$) med $M = 4.0$ kg og $R = 0.50$ m roterer om aksen sin med 10 rad/s. Hva er rotasjonsenergien?",
+"riktig": "25 J",
+"feil": [
+{
+"svar": "5.0 J",
+"type": "regnefeil"
+},
+{
+"svar": "13 J",
+"type": "regnefeil"
+},
+{
+"svar": "50 J",
+"type": "begrep"
+}
+],
+"forklaring": "$E = \\frac{1}{2}I\\omega^2$ med $I = 0.50\\ \\mathrm{kg\\ m^2}$."
+},
+{
+"id": "rotasjon-059",
+"tema": "rotasjon",
+"undertema": "rulling",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "Et legeme med treghetsmoment 2.0 kg m² får kraftmomentet 6.0 N m. Hva er vinkelakselerasjonen?",
+"riktig": "3.0 rad/s²",
+"feil": [
+{
+"svar": "12 rad/s²",
+"type": "regnefeil"
+},
+{
+"svar": "0.33 rad/s²",
+"type": "regnefeil"
+},
+{
+"svar": "6.0 rad/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$\\tau = I\\alpha$."
+},
+{
+"id": "rotasjon-060",
+"tema": "rotasjon",
+"undertema": "rulling",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En kompakt sylinder ruller uten å skli ned fra høyden 2.0 m, fra ro. Hva er farten nederst?",
+"riktig": "5.1 m/s",
+"feil": [
+{
+"svar": "4.4 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "6.3 m/s",
+"type": "begrep"
+},
+{
+"svar": "5.3 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$m\\mathrm{g}h = \\frac{3}{4}mv^2$. Rotasjonen tar sin del av energien."
+},
+{
+"id": "rotasjon-061",
+"tema": "rotasjon",
+"undertema": "rulling",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Et lodd på 2.0 kg henger i en snor rundt en trinse formet som en kompakt skive på 4.0 kg. Hva er akselerasjonen til loddet?",
+"riktig": "4.9 m/s²",
+"feil": [
+{
+"svar": "3.3 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "2.5 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "9.8 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$a = m\\mathrm{g}/(m + M/2)$."
+},
+{
+"id": "rotasjon-062",
+"tema": "rotasjon",
+"undertema": "dreieimpuls",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "En kunstløper trekker armene inn under en piruett. Hva skjer med vinkelfarten?",
+"riktig": "Den øker",
+"feil": [
+{
+"svar": "Den avtar",
+"type": "begrep"
+},
+{
+"svar": "Den er uendret",
+"type": "begrep"
+},
+{
+"svar": "Den blir null",
+"type": "begrep"
+}
+],
+"forklaring": "Dreieimpulsen $L = I\\omega$ er bevart, og $I$ blir mindre."
+},
+{
+"id": "rotasjon-063",
+"tema": "rotasjon",
+"undertema": "dreieimpuls",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "Treghetsmomentet til en roterende person minker fra 4.0 til 1.0 kg m² uten ytre moment. Hvor mange ganger større blir rotasjonsenergien?",
+"riktig": "4 ganger",
+"feil": [
+{
+"svar": "2 ganger",
+"type": "regnefeil"
+},
+{
+"svar": "16 ganger",
+"type": "regnefeil"
+},
+{
+"svar": "Den er uendret",
+"type": "begrep"
+}
+],
+"forklaring": "$\\omega$ blir firedoblet. $E = L^2/(2I)$ gir faktoren 4."
+},
+{
+"id": "gravitasjon-064",
+"tema": "gravitasjon",
+"undertema": "gravitasjonsloven",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Avstanden mellom to masser dobles. Hva skjer med gravitasjonskraften?",
+"riktig": "Den blir en firedel",
+"feil": [
+{
+"svar": "Den blir halvert",
+"type": "begrep"
+},
+{
+"svar": "Den blir doblet",
+"type": "regnefeil"
+},
+{
+"svar": "Den er uendret",
+"type": "begrep"
+}
+],
+"forklaring": "Kraften er omvendt proporsjonal med avstanden i andre."
+},
+{
+"id": "gravitasjon-065",
+"tema": "gravitasjon",
+"undertema": "gravitasjonsloven",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva skjer med massen din hvis du reiser til Månen?",
+"riktig": "Den er uendret",
+"feil": [
+{
+"svar": "Den blir en sjettedel",
+"type": "begrep"
+},
+{
+"svar": "Den blir null",
+"type": "begrep"
+},
+{
+"svar": "Den dobles",
+"type": "begrep"
+}
+],
+"forklaring": "Massen er den samme, mens tyngden endres."
+},
+{
+"id": "gravitasjon-066",
+"tema": "gravitasjon",
+"undertema": "gravitasjonsloven",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "To masser på 1.0·10³ kg ligger 1.0 m fra hverandre. Hvor stor er gravitasjonskraften?",
+"riktig": "67 µN",
+"feil": [
+{
+"svar": "67 nN",
+"type": "regnefeil"
+},
+{
+"svar": "6.7 mN",
+"type": "regnefeil"
+},
+{
+"svar": "9.8 kN",
+"type": "begrep"
+}
+],
+"forklaring": "$F = \\mathrm{G}m_1 m_2/r^2$."
+},
+{
+"id": "gravitasjon-067",
+"tema": "gravitasjon",
+"undertema": "gravitasjonsloven",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "Hva er tyngdeakselerasjonen i en høyde over bakken lik Jordas radius? Ved overflaten er den 9.81 m/s².",
+"riktig": "2.45 m/s²",
+"feil": [
+{
+"svar": "4.91 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "1.09 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "9.81 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "Avstanden fra sentrum dobles, så verdien blir en firedel."
+},
+{
+"id": "gravitasjon-068",
+"tema": "gravitasjon",
+"undertema": "gravitasjonsloven",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Hva er unnslipningsfarten fra Jordas overflate? Bruk $M = 5.97\\cdot 10^{24}$ kg og $R = 6.37\\cdot 10^6$ m.",
+"riktig": "11.2 km/s",
+"feil": [
+{
+"svar": "5.6 km/s",
+"type": "regnefeil"
+},
+{
+"svar": "16 km/s",
+"type": "regnefeil"
+},
+{
+"svar": "7.9 km/s",
+"type": "begrep"
+}
+],
+"forklaring": "$v = \\sqrt{2\\mathrm{G}M/R}$. Sirkelbanefarten ved overflaten er 7.9 km/s."
+},
+{
+"id": "gravitasjon-069",
+"tema": "gravitasjon",
+"undertema": "satellitter",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva holder en satellitt i bane rundt Jorda?",
+"riktig": "Gravitasjonen",
+"feil": [
+{
+"svar": "Motoren til satellitten",
+"type": "begrep"
+},
+{
+"svar": "En sentrifugalkraft",
+"type": "begrep"
+},
+{
+"svar": "Det virker ingen krefter",
+"type": "begrep"
+}
+],
+"forklaring": "Gravitasjonen er sentripetalkraften i banen."
+},
+{
+"id": "gravitasjon-070",
+"tema": "gravitasjon",
+"undertema": "satellitter",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "En satellitt går i sirkelbane med radius 7.0·10⁶ m rundt Jorda ($M = 5.97\\cdot 10^{24}$ kg). Hva er banefarten?",
+"riktig": "7.5 km/s",
+"feil": [
+{
+"svar": "11 km/s",
+"type": "regnefeil"
+},
+{
+"svar": "3.8 km/s",
+"type": "regnefeil"
+},
+{
+"svar": "Avhenger av massen til satellitten",
+"type": "begrep"
+}
+],
+"forklaring": "$v = \\sqrt{\\mathrm{G}M/r}$."
+},
+{
+"id": "gravitasjon-071",
+"tema": "gravitasjon",
+"undertema": "satellitter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 60,
+"tekst": "Baneradien til en satellitt firedobles. Hvor mange ganger lengre blir perioden?",
+"riktig": "8 ganger",
+"feil": [
+{
+"svar": "4 ganger",
+"type": "regnefeil"
+},
+{
+"svar": "16 ganger",
+"type": "regnefeil"
+},
+{
+"svar": "2 ganger",
+"type": "begrep"
+}
+],
+"forklaring": "Keplers 3. lov: $T^2$ er proporsjonal med $r^3$."
+},
+{
+"id": "gravitasjon-072",
+"tema": "gravitasjon",
+"undertema": "satellitter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Hva er baneradien, målt fra Jordas sentrum, for en satellitt med perioden 24 h? Bruk $M = 5.97\\cdot 10^{24}$ kg.",
+"riktig": "42 Mm",
+"feil": [
+{
+"svar": "6.4 Mm",
+"type": "regnefeil"
+},
+{
+"svar": "9.5 Mm",
+"type": "regnefeil"
+},
+{
+"svar": "36 Mm",
+"type": "begrep"
+}
+],
+"forklaring": "$r^3 = \\mathrm{G}MT^2/(4\\pi^2)$. 36 Mm er høyden over bakken."
+},
+{
+"id": "svingninger-073",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En svingning har perioden 0.50 s. Hva er frekvensen?",
+"riktig": "2.0 Hz",
+"feil": [
+{
+"svar": "0.50 Hz",
+"type": "regnefeil"
+},
+{
+"svar": "4.0 Hz",
+"type": "regnefeil"
+},
+{
+"svar": "1.0 Hz",
+"type": "begrep"
+}
+],
+"forklaring": "$f = 1/T$."
+},
+{
+"id": "svingninger-074",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvor i en harmonisk svingning er farten størst?",
+"riktig": "I likevektsstillingen",
+"feil": [
+{
+"svar": "I ytterpunktene",
+"type": "begrep"
+},
+{
+"svar": "Den er lik overalt",
+"type": "begrep"
+},
+{
+"svar": "Halvveis ut mot ytterpunktene",
+"type": "begrep"
+}
+],
+"forklaring": "I likevektsstillingen er all energi kinetisk."
+},
+{
+"id": "svingninger-075",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En svingning har amplitude 0.10 m og vinkelfrekvens 5.0 rad/s. Hva er største fart?",
+"riktig": "0.50 m/s",
+"feil": [
+{
+"svar": "2.5 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0.020 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0.10 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$v_{\\text{maks}} = A\\omega$."
+},
+{
+"id": "svingninger-076",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "En svingning har amplitude 0.020 m og frekvens 5.0 Hz. Hva er største akselerasjon?",
+"riktig": "20 m/s²",
+"feil": [
+{
+"svar": "0.63 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "0.50 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "9.8 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$a_{\\text{maks}} = A\\omega^2$ med $\\omega = 2\\pi f$."
+},
+{
+"id": "svingninger-077",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En kloss på 0.20 kg svinger i en fjær med stivhet 80 N/m og amplitude 0.050 m. Hva er farten når utsvinget er 0.030 m?",
+"riktig": "0.80 m/s",
+"feil": [
+{
+"svar": "1.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0.60 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$v = \\omega\\sqrt{A^2 - x^2}$ med $\\omega = \\sqrt{k/m} = 20\\ \\mathrm{rad/s}$."
+},
+{
+"id": "svingninger-078",
+"tema": "svingninger",
+"undertema": "pendel",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva påvirker ikke perioden til en matematisk pendel ved små utslag?",
+"riktig": "Massen til loddet",
+"feil": [
+{
+"svar": "Lengden på snora",
+"type": "begrep"
+},
+{
+"svar": "Tyngdeakselerasjonen",
+"type": "begrep"
+},
+{
+"svar": "Alle disse påvirker perioden",
+"type": "begrep"
+}
+],
+"forklaring": "$T = 2\\pi\\sqrt{l/\\mathrm{g}}$ inneholder ikke massen."
+},
+{
+"id": "svingninger-079",
+"tema": "svingninger",
+"undertema": "pendel",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Hva er perioden til en pendel med lengde 1.00 m?",
+"riktig": "2.01 s",
+"feil": [
+{
+"svar": "6.28 s",
+"type": "regnefeil"
+},
+{
+"svar": "0.50 s",
+"type": "regnefeil"
+},
+{
+"svar": "9.81 s",
+"type": "begrep"
+}
+],
+"forklaring": "$T = 2\\pi\\sqrt{l/\\mathrm{g}}$."
+},
+{
+"id": "svingninger-080",
+"tema": "svingninger",
+"undertema": "pendel",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En kloss på 0.50 kg henger i en fjær med stivhet 200 N/m. Hva er perioden?",
+"riktig": "0.31 s",
+"feil": [
+{
+"svar": "0.050 s",
+"type": "regnefeil"
+},
+{
+"svar": "20 s",
+"type": "regnefeil"
+},
+{
+"svar": "0.16 s",
+"type": "begrep"
+}
+],
+"forklaring": "$T = 2\\pi\\sqrt{m/k}$."
+},
+{
+"id": "svingninger-081",
+"tema": "svingninger",
+"undertema": "pendel",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "En pendel med lengde 1.0 m har perioden 3.0 s på en fremmed planet. Hva er tyngdeakselerasjonen der?",
+"riktig": "4.4 m/s²",
+"feil": [
+{
+"svar": "1.1 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "13 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "9.8 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$\\mathrm{g} = 4\\pi^2 l/T^2$."
+},
+{
+"id": "elektrisk-felt-082",
+"tema": "elektrisk-felt",
+"undertema": "ladning",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "To positive ladninger ligger nær hverandre. Hva skjer?",
+"riktig": "De frastøter hverandre",
+"feil": [
+{
+"svar": "De tiltrekker hverandre",
+"type": "begrep"
+},
+{
+"svar": "Det virker ingen kraft",
+"type": "begrep"
+},
+{
+"svar": "Det avhenger av massene",
+"type": "begrep"
+}
+],
+"forklaring": "Like ladninger frastøter hverandre."
+},
+{
+"id": "elektrisk-felt-083",
+"tema": "elektrisk-felt",
+"undertema": "ladning",
+"vanskelighet": "lett",
+"forventet_tid_s": 40,
+"tekst": "Et legeme har ladningen −1.6·10⁻¹⁸ C. Hvor mange overskuddselektroner har det?",
+"riktig": "10",
+"feil": [
+{
+"svar": "100",
+"type": "regnefeil"
+},
+{
+"svar": "0.10",
+"type": "regnefeil"
+},
+{
+"svar": "1",
+"type": "begrep"
+}
+],
+"forklaring": "$n = Q/\\mathrm{e}$."
+},
+{
+"id": "elektrisk-felt-084",
+"tema": "elektrisk-felt",
+"undertema": "coulomb",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "To ladninger på 2.0 µC og 3.0 µC ligger 0.30 m fra hverandre. Hvor stor er kraften?",
+"riktig": "0.60 N",
+"feil": [
+{
+"svar": "0.18 N",
+"type": "regnefeil"
+},
+{
+"svar": "6.0·10¹¹ N",
+"type": "regnefeil"
+},
+{
+"svar": "0 N",
+"type": "begrep"
+}
+],
+"forklaring": "$F = \\mathrm{k_e}q_1 q_2/r^2$."
+},
+{
+"id": "elektrisk-felt-085",
+"tema": "elektrisk-felt",
+"undertema": "coulomb",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En ladning $q$ ligger i $x = 0$ og en ladning $4q$ i $x = 3.0$ m. Hvor mellom dem blir kraften på en tredje ladning null?",
+"riktig": "1.0 m",
+"feil": [
+{
+"svar": "2.0 m",
+"type": "regnefeil"
+},
+{
+"svar": "0.75 m",
+"type": "regnefeil"
+},
+{
+"svar": "1.5 m",
+"type": "begrep"
+}
+],
+"forklaring": "$1/x^2 = 4/(3.0-x)^2$ gir $3.0 - x = 2x$."
+},
+{
+"id": "elektrisk-felt-086",
+"tema": "elektrisk-felt",
+"undertema": "felt",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvilken retning har det elektriske feltet rundt en positiv punktladning?",
+"riktig": "Bort fra ladningen",
+"feil": [
+{
+"svar": "Inn mot ladningen",
+"type": "begrep"
+},
+{
+"svar": "I sirkler rundt ladningen",
+"type": "begrep"
+},
+{
+"svar": "Det avhenger av testladningens fortegn",
+"type": "begrep"
+}
+],
+"forklaring": "Feltet viser retningen på kraften på en positiv testladning."
+},
+{
+"id": "elektrisk-felt-087",
+"tema": "elektrisk-felt",
+"undertema": "felt",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "En ladning på 2.0 nC er i et elektrisk felt på 500 N/C. Hvor stor er kraften?",
+"riktig": "1.0 µN",
+"feil": [
+{
+"svar": "1.0 mN",
+"type": "regnefeil"
+},
+{
+"svar": "250 nN",
+"type": "regnefeil"
+},
+{
+"svar": "500 N",
+"type": "begrep"
+}
+],
+"forklaring": "$F = qE$."
+},
+{
+"id": "elektrisk-felt-088",
+"tema": "elektrisk-felt",
+"undertema": "felt",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Ladninger på +1.0 nC og −1.0 nC ligger 0.20 m fra hverandre. Hvor sterkt er feltet midt mellom dem?",
+"riktig": "1.8 kN/C",
+"feil": [
+{
+"svar": "0.90 kN/C",
+"type": "regnefeil"
+},
+{
+"svar": "0.45 kN/C",
+"type": "regnefeil"
+},
+{
+"svar": "0 N/C",
+"type": "begrep"
+}
+],
+"forklaring": "Feltene peker samme vei: $E = 2\\mathrm{k_e}q/r^2$ med $r = 0.10\\ \\mathrm{m}$."
+},
+{
+"id": "elektrisk-felt-089",
+"tema": "elektrisk-felt",
+"undertema": "homogent-felt",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "To parallelle plater står 2.0 cm fra hverandre med spenningen 120 V. Hvor sterkt er feltet?",
+"riktig": "6.0 kV/m",
+"feil": [
+{
+"svar": "60 V/m",
+"type": "regnefeil"
+},
+{
+"svar": "2.4 V/m",
+"type": "regnefeil"
+},
+{
+"svar": "120 V/m",
+"type": "begrep"
+}
+],
+"forklaring": "$E = U/d$ med $d = 0.020\\ \\mathrm{m}$."
+},
+{
+"id": "elektrisk-felt-090",
+"tema": "elektrisk-felt",
+"undertema": "homogent-felt",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Et elektron starter fra ro og akselereres gjennom 150 V. Hva er farten etterpå?",
+"riktig": "7.3 Mm/s",
+"feil": [
+{
+"svar": "5.1 Mm/s",
+"type": "regnefeil"
+},
+{
+"svar": "5.3·10¹³ m/s",
+"type": "regnefeil"
+},
+{
+"svar": "170 km/s",
+"type": "begrep"
+}
+],
+"forklaring": "$\\mathrm{e}U = \\frac{1}{2}\\mathrm{m_e}v^2$."
+},
+{
+"id": "elektrisk-potensial-091",
+"tema": "elektrisk-potensial",
+"undertema": "potensiell-energi",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvordan beveger en fri, positiv ladning seg i et elektrisk felt?",
+"riktig": "Fra høyt mot lavt potensial",
+"feil": [
+{
+"svar": "Fra lavt mot høyt potensial",
+"type": "begrep"
+},
+{
+"svar": "Den forblir i ro",
+"type": "begrep"
+},
+{
+"svar": "Alltid vinkelrett på feltet",
+"type": "begrep"
+}
+],
+"forklaring": "Da minker den potensielle energien."
+},
+{
+"id": "elektrisk-potensial-092",
+"tema": "elektrisk-potensial",
+"undertema": "potensiell-energi",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "Ladninger på +2.0 nC og −3.0 nC ligger 10 cm fra hverandre. Hva er den potensielle energien?",
+"riktig": "−0.54 µJ",
+"feil": [
+{
+"svar": "−5.4 µJ",
+"type": "regnefeil"
+},
+{
+"svar": "−0.054 µJ",
+"type": "regnefeil"
+},
+{
+"svar": "+0.54 µJ",
+"type": "begrep"
+}
+],
+"forklaring": "$U = \\mathrm{k_e}q_1 q_2/r$. Motsatte fortegn gir negativ energi."
+},
+{
+"id": "elektrisk-potensial-093",
+"tema": "elektrisk-potensial",
+"undertema": "potensiell-energi",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Hvor stort arbeid trengs for å flytte 1.0 nC fra uendelig langt unna til 5.0 cm fra en ladning på 4.0 nC?",
+"riktig": "0.72 µJ",
+"feil": [
+{
+"svar": "14 µJ",
+"type": "regnefeil"
+},
+{
+"svar": "0.36 µJ",
+"type": "regnefeil"
+},
+{
+"svar": "0 J",
+"type": "begrep"
+}
+],
+"forklaring": "$W = \\mathrm{k_e}q_1 q_2/r$."
+},
+{
+"id": "elektrisk-potensial-094",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En ladning på 2.0 C flyttes gjennom 12 V. Hvor stort er arbeidet?",
+"riktig": "24 J",
+"feil": [
+{
+"svar": "6.0 J",
+"type": "regnefeil"
+},
+{
+"svar": "0.17 J",
+"type": "regnefeil"
+},
+{
+"svar": "14 J",
+"type": "begrep"
+}
+],
+"forklaring": "$W = qU$."
+},
+{
+"id": "elektrisk-potensial-095",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva er elektrisk spenning?",
+"riktig": "Potensialforskjell mellom to punkter",
+"feil": [
+{
+"svar": "Ladning per tid",
+"type": "begrep"
+},
+{
+"svar": "Motstand i en leder",
+"type": "begrep"
+},
+{
+"svar": "Kraft per ladning",
+"type": "begrep"
+}
+],
+"forklaring": "Spenning er forskjellen i potensial, altså energi per ladning."
+},
+{
+"id": "elektrisk-potensial-096",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Hva er potensialet 0.30 m fra en punktladning på 3.0 nC?",
+"riktig": "90 V",
+"feil": [
+{
+"svar": "0.30 kV",
+"type": "regnefeil"
+},
+{
+"svar": "27 V",
+"type": "regnefeil"
+},
+{
+"svar": "0 V",
+"type": "begrep"
+}
+],
+"forklaring": "$V = \\mathrm{k_e}q/r$."
+},
+{
+"id": "elektrisk-potensial-097",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "middels",
+"forventet_tid_s": 40,
+"tekst": "Et elektron akselereres gjennom 5.0 V. Hvor mye kinetisk energi får det?",
+"riktig": "5.0 eV",
+"feil": [
+{
+"svar": "8.0 eV",
+"type": "regnefeil"
+},
+{
+"svar": "3.2 eV",
+"type": "regnefeil"
+},
+{
+"svar": "1.6 eV",
+"type": "begrep"
+}
+],
+"forklaring": "Én elementærladning gjennom 5.0 V gir 5.0 eV."
+},
+{
+"id": "elektrisk-potensial-098",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 60,
+"tekst": "Ladninger på +2.0 nC og −2.0 nC ligger et stykke fra hverandre. Hva gjelder midt mellom dem?",
+"riktig": "Potensialet er null, feltet er ikke null",
+"feil": [
+{
+"svar": "Potensialet er ikke null, feltet er null",
+"type": "begrep"
+},
+{
+"svar": "Begge er null",
+"type": "begrep"
+},
+{
+"svar": "Ingen av dem er null",
+"type": "begrep"
+}
+],
+"forklaring": "Potensial er skalar og summen blir null. Feltene er vektorer og peker samme vei."
+},
+{
+"id": "elektrisk-potensial-099",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Et proton starter fra ro og akselereres gjennom 2.0 kV. Hva er farten etterpå?",
+"riktig": "0.62 Mm/s",
+"feil": [
+{
+"svar": "0.44 Mm/s",
+"type": "regnefeil"
+},
+{
+"svar": "0.20 Mm/s",
+"type": "regnefeil"
+},
+{
+"svar": "27 Mm/s",
+"type": "begrep"
+}
+],
+"forklaring": "$\\mathrm{e}U = \\frac{1}{2}\\mathrm{m_p}v^2$."
+},
+{
+"id": "kretser-100",
+"tema": "kretser",
+"undertema": "strom-spenning",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En ladning på 6.0 C passerer et punkt på 3.0 s. Hva er strømmen?",
+"riktig": "2.0 A",
+"feil": [
+{
+"svar": "18 A",
+"type": "regnefeil"
+},
+{
+"svar": "0.50 A",
+"type": "regnefeil"
+},
+{
+"svar": "9.0 A",
+"type": "begrep"
+}
+],
+"forklaring": "$I = Q/t$."
+},
+{
+"id": "kretser-101",
+"tema": "kretser",
+"undertema": "motstand",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En motstand på 4.0 Ω kobles til 12 V. Hva er strømmen?",
+"riktig": "3.0 A",
+"feil": [
+{
+"svar": "48 A",
+"type": "regnefeil"
+},
+{
+"svar": "0.33 A",
+"type": "regnefeil"
+},
+{
+"svar": "16 A",
+"type": "begrep"
+}
+],
+"forklaring": "$I = U/R$."
+},
+{
+"id": "kretser-102",
+"tema": "kretser",
+"undertema": "motstand",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "Motstander på 6.0 Ω og 3.0 Ω er parallellkoblet. Hva er resultantmotstanden?",
+"riktig": "2.0 Ω",
+"feil": [
+{
+"svar": "4.5 Ω",
+"type": "regnefeil"
+},
+{
+"svar": "0.50 Ω",
+"type": "regnefeil"
+},
+{
+"svar": "9.0 Ω",
+"type": "begrep"
+}
+],
+"forklaring": "$1/R = 1/6.0 + 1/3.0$."
+},
+{
+"id": "kretser-103",
+"tema": "kretser",
+"undertema": "kirchhoff",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "I et knutepunkt går 5.0 A og 2.0 A inn, og 3.0 A og strømmen $I$ ut. Hva er $I$?",
+"riktig": "4.0 A",
+"feil": [
+{
+"svar": "10 A",
+"type": "regnefeil"
+},
+{
+"svar": "6.0 A",
+"type": "regnefeil"
+},
+{
+"svar": "0 A",
+"type": "begrep"
+}
+],
+"forklaring": "Sum inn er lik sum ut."
+},
+{
+"id": "kretser-104",
+"tema": "kretser",
+"undertema": "kirchhoff",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "Et batteri på 10 V i serie med 2.0 Ω og et batteri på 4.0 V i serie med 2.0 Ω er koblet parallelt, med samme polaritet, over en motstand på 2.0 Ω. Hva er strømmen gjennom denne motstanden?",
+"riktig": "2.3 A",
+"feil": [
+{
+"svar": "3.5 A",
+"type": "regnefeil"
+},
+{
+"svar": "1.2 A",
+"type": "regnefeil"
+},
+{
+"svar": "7.0 A",
+"type": "begrep"
+}
+],
+"forklaring": "Knutepunkt: $(10-V)/2.0 + (4.0-V)/2.0 = V/2.0$ gir $V = 4.67\\ \\mathrm{V}$."
+},
+{
+"id": "kretser-105",
+"tema": "kretser",
+"undertema": "emf",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Et batteri har ems 12 V og indre resistans 0.50 Ω. Det kobles til en ytre motstand på 5.5 Ω. Hva er klemmespenningen?",
+"riktig": "11 V",
+"feil": [
+{
+"svar": "1.0 V",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 V",
+"type": "regnefeil"
+},
+{
+"svar": "12 V",
+"type": "begrep"
+}
+],
+"forklaring": "$I = 12/6.0 = 2.0\\ \\mathrm{A}$ og $U = \\varepsilon - rI$."
+},
+{
+"id": "kretser-106",
+"tema": "kretser",
+"undertema": "emf",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Et batteri har ems 12 V og indre resistans 2.0 Ω. Hva er den største effekten det kan gi til en ytre motstand?",
+"riktig": "18 W",
+"feil": [
+{
+"svar": "36 W",
+"type": "regnefeil"
+},
+{
+"svar": "9.0 W",
+"type": "regnefeil"
+},
+{
+"svar": "72 W",
+"type": "begrep"
+}
+],
+"forklaring": "Størst effekt når $R = r$: $P = \\varepsilon^2/(4r)$."
+},
+{
+"id": "kretser-107",
+"tema": "kretser",
+"undertema": "effekt",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En ovn trekker 2.0 A ved 230 V. Hva er effekten?",
+"riktig": "0.46 kW",
+"feil": [
+{
+"svar": "0.12 kW",
+"type": "regnefeil"
+},
+{
+"svar": "0.92 kW",
+"type": "regnefeil"
+},
+{
+"svar": "0.23 kW",
+"type": "begrep"
+}
+],
+"forklaring": "$P = UI$."
+},
+{
+"id": "kretser-108",
+"tema": "kretser",
+"undertema": "effekt",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En ovn gir 1.2 kW ved 230 V. Hva gir den ved 200 V, med samme motstand?",
+"riktig": "0.91 kW",
+"feil": [
+{
+"svar": "0.79 kW",
+"type": "regnefeil"
+},
+{
+"svar": "1.0 kW",
+"type": "begrep"
+},
+{
+"svar": "1.2 kW",
+"type": "begrep"
+}
+],
+"forklaring": "$P = U^2/R$, så $P$ går som $U^2$."
+},
+{
+"id": "kinematikk-109",
+"tema": "kinematikk",
+"undertema": "posisjon-fart-akselerasjon",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En løper bruker 80 s på 400 m. Hva er gjennomsnittsfarten?",
+"riktig": "5.0 m/s",
+"feil": [
+{
+"svar": "0.20 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "320 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "80 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$v = s/t$."
+},
+{
+"id": "kinematikk-110",
+"tema": "kinematikk",
+"undertema": "posisjon-fart-akselerasjon",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Hva er 72 km/h målt i m/s?",
+"riktig": "20 m/s",
+"feil": [
+{
+"svar": "259 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "72 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "Del på 3.6 for å gå fra km/h til m/s."
+},
+{
+"id": "kinematikk-111",
+"tema": "kinematikk",
+"undertema": "posisjon-fart-akselerasjon",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva forteller arealet under en graf av fart mot tid?",
+"riktig": "Strekningen",
+"feil": [
+{
+"svar": "Akselerasjonen",
+"type": "begrep"
+},
+{
+"svar": "Farten",
+"type": "begrep"
+},
+{
+"svar": "Tiden",
+"type": "begrep"
+}
+],
+"forklaring": "Fart ganger tid er strekning."
+},
+{
+"id": "kinematikk-112",
+"tema": "kinematikk",
+"undertema": "posisjon-fart-akselerasjon",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En syklist kjører 3.0 km mot øst og så 3.0 km tilbake til start. Hva er forflytningen?",
+"riktig": "0 km",
+"feil": [
+{
+"svar": "6.0 km",
+"type": "begrep"
+},
+{
+"svar": "3.0 km",
+"type": "begrep"
+},
+{
+"svar": "1.5 km",
+"type": "begrep"
+}
+],
+"forklaring": "Forflytning er avstanden fra start til slutt, med retning."
+},
+{
+"id": "kinematikk-113",
+"tema": "kinematikk",
+"undertema": "konstant-akselerasjon",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En bil har farten 5.0 m/s og akselererer med 3.0 m/s² i 2.0 s. Hva er farten etterpå?",
+"riktig": "11 m/s",
+"feil": [
+{
+"svar": "6.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "16 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "8.0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$v = v_0 + at$."
+},
+{
+"id": "kinematikk-114",
+"tema": "kinematikk",
+"undertema": "konstant-akselerasjon",
+"vanskelighet": "lett",
+"forventet_tid_s": 40,
+"tekst": "En kloss starter fra ro med akselerasjonen 4.0 m/s². Hvor langt kommer den på 3.0 s?",
+"riktig": "18 m",
+"feil": [
+{
+"svar": "36 m",
+"type": "regnefeil"
+},
+{
+"svar": "6.0 m",
+"type": "regnefeil"
+},
+{
+"svar": "12 m",
+"type": "begrep"
+}
+],
+"forklaring": "$s = \\frac{1}{2}at^2$."
+},
+{
+"id": "kinematikk-115",
+"tema": "kinematikk",
+"undertema": "to-dimensjoner",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "To like baller slippes og kastes horisontalt samtidig fra samme høyde. Hvilken lander først uten luftmotstand?",
+"riktig": "De lander samtidig",
+"feil": [
+{
+"svar": "Den som slippes",
+"type": "begrep"
+},
+{
+"svar": "Den som kastes",
+"type": "begrep"
+},
+{
+"svar": "Det avhenger av massen",
+"type": "begrep"
+}
+],
+"forklaring": "Bevegelsen loddrett er den samme for begge."
+},
+{
+"id": "kinematikk-116",
+"tema": "kinematikk",
+"undertema": "konstant-akselerasjon",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En bil øker farten jevnt fra 12 m/s til 28 m/s på 4.0 s. Hvor langt kjører den?",
+"riktig": "80 m",
+"feil": [
+{
+"svar": "160 m",
+"type": "regnefeil"
+},
+{
+"svar": "48 m",
+"type": "regnefeil"
+},
+{
+"svar": "112 m",
+"type": "begrep"
+}
+],
+"forklaring": "$s = \\frac{1}{2}(v_0 + v)t$."
+},
+{
+"id": "kinematikk-117",
+"tema": "kinematikk",
+"undertema": "konstant-akselerasjon",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En ball kastes rett opp med 15 m/s. Hvor høyt når den?",
+"riktig": "11 m",
+"feil": [
+{
+"svar": "23 m",
+"type": "regnefeil"
+},
+{
+"svar": "1.5 m",
+"type": "regnefeil"
+},
+{
+"svar": "15 m",
+"type": "begrep"
+}
+],
+"forklaring": "$h = v_0^2/(2\\mathrm{g})$."
+},
+{
+"id": "kinematikk-118",
+"tema": "kinematikk",
+"undertema": "konstant-akselerasjon",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En ball kastes rett opp med 12 m/s. Hvor lang tid går før den er tilbake i utgangspunktet?",
+"riktig": "2.4 s",
+"feil": [
+{
+"svar": "1.2 s",
+"type": "regnefeil"
+},
+{
+"svar": "4.9 s",
+"type": "regnefeil"
+},
+{
+"svar": "12 s",
+"type": "begrep"
+}
+],
+"forklaring": "$t = 2v_0/\\mathrm{g}$."
+},
+{
+"id": "kinematikk-119",
+"tema": "kinematikk",
+"undertema": "posisjon-fart-akselerasjon",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "En bil kjører 60 km med 60 km/h og deretter 60 km med 30 km/h. Hva er gjennomsnittsfarten?",
+"riktig": "40 km/h",
+"feil": [
+{
+"svar": "90 km/h",
+"type": "regnefeil"
+},
+{
+"svar": "20 km/h",
+"type": "regnefeil"
+},
+{
+"svar": "45 km/h",
+"type": "begrep"
+}
+],
+"forklaring": "Total strekning 120 km delt på total tid 3.0 h."
+},
+{
+"id": "kinematikk-120",
+"tema": "kinematikk",
+"undertema": "posisjon-fart-akselerasjon",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Posisjonen er $x = 3.0t^2$, med $x$ i meter og $t$ i sekunder. Hva er farten ved $t = 3.0$ s?",
+"riktig": "18 m/s",
+"feil": [
+{
+"svar": "9.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "54 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "27 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$v = \\mathrm{d}x/\\mathrm{d}t = 6.0t$."
+},
+{
+"id": "kinematikk-121",
+"tema": "kinematikk",
+"undertema": "to-dimensjoner",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "En ball har startfarten 25 m/s i 37° over horisontalen. Hva er den horisontale fartskomponenten?",
+"riktig": "20 m/s",
+"feil": [
+{
+"svar": "15 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "31 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "25 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$v_x = v_0\\cos\\theta$."
+},
+{
+"id": "kinematikk-122",
+"tema": "kinematikk",
+"undertema": "to-dimensjoner",
+"vanskelighet": "middels",
+"forventet_tid_s": 40,
+"tekst": "Hva gjelder farten i toppunktet i et skrått kast uten luftmotstand?",
+"riktig": "Den er bare horisontal",
+"feil": [
+{
+"svar": "Den er null",
+"type": "begrep"
+},
+{
+"svar": "Den er bare loddrett",
+"type": "begrep"
+},
+{
+"svar": "Den er lik startfarten",
+"type": "begrep"
+}
+],
+"forklaring": "Den loddrette komponenten er null i toppunktet, mens den horisontale er uendret."
+},
+{
+"id": "kinematikk-123",
+"tema": "kinematikk",
+"undertema": "konstant-akselerasjon",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En bilist kjører i 25 m/s og har reaksjonstid 1.0 s. Deretter bremser bilen med 5.0 m/s². Hvor lang er stopplengden?",
+"riktig": "88 m",
+"feil": [
+{
+"svar": "150 m",
+"type": "regnefeil"
+},
+{
+"svar": "50 m",
+"type": "regnefeil"
+},
+{
+"svar": "63 m",
+"type": "begrep"
+}
+],
+"forklaring": "Reaksjon: 25 m. Bremsing: $v_0^2/(2a) = 62.5\\ \\mathrm{m}$."
+},
+{
+"id": "kinematikk-124",
+"tema": "kinematikk",
+"undertema": "konstant-akselerasjon",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En stein faller fra ro og bruker det siste sekundet på de siste 25 m. Fra hvilken høyde falt den?",
+"riktig": "46 m",
+"feil": [
+{
+"svar": "31 m",
+"type": "regnefeil"
+},
+{
+"svar": "91 m",
+"type": "regnefeil"
+},
+{
+"svar": "25 m",
+"type": "begrep"
+}
+],
+"forklaring": "Fart ved starten av siste sekund: $25 - \\mathrm{g}/2 = 20.1\\ \\mathrm{m/s}$. Legg ett sekund til falltiden."
+},
+{
+"id": "kinematikk-125",
+"tema": "kinematikk",
+"undertema": "konstant-akselerasjon",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En ballong stiger med 5.0 m/s. En stein slippes fra den i 40 m høyde. Hvor lang tid tar steinen til bakken?",
+"riktig": "3.4 s",
+"feil": [
+{
+"svar": "2.4 s",
+"type": "regnefeil"
+},
+{
+"svar": "6.8 s",
+"type": "regnefeil"
+},
+{
+"svar": "2.9 s",
+"type": "begrep"
+}
+],
+"forklaring": "Steinen starter med 5.0 m/s oppover: $-40 = 5.0t - \\frac{1}{2}\\mathrm{g}t^2$."
+},
+{
+"id": "kinematikk-126",
+"tema": "kinematikk",
+"undertema": "to-dimensjoner",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "En ball kastes med 15 m/s i 45° fra flatt underlag. Hva er kastlengden?",
+"riktig": "23 m",
+"feil": [
+{
+"svar": "11 m",
+"type": "regnefeil"
+},
+{
+"svar": "16 m",
+"type": "regnefeil"
+},
+{
+"svar": "15 m",
+"type": "begrep"
+}
+],
+"forklaring": "$x = v_0^2\\sin(2\\theta)/\\mathrm{g}$."
+},
+{
+"id": "kinematikk-127",
+"tema": "kinematikk",
+"undertema": "to-dimensjoner",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En stein kastes horisontalt med 12 m/s fra et 10 m høyt stup. Hvor stor vinkel med horisontalen har farten når steinen treffer bakken?",
+"riktig": "49°",
+"feil": [
+{
+"svar": "41°",
+"type": "regnefeil"
+},
+{
+"svar": "60°",
+"type": "regnefeil"
+},
+{
+"svar": "0°",
+"type": "begrep"
+}
+],
+"forklaring": "$v_y = \\sqrt{2\\mathrm{g}h}$ og $\\tan\\theta = v_y/v_x$."
+},
+{
+"id": "kinematikk-128",
+"tema": "kinematikk",
+"undertema": "to-dimensjoner",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En ball kastes med 15 m/s fra flatt underlag og skal lande 20 m unna. Hva er den laveste utgangsvinkelen som virker?",
+"riktig": "30°",
+"feil": [
+{
+"svar": "61°",
+"type": "regnefeil"
+},
+{
+"svar": "15°",
+"type": "regnefeil"
+},
+{
+"svar": "45°",
+"type": "begrep"
+}
+],
+"forklaring": "$\\sin(2\\theta) = x\\mathrm{g}/v_0^2 = 0.872$."
+},
+{
+"id": "kinematikk-129",
+"tema": "kinematikk",
+"undertema": "posisjon-fart-akselerasjon",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "En gjenstand starter fra ro med akselerasjonen $a = 2.0t$, med $a$ i m/s² og $t$ i sekunder. Hva er farten ved $t = 3.0$ s?",
+"riktig": "9.0 m/s",
+"feil": [
+{
+"svar": "18 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "3.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "6.0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$v = \\int a\\ \\mathrm{d}t = t^2$."
+},
+{
+"id": "sirkelbevegelse-130",
+"tema": "sirkelbevegelse",
+"undertema": "sentripetal",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva er perioden i en sirkelbevegelse?",
+"riktig": "Tiden for én runde",
+"feil": [
+{
+"svar": "Antall runder per sekund",
+"type": "begrep"
+},
+{
+"svar": "Banefarten",
+"type": "begrep"
+},
+{
+"svar": "Radien",
+"type": "begrep"
+}
+],
+"forklaring": "Frekvensen er antall runder per sekund, og perioden er tiden for én runde."
+},
+{
+"id": "sirkelbevegelse-131",
+"tema": "sirkelbevegelse",
+"undertema": "sentripetal",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En sirkelbevegelse har perioden 4.0 s. Hva er frekvensen?",
+"riktig": "0.25 Hz",
+"feil": [
+{
+"svar": "4.0 Hz",
+"type": "regnefeil"
+},
+{
+"svar": "2.5 Hz",
+"type": "regnefeil"
+},
+{
+"svar": "1.0 Hz",
+"type": "begrep"
+}
+],
+"forklaring": "$f = 1/T$."
+},
+{
+"id": "sirkelbevegelse-132",
+"tema": "sirkelbevegelse",
+"undertema": "sentripetal",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvilken retning har farten i en sirkelbevegelse?",
+"riktig": "Langs tangenten til banen",
+"feil": [
+{
+"svar": "Inn mot sentrum",
+"type": "begrep"
+},
+{
+"svar": "Ut fra sentrum",
+"type": "begrep"
+},
+{
+"svar": "Den har ingen bestemt retning",
+"type": "begrep"
+}
+],
+"forklaring": "Farten står hele tiden vinkelrett på radien."
+},
+{
+"id": "sirkelbevegelse-133",
+"tema": "sirkelbevegelse",
+"undertema": "sentripetal",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Farten i en sirkelbane dobles, og radien er den samme. Hvor mange ganger større blir sentripetalakselerasjonen?",
+"riktig": "4 ganger",
+"feil": [
+{
+"svar": "8 ganger",
+"type": "regnefeil"
+},
+{
+"svar": "2 ganger",
+"type": "begrep"
+},
+{
+"svar": "Den er uendret",
+"type": "begrep"
+}
+],
+"forklaring": "$a = v^2/r$."
+},
+{
+"id": "sirkelbevegelse-134",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Et legeme på 2.0 kg har sentripetalakselerasjonen 3.0 m/s². Hvor stor er sentripetalkraften?",
+"riktig": "6.0 N",
+"feil": [
+{
+"svar": "1.5 N",
+"type": "regnefeil"
+},
+{
+"svar": "0.67 N",
+"type": "regnefeil"
+},
+{
+"svar": "5.0 N",
+"type": "begrep"
+}
+],
+"forklaring": "$F = ma$."
+},
+{
+"id": "sirkelbevegelse-135",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "En stein svinges i en snor, og snora ryker. Hvor går steinen?",
+"riktig": "Rett fram langs tangenten",
+"feil": [
+{
+"svar": "Rett ut fra sentrum",
+"type": "begrep"
+},
+{
+"svar": "Rett inn mot sentrum",
+"type": "begrep"
+},
+{
+"svar": "Videre i sirkelen",
+"type": "begrep"
+}
+],
+"forklaring": "Uten kraft mot sentrum fortsetter steinen i fartsretningen."
+},
+{
+"id": "sirkelbevegelse-136",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "En stein svinges i en horisontal sirkel i en snor på et friksjonsfritt bord. Hva gir sentripetalkraften?",
+"riktig": "Snordraget",
+"feil": [
+{
+"svar": "Farten",
+"type": "begrep"
+},
+{
+"svar": "Normalkraften",
+"type": "begrep"
+},
+{
+"svar": "En egen sentrifugalkraft",
+"type": "begrep"
+}
+],
+"forklaring": "Snora er det eneste som drar inn mot sentrum."
+},
+{
+"id": "sirkelbevegelse-137",
+"tema": "sirkelbevegelse",
+"undertema": "sentripetal",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Et hjul med radius 0.30 m roterer med frekvensen 5.0 Hz. Hva er banefarten ytterst på hjulet?",
+"riktig": "9.4 m/s",
+"feil": [
+{
+"svar": "1.5 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "4.7 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "5.0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$v = 2\\pi r f$."
+},
+{
+"id": "sirkelbevegelse-138",
+"tema": "sirkelbevegelse",
+"undertema": "sentripetal",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "Hva er banefarten til et punkt på ekvator på grunn av Jordas rotasjon? Bruk $R = 6.37\\cdot 10^6$ m og perioden 24 h.",
+"riktig": "0.46 km/s",
+"feil": [
+{
+"svar": "1.7 Mm/s",
+"type": "regnefeil"
+},
+{
+"svar": "0.23 km/s",
+"type": "regnefeil"
+},
+{
+"svar": "7.9 km/s",
+"type": "begrep"
+}
+],
+"forklaring": "$v = 2\\pi R/T$ med $T$ i sekunder."
+},
+{
+"id": "sirkelbevegelse-139",
+"tema": "sirkelbevegelse",
+"undertema": "sentripetal",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En kule går i en sirkel med radius 0.50 m og perioden 1.0 s. Hva er sentripetalakselerasjonen?",
+"riktig": "20 m/s²",
+"feil": [
+{
+"svar": "3.1 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "9.9 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "0 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$a = 4\\pi^2 r/T^2$."
+},
+{
+"id": "sirkelbevegelse-140",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En stein på 0.20 kg svinges i en horisontal sirkel med radius 0.80 m og farten 4.0 m/s. Hvor stor er sentripetalkraften?",
+"riktig": "4.0 N",
+"feil": [
+{
+"svar": "1.0 N",
+"type": "regnefeil"
+},
+{
+"svar": "3.2 N",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 N",
+"type": "begrep"
+}
+],
+"forklaring": "$F = mv^2/r$."
+},
+{
+"id": "sirkelbevegelse-141",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "En bil på 1000 kg kjører over en bakketopp med krumningsradius 50 m i 15 m/s. Hvor stor er normalkraften?",
+"riktig": "5.3 kN",
+"feil": [
+{
+"svar": "14 kN",
+"type": "regnefeil"
+},
+{
+"svar": "4.5 kN",
+"type": "regnefeil"
+},
+{
+"svar": "9.8 kN",
+"type": "begrep"
+}
+],
+"forklaring": "$N = m(\\mathrm{g} - v^2/r)$."
+},
+{
+"id": "sirkelbevegelse-142",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "En bil på 800 kg kjører gjennom bunnen av en dal med krumningsradius 40 m i 20 m/s. Hvor stor er normalkraften?",
+"riktig": "16 kN",
+"feil": [
+{
+"svar": "0.15 kN",
+"type": "regnefeil"
+},
+{
+"svar": "8.0 kN",
+"type": "regnefeil"
+},
+{
+"svar": "7.8 kN",
+"type": "begrep"
+}
+],
+"forklaring": "$N = m(\\mathrm{g} + v^2/r)$."
+},
+{
+"id": "sirkelbevegelse-143",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "Radien i en flat sving firedobles, og friksjonstallet er det samme. Hvor mange ganger større blir høyeste fart?",
+"riktig": "2 ganger",
+"feil": [
+{
+"svar": "16 ganger",
+"type": "regnefeil"
+},
+{
+"svar": "4 ganger",
+"type": "begrep"
+},
+{
+"svar": "Den er uendret",
+"type": "begrep"
+}
+],
+"forklaring": "$v_{\\text{maks}} = \\sqrt{\\mu_s\\mathrm{g}r}$."
+},
+{
+"id": "sirkelbevegelse-144",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En kule på 0.50 kg svinges i en loddrett sirkel med radius 1.2 m. Farten i bunnen er 6.0 m/s. Hva er snordraget der?",
+"riktig": "20 N",
+"feil": [
+{
+"svar": "10 N",
+"type": "regnefeil"
+},
+{
+"svar": "15 N",
+"type": "begrep"
+},
+{
+"svar": "4.9 N",
+"type": "begrep"
+}
+],
+"forklaring": "$S = m(\\mathrm{g} + v^2/r)$."
+},
+{
+"id": "sirkelbevegelse-145",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En kule i ei snor med lengde 1.0 m går i en horisontal sirkel, og snora danner 30° med loddlinjen. Hva er perioden?",
+"riktig": "1.9 s",
+"feil": [
+{
+"svar": "2.0 s",
+"type": "regnefeil"
+},
+{
+"svar": "1.4 s",
+"type": "regnefeil"
+},
+{
+"svar": "Avhenger av massen til kula",
+"type": "begrep"
+}
+],
+"forklaring": "$T = 2\\pi\\sqrt{l\\cos\\theta/\\mathrm{g}}$."
+},
+{
+"id": "sirkelbevegelse-146",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En vogn ruller friksjonsfritt inn i en loddrett sløyfe med radius 4.0 m. Fra hvilken høyde over bunnen må den minst starte for å holde kontakten på toppen?",
+"riktig": "10 m",
+"feil": [
+{
+"svar": "12 m",
+"type": "regnefeil"
+},
+{
+"svar": "4.0 m",
+"type": "regnefeil"
+},
+{
+"svar": "8.0 m",
+"type": "begrep"
+}
+],
+"forklaring": "På toppen er $v^2 = \\mathrm{g}r$. Energibevaring gir $h = 2.5r$."
+},
+{
+"id": "sirkelbevegelse-147",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "En bil kjører over en bakketopp med krumningsradius 40 m. Ved hvilken fart mister den kontakten med veien?",
+"riktig": "20 m/s",
+"feil": [
+{
+"svar": "28 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "6.3 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "Avhenger av massen til bilen",
+"type": "begrep"
+}
+],
+"forklaring": "$N = 0$ gir $v = \\sqrt{\\mathrm{g}r}$."
+},
+{
+"id": "sirkelbevegelse-148",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En person sitter 3.0 m fra aksen på en karusell, og $\\mu_s = 0.40$. Hva er korteste periode uten at personen glir?",
+"riktig": "5.5 s",
+"feil": [
+{
+"svar": "0.87 s",
+"type": "regnefeil"
+},
+{
+"svar": "11 s",
+"type": "regnefeil"
+},
+{
+"svar": "Avhenger av massen til personen",
+"type": "begrep"
+}
+],
+"forklaring": "$\\mu_s\\mathrm{g} = 4\\pi^2 r/T^2$."
+},
+{
+"id": "sirkelbevegelse-149",
+"tema": "sirkelbevegelse",
+"undertema": "sentripetal",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "Minuttviseren på en klokke er 12 cm lang. Hva er farten til spissen?",
+"riktig": "0.21 mm/s",
+"feil": [
+{
+"svar": "13 mm/s",
+"type": "regnefeil"
+},
+{
+"svar": "0.10 mm/s",
+"type": "regnefeil"
+},
+{
+"svar": "0 mm/s",
+"type": "begrep"
+}
+],
+"forklaring": "$v = 2\\pi r/T$ med $T = 3600\\ \\mathrm{s}$."
+},
+{
+"id": "sirkelbevegelse-150",
+"tema": "sirkelbevegelse",
+"undertema": "sirkel-krefter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En pilot på 80 kg flyr i 100 m/s gjennom bunnen av en loddrett sirkel med radius 250 m. Hvor stor kraft får piloten fra setet?",
+"riktig": "4.0 kN",
+"feil": [
+{
+"svar": "3.2 kN",
+"type": "regnefeil"
+},
+{
+"svar": "2.4 kN",
+"type": "regnefeil"
+},
+{
+"svar": "0.78 kN",
+"type": "begrep"
+}
+],
+"forklaring": "$N = m(\\mathrm{g} + v^2/r)$."
+},
+{
+"id": "newtons-lover-151",
+"tema": "newtons-lover",
+"undertema": "newtons-lover",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Hva er tyngden til en person på 70 kg?",
+"riktig": "0.69 kN",
+"feil": [
+{
+"svar": "7.1 N",
+"type": "regnefeil"
+},
+{
+"svar": "6.9 kN",
+"type": "regnefeil"
+},
+{
+"svar": "70 N",
+"type": "begrep"
+}
+],
+"forklaring": "$G = m\\mathrm{g}$."
+},
+{
+"id": "newtons-lover-152",
+"tema": "newtons-lover",
+"undertema": "newtons-lover",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Et legeme på 4.0 kg har akselerasjonen 3.0 m/s². Hva er kraftsummen?",
+"riktig": "12 N",
+"feil": [
+{
+"svar": "1.3 N",
+"type": "regnefeil"
+},
+{
+"svar": "0.75 N",
+"type": "regnefeil"
+},
+{
+"svar": "7.0 N",
+"type": "begrep"
+}
+],
+"forklaring": "$F = ma$."
+},
+{
+"id": "newtons-lover-153",
+"tema": "newtons-lover",
+"undertema": "newtons-lover",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "En bok ligger i ro på et bord. Hvor stor er normalkraften?",
+"riktig": "Lik tyngden til boka",
+"feil": [
+{
+"svar": "Null",
+"type": "begrep"
+},
+{
+"svar": "Større enn tyngden",
+"type": "begrep"
+},
+{
+"svar": "Mindre enn tyngden",
+"type": "begrep"
+}
+],
+"forklaring": "Boka akselererer ikke, så kreftene oppveier hverandre."
+},
+{
+"id": "newtons-lover-154",
+"tema": "newtons-lover",
+"undertema": "newtons-lover",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En kraft på 3.0 N virker mot høyre og en på 5.0 N mot venstre. Hva er kraftsummen?",
+"riktig": "2.0 N mot venstre",
+"feil": [
+{
+"svar": "8.0 N mot venstre",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 N mot høyre",
+"type": "begrep"
+},
+{
+"svar": "Null",
+"type": "begrep"
+}
+],
+"forklaring": "Krefter i motsatt retning trekkes fra hverandre."
+},
+{
+"id": "newtons-lover-155",
+"tema": "newtons-lover",
+"undertema": "krefter-i-planet",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "To krefter på 3.0 N og 4.0 N står vinkelrett på hverandre. Hvor stor er kraftsummen?",
+"riktig": "5.0 N",
+"feil": [
+{
+"svar": "1.0 N",
+"type": "regnefeil"
+},
+{
+"svar": "12 N",
+"type": "regnefeil"
+},
+{
+"svar": "7.0 N",
+"type": "begrep"
+}
+],
+"forklaring": "$F = \\sqrt{3.0^2 + 4.0^2}\\ \\mathrm{N}$."
+},
+{
+"id": "newtons-lover-156",
+"tema": "newtons-lover",
+"undertema": "friksjon-fjaer-snorer",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvilken retning har friksjonskraften på en kloss som glir?",
+"riktig": "Mot bevegelsen",
+"feil": [
+{
+"svar": "Med bevegelsen",
+"type": "begrep"
+},
+{
+"svar": "Vinkelrett opp fra underlaget",
+"type": "begrep"
+},
+{
+"svar": "Rett ned",
+"type": "begrep"
+}
+],
+"forklaring": "Friksjonen motvirker at flatene glir mot hverandre."
+},
+{
+"id": "newtons-lover-157",
+"tema": "newtons-lover",
+"undertema": "luftmotstand",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Luftmotstanden er $L = kv^2$. Farten dobles. Hvor mange ganger større blir luftmotstanden?",
+"riktig": "4 ganger",
+"feil": [
+{
+"svar": "8 ganger",
+"type": "regnefeil"
+},
+{
+"svar": "2 ganger",
+"type": "begrep"
+},
+{
+"svar": "Den er uendret",
+"type": "begrep"
+}
+],
+"forklaring": "Luftmotstanden går som farten i andre."
+},
+{
+"id": "newtons-lover-158",
+"tema": "newtons-lover",
+"undertema": "newtons-lover",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En person på 60 kg står i en heis som akselererer oppover med 2.0 m/s². Hvor stor er normalkraften?",
+"riktig": "0.71 kN",
+"feil": [
+{
+"svar": "0.47 kN",
+"type": "regnefeil"
+},
+{
+"svar": "0.12 kN",
+"type": "regnefeil"
+},
+{
+"svar": "0.59 kN",
+"type": "begrep"
+}
+],
+"forklaring": "$N = m(\\mathrm{g} + a)$."
+},
+{
+"id": "newtons-lover-159",
+"tema": "newtons-lover",
+"undertema": "newtons-lover",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "Klosser på 2.0 kg og 3.0 kg står inntil hverandre på et friksjonsfritt golv. En kraft på 10 N skyver på den minste. Hvor stor kraft virker mellom klossene?",
+"riktig": "6.0 N",
+"feil": [
+{
+"svar": "4.0 N",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 N",
+"type": "regnefeil"
+},
+{
+"svar": "10 N",
+"type": "begrep"
+}
+],
+"forklaring": "$a = 2.0\\ \\mathrm{m/s^2}$, og den største klossen må ha $F = 3.0\\cdot 2.0\\ \\mathrm{N}$."
+},
+{
+"id": "newtons-lover-160",
+"tema": "newtons-lover",
+"undertema": "krefter-i-planet",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "En kraft på 40 N virker 30° over horisontalen. Hvor stor er den horisontale komponenten?",
+"riktig": "35 N",
+"feil": [
+{
+"svar": "20 N",
+"type": "regnefeil"
+},
+{
+"svar": "46 N",
+"type": "regnefeil"
+},
+{
+"svar": "40 N",
+"type": "begrep"
+}
+],
+"forklaring": "$F_x = F\\cos\\theta$."
+},
+{
+"id": "newtons-lover-161",
+"tema": "newtons-lover",
+"undertema": "krefter-i-planet",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En kloss på 5.0 kg ligger på et skråplan med vinkel 40°. Hvor stor er normalkraften?",
+"riktig": "38 N",
+"feil": [
+{
+"svar": "32 N",
+"type": "regnefeil"
+},
+{
+"svar": "64 N",
+"type": "regnefeil"
+},
+{
+"svar": "49 N",
+"type": "begrep"
+}
+],
+"forklaring": "$N = m\\mathrm{g}\\cos\\theta$."
+},
+{
+"id": "newtons-lover-162",
+"tema": "newtons-lover",
+"undertema": "friksjon-fjaer-snorer",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En kasse på 20 kg står på et horisontalt golv med $\\mu_s = 0.50$. Hvor stor horisontal kraft trengs for å få den i gang?",
+"riktig": "98 N",
+"feil": [
+{
+"svar": "9.8 N",
+"type": "regnefeil"
+},
+{
+"svar": "40 N",
+"type": "regnefeil"
+},
+{
+"svar": "0.20 kN",
+"type": "begrep"
+}
+],
+"forklaring": "$F = \\mu_s m\\mathrm{g}$."
+},
+{
+"id": "newtons-lover-163",
+"tema": "newtons-lover",
+"undertema": "friksjon-fjaer-snorer",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "Et lodd på 2.0 kg henger i to like, parallelle fjærer med stivhet 100 N/m. Hvor mye strekkes de?",
+"riktig": "9.8 cm",
+"feil": [
+{
+"svar": "20 cm",
+"type": "regnefeil"
+},
+{
+"svar": "4.9 cm",
+"type": "regnefeil"
+},
+{
+"svar": "0 cm",
+"type": "begrep"
+}
+],
+"forklaring": "Fjærene deler lasten: $x = m\\mathrm{g}/(2k)$."
+},
+{
+"id": "newtons-lover-164",
+"tema": "newtons-lover",
+"undertema": "luftmotstand",
+"vanskelighet": "middels",
+"forventet_tid_s": 30,
+"tekst": "Hva er akselerasjonen til en fallskjermhopper som har nådd terminalfarten?",
+"riktig": "Null",
+"feil": [
+{
+"svar": "$\\mathrm{g}$ nedover",
+"type": "begrep"
+},
+{
+"svar": "$\\mathrm{g}/2$ nedover",
+"type": "begrep"
+},
+{
+"svar": "Den øker jevnt",
+"type": "begrep"
+}
+],
+"forklaring": "Luftmotstanden er like stor som tyngden, så kraftsummen er null."
+},
+{
+"id": "newtons-lover-165",
+"tema": "newtons-lover",
+"undertema": "krefter-i-planet",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En kasse på 10 kg skyves med konstant fart oppover et skråplan med vinkel 30°, og $\\mu_k = 0.25$. Kraften er parallell med planet. Hvor stor er den?",
+"riktig": "70 N",
+"feil": [
+{
+"svar": "28 N",
+"type": "regnefeil"
+},
+{
+"svar": "49 N",
+"type": "begrep"
+},
+{
+"svar": "98 N",
+"type": "begrep"
+}
+],
+"forklaring": "$F = m\\mathrm{g}(\\sin\\theta + \\mu_k\\cos\\theta)$."
+},
+{
+"id": "newtons-lover-166",
+"tema": "newtons-lover",
+"undertema": "friksjon-fjaer-snorer",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En vogn på 4.0 kg står på et bord med $\\mu_k = 0.20$ og er koblet over en lett trinse til et lodd på 3.0 kg som henger fritt. Hva er akselerasjonen?",
+"riktig": "3.1 m/s²",
+"feil": [
+{
+"svar": "5.3 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "7.4 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "4.2 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$a = \\mathrm{g}(3.0 - 0.20\\cdot 4.0)/7.0$."
+},
+{
+"id": "newtons-lover-167",
+"tema": "newtons-lover",
+"undertema": "newtons-lover",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En heis på 1200 kg er på vei ned i 4.0 m/s og bremser jevnt til stopp på 8.0 m. Hva er draget i kabelen?",
+"riktig": "13 kN",
+"feil": [
+{
+"svar": "11 kN",
+"type": "regnefeil"
+},
+{
+"svar": "1.2 kN",
+"type": "regnefeil"
+},
+{
+"svar": "12 kN",
+"type": "begrep"
+}
+],
+"forklaring": "$a = v^2/(2s) = 1.0\\ \\mathrm{m/s^2}$ oppover, så $S = m(\\mathrm{g} + a)$."
+},
+{
+"id": "newtons-lover-168",
+"tema": "newtons-lover",
+"undertema": "krefter-i-planet",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En kasse på 10 kg dras langs et golv med en kraft på 50 N som virker 37° over horisontalen, og $\\mu_k = 0.30$. Hva er akselerasjonen?",
+"riktig": "2.0 m/s²",
+"feil": [
+{
+"svar": "4.0 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "5.0 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "1.1 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "Normalkraften blir mindre: $N = m\\mathrm{g} - F\\sin\\theta$."
+},
+{
+"id": "newtons-lover-169",
+"tema": "newtons-lover",
+"undertema": "friksjon-fjaer-snorer",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En kloss på 2.0 kg ligger oppå en kloss på 5.0 kg på et friksjonsfritt golv, med $\\mu_s = 0.40$ mellom dem. Hva er største horisontale kraft på den nederste uten at den øverste glir?",
+"riktig": "27 N",
+"feil": [
+{
+"svar": "7.8 N",
+"type": "regnefeil"
+},
+{
+"svar": "12 N",
+"type": "regnefeil"
+},
+{
+"svar": "20 N",
+"type": "begrep"
+}
+],
+"forklaring": "Største felles akselerasjon er $\\mu_s\\mathrm{g}$, og hele massen må ha den."
+},
+{
+"id": "newtons-lover-170",
+"tema": "newtons-lover",
+"undertema": "luftmotstand",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "To kuler har samme konstant $k$ i $L = kv^2$, men den ene har fire ganger så stor masse. Hvor mange ganger større er terminalfarten dens?",
+"riktig": "2 ganger",
+"feil": [
+{
+"svar": "16 ganger",
+"type": "regnefeil"
+},
+{
+"svar": "4 ganger",
+"type": "begrep"
+},
+{
+"svar": "Den er uendret",
+"type": "begrep"
+}
+],
+"forklaring": "$v = \\sqrt{m\\mathrm{g}/k}$."
+},
+{
+"id": "newtons-lover-171",
+"tema": "newtons-lover",
+"undertema": "luftmotstand",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "En ball på 0.50 kg er på vei rett opp i 20 m/s, med $L = kv^2$ og $k = 0.010$ kg/m. Hvor stor er akselerasjonen?",
+"riktig": "18 m/s²",
+"feil": [
+{
+"svar": "1.8 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "8.0 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "9.8 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "Tyngde og luftmotstand virker begge nedover: $a = \\mathrm{g} + kv^2/m$."
+},
+{
+"id": "bevegelsesmengde-172",
+"tema": "bevegelsesmengde",
+"undertema": "kraftstot",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvilken enhet har bevegelsesmengde?",
+"riktig": "kg m/s",
+"feil": [
+{
+"svar": "kg m/s²",
+"type": "begrep"
+},
+{
+"svar": "J",
+"type": "begrep"
+},
+{
+"svar": "W",
+"type": "begrep"
+}
+],
+"forklaring": "$p = mv$."
+},
+{
+"id": "bevegelsesmengde-173",
+"tema": "bevegelsesmengde",
+"undertema": "kraftstot",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva slags størrelse er bevegelsesmengde?",
+"riktig": "En vektor i samme retning som farten",
+"feil": [
+{
+"svar": "En skalar",
+"type": "begrep"
+},
+{
+"svar": "En vektor mot farten",
+"type": "begrep"
+},
+{
+"svar": "En vektor inn mot sentrum",
+"type": "begrep"
+}
+],
+"forklaring": "Massen er positiv, så $\\vec p = m\\vec v$ peker samme vei som farten."
+},
+{
+"id": "bevegelsesmengde-174",
+"tema": "bevegelsesmengde",
+"undertema": "kraftstot",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Et legeme på 3.0 kg har bevegelsesmengden 12 kg m/s. Hva er farten?",
+"riktig": "4.0 m/s",
+"feil": [
+{
+"svar": "36 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0.25 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "9.0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$v = p/m$."
+},
+{
+"id": "bevegelsesmengde-175",
+"tema": "bevegelsesmengde",
+"undertema": "kraftstot",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva er kraftstøtet på et legeme lik?",
+"riktig": "Endringen i bevegelsesmengden",
+"feil": [
+{
+"svar": "Endringen i energien",
+"type": "begrep"
+},
+{
+"svar": "Massen til legemet",
+"type": "begrep"
+},
+{
+"svar": "Arbeidet på legemet",
+"type": "begrep"
+}
+],
+"forklaring": "$F\\Delta t = \\Delta p$."
+},
+{
+"id": "bevegelsesmengde-176",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "lett",
+"forventet_tid_s": 40,
+"tekst": "En vogn på 1.0 kg med farten 6.0 m/s treffer en vogn på 2.0 kg i ro, og de henger sammen. Hva er farten etterpå?",
+"riktig": "2.0 m/s",
+"feil": [
+{
+"svar": "3.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "6.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$V = 6.0/3.0\\ \\mathrm{m/s}$."
+},
+{
+"id": "bevegelsesmengde-177",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva kjennetegner et fullstendig uelastisk støt?",
+"riktig": "Legemene henger sammen, og kinetisk energi går tapt",
+"feil": [
+{
+"svar": "Bevegelsesmengden går tapt",
+"type": "begrep"
+},
+{
+"svar": "Massen endres",
+"type": "begrep"
+},
+{
+"svar": "Det virker ingen krefter",
+"type": "begrep"
+}
+],
+"forklaring": "Bevegelsesmengden er bevart, men ikke den kinetiske energien."
+},
+{
+"id": "bevegelsesmengde-178",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "En gjenstand i ro sprenges i biter. Hva er den samlede bevegelsesmengden etterpå?",
+"riktig": "Null",
+"feil": [
+{
+"svar": "Større enn null",
+"type": "begrep"
+},
+{
+"svar": "Lik den samlede kinetiske energien",
+"type": "begrep"
+},
+{
+"svar": "Den avhenger av antall biter",
+"type": "begrep"
+}
+],
+"forklaring": "Bevegelsesmengden var null før, og indre krefter endrer den ikke."
+},
+{
+"id": "bevegelsesmengde-179",
+"tema": "bevegelsesmengde",
+"undertema": "kraftstot",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En bil på 1500 kg øker farten fra 0 til 20 m/s på 10 s. Hvor stor er middelkraften?",
+"riktig": "3.0 kN",
+"feil": [
+{
+"svar": "30 kN",
+"type": "regnefeil"
+},
+{
+"svar": "0.30 kN",
+"type": "regnefeil"
+},
+{
+"svar": "15 kN",
+"type": "begrep"
+}
+],
+"forklaring": "$F = \\Delta p/\\Delta t$."
+},
+{
+"id": "bevegelsesmengde-180",
+"tema": "bevegelsesmengde",
+"undertema": "kraftstot",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En ball på 0.50 kg treffer en vegg med 10 m/s og spretter rett tilbake med 8.0 m/s. Hvor stor er endringen i bevegelsesmengde?",
+"riktig": "9.0 kg m/s",
+"feil": [
+{
+"svar": "18 kg m/s",
+"type": "regnefeil"
+},
+{
+"svar": "4.5 kg m/s",
+"type": "regnefeil"
+},
+{
+"svar": "1.0 kg m/s",
+"type": "begrep"
+}
+],
+"forklaring": "Retningen snus, så fartene legges sammen."
+},
+{
+"id": "bevegelsesmengde-181",
+"tema": "bevegelsesmengde",
+"undertema": "kraftstot",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Kraften i et støt øker jevnt til 100 N og avtar jevnt til null, alt på 0.020 s. Hvor stort er kraftstøtet?",
+"riktig": "1.0 N s",
+"feil": [
+{
+"svar": "2.0 N s",
+"type": "regnefeil"
+},
+{
+"svar": "0.50 N s",
+"type": "regnefeil"
+},
+{
+"svar": "100 N s",
+"type": "begrep"
+}
+],
+"forklaring": "Arealet under grafen er en trekant."
+},
+{
+"id": "bevegelsesmengde-182",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En vogn på 5.0 kg med 2.0 m/s og en på 3.0 kg med 2.0 m/s kolliderer rett mot hverandre og henger sammen. Hva er farten etterpå?",
+"riktig": "0.50 m/s",
+"feil": [
+{
+"svar": "2.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "1.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$V = (10 - 6.0)/8.0\\ \\mathrm{m/s}$."
+},
+{
+"id": "bevegelsesmengde-183",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "To skøyteløpere på 60 kg og 40 kg står i ro og dytter hverandre. Den tyngste får farten 2.0 m/s. Hvilken fart får den letteste?",
+"riktig": "3.0 m/s",
+"feil": [
+{
+"svar": "1.3 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "5.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "Samlet bevegelsesmengde er null."
+},
+{
+"id": "bevegelsesmengde-184",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "middels",
+"forventet_tid_s": 30,
+"tekst": "Hva er bevart i et elastisk støt?",
+"riktig": "Bevegelsesmengde og kinetisk energi",
+"feil": [
+{
+"svar": "Bare bevegelsesmengde",
+"type": "begrep"
+},
+{
+"svar": "Bare kinetisk energi",
+"type": "begrep"
+},
+{
+"svar": "Ingen av dem",
+"type": "begrep"
+}
+],
+"forklaring": "Det er nettopp bevaringen av kinetisk energi som gjør støtet elastisk."
+},
+{
+"id": "bevegelsesmengde-185",
+"tema": "bevegelsesmengde",
+"undertema": "kraftstot",
+"vanskelighet": "middels",
+"forventet_tid_s": 40,
+"tekst": "Hvorfor reduserer en kollisjonspute kraften på føreren?",
+"riktig": "Støttiden blir lengre",
+"feil": [
+{
+"svar": "Kraftstøtet blir mindre av seg selv",
+"type": "begrep"
+},
+{
+"svar": "Bevegelsesmengden før støtet blir mindre",
+"type": "begrep"
+},
+{
+"svar": "Massen til føreren øker",
+"type": "begrep"
+}
+],
+"forklaring": "Samme endring i bevegelsesmengde over lengre tid gir mindre kraft."
+},
+{
+"id": "bevegelsesmengde-186",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En kule på 2.0 kg med 3.0 m/s støter elastisk og sentralt mot en kule på 1.0 kg i ro. Hva er farten til den letteste etterpå?",
+"riktig": "4.0 m/s",
+"feil": [
+{
+"svar": "1.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "6.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$v_2 = 2m_1 v/(m_1 + m_2)$."
+},
+{
+"id": "bevegelsesmengde-187",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En kule på 10 g med 300 m/s skytes inn i en trekloss på 2.0 kg som henger i snorer. Hvor høyt svinger klossen?",
+"riktig": "11 cm",
+"feil": [
+{
+"svar": "7.6 cm",
+"type": "regnefeil"
+},
+{
+"svar": "23 cm",
+"type": "regnefeil"
+},
+{
+"svar": "4.6 km",
+"type": "begrep"
+}
+],
+"forklaring": "Først bevegelsesmengde: $V = mv/(m+M)$. Så energi: $h = V^2/(2\\mathrm{g})$."
+},
+{
+"id": "bevegelsesmengde-188",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En gjenstand på 3.0 kg i ro sprenges i biter på 1.0 kg og 2.0 kg. Samlet kinetisk energi blir 12 J. Hvilken fart får den minste?",
+"riktig": "4.0 m/s",
+"feil": [
+{
+"svar": "2.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "4.9 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "3.5 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "Bitene får samme $p$, og $p^2/2\\cdot(1/1.0 + 1/2.0) = 12$."
+},
+{
+"id": "bevegelsesmengde-189",
+"tema": "bevegelsesmengde",
+"undertema": "kraftstot",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "En vannstråle med 2.0 kg/s treffer en vegg i 10 m/s og stopper. Hvor stor kraft virker på veggen?",
+"riktig": "20 N",
+"feil": [
+{
+"svar": "5.0 N",
+"type": "regnefeil"
+},
+{
+"svar": "40 N",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 N",
+"type": "begrep"
+}
+],
+"forklaring": "$F = (\\Delta m/\\Delta t)v$."
+},
+{
+"id": "bevegelsesmengde-190",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "To like kuler støter elastisk, men ikke sentralt, og den ene lå i ro. Hvilken vinkel er det mellom fartene etterpå?",
+"riktig": "90°",
+"feil": [
+{
+"svar": "0°",
+"type": "begrep"
+},
+{
+"svar": "45°",
+"type": "begrep"
+},
+{
+"svar": "180°",
+"type": "begrep"
+}
+],
+"forklaring": "Bevaring av bevegelsesmengde og energi gir Pythagoras for fartene."
+},
+{
+"id": "bevegelsesmengde-191",
+"tema": "bevegelsesmengde",
+"undertema": "kollisjoner",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En person på 70 kg løper i 4.0 m/s og hopper på en vogn på 50 kg som ruller i 2.0 m/s samme vei. Hva er farten etterpå?",
+"riktig": "3.2 m/s",
+"feil": [
+{
+"svar": "1.5 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "6.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "3.0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$V = (70\\cdot 4.0 + 50\\cdot 2.0)/120$."
+},
+{
+"id": "bevegelsesmengde-192",
+"tema": "bevegelsesmengde",
+"undertema": "kraftstot",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "En rakett slipper ut 5.0 kg gass per sekund med 2.0 km/s i forhold til raketten. Hvor stor er skyvekraften?",
+"riktig": "10 kN",
+"feil": [
+{
+"svar": "2.5 kN",
+"type": "regnefeil"
+},
+{
+"svar": "10 N",
+"type": "regnefeil"
+},
+{
+"svar": "49 N",
+"type": "begrep"
+}
+],
+"forklaring": "$F = (\\Delta m/\\Delta t)v$."
+},
+{
+"id": "arbeid-og-energi-193",
+"tema": "arbeid-og-energi",
+"undertema": "arbeid",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Du bærer en kasse horisontalt med konstant fart. Hvor stort arbeid gjør den loddrette løftekraften?",
+"riktig": "Null",
+"feil": [
+{
+"svar": "Positivt",
+"type": "begrep"
+},
+{
+"svar": "Negativt",
+"type": "begrep"
+},
+{
+"svar": "Lik tyngden ganger strekningen",
+"type": "begrep"
+}
+],
+"forklaring": "Kraften står vinkelrett på bevegelsen."
+},
+{
+"id": "arbeid-og-energi-194",
+"tema": "arbeid-og-energi",
+"undertema": "arbeid",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvilken enhet er det samme som joule?",
+"riktig": "N m",
+"feil": [
+{
+"svar": "N/m",
+"type": "begrep"
+},
+{
+"svar": "kg m/s",
+"type": "begrep"
+},
+{
+"svar": "W/s",
+"type": "begrep"
+}
+],
+"forklaring": "Arbeid er kraft ganger strekning."
+},
+{
+"id": "arbeid-og-energi-195",
+"tema": "arbeid-og-energi",
+"undertema": "energiformer",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Et legeme på 3.0 kg løftes 2.0 m. Hvor mye øker den potensielle energien?",
+"riktig": "59 J",
+"feil": [
+{
+"svar": "6.0 J",
+"type": "regnefeil"
+},
+{
+"svar": "29 J",
+"type": "regnefeil"
+},
+{
+"svar": "15 J",
+"type": "begrep"
+}
+],
+"forklaring": "$E_p = m\\mathrm{g}h$."
+},
+{
+"id": "arbeid-og-energi-196",
+"tema": "arbeid-og-energi",
+"undertema": "energiformer",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En fjær med stivhet 100 N/m er strukket 0.20 m. Hva er fjærenergien?",
+"riktig": "2.0 J",
+"feil": [
+{
+"svar": "4.0 J",
+"type": "regnefeil"
+},
+{
+"svar": "20 J",
+"type": "regnefeil"
+},
+{
+"svar": "10 J",
+"type": "begrep"
+}
+],
+"forklaring": "$E = \\frac{1}{2}kx^2$."
+},
+{
+"id": "arbeid-og-energi-197",
+"tema": "arbeid-og-energi",
+"undertema": "energibevaring",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva skjer med energien til en ball i fritt fall uten luftmotstand?",
+"riktig": "Potensiell energi blir til kinetisk energi",
+"feil": [
+{
+"svar": "Kinetisk energi blir til potensiell energi",
+"type": "begrep"
+},
+{
+"svar": "Begge energiformene øker",
+"type": "begrep"
+},
+{
+"svar": "Energien forsvinner",
+"type": "begrep"
+}
+],
+"forklaring": "Summen av de to er konstant."
+},
+{
+"id": "arbeid-og-energi-198",
+"tema": "arbeid-og-energi",
+"undertema": "effekt",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En ovn på 1.5 kW står på i 2.0 h. Hvor mye energi bruker den?",
+"riktig": "3.0 kWh",
+"feil": [
+{
+"svar": "0.75 kWh",
+"type": "regnefeil"
+},
+{
+"svar": "0.18 MWh",
+"type": "regnefeil"
+},
+{
+"svar": "3.5 kWh",
+"type": "begrep"
+}
+],
+"forklaring": "$E = Pt$."
+},
+{
+"id": "arbeid-og-energi-199",
+"tema": "arbeid-og-energi",
+"undertema": "effekt",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En maskin får tilført 100 J og gir 80 J nyttig energi. Hva er virkningsgraden?",
+"riktig": "80 %",
+"feil": [
+{
+"svar": "125 %",
+"type": "regnefeil"
+},
+{
+"svar": "20 %",
+"type": "regnefeil"
+},
+{
+"svar": "180 %",
+"type": "begrep"
+}
+],
+"forklaring": "$\\eta = E_{\\text{nyttig}}/E_{\\text{tilført}}$."
+},
+{
+"id": "arbeid-og-energi-200",
+"tema": "arbeid-og-energi",
+"undertema": "arbeid",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En kasse på 5.0 kg glir 4.0 m på et golv med $\\mu_k = 0.20$. Hvor stort er friksjonsarbeidet i tallverdi?",
+"riktig": "39 J",
+"feil": [
+{
+"svar": "20 J",
+"type": "regnefeil"
+},
+{
+"svar": "3.9 J",
+"type": "regnefeil"
+},
+{
+"svar": "0.20 kJ",
+"type": "begrep"
+}
+],
+"forklaring": "$W = \\mu_k m\\mathrm{g}s$."
+},
+{
+"id": "arbeid-og-energi-201",
+"tema": "arbeid-og-energi",
+"undertema": "arbeid",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "En kasse på 15 kg løftes 2.0 m med konstant fart. Hvor stort arbeid gjør løftekraften?",
+"riktig": "0.29 kJ",
+"feil": [
+{
+"svar": "30 J",
+"type": "regnefeil"
+},
+{
+"svar": "0.15 kJ",
+"type": "regnefeil"
+},
+{
+"svar": "0 J",
+"type": "begrep"
+}
+],
+"forklaring": "$W = m\\mathrm{g}h$."
+},
+{
+"id": "arbeid-og-energi-202",
+"tema": "arbeid-og-energi",
+"undertema": "arbeid",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Et netto arbeid på 200 J utføres på et legeme på 4.0 kg i ro. Hva er farten etterpå?",
+"riktig": "10 m/s",
+"feil": [
+{
+"svar": "7.1 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "50 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "100 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$W = \\frac{1}{2}mv^2$."
+},
+{
+"id": "arbeid-og-energi-203",
+"tema": "arbeid-og-energi",
+"undertema": "energiformer",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Hva er den kinetiske energien til en bil på 1000 kg i 90 km/h?",
+"riktig": "0.31 MJ",
+"feil": [
+{
+"svar": "4.1 MJ",
+"type": "regnefeil"
+},
+{
+"svar": "0.63 MJ",
+"type": "regnefeil"
+},
+{
+"svar": "25 kJ",
+"type": "begrep"
+}
+],
+"forklaring": "Regn om til 25 m/s før du setter inn."
+},
+{
+"id": "arbeid-og-energi-204",
+"tema": "arbeid-og-energi",
+"undertema": "energibevaring",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En pendelkule slippes fra 0.20 m over det laveste punktet. Hva er farten i bunnen?",
+"riktig": "2.0 m/s",
+"feil": [
+{
+"svar": "1.4 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "3.9 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "Kan ikke beregnes uten massen",
+"type": "begrep"
+}
+],
+"forklaring": "$v = \\sqrt{2\\mathrm{g}h}$."
+},
+{
+"id": "arbeid-og-energi-205",
+"tema": "arbeid-og-energi",
+"undertema": "energibevaring",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En ball kastes rett opp med 8.0 m/s. Bruk energibevaring: Hvor høyt når den?",
+"riktig": "3.3 m",
+"feil": [
+{
+"svar": "6.5 m",
+"type": "regnefeil"
+},
+{
+"svar": "0.82 m",
+"type": "regnefeil"
+},
+{
+"svar": "8.0 m",
+"type": "begrep"
+}
+],
+"forklaring": "$h = v^2/(2\\mathrm{g})$."
+},
+{
+"id": "arbeid-og-energi-206",
+"tema": "arbeid-og-energi",
+"undertema": "effekt",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "En bil holder 20 m/s mot en samlet motstand på 500 N. Hvor stor effekt trengs?",
+"riktig": "10 kW",
+"feil": [
+{
+"svar": "25 W",
+"type": "regnefeil"
+},
+{
+"svar": "2.5 kW",
+"type": "regnefeil"
+},
+{
+"svar": "0.50 kW",
+"type": "begrep"
+}
+],
+"forklaring": "$P = Fv$."
+},
+{
+"id": "arbeid-og-energi-207",
+"tema": "arbeid-og-energi",
+"undertema": "energibevaring",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En kloss starter fra ro og glir 5.0 m ned et skråplan med vinkel 30° og $\\mu_k = 0.20$. Hva er farten nederst?",
+"riktig": "5.7 m/s",
+"feil": [
+{
+"svar": "8.1 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "4.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "7.0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$\\frac{1}{2}mv^2 = m\\mathrm{g}L(\\sin\\theta - \\mu_k\\cos\\theta)$."
+},
+{
+"id": "arbeid-og-energi-208",
+"tema": "arbeid-og-energi",
+"undertema": "energibevaring",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En fjær med stivhet 800 N/m presses 0.10 m sammen og skyter en kule på 50 g rett opp. Hvor høyt når kula over startpunktet?",
+"riktig": "8.2 m",
+"feil": [
+{
+"svar": "4.1 m",
+"type": "regnefeil"
+},
+{
+"svar": "16 m",
+"type": "regnefeil"
+},
+{
+"svar": "0.82 m",
+"type": "begrep"
+}
+],
+"forklaring": "$\\frac{1}{2}kx^2 = m\\mathrm{g}h$."
+},
+{
+"id": "arbeid-og-energi-209",
+"tema": "arbeid-og-energi",
+"undertema": "energibevaring",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "En berg-og-dal-vogn starter fra ro 30 m over bakken. Hva er farten når den er 10 m over bakken, uten friksjon?",
+"riktig": "20 m/s",
+"feil": [
+{
+"svar": "14 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "17 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "24 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "Bare høydeforskjellen på 20 m teller."
+},
+{
+"id": "arbeid-og-energi-210",
+"tema": "arbeid-og-energi",
+"undertema": "arbeid",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "En kraft er $F = 3.0x$, med $F$ i newton og $x$ i meter. Hvor stort arbeid gjør den fra $x = 0$ til $x = 4.0$ m?",
+"riktig": "24 J",
+"feil": [
+{
+"svar": "12 J",
+"type": "regnefeil"
+},
+{
+"svar": "6.0 J",
+"type": "regnefeil"
+},
+{
+"svar": "48 J",
+"type": "begrep"
+}
+],
+"forklaring": "Kraften varierer: $W = \\int F\\ \\mathrm{d}x$."
+},
+{
+"id": "arbeid-og-energi-211",
+"tema": "arbeid-og-energi",
+"undertema": "effekt",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En bil på 1200 kg kjører i 25 m/s oppover en bakke med helning 5.0°. Samlet motstand er 400 N. Hvor stor effekt trengs?",
+"riktig": "36 kW",
+"feil": [
+{
+"svar": "0.29 MW",
+"type": "regnefeil"
+},
+{
+"svar": "26 kW",
+"type": "begrep"
+},
+{
+"svar": "10 kW",
+"type": "begrep"
+}
+],
+"forklaring": "$P = v(m\\mathrm{g}\\sin\\theta + F_{\\text{motstand}})$."
+},
+{
+"id": "arbeid-og-energi-212",
+"tema": "arbeid-og-energi",
+"undertema": "effekt",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Et kraftverk har fallhøyde 100 m, vannføring 20 m³/s og virkningsgrad 90 %. Hvor stor effekt gir det?",
+"riktig": "18 MW",
+"feil": [
+{
+"svar": "20 MW",
+"type": "regnefeil"
+},
+{
+"svar": "16 MW",
+"type": "regnefeil"
+},
+{
+"svar": "18 kW",
+"type": "begrep"
+}
+],
+"forklaring": "$P = \\eta\\rho Q\\mathrm{g}h$."
+},
+{
+"id": "arbeid-og-energi-213",
+"tema": "arbeid-og-energi",
+"undertema": "energiformer",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "Legeme A har fire ganger så stor masse som legeme B, og de har samme bevegelsesmengde. Hvor mange ganger større kinetisk energi har B?",
+"riktig": "4 ganger",
+"feil": [
+{
+"svar": "2 ganger",
+"type": "regnefeil"
+},
+{
+"svar": "16 ganger",
+"type": "regnefeil"
+},
+{
+"svar": "Like stor",
+"type": "begrep"
+}
+],
+"forklaring": "$E_k = p^2/(2m)$."
+},
+{
+"id": "statikk-214",
+"tema": "statikk",
+"undertema": "kraftlikevekt",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Et lodd med tyngde 10 N henger i ro i en snor. Hva er snordraget?",
+"riktig": "10 N",
+"feil": [
+{
+"svar": "5.0 N",
+"type": "regnefeil"
+},
+{
+"svar": "20 N",
+"type": "regnefeil"
+},
+{
+"svar": "0 N",
+"type": "begrep"
+}
+],
+"forklaring": "Snordraget oppveier tyngden."
+},
+{
+"id": "statikk-215",
+"tema": "statikk",
+"undertema": "kraftlikevekt",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Krefter på 5.0 N og 3.0 N virker mot høyre på en gjenstand i ro. Hvor stor kraft må virke mot venstre?",
+"riktig": "8.0 N",
+"feil": [
+{
+"svar": "2.0 N",
+"type": "regnefeil"
+},
+{
+"svar": "5.0 N",
+"type": "begrep"
+},
+{
+"svar": "0 N",
+"type": "begrep"
+}
+],
+"forklaring": "Kraftsummen skal være null."
+},
+{
+"id": "statikk-216",
+"tema": "statikk",
+"undertema": "kraftmoment",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvilken enhet har kraftmoment?",
+"riktig": "N m",
+"feil": [
+{
+"svar": "N/m",
+"type": "begrep"
+},
+{
+"svar": "N s",
+"type": "begrep"
+},
+{
+"svar": "kg m",
+"type": "begrep"
+}
+],
+"forklaring": "Kraft ganger arm."
+},
+{
+"id": "statikk-217",
+"tema": "statikk",
+"undertema": "kraftmoment",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvorfor sitter håndtaket langt fra hengslene på en dør?",
+"riktig": "Lengre arm gir større kraftmoment",
+"feil": [
+{
+"svar": "Da virker kraften mindre",
+"type": "begrep"
+},
+{
+"svar": "Døra blir lettere",
+"type": "begrep"
+},
+{
+"svar": "Friksjonen forsvinner",
+"type": "begrep"
+}
+],
+"forklaring": "Samme kraft gir større moment med lengre arm."
+},
+{
+"id": "statikk-218",
+"tema": "statikk",
+"undertema": "kraftmoment",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "En kraft har angrepslinje rett gjennom rotasjonsaksen. Hvor stort er kraftmomentet?",
+"riktig": "Null",
+"feil": [
+{
+"svar": "Størst mulig",
+"type": "begrep"
+},
+{
+"svar": "Lik kraften",
+"type": "begrep"
+},
+{
+"svar": "Lik kraften delt på armen",
+"type": "begrep"
+}
+],
+"forklaring": "Armen er null."
+},
+{
+"id": "statikk-219",
+"tema": "statikk",
+"undertema": "massesenter",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvor ligger massesenteret til en jevn stav på 2.0 m, målt fra enden?",
+"riktig": "1.0 m",
+"feil": [
+{
+"svar": "2.0 m",
+"type": "regnefeil"
+},
+{
+"svar": "0.50 m",
+"type": "regnefeil"
+},
+{
+"svar": "0 m",
+"type": "begrep"
+}
+],
+"forklaring": "I midten av staven."
+},
+{
+"id": "statikk-220",
+"tema": "statikk",
+"undertema": "massesenter",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva gjør en gjenstand mest stabil?",
+"riktig": "Lavt massesenter og bred støtteflate",
+"feil": [
+{
+"svar": "Høyt massesenter og bred støtteflate",
+"type": "begrep"
+},
+{
+"svar": "Lavt massesenter og smal støtteflate",
+"type": "begrep"
+},
+{
+"svar": "Høyt massesenter og smal støtteflate",
+"type": "begrep"
+}
+],
+"forklaring": "Da må gjenstanden vippes langt før massesenteret kommer utenfor støtteflaten."
+},
+{
+"id": "statikk-221",
+"tema": "statikk",
+"undertema": "kraftmoment",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En kraft på 30 N virker på en arm med lengde 0.40 m, med 30° mellom kraften og armen. Hvor stort er kraftmomentet?",
+"riktig": "6.0 N m",
+"feil": [
+{
+"svar": "10 N m",
+"type": "regnefeil"
+},
+{
+"svar": "3.0 N m",
+"type": "regnefeil"
+},
+{
+"svar": "12 N m",
+"type": "begrep"
+}
+],
+"forklaring": "$\\tau = Fr\\sin\\theta$."
+},
+{
+"id": "statikk-222",
+"tema": "statikk",
+"undertema": "kraftmoment",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "En skrue skal strammes med 60 N m ved hjelp av en nøkkel med arm 0.30 m. Hvor stor kraft trengs?",
+"riktig": "0.20 kN",
+"feil": [
+{
+"svar": "18 N",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 N",
+"type": "regnefeil"
+},
+{
+"svar": "60 N",
+"type": "begrep"
+}
+],
+"forklaring": "$F = \\tau/r$."
+},
+{
+"id": "statikk-223",
+"tema": "statikk",
+"undertema": "kraftmoment",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En jevn bjelke ligger i balanse om midten. En masse på 5.0 kg ligger 0.80 m til venstre. Hvor stor masse må ligge 0.40 m til høyre?",
+"riktig": "10 kg",
+"feil": [
+{
+"svar": "2.5 kg",
+"type": "regnefeil"
+},
+{
+"svar": "20 kg",
+"type": "regnefeil"
+},
+{
+"svar": "5.0 kg",
+"type": "begrep"
+}
+],
+"forklaring": "$m_1 r_1 = m_2 r_2$."
+},
+{
+"id": "statikk-224",
+"tema": "statikk",
+"undertema": "kraftlikevekt",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En kasse på 20 kg står i ro på et skråplan med vinkel 25°. Hvor stor er friksjonskraften?",
+"riktig": "83 N",
+"feil": [
+{
+"svar": "0.18 kN",
+"type": "regnefeil"
+},
+{
+"svar": "39 N",
+"type": "regnefeil"
+},
+{
+"svar": "0.20 kN",
+"type": "begrep"
+}
+],
+"forklaring": "$f = m\\mathrm{g}\\sin\\theta$."
+},
+{
+"id": "statikk-225",
+"tema": "statikk",
+"undertema": "kraftlikevekt",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "Et lodd på 10 kg henger i to snorer som danner 30° og 60° med loddlinjen. Hva er draget i snora med 30°?",
+"riktig": "85 N",
+"feil": [
+{
+"svar": "49 N",
+"type": "regnefeil"
+},
+{
+"svar": "0.17 kN",
+"type": "regnefeil"
+},
+{
+"svar": "98 N",
+"type": "begrep"
+}
+],
+"forklaring": "Snorene står vinkelrett på hverandre, så $S = m\\mathrm{g}\\cos 30°$."
+},
+{
+"id": "statikk-226",
+"tema": "statikk",
+"undertema": "massesenter",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Like masser ligger i punktene $(0, 0)$, $(2.0, 0)$ og $(0, 2.0)$, målt i meter. Hva er $x$-koordinaten til massesenteret?",
+"riktig": "0.67 m",
+"feil": [
+{
+"svar": "1.0 m",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 m",
+"type": "regnefeil"
+},
+{
+"svar": "0 m",
+"type": "begrep"
+}
+],
+"forklaring": "$x = (0 + 2.0 + 0)/3$."
+},
+{
+"id": "statikk-227",
+"tema": "statikk",
+"undertema": "massesenter",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En bil har akselavstand 2.5 m, og 60 % av tyngden hviler på framakselen. Hvor langt bak framakselen er massesenteret?",
+"riktig": "1.0 m",
+"feil": [
+{
+"svar": "1.5 m",
+"type": "regnefeil"
+},
+{
+"svar": "0.60 m",
+"type": "regnefeil"
+},
+{
+"svar": "1.25 m",
+"type": "begrep"
+}
+],
+"forklaring": "$x = 0.40\\cdot 2.5\\ \\mathrm{m}$."
+},
+{
+"id": "statikk-228",
+"tema": "statikk",
+"undertema": "kraftmoment",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En jevn stige på 20 kg står mot en glatt vegg og danner 60° med golvet. Hvor stor kraft får den fra veggen?",
+"riktig": "57 N",
+"feil": [
+{
+"svar": "98 N",
+"type": "regnefeil"
+},
+{
+"svar": "0.17 kN",
+"type": "regnefeil"
+},
+{
+"svar": "0 N",
+"type": "begrep"
+}
+],
+"forklaring": "Moment om foten: $N_v = m\\mathrm{g}/(2\\tan\\theta)$."
+},
+{
+"id": "statikk-229",
+"tema": "statikk",
+"undertema": "kraftmoment",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En jevn stige står mot en glatt vegg og danner 60° med golvet. Hva er det minste friksjonstallet mot golvet for at den ikke skal gli?",
+"riktig": "0.29",
+"feil": [
+{
+"svar": "0.58",
+"type": "regnefeil"
+},
+{
+"svar": "0.87",
+"type": "regnefeil"
+},
+{
+"svar": "0.50",
+"type": "begrep"
+}
+],
+"forklaring": "$\\mu_s = 1/(2\\tan\\theta)$."
+},
+{
+"id": "statikk-230",
+"tema": "statikk",
+"undertema": "kraftmoment",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En jevn bjelke på 30 kg og 6.0 m hviler på støtter i 0 m og 4.0 m. Hvor langt ut forbi støtten i 4.0 m kan en person på 50 kg gå før bjelken vipper?",
+"riktig": "0.60 m",
+"feil": [
+{
+"svar": "1.7 m",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 m",
+"type": "regnefeil"
+},
+{
+"svar": "1.0 m",
+"type": "begrep"
+}
+],
+"forklaring": "Moment om støtten: $30\\cdot 1.0 = 50x$."
+},
+{
+"id": "statikk-231",
+"tema": "statikk",
+"undertema": "kraftlikevekt",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En lampe på 10 kg henger midt på en wire. Hver halvdel danner 5.0° med horisontalen. Hva er draget i wiren?",
+"riktig": "0.56 kN",
+"feil": [
+{
+"svar": "49 N",
+"type": "regnefeil"
+},
+{
+"svar": "1.1 kN",
+"type": "regnefeil"
+},
+{
+"svar": "98 N",
+"type": "begrep"
+}
+],
+"forklaring": "$2S\\sin\\theta = m\\mathrm{g}$."
+},
+{
+"id": "statikk-232",
+"tema": "statikk",
+"undertema": "massesenter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "Et sirkelformet hull med radius $R/2$ skjæres ut av en jevn skive med radius $R$. Hullet tangerer kanten. Hvor langt fra skivens sentrum havner massesenteret?",
+"riktig": "R/6",
+"feil": [
+{
+"svar": "R/3",
+"type": "regnefeil"
+},
+{
+"svar": "R/4",
+"type": "regnefeil"
+},
+{
+"svar": "0",
+"type": "begrep"
+}
+],
+"forklaring": "Hullet er en negativ masse på $1/4$: $x = (1/4)(R/2)/(3/4)$."
+},
+{
+"id": "statikk-233",
+"tema": "statikk",
+"undertema": "kraftmoment",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En person holder en kule på 5.0 kg i hånden, 0.30 m fra albuen. Biceps fester 0.040 m fra albuen og drar loddrett. Hvor stor er kraften fra biceps? Se bort fra armens tyngde.",
+"riktig": "0.37 kN",
+"feil": [
+{
+"svar": "6.5 N",
+"type": "regnefeil"
+},
+{
+"svar": "37 N",
+"type": "regnefeil"
+},
+{
+"svar": "49 N",
+"type": "begrep"
+}
+],
+"forklaring": "Moment om albuen: $F\\cdot 0.040 = m\\mathrm{g}\\cdot 0.30$."
+},
+{
+"id": "statikk-234",
+"tema": "statikk",
+"undertema": "kraftlikevekt",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En jevn kasse på 40 kg er 1.2 m høy og 0.60 m bred. Den kan ikke gli. Hvor stor horisontal kraft øverst får den til å vippe?",
+"riktig": "98 N",
+"feil": [
+{
+"svar": "0.20 kN",
+"type": "regnefeil"
+},
+{
+"svar": "25 N",
+"type": "regnefeil"
+},
+{
+"svar": "0.39 kN",
+"type": "begrep"
+}
+],
+"forklaring": "Moment om nederste hjørne: $F\\cdot 1.2 = m\\mathrm{g}\\cdot 0.30$."
+},
+{
+"id": "rotasjon-235",
+"tema": "rotasjon",
+"undertema": "rotasjonskinematikk",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvor mange radianer er 180°?",
+"riktig": "π rad",
+"feil": [
+{
+"svar": "2π rad",
+"type": "regnefeil"
+},
+{
+"svar": "π/2 rad",
+"type": "regnefeil"
+},
+{
+"svar": "180 rad",
+"type": "begrep"
+}
+],
+"forklaring": "En hel runde er $2\\pi$ rad."
+},
+{
+"id": "rotasjon-236",
+"tema": "rotasjon",
+"undertema": "rotasjonskinematikk",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Et punkt er 0.50 m fra aksen, og vinkelfarten er 4.0 rad/s. Hva er banefarten?",
+"riktig": "2.0 m/s",
+"feil": [
+{
+"svar": "8.0 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0.13 m/s",
+"type": "regnefeil"
+},
+{
+"svar": "4.0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$v = \\omega r$."
+},
+{
+"id": "rotasjon-237",
+"tema": "rotasjon",
+"undertema": "rotasjonskinematikk",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Et hjul har vinkelfarten 2.0 rad/s og vinkelakselerasjonen 3.0 rad/s². Hva er vinkelfarten etter 4.0 s?",
+"riktig": "14 rad/s",
+"feil": [
+{
+"svar": "12 rad/s",
+"type": "regnefeil"
+},
+{
+"svar": "8.0 rad/s",
+"type": "regnefeil"
+},
+{
+"svar": "9.0 rad/s",
+"type": "begrep"
+}
+],
+"forklaring": "$\\omega = \\omega_0 + \\alpha t$."
+},
+{
+"id": "rotasjon-238",
+"tema": "rotasjon",
+"undertema": "treghetsmoment",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva sier treghetsmomentet noe om?",
+"riktig": "Hvor vanskelig det er å endre rotasjonen",
+"feil": [
+{
+"svar": "Hvor stor kraft som virker",
+"type": "begrep"
+},
+{
+"svar": "Hvor fort legemet roterer",
+"type": "begrep"
+},
+{
+"svar": "Hvor langt fra aksen kraften virker",
+"type": "begrep"
+}
+],
+"forklaring": "Treghetsmoment er for rotasjon det massen er for rett bevegelse."
+},
+{
+"id": "rotasjon-239",
+"tema": "rotasjon",
+"undertema": "treghetsmoment",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "En ring, en kompakt skive og en kompakt kule har samme masse og radius. Hvilken har størst treghetsmoment?",
+"riktig": "Ringen",
+"feil": [
+{
+"svar": "Skiva",
+"type": "begrep"
+},
+{
+"svar": "Kula",
+"type": "begrep"
+},
+{
+"svar": "De er like",
+"type": "begrep"
+}
+],
+"forklaring": "I ringen ligger all massen lengst fra aksen."
+},
+{
+"id": "rotasjon-240",
+"tema": "rotasjon",
+"undertema": "rulling",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Et hjul med radius 0.25 m ruller uten å skli med 5.0 m/s. Hva er vinkelfarten?",
+"riktig": "20 rad/s",
+"feil": [
+{
+"svar": "1.3 rad/s",
+"type": "regnefeil"
+},
+{
+"svar": "10 rad/s",
+"type": "regnefeil"
+},
+{
+"svar": "5.0 rad/s",
+"type": "begrep"
+}
+],
+"forklaring": "$\\omega = v/R$."
+},
+{
+"id": "rotasjon-241",
+"tema": "rotasjon",
+"undertema": "dreieimpuls",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Et legeme med treghetsmoment 3.0 kg m² roterer med 4.0 rad/s. Hva er dreieimpulsen?",
+"riktig": "12 kg m²/s",
+"feil": [
+{
+"svar": "0.75 kg m²/s",
+"type": "regnefeil"
+},
+{
+"svar": "24 kg m²/s",
+"type": "regnefeil"
+},
+{
+"svar": "7.0 kg m²/s",
+"type": "begrep"
+}
+],
+"forklaring": "$L = I\\omega$."
+},
+{
+"id": "rotasjon-242",
+"tema": "rotasjon",
+"undertema": "rotasjonskinematikk",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "En motor går med 300 omdreininger per minutt. Hva er vinkelfarten?",
+"riktig": "31 rad/s",
+"feil": [
+{
+"svar": "5.0 rad/s",
+"type": "regnefeil"
+},
+{
+"svar": "1.9 krad/s",
+"type": "regnefeil"
+},
+{
+"svar": "300 rad/s",
+"type": "begrep"
+}
+],
+"forklaring": "$\\omega = 2\\pi\\cdot 300/60$."
+},
+{
+"id": "rotasjon-243",
+"tema": "rotasjon",
+"undertema": "rotasjonskinematikk",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "Et hjul øker jevnt fra 10 rad/s til 30 rad/s på 5.0 s. Hvor mange omdreininger gjør det?",
+"riktig": "16 omdreininger",
+"feil": [
+{
+"svar": "100 omdreininger",
+"type": "regnefeil"
+},
+{
+"svar": "32 omdreininger",
+"type": "regnefeil"
+},
+{
+"svar": "20 omdreininger",
+"type": "begrep"
+}
+],
+"forklaring": "$\\theta = \\frac{1}{2}(\\omega_0 + \\omega)t = 100\\ \\mathrm{rad}$. Del på $2\\pi$."
+},
+{
+"id": "rotasjon-244",
+"tema": "rotasjon",
+"undertema": "treghetsmoment",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "En jevn stav har $M = 3.0$ kg og $L = 2.0$ m og roterer om midten ($I = ML^2/12$). Hva er treghetsmomentet?",
+"riktig": "1.0 kg m²",
+"feil": [
+{
+"svar": "4.0 kg m²",
+"type": "regnefeil"
+},
+{
+"svar": "12 kg m²",
+"type": "regnefeil"
+},
+{
+"svar": "6.0 kg m²",
+"type": "begrep"
+}
+],
+"forklaring": "$I = 3.0\\cdot 4.0/12$."
+},
+{
+"id": "rotasjon-245",
+"tema": "rotasjon",
+"undertema": "treghetsmoment",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En tynn ring har $M = 2.0$ kg og $R = 0.50$ m og roterer om aksen sin med 4.0 rad/s. Hva er rotasjonsenergien?",
+"riktig": "4.0 J",
+"feil": [
+{
+"svar": "2.0 J",
+"type": "regnefeil"
+},
+{
+"svar": "8.0 J",
+"type": "regnefeil"
+},
+{
+"svar": "1.0 J",
+"type": "begrep"
+}
+],
+"forklaring": "$I = MR^2 = 0.50\\ \\mathrm{kg\\ m^2}$ og $E = \\frac{1}{2}I\\omega^2$."
+},
+{
+"id": "rotasjon-246",
+"tema": "rotasjon",
+"undertema": "rulling",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En kraft på 20 N virker tangentielt på en trinse med radius 0.10 m og treghetsmoment 0.50 kg m². Hva er vinkelakselerasjonen?",
+"riktig": "4.0 rad/s²",
+"feil": [
+{
+"svar": "40 rad/s²",
+"type": "regnefeil"
+},
+{
+"svar": "0.40 rad/s²",
+"type": "regnefeil"
+},
+{
+"svar": "20 rad/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$\\alpha = FR/I$."
+},
+{
+"id": "rotasjon-247",
+"tema": "rotasjon",
+"undertema": "rulling",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "En kompakt skive på 2.0 kg ruller uten å skli med 4.0 m/s. Hva er den samlede kinetiske energien?",
+"riktig": "24 J",
+"feil": [
+{
+"svar": "8.0 J",
+"type": "regnefeil"
+},
+{
+"svar": "32 J",
+"type": "regnefeil"
+},
+{
+"svar": "16 J",
+"type": "begrep"
+}
+],
+"forklaring": "$E = \\frac{1}{2}mv^2 + \\frac{1}{2}I\\omega^2 = \\frac{3}{4}mv^2$."
+},
+{
+"id": "rotasjon-248",
+"tema": "rotasjon",
+"undertema": "dreieimpuls",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En skive med $I = 2.0$ kg m² roterer med 3.0 rad/s. Et stykke faller ned på den, og $I$ øker til 3.0 kg m². Hva blir vinkelfarten?",
+"riktig": "2.0 rad/s",
+"feil": [
+{
+"svar": "4.5 rad/s",
+"type": "regnefeil"
+},
+{
+"svar": "1.0 rad/s",
+"type": "regnefeil"
+},
+{
+"svar": "3.0 rad/s",
+"type": "begrep"
+}
+],
+"forklaring": "Dreieimpulsen er bevart."
+},
+{
+"id": "rotasjon-249",
+"tema": "rotasjon",
+"undertema": "rulling",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 90,
+"tekst": "En kompakt kule, en kompakt skive og en ring ruller ned samme skråplan uten å skli. Hvilken kommer først?",
+"riktig": "Kula",
+"feil": [
+{
+"svar": "Ringen",
+"type": "begrep"
+},
+{
+"svar": "Skiva",
+"type": "begrep"
+},
+{
+"svar": "De kommer samtidig",
+"type": "begrep"
+}
+],
+"forklaring": "Kula har minst treghetsmoment i forhold til $MR^2$ og taper minst energi til rotasjon."
+},
+{
+"id": "rotasjon-250",
+"tema": "rotasjon",
+"undertema": "rulling",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Hva er akselerasjonen til en kompakt sylinder som ruller uten å skli ned et skråplan med vinkel 30°?",
+"riktig": "3.3 m/s²",
+"feil": [
+{
+"svar": "2.5 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "4.9 m/s²",
+"type": "begrep"
+},
+{
+"svar": "3.5 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$a = \\frac{2}{3}\\mathrm{g}\\sin\\theta$."
+},
+{
+"id": "rotasjon-251",
+"tema": "rotasjon",
+"undertema": "rulling",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "Hva er det minste friksjonstallet for at en kompakt sylinder skal rulle uten å skli ned et skråplan med vinkel 30°?",
+"riktig": "0.19",
+"feil": [
+{
+"svar": "0.29",
+"type": "regnefeil"
+},
+{
+"svar": "0.38",
+"type": "regnefeil"
+},
+{
+"svar": "0.58",
+"type": "begrep"
+}
+],
+"forklaring": "$\\mu_s = \\tan\\theta/3$."
+},
+{
+"id": "rotasjon-252",
+"tema": "rotasjon",
+"undertema": "treghetsmoment",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En jevn stav med lengde 1.0 m kan dreie fritt om den ene enden ($I = ML^2/3$). Den slippes fra horisontal stilling. Hva er vinkelfarten når den henger rett ned?",
+"riktig": "5.4 rad/s",
+"feil": [
+{
+"svar": "7.7 rad/s",
+"type": "regnefeil"
+},
+{
+"svar": "3.1 rad/s",
+"type": "regnefeil"
+},
+{
+"svar": "4.4 rad/s",
+"type": "begrep"
+}
+],
+"forklaring": "Massesenteret synker $L/2$: $\\omega = \\sqrt{3\\mathrm{g}/L}$."
+},
+{
+"id": "rotasjon-253",
+"tema": "rotasjon",
+"undertema": "dreieimpuls",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En klump på 0.10 kg med 5.0 m/s treffer tangentielt og fester seg ytterst på en skive i ro med $I = 0.50$ kg m² og $R = 0.50$ m. Hva er vinkelfarten etterpå?",
+"riktig": "0.48 rad/s",
+"feil": [
+{
+"svar": "0.95 rad/s",
+"type": "regnefeil"
+},
+{
+"svar": "0.50 rad/s",
+"type": "begrep"
+},
+{
+"svar": "10 rad/s",
+"type": "begrep"
+}
+],
+"forklaring": "$L = mvR$, og klumpen øker $I$ med $mR^2$."
+},
+{
+"id": "rotasjon-254",
+"tema": "rotasjon",
+"undertema": "rotasjonskinematikk",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Et punkt 0.40 m fra aksen har $\\alpha = 5.0$ rad/s² og $\\omega = 3.0$ rad/s. Hvor stor er den samlede akselerasjonen?",
+"riktig": "4.1 m/s²",
+"feil": [
+{
+"svar": "5.6 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "3.6 m/s²",
+"type": "begrep"
+},
+{
+"svar": "2.0 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$a_t = \\alpha r$ og $a_s = \\omega^2 r$ står vinkelrett på hverandre."
+},
+{
+"id": "rotasjon-255",
+"tema": "rotasjon",
+"undertema": "treghetsmoment",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "Lodd på 3.0 kg og 1.0 kg henger over en trinse formet som en kompakt skive på 2.0 kg. Hva er akselerasjonen?",
+"riktig": "3.9 m/s²",
+"feil": [
+{
+"svar": "3.3 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "7.8 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "4.9 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$a = (m_1 - m_2)\\mathrm{g}/(m_1 + m_2 + M/2)$."
+},
+{
+"id": "gravitasjon-256",
+"tema": "gravitasjon",
+"undertema": "gravitasjonsloven",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvilken retning har gravitasjonskraften mellom to masser?",
+"riktig": "Tiltrekkende, langs linjen mellom dem",
+"feil": [
+{
+"svar": "Frastøtende, langs linjen mellom dem",
+"type": "begrep"
+},
+{
+"svar": "Vinkelrett på linjen mellom dem",
+"type": "begrep"
+},
+{
+"svar": "Den kan være både tiltrekkende og frastøtende",
+"type": "begrep"
+}
+],
+"forklaring": "Gravitasjon er alltid tiltrekkende."
+},
+{
+"id": "gravitasjon-257",
+"tema": "gravitasjon",
+"undertema": "gravitasjonsloven",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Den ene av to masser dobles. Hvor mange ganger større blir gravitasjonskraften?",
+"riktig": "2 ganger",
+"feil": [
+{
+"svar": "4 ganger",
+"type": "regnefeil"
+},
+{
+"svar": "Den halveres",
+"type": "begrep"
+},
+{
+"svar": "Den er uendret",
+"type": "begrep"
+}
+],
+"forklaring": "Kraften er proporsjonal med hver av massene."
+},
+{
+"id": "gravitasjon-258",
+"tema": "gravitasjon",
+"undertema": "gravitasjonsloven",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvilken påstand om gravitasjonskonstanten $\\mathrm{G}$ stemmer?",
+"riktig": "Den har samme verdi overalt",
+"feil": [
+{
+"svar": "Den er 9.81 m/s²",
+"type": "begrep"
+},
+{
+"svar": "Den varierer med høyden",
+"type": "begrep"
+},
+{
+"svar": "Den er lik massen til Jorda",
+"type": "begrep"
+}
+],
+"forklaring": "$\\mathrm{G}$ er en naturkonstant, mens $\\mathrm{g}$ varierer fra sted til sted."
+},
+{
+"id": "gravitasjon-259",
+"tema": "gravitasjon",
+"undertema": "gravitasjonsloven",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Hva er tyngden til en person på 70 kg på Månen, der tyngdeakselerasjonen er 1.62 m/s²?",
+"riktig": "0.11 kN",
+"feil": [
+{
+"svar": "43 N",
+"type": "regnefeil"
+},
+{
+"svar": "1.1 kN",
+"type": "regnefeil"
+},
+{
+"svar": "0.69 kN",
+"type": "begrep"
+}
+],
+"forklaring": "$G = m\\mathrm{g}_\\text{Månen}$."
+},
+{
+"id": "gravitasjon-260",
+"tema": "gravitasjon",
+"undertema": "satellitter",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva er perioden til en geostasjonær satellitt?",
+"riktig": "24 h",
+"feil": [
+{
+"svar": "12 h",
+"type": "begrep"
+},
+{
+"svar": "1 h",
+"type": "begrep"
+},
+{
+"svar": "365 døgn",
+"type": "begrep"
+}
+],
+"forklaring": "Den følger Jordas rotasjon."
+},
+{
+"id": "gravitasjon-261",
+"tema": "gravitasjon",
+"undertema": "satellitter",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvorfor føler astronauter seg vektløse i bane rundt Jorda?",
+"riktig": "De er i fritt fall sammen med romskipet",
+"feil": [
+{
+"svar": "Det er ingen gravitasjon der",
+"type": "begrep"
+},
+{
+"svar": "De er for langt unna Jorda",
+"type": "begrep"
+},
+{
+"svar": "Det er ingen luft der",
+"type": "begrep"
+}
+],
+"forklaring": "Gravitasjonen er nesten like stor som ved bakken, men ingenting holder dem oppe."
+},
+{
+"id": "gravitasjon-262",
+"tema": "gravitasjon",
+"undertema": "satellitter",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva sier Keplers 1. lov om planetbanene?",
+"riktig": "De er ellipser med Sola i det ene brennpunktet",
+"feil": [
+{
+"svar": "De er sirkler med Sola i sentrum",
+"type": "begrep"
+},
+{
+"svar": "Sola går i bane rundt planetene",
+"type": "begrep"
+},
+{
+"svar": "De er rette linjer",
+"type": "begrep"
+}
+],
+"forklaring": "Sirkelen er bare et spesialtilfelle av ellipsen."
+},
+{
+"id": "gravitasjon-263",
+"tema": "gravitasjon",
+"undertema": "gravitasjonsloven",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "Hva er gravitasjonskraften mellom Jorda ($5.97\\cdot 10^{24}$ kg) og Månen ($7.35\\cdot 10^{22}$ kg) med avstanden $3.84\\cdot 10^8$ m?",
+"riktig": "1.98·10²⁰ N",
+"feil": [
+{
+"svar": "7.6·10²⁸ N",
+"type": "regnefeil"
+},
+{
+"svar": "9.9·10¹⁹ N",
+"type": "regnefeil"
+},
+{
+"svar": "7.2·10²³ N",
+"type": "begrep"
+}
+],
+"forklaring": "$F = \\mathrm{G}Mm/r^2$."
+},
+{
+"id": "gravitasjon-264",
+"tema": "gravitasjon",
+"undertema": "gravitasjonsloven",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Mars har massen $6.42\\cdot 10^{23}$ kg og radien $3.39\\cdot 10^6$ m. Hva er tyngdeakselerasjonen ved overflaten?",
+"riktig": "3.73 m/s²",
+"feil": [
+{
+"svar": "7.45 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "1.86 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "9.81 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$\\mathrm{g} = \\mathrm{G}M/R^2$."
+},
+{
+"id": "gravitasjon-265",
+"tema": "gravitasjon",
+"undertema": "gravitasjonsloven",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "En planet har dobbelt så stor masse og dobbelt så stor radius som Jorda. Hvordan er tyngdeakselerasjonen der sammenliknet med på Jorda?",
+"riktig": "Halvparten så stor",
+"feil": [
+{
+"svar": "En firedel så stor",
+"type": "regnefeil"
+},
+{
+"svar": "Dobbelt så stor",
+"type": "regnefeil"
+},
+{
+"svar": "Like stor",
+"type": "begrep"
+}
+],
+"forklaring": "$\\mathrm{g} = \\mathrm{G}M/R^2$ gir faktoren $2/4$."
+},
+{
+"id": "gravitasjon-266",
+"tema": "gravitasjon",
+"undertema": "gravitasjonsloven",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "I hvilken høyde over bakken er tyngdeakselerasjonen halvparten av verdien ved overflaten? Bruk $R = 6.37$ Mm.",
+"riktig": "2.64 Mm",
+"feil": [
+{
+"svar": "6.37 Mm",
+"type": "regnefeil"
+},
+{
+"svar": "3.19 Mm",
+"type": "regnefeil"
+},
+{
+"svar": "1.3 Mm",
+"type": "begrep"
+}
+],
+"forklaring": "$(R+h)^2 = 2R^2$ gir $h = (\\sqrt{2}-1)R$."
+},
+{
+"id": "gravitasjon-267",
+"tema": "gravitasjon",
+"undertema": "satellitter",
+"vanskelighet": "middels",
+"forventet_tid_s": 30,
+"tekst": "Hvordan er banefarten til en satellitt i lav bane sammenliknet med en i høy bane?",
+"riktig": "Større",
+"feil": [
+{
+"svar": "Mindre",
+"type": "begrep"
+},
+{
+"svar": "Like stor",
+"type": "begrep"
+},
+{
+"svar": "Den er null i begge",
+"type": "begrep"
+}
+],
+"forklaring": "$v = \\sqrt{\\mathrm{G}M/r}$ øker når $r$ minker."
+},
+{
+"id": "gravitasjon-268",
+"tema": "gravitasjon",
+"undertema": "satellitter",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "En satellitt går i sirkelbane med radius $7.0\\cdot 10^6$ m rundt Jorda ($M = 5.97\\cdot 10^{24}$ kg). Hva er perioden?",
+"riktig": "97 min",
+"feil": [
+{
+"svar": "16 min",
+"type": "regnefeil"
+},
+{
+"svar": "1.6 min",
+"type": "regnefeil"
+},
+{
+"svar": "24 h",
+"type": "begrep"
+}
+],
+"forklaring": "$T = 2\\pi r/v$ med $v = \\sqrt{\\mathrm{G}M/r}$."
+},
+{
+"id": "gravitasjon-269",
+"tema": "gravitasjon",
+"undertema": "satellitter",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Mars har banehalvakse 1.52 ganger Jordas. Hva er perioden til Mars, målt i år?",
+"riktig": "1.87 år",
+"feil": [
+{
+"svar": "1.52 år",
+"type": "regnefeil"
+},
+{
+"svar": "2.31 år",
+"type": "regnefeil"
+},
+{
+"svar": "1.00 år",
+"type": "begrep"
+}
+],
+"forklaring": "Keplers 3. lov: $T = a^{3/2}$ med $a$ målt i Jordas baneradius."
+},
+{
+"id": "gravitasjon-270",
+"tema": "gravitasjon",
+"undertema": "satellitter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Hva er den samlede mekaniske energien til en satellitt på 1000 kg i sirkelbane med radius $7.0\\cdot 10^6$ m rundt Jorda ($M = 5.97\\cdot 10^{24}$ kg)?",
+"riktig": "−28 GJ",
+"feil": [
+{
+"svar": "−57 GJ",
+"type": "regnefeil"
+},
+{
+"svar": "−14 GJ",
+"type": "regnefeil"
+},
+{
+"svar": "+28 GJ",
+"type": "begrep"
+}
+],
+"forklaring": "$E = -\\mathrm{G}Mm/(2r)$."
+},
+{
+"id": "gravitasjon-271",
+"tema": "gravitasjon",
+"undertema": "satellitter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "Hvor mye energi må tilføres en satellitt på 1000 kg for å flytte den fra sirkelbane med radius 7.0 Mm til 14 Mm? Bruk $M = 5.97\\cdot 10^{24}$ kg.",
+"riktig": "14 GJ",
+"feil": [
+{
+"svar": "28 GJ",
+"type": "regnefeil"
+},
+{
+"svar": "7.1 GJ",
+"type": "regnefeil"
+},
+{
+"svar": "0 J",
+"type": "begrep"
+}
+],
+"forklaring": "$\\Delta E = \\frac{\\mathrm{G}Mm}{2}(1/r_1 - 1/r_2)$."
+},
+{
+"id": "gravitasjon-272",
+"tema": "gravitasjon",
+"undertema": "gravitasjonsloven",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "Månens masse er $7.35\\cdot 10^{22}$ kg, Jordas er $5.97\\cdot 10^{24}$ kg, og avstanden er 384 Mm. Hvor langt fra Jorda er gravitasjonskreftene fra de to like store?",
+"riktig": "346 Mm",
+"feil": [
+{
+"svar": "300 Mm",
+"type": "regnefeil"
+},
+{
+"svar": "42 Mm",
+"type": "regnefeil"
+},
+{
+"svar": "192 Mm",
+"type": "begrep"
+}
+],
+"forklaring": "$x/(d-x) = \\sqrt{M/m}$."
+},
+{
+"id": "gravitasjon-273",
+"tema": "gravitasjon",
+"undertema": "gravitasjonsloven",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "Tenk deg en sjakt til halve Jordas radius, og at Jorda har jevn tetthet. Hva er tyngdeakselerasjonen der?",
+"riktig": "4.91 m/s²",
+"feil": [
+{
+"svar": "2.45 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "19.6 m/s²",
+"type": "begrep"
+},
+{
+"svar": "0 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "Inne i en jevn kule er tyngdeakselerasjonen proporsjonal med avstanden fra sentrum."
+},
+{
+"id": "gravitasjon-274",
+"tema": "gravitasjon",
+"undertema": "satellitter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "Månen går rundt Jorda med radius $3.84\\cdot 10^8$ m og perioden 27.3 døgn. Hva gir dette for massen til Jorda?",
+"riktig": "6.0·10²⁴ kg",
+"feil": [
+{
+"svar": "9.6·10²³ kg",
+"type": "regnefeil"
+},
+{
+"svar": "2.4·10²⁵ kg",
+"type": "regnefeil"
+},
+{
+"svar": "7.4·10²² kg",
+"type": "begrep"
+}
+],
+"forklaring": "$M = 4\\pi^2 r^3/(\\mathrm{G}T^2)$."
+},
+{
+"id": "gravitasjon-275",
+"tema": "gravitasjon",
+"undertema": "satellitter",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "Hvor mange ganger større er unnslipningsfarten enn sirkelbanefarten i samme avstand fra en planet?",
+"riktig": "√2 ganger",
+"feil": [
+{
+"svar": "2 ganger",
+"type": "regnefeil"
+},
+{
+"svar": "4 ganger",
+"type": "regnefeil"
+},
+{
+"svar": "1 gang",
+"type": "begrep"
+}
+],
+"forklaring": "$v_u = \\sqrt{2\\mathrm{G}M/r}$ og $v = \\sqrt{\\mathrm{G}M/r}$."
+},
+{
+"id": "gravitasjon-276",
+"tema": "gravitasjon",
+"undertema": "gravitasjonsloven",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "To stjerner, begge på $2.0\\cdot 10^{30}$ kg, går i sirkel om det felles massesenteret med avstand $1.0\\cdot 10^{11}$ m mellom seg. Hva er banefarten til hver?",
+"riktig": "26 km/s",
+"feil": [
+{
+"svar": "37 km/s",
+"type": "regnefeil"
+},
+{
+"svar": "52 km/s",
+"type": "regnefeil"
+},
+{
+"svar": "Stjernene står stille",
+"type": "begrep"
+}
+],
+"forklaring": "Baneradien er $d/2$: $\\mathrm{G}m^2/d^2 = mv^2/(d/2)$."
+},
+{
+"id": "svingninger-277",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En pendel gjør 10 svingninger på 5.0 s. Hva er perioden?",
+"riktig": "0.50 s",
+"feil": [
+{
+"svar": "2.0 s",
+"type": "regnefeil"
+},
+{
+"svar": "50 s",
+"type": "regnefeil"
+},
+{
+"svar": "5.0 s",
+"type": "begrep"
+}
+],
+"forklaring": "$T = t/n$."
+},
+{
+"id": "svingninger-278",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En svingning har frekvensen 50 Hz. Hva er perioden?",
+"riktig": "20 ms",
+"feil": [
+{
+"svar": "50 ms",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 ms",
+"type": "regnefeil"
+},
+{
+"svar": "50 s",
+"type": "begrep"
+}
+],
+"forklaring": "$T = 1/f$."
+},
+{
+"id": "svingninger-279",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva er amplituden i en svingning?",
+"riktig": "Største utslag fra likevektsstillingen",
+"feil": [
+{
+"svar": "Tiden for én svingning",
+"type": "begrep"
+},
+{
+"svar": "Antall svingninger per sekund",
+"type": "begrep"
+},
+{
+"svar": "Avstanden mellom de to ytterpunktene",
+"type": "begrep"
+}
+],
+"forklaring": "Avstanden mellom ytterpunktene er to amplituder."
+},
+{
+"id": "svingninger-280",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvilken retning har akselerasjonen i en harmonisk svingning?",
+"riktig": "Mot likevektsstillingen",
+"feil": [
+{
+"svar": "Bort fra likevektsstillingen",
+"type": "begrep"
+},
+{
+"svar": "Alltid samme vei som farten",
+"type": "begrep"
+},
+{
+"svar": "Alltid rett ned",
+"type": "begrep"
+}
+],
+"forklaring": "$a = -\\omega^2 x$."
+},
+{
+"id": "svingninger-281",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En svingning har frekvensen 2.0 Hz. Hva er vinkelfrekvensen?",
+"riktig": "13 rad/s",
+"feil": [
+{
+"svar": "6.3 rad/s",
+"type": "regnefeil"
+},
+{
+"svar": "3.1 rad/s",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 rad/s",
+"type": "begrep"
+}
+],
+"forklaring": "$\\omega = 2\\pi f$."
+},
+{
+"id": "svingninger-282",
+"tema": "svingninger",
+"undertema": "pendel",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Lengden på en pendel firedobles. Hvor mange ganger lengre blir perioden?",
+"riktig": "2 ganger",
+"feil": [
+{
+"svar": "16 ganger",
+"type": "regnefeil"
+},
+{
+"svar": "4 ganger",
+"type": "begrep"
+},
+{
+"svar": "Den er uendret",
+"type": "begrep"
+}
+],
+"forklaring": "$T$ er proporsjonal med $\\sqrt{l}$."
+},
+{
+"id": "svingninger-283",
+"tema": "svingninger",
+"undertema": "pendel",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "En kloss svinger i en fjær. Fjæra byttes med en stivere. Hva skjer med perioden?",
+"riktig": "Den minker",
+"feil": [
+{
+"svar": "Den øker",
+"type": "begrep"
+},
+{
+"svar": "Den er uendret",
+"type": "begrep"
+},
+{
+"svar": "Den blir null",
+"type": "begrep"
+}
+],
+"forklaring": "$T = 2\\pi\\sqrt{m/k}$."
+},
+{
+"id": "svingninger-284",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "En fjær med stivhet 50 N/m svinger med amplitude 0.20 m. Hva er den samlede energien?",
+"riktig": "1.0 J",
+"feil": [
+{
+"svar": "2.0 J",
+"type": "regnefeil"
+},
+{
+"svar": "5.0 J",
+"type": "regnefeil"
+},
+{
+"svar": "10 J",
+"type": "begrep"
+}
+],
+"forklaring": "$E = \\frac{1}{2}kA^2$."
+},
+{
+"id": "svingninger-285",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "En svingning er gitt ved $x = 0.050\\cos(4.0t)$, i SI-enheter. Hva er perioden?",
+"riktig": "1.6 s",
+"feil": [
+{
+"svar": "0.64 s",
+"type": "regnefeil"
+},
+{
+"svar": "4.0 s",
+"type": "regnefeil"
+},
+{
+"svar": "0.050 s",
+"type": "begrep"
+}
+],
+"forklaring": "$T = 2\\pi/\\omega$."
+},
+{
+"id": "svingninger-286",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "middels",
+"forventet_tid_s": 30,
+"tekst": "Hvor i en harmonisk svingning er akselerasjonen størst i tallverdi?",
+"riktig": "I ytterpunktene",
+"feil": [
+{
+"svar": "I likevektsstillingen",
+"type": "begrep"
+},
+{
+"svar": "Den er lik overalt",
+"type": "begrep"
+},
+{
+"svar": "Halvveis ut mot ytterpunktene",
+"type": "begrep"
+}
+],
+"forklaring": "Akselerasjonen er proporsjonal med utslaget."
+},
+{
+"id": "svingninger-287",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En kloss i en fjær har utslaget $x = A/2$. Hvor stor del av energien er fjærenergi?",
+"riktig": "25 %",
+"feil": [
+{
+"svar": "75 %",
+"type": "regnefeil"
+},
+{
+"svar": "50 %",
+"type": "regnefeil"
+},
+{
+"svar": "100 %",
+"type": "begrep"
+}
+],
+"forklaring": "Fjærenergien går som $x^2$."
+},
+{
+"id": "svingninger-288",
+"tema": "svingninger",
+"undertema": "pendel",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Hva er perioden til en pendel med lengde 1.0 m på Månen, der tyngdeakselerasjonen er 1.62 m/s²?",
+"riktig": "4.9 s",
+"feil": [
+{
+"svar": "0.79 s",
+"type": "regnefeil"
+},
+{
+"svar": "3.9 s",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 s",
+"type": "begrep"
+}
+],
+"forklaring": "$T = 2\\pi\\sqrt{l/\\mathrm{g}_\\text{Månen}}$."
+},
+{
+"id": "svingninger-289",
+"tema": "svingninger",
+"undertema": "pendel",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Hvor lang må en pendel være for å ha perioden 1.0 s?",
+"riktig": "0.25 m",
+"feil": [
+{
+"svar": "1.6 m",
+"type": "regnefeil"
+},
+{
+"svar": "0.50 m",
+"type": "regnefeil"
+},
+{
+"svar": "1.0 m",
+"type": "begrep"
+}
+],
+"forklaring": "$l = \\mathrm{g}T^2/(4\\pi^2)$."
+},
+{
+"id": "svingninger-290",
+"tema": "svingninger",
+"undertema": "pendel",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Et lodd strekker en fjær 0.20 m når det henger i ro. Hva blir perioden hvis det settes i svingninger?",
+"riktig": "0.90 s",
+"feil": [
+{
+"svar": "0.14 s",
+"type": "regnefeil"
+},
+{
+"svar": "0.45 s",
+"type": "regnefeil"
+},
+{
+"svar": "Kan ikke beregnes uten massen",
+"type": "begrep"
+}
+],
+"forklaring": "$k = m\\mathrm{g}/x$ gir $T = 2\\pi\\sqrt{x/\\mathrm{g}}$."
+},
+{
+"id": "svingninger-291",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "En svingning har største fart 0.60 m/s og amplitude 0.10 m. Hva er største akselerasjon?",
+"riktig": "3.6 m/s²",
+"feil": [
+{
+"svar": "0.60 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "36 m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "9.8 m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$\\omega = v_{\\text{maks}}/A$ og $a_{\\text{maks}} = A\\omega^2$."
+},
+{
+"id": "svingninger-292",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En svingning med perioden 1.2 s starter i $x = A$. Hvor lang tid tar det før $x = A/2$ første gang?",
+"riktig": "0.20 s",
+"feil": [
+{
+"svar": "0.60 s",
+"type": "regnefeil"
+},
+{
+"svar": "0.10 s",
+"type": "regnefeil"
+},
+{
+"svar": "0.30 s",
+"type": "begrep"
+}
+],
+"forklaring": "$\\cos(\\omega t) = 1/2$ gir $\\omega t = \\pi/3$, altså $t = T/6$."
+},
+{
+"id": "svingninger-293",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "En fjær med stivhet 200 N/m svinger med samlet energi 0.25 J. Hva er amplituden?",
+"riktig": "5.0 cm",
+"feil": [
+{
+"svar": "3.5 cm",
+"type": "regnefeil"
+},
+{
+"svar": "13 cm",
+"type": "regnefeil"
+},
+{
+"svar": "25 cm",
+"type": "begrep"
+}
+],
+"forklaring": "$A = \\sqrt{2E/k}$."
+},
+{
+"id": "svingninger-294",
+"tema": "svingninger",
+"undertema": "harmoniske",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 150,
+"tekst": "Amplituden i en dempet svingning minker med 10 % per periode. Hvor mange prosent av startamplituden er igjen etter 5 perioder?",
+"riktig": "59 %",
+"feil": [
+{
+"svar": "41 %",
+"type": "regnefeil"
+},
+{
+"svar": "90 %",
+"type": "regnefeil"
+},
+{
+"svar": "50 %",
+"type": "begrep"
+}
+],
+"forklaring": "$0.90^5 = 0.59$."
+},
+{
+"id": "svingninger-295",
+"tema": "svingninger",
+"undertema": "pendel",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En pendel med lengde 0.50 m henger i en heis som akselererer oppover med 2.0 m/s². Hva er perioden?",
+"riktig": "1.3 s",
+"feil": [
+{
+"svar": "1.6 s",
+"type": "regnefeil"
+},
+{
+"svar": "0.46 s",
+"type": "regnefeil"
+},
+{
+"svar": "1.4 s",
+"type": "begrep"
+}
+],
+"forklaring": "Effektiv tyngdeakselerasjon er $\\mathrm{g} + a$."
+},
+{
+"id": "svingninger-296",
+"tema": "svingninger",
+"undertema": "pendel",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En kloss på 0.50 kg henger i to like fjærer med stivhet 100 N/m koblet etter hverandre. Hva er perioden?",
+"riktig": "0.63 s",
+"feil": [
+{
+"svar": "0.44 s",
+"type": "regnefeil"
+},
+{
+"svar": "0.10 s",
+"type": "regnefeil"
+},
+{
+"svar": "0.31 s",
+"type": "begrep"
+}
+],
+"forklaring": "Serie gir $k = 50\\ \\mathrm{N/m}$."
+},
+{
+"id": "svingninger-297",
+"tema": "svingninger",
+"undertema": "pendel",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En jevn stav med lengde 1.0 m svinger om den ene enden ($I = ML^2/3$). Hva er perioden ved små utslag?",
+"riktig": "1.6 s",
+"feil": [
+{
+"svar": "1.2 s",
+"type": "regnefeil"
+},
+{
+"svar": "2.9 s",
+"type": "regnefeil"
+},
+{
+"svar": "2.0 s",
+"type": "begrep"
+}
+],
+"forklaring": "$T = 2\\pi\\sqrt{2L/(3\\mathrm{g})}$."
+}
+]
+}

@@ -1,0 +1,546 @@
+// Studieappen (fysikkhjelp.no/studie/): temavalg, løype, ukens quiz med tilpasset nivå, kunnskapsprofil og kurs.
+// Data lagres i Supabase (tabellene studie_* og kurs*, se supabase/oppsett.sql). Én konto og én profil for alle
+// nettstedene: svarene merkes med nettsted, og temavalget lagres som «nettsted/tema».
+// KI-vurdering og eksamensråd går via hint-tjeneren (/vurder og /rad i hint-tjener/worker.js).
+// Spørsmålene ligger i studie/sporsmal.json (lages av verktoy/sporsmal/lag_bank.py).
+(function vent(n) {
+  if (!window.fhKonto && (n || 0) < 100) return setTimeout(function () { vent((n || 0) + 1); }, 50);   // konto.js lastes etter denne
+  studieStart();
+})();
+
+function studieStart() {
+  'use strict';
+  var rot = document.getElementById('studie');
+  var NETTSTED = ((document.querySelector('meta[name="nettsted-navn"]') || {}).content || 'fysikkhjelp.no').replace(/\.no$/, '');
+  var apiMeta = (document.querySelector('meta[name="fysikkhjelp-hint-api"]') || {}).content || '';
+  var API = apiMeta.replace(/\/hint\/?$/, '');
+  var NIV = ['lett', 'middels', 'vanskelig'], VEKT = { lett: 1, middels: 1.5, vanskelig: 2 };
+  var OKT = 6, REP = 2, PER_DAG = 2;
+  var S = {}, Q = [], k = null, bruker = null;
+  var T = { vis: 'hjem', inn: null, svar: [], ukevurd: {}, deltar: [], mine: [], q: null };
+
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var pst = function (v) { return v == null ? '–' : Math.round(v * 100) + ' %'; };
+
+  // ---------------------------------------------------------------- formler
+  // Gjengir den delen av LaTeX som spørsmålene bruker (variabler i kursiv, konstanter og enheter oppreist, jf. NOTASJON.md).
+  var SYM = { cdot: '·', Delta: 'Δ', pi: 'π', theta: 'θ', mu: 'μ', omega: 'ω', alpha: 'α', tau: 'τ', eta: 'η', varepsilon: 'ε', int: '∫', hbar: 'ħ' };
+  var FUNK = { sin: 1, cos: 1, tan: 1 };
+  function mat(s, rett) {
+    var o = '', i = 0;
+    function arg() {
+      while (s[i] === ' ') i++;
+      var j, d;
+      if (s[i] === '\\') {
+        var m = /^\\[A-Za-z]+/.exec(s.slice(i)); j = i + (m ? m[0].length : 1);
+        if (s[j] === '{') { d = 0; do { if (s[j] === '{') d++; if (s[j] === '}') d--; j++; } while (d > 0 && j < s.length); }
+        var a0 = s.slice(i, j); i = j; return a0;
+      }
+      if (s[i] === '{') { j = i; d = 0; do { if (s[j] === '{') d++; if (s[j] === '}') d--; j++; } while (d > 0 && j < s.length); var a = s.slice(i + 1, j - 1); i = j; return a; }
+      return s[i++] || '';
+    }
+    while (i < s.length) {
+      var c = s[i];
+      if (c === '\\') {
+        i++; var m = /^[A-Za-z]+/.exec(s.slice(i));
+        if (!m) { i++; o += ' '; continue; }
+        var n = m[0]; i += n.length;
+        if (n === 'mathrm' || n === 'text') o += mat(arg(), true);
+        else if (n === 'frac') { var a = arg(), b = arg(); o += mat(a, rett) + '/' + mat(b, rett); }
+        else if (n === 'sqrt') o += '√(' + mat(arg(), rett) + ')';
+        else if (n === 'vec') o += mat(arg(), rett) + '⃗';
+        else if (FUNK[n]) o += ' ' + n + ' ';
+        else o += SYM[n] || n;
+      } else if (c === '^' || c === '_') { i++; var t = c === '^' ? 'sup' : 'sub'; o += '<' + t + '>' + mat(arg(), rett) + '</' + t + '>'; }
+      else if (/[A-Za-z]/.test(c)) { o += rett ? c : '<i>' + c + '</i>'; i++; }
+      else { o += esc(c); i++; }
+    }
+    return o;
+  }
+  var tx = function (s) { return String(s || '').split('$').map(function (d, i) { return i % 2 ? '<span class="st-mat">' + mat(d) + '</span>' : esc(d); }).join(''); };
+
+  // ---------------------------------------------------------------- data
+  var nokkel = function (t) { return NETTSTED + '/' + t; };
+  var valgt = function () { return (T.inn.valgt || []).filter(function (x) { return x.indexOf(NETTSTED + '/') === 0; }).map(function (x) { return x.slice(NETTSTED.length + 1); }).filter(function (t) { return S[t]; }); };
+  var niva = function (t) { var n = (T.inn.niva || {})[nokkel(t)]; return typeof n === 'number' ? n : 1; };
+  var eff = function (s) { var v = s.ki && s.ki.vurdering; return v === 'riktig' || v === 'regnefeil' || v === 'begrep' ? v : s.type; };
+  var temaUrl = function (t, u) { return '../tema/' + S[t].omrade + '/' + t + (u ? '/' + u : '') + '.html'; };
+  var tittel = function (t) { return S[t] ? S[t].tittel : t; };
+
+  function feilmelding(e) {
+    var m = (e && (e.message || e.feil)) || String(e || '');
+    if (/relation .* does not exist|schema cache/i.test(m)) return 'Databasen er ikke satt opp for studieappen ennå.';
+    if (/Failed to fetch|NetworkError|Load failed/i.test(m)) return 'Fikk ikke kontakt. Sjekk nettforbindelsen.';
+    return m || 'Noe gikk galt.';
+  }
+  function varsle(tekst, feil) {
+    var el = document.getElementById('st-varsel');
+    if (!el) return;
+    el.textContent = tekst; el.className = 'st-varsel' + (feil ? ' feil' : ''); el.hidden = false;
+    clearTimeout(varsle.t); varsle.t = setTimeout(function () { el.hidden = true; }, feil ? 8000 : 3000);
+  }
+  var sjekk = function (r) { if (r.error) throw r.error; return r.data; };
+
+  function lagreInn() {
+    T.inn.endret = new Date().toISOString();
+    return k.from('studie_innstillinger').upsert({ eier: bruker.id, valgt: T.inn.valgt, modus: T.inn.modus, repetisjon: T.inn.repetisjon, varsler: T.inn.varsler, niva: T.inn.niva, endret: T.inn.endret })
+      .then(sjekk).catch(function (e) { varsle('Fikk ikke lagret: ' + feilmelding(e), true); });
+  }
+  function fraRad(r) {
+    return { dbid: r.id, id: r.sporsmal, nettsted: r.nettsted, tema: r.tema, undertema: r.undertema, v: r.vanskelighet, type: r.type,
+             tid: r.tid_s, forv: r.forventet_s, rep: r.repetisjon, ki: r.ki, dato: r.opprettet };
+  }
+  function hentAlt() {
+    return Promise.all([
+      k.from('studie_innstillinger').select('*').eq('eier', bruker.id).maybeSingle().then(sjekk),
+      k.from('studie_svar').select('*').eq('eier', bruker.id).order('opprettet').limit(5000).then(sjekk),
+      k.from('studie_ukevurdering').select('*').eq('eier', bruker.id).then(sjekk),
+      k.from('kurs_deltaker').select('kurs, samtykke_innsyn, pameldt, kursinfo:kurs ( id, navn, krev_innsyn )').eq('student', bruker.id).then(sjekk),
+      k.from('kurs').select('*').eq('eier', bruker.id).order('opprettet').then(sjekk),
+    ]).then(function (r) {
+      T.inn = r[0] || { valgt: [], modus: 'alle', repetisjon: true, varsler: true, niva: {} };
+      T.ny = !r[0];
+      T.svar = r[1].map(fraRad);
+      T.ukevurd = {}; r[2].forEach(function (x) { if (x.nettsted === NETTSTED) T.ukevurd[x.tema] = x.vurdering; });
+      T.deltar = r[3]; T.mine = r[4];
+    });
+  }
+
+  // ---------------------------------------------------------------- kunnskapsprofil
+  // Forståelse: riktig tanke (riktig svar eller regnefeil), vektet etter vanskelighet. Presisjon: riktig blant dem med riktig tanke.
+  // Hurtighet: riktig innen forventet tid. Har KI vurdert forklaringen, gjelder KI-vurderingen.
+  function skar(l) {
+    if (!l.length) return null;
+    var v = 0, sv = 0, tanke = 0, rett = 0, fort = 0, ki = 0;
+    l.forEach(function (s) {
+      var e = eff(s); sv += VEKT[s.v] || 1;
+      if (e !== 'begrep') { v += VEKT[s.v] || 1; tanke++; }
+      if (e === 'riktig') { rett++; if (s.tid != null && s.forv && s.tid <= s.forv) fort++; }
+      if (s.ki && s.ki.vurdering && s.ki.vurdering !== 'uklar') ki++;
+    });
+    return { n: l.length, f: v / sv, p: tanke ? rett / tanke : null, h: rett ? fort / rett : null, ki: ki };
+  }
+  var mineSvar = function (t, u) { return T.svar.filter(function (s) { return s.nettsted === NETTSTED && s.tema === t && (!u || s.undertema === u); }); };
+  function stolpe(navn, v, kl) { return '<div class="st-stolpe"><span>' + navn + '</span><div class="st-bar"><i class="' + kl + '" style="width:' + (v == null ? 0 : Math.round(v * 100)) + '%"></i></div><span class="st-sm">' + pst(v) + '</span></div>'; }
+  function stolper(s) { return stolpe('Forståelse', s.f, 'f') + stolpe('Presisjon', s.p, 'p') + stolpe('Hurtighet', s.h, 'h'); }
+  function profilRader() {
+    var r = [];
+    valgt().forEach(function (t) { Object.keys(S[t].undertemaer).forEach(function (u) { var s = skar(mineSvar(t, u)); if (s) r.push({ t: t, u: u, s: s }); }); });
+    return r;
+  }
+  function regelRad() {
+    var r = profilRader();
+    if (!r.length) return '<p class="st-ind">Ta en quiz, så får du råd her.</p>';
+    function min(kk, g) { return r.filter(function (x) { return x.s[kk] != null && x.s[kk] < g; }).sort(function (a, b) { return a.s[kk] - b.s[kk]; }).slice(0, 2); }
+    function nv(x) { return '<a href="' + temaUrl(x.t, x.u) + '">' + esc(S[x.t].undertemaer[x.u]) + '</a>'; }
+    var f = min('f', 0.7), p = min('p', 0.7), h = min('h', 0.6), o = '';
+    if (f.length) o += '<p><b>Først:</b> Gå gjennom teori og videoer i ' + f.map(nv).join(' og ') + '. Her er det forståelsen som mangler, og den betyr mest.</p>';
+    if (p.length) o += '<p><b>Deretter:</b> Du tenker riktig i ' + p.map(nv).join(' og ') + ', men regner feil. Regn oppgaver for hånd, og kontroller enheter og overslag.</p>';
+    if (h.length) o += '<p><b>Til slutt:</b> Øv med tidtaking i ' + h.map(nv).join(' og ') + '. Hurtighet er det minst viktige, men kan gi deg bedre tid på eksamen.</p>';
+    return o || '<p>Du ligger godt an. Hold det ved like med repetisjonsspørsmål.</p>';
+  }
+
+  // ---------------------------------------------------------------- quiz
+  var idag = function () { return new Date().toISOString().slice(0, 10); };
+  function iDag(t) { return T.svar.filter(function (s) { return s.nettsted === NETTSTED && s.tema === t && !s.rep && String(s.dato || '').slice(0, 10) === idag(); }).length; }
+  function denneUken(t) { var g = Date.now() - 7 * 864e5; return T.svar.filter(function (s) { return s.nettsted === NETTSTED && s.tema === t && !s.rep && Date.parse(s.dato) >= g; }).length; }
+
+  // To riktige på rad gir ett nivå opp, begrepsfeil ett ned, regnefeil beholder nivået (tanken var riktig).
+  function velgNeste(t, brukt) {
+    var n = niva(t), rek = [n, n - 1, n + 1, n - 2, n + 2];
+    for (var i = 0; i < rek.length; i++) {
+      if (rek[i] < 0 || rek[i] > 2) continue;
+      var l = Q.filter(function (x) { return x.tema === t && x.vanskelighet === NIV[rek[i]] && brukt.indexOf(x.id) < 0; });
+      if (!l.length) continue;
+      var usett = l.filter(function (x) { return !T.svar.some(function (s) { return s.id === x.id; }); });
+      var u = usett.length ? usett : l;
+      return u[Math.floor(Math.random() * u.length)];
+    }
+    return null;
+  }
+  function repSp(q) {
+    var andre = T.svar.filter(function (s) { return s.nettsted === NETTSTED && s.tema !== q.tema && q.brukt.indexOf(s.id) < 0; });
+    var feil = andre.filter(function (s) { return eff(s) !== 'riktig'; });
+    var kilde = feil.length ? feil : andre;
+    for (var i = 0; i < 10 && kilde.length; i++) {
+      var s = kilde[Math.floor(Math.random() * kilde.length)], x = Q.find(function (y) { return y.id === s.id; });
+      if (x) return x;
+    }
+    return null;
+  }
+  function startQuiz(t, flere) {
+    var dag = T.inn.modus === 'dag' && !flere;
+    var hoved = dag ? Math.max(0, PER_DAG - iDag(t)) : OKT;
+    if (!hoved) return ga('ferdigIdag', { t: t });
+    // Repetisjon bare når det finnes svar fra andre temaer å repetere.
+    var kandidater = {}; T.svar.forEach(function (s) { if (s.nettsted === NETTSTED && s.tema !== t && Q.some(function (x) { return x.id === s.id; })) kandidater[s.id] = 1; });
+    var rep = T.inn.repetisjon ? Math.min(dag ? 1 : REP, Object.keys(kandidater).length) : 0;
+    T.q = { tema: t, nr: 0, hoved: hoved, antall: hoved + rep, brukt: [], res: [], rekke: 0 };
+    nesteSp();
+    ga('quiz');
+  }
+  function nesteSp() {
+    var q = T.q, x = null, rep = false;
+    if (q.nr >= q.hoved) { x = repSp(q); rep = !!x; }
+    if (!x && q.nr < q.hoved) x = velgNeste(q.tema, q.brukt);
+    if (!x) { q.ferdig = true; return; }
+    q.brukt.push(x.id);
+    var alt = [{ svar: x.riktig, type: 'riktig' }].concat(x.feil).map(function (a) { return [Math.random(), a]; }).sort(function (a, b) { return a[0] - b[0]; }).map(function (a) { return a[1]; });
+    q.na = Object.assign({}, x, { alt: alt, rep: rep, start: performance.now() }); q.svart = null; q.kiSvar = null; q.bilde = null;
+  }
+  function svar(i) {
+    var q = T.q, x = q.na, a = x.alt[i], tid = (performance.now() - x.start) / 1000;
+    if (q.svart != null) return;
+    q.svart = i;
+    var s = { id: x.id, nettsted: NETTSTED, tema: x.tema, undertema: x.undertema, v: x.vanskelighet, type: a.type, tid: tid, forv: x.forventet_tid_s, rep: x.rep, ki: null, dato: new Date().toISOString() };
+    T.svar.push(s); q.res.push(a.type); q.sist = s;
+    s.lagret = k.from('studie_svar').insert({ nettsted: NETTSTED, sporsmal: x.id, tema: x.tema, undertema: x.undertema, vanskelighet: x.vanskelighet, type: a.type,
+      tid_s: Math.round(tid * 10) / 10, forventet_s: x.forventet_tid_s, repetisjon: x.rep }).select('id').single()
+      .then(function (r) { s.dbid = sjekk(r).id; return s.dbid; })
+      .catch(function (e) { varsle('Svaret ble ikke lagret: ' + feilmelding(e), true); });
+    if (!x.rep) {
+      var t = x.tema, n = niva(t);
+      if (a.type === 'riktig') { q.rekke++; if (q.rekke >= 2) { n = Math.min(2, n + 1); q.rekke = 0; } }
+      else { q.rekke = 0; if (a.type === 'begrep') n = Math.max(0, n - 1); }
+      if (n !== niva(t)) { T.inn.niva = Object.assign({}, T.inn.niva); T.inn.niva[nokkel(t)] = n; lagreInn(); }
+    }
+    tegn();
+  }
+  function videre() {
+    var q = T.q; q.nr++;
+    if (q.nr >= q.antall) return ga('resultat');
+    nesteSp(); if (q.ferdig) return ga('resultat');
+    tegn(); scrollTo(0, rot.getBoundingClientRect().top + scrollY - 80);
+  }
+
+  // ---------------------------------------------------------------- KI: tale, bilde, vurdering, råd
+  var Tale = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var lytter = null;
+  function tale(knapp) {
+    if (lytter) { lytter.stop(); return; }
+    var felt = document.getElementById('st-forklaring');
+    lytter = new Tale(); lytter.lang = 'nb-NO'; lytter.continuous = true; lytter.interimResults = false;
+    lytter.onresult = function (ev) { for (var i = ev.resultIndex; i < ev.results.length; i++) if (ev.results[i].isFinal) felt.value += (felt.value && !/\s$/.test(felt.value) ? ' ' : '') + ev.results[i][0].transcript; };
+    lytter.onend = function () { lytter = null; knapp.textContent = '🎤 Snakk'; knapp.classList.remove('pa'); };
+    lytter.onerror = function (e) { varsle(e.error === 'not-allowed' ? 'Gi nettleseren lov til å bruke mikrofonen.' : 'Talegjenkjenningen stoppet.', true); };
+    lytter.start(); knapp.textContent = '■ Stopp'; knapp.classList.add('pa');
+  }
+  // Bildet skaleres ned til høyst 1600 px før det sendes. Det lagres ikke noe sted.
+  function lesBilde(fil) {
+    return new Promise(function (ok, nei) {
+      if (!fil || !/^image\//.test(fil.type)) return nei(new Error('Velg et bilde.'));
+      var r = new FileReader();
+      r.onload = function () {
+        var img = new Image();
+        img.onload = function () {
+          var m = Math.min(1, 1600 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+          c.width = Math.round(img.width * m); c.height = Math.round(img.height * m);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          ok(c.toDataURL('image/jpeg', 0.85));
+        };
+        img.onerror = function () { nei(new Error('Klarte ikke å lese bildet. Prøv JPEG eller PNG.')); };
+        img.src = r.result;
+      };
+      r.onerror = nei; r.readAsDataURL(fil);
+    });
+  }
+  function ki(sti, body) {
+    if (!API) return Promise.reject(new Error('KI-tjenesten er ikke satt opp ennå.'));
+    return k.auth.getSession().then(function (r) {
+      var tok = r.data.session && r.data.session.access_token;
+      return fetch(API + sti, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: JSON.stringify(body) });
+    }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (d) { if (!r.ok) throw new Error(d.feil || 'KI-tjenesten svarte ikke (' + r.status + ').'); return d; }); });
+  }
+  function vurder() {
+    var q = T.q, x = q.na, s = q.sist, tekst = document.getElementById('st-forklaring').value.trim();
+    if (!tekst && !q.bilde) return varsle('Skriv, snakk eller last opp et bilde først.', true);
+    q.venter = true; tegn();
+    ki('/vurder', { sporsmal: { tekst: x.tekst, riktig: x.riktig, forklaring: x.forklaring }, valgt: x.alt[q.svart].svar, forklaring: tekst, bilde: q.bilde })
+      .then(function (d) {
+        q.kiSvar = d; s.ki = { vurdering: d.vurdering, sikkerhet: d.sikkerhet, tilbakemelding: d.tilbakemelding, kilde: q.bilde ? 'bilde' : 'tekst' };
+        return Promise.resolve(s.lagret).then(function (id) { if (id) return k.from('studie_svar').update({ ki: s.ki }).eq('id', id).then(sjekk); });
+      })
+      .catch(function (e) { q.kiSvar = { feil: feilmelding(e) }; })
+      .then(function () { q.venter = false; q.tekst = tekst; tegn(); });
+  }
+  function hentRad() {
+    var r = profilRader().map(function (x) { return { tema: tittel(x.t), undertema: S[x.t].undertemaer[x.u], f: x.s.f, p: x.s.p, h: x.s.h, n: x.s.n }; });
+    T.kiRad = { venter: true }; tegn();
+    ki('/rad', { profil: r }).then(function (d) { T.kiRad = { tekst: d.rad }; }).catch(function (e) { T.kiRad = { feil: feilmelding(e) }; }).then(tegn);
+  }
+
+  // ---------------------------------------------------------------- kurs
+  function lagKode() { var a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s = ''; for (var i = 0; i < 6; i++) s += a[Math.floor(Math.random() * a.length)]; return s; }
+  function lagKurs() {
+    var navn = document.getElementById('st-kursnavn').value.trim(), krev = document.getElementById('st-kurskrev').checked;
+    if (!navn) return varsle('Gi kurset et navn.', true);
+    (function prov(n) {
+      k.from('kurs').insert({ navn: navn, kode: lagKode(), krev_innsyn: krev }).select('*').single().then(function (r) {
+        if (r.error && r.error.code === '23505' && n < 5) return prov(n + 1);
+        T.mine.push(sjekk(r)); varsle('Kurset er laget. Gi studentene koden.'); tegn();
+      }).catch(function (e) { varsle(feilmelding(e), true); });
+    })(0);
+  }
+  function finnKurs() {
+    var kode = document.getElementById('st-kode').value.trim();
+    if (!kode) return;
+    k.rpc('finn_kurs', { k: kode }).then(sjekk).then(function (d) {
+      if (!d || !d.length) return varsle('Fant ikke noe kurs med den koden.', true);
+      if (T.deltar.some(function (x) { return x.kurs === d[0].id; })) return varsle('Du er allerede påmeldt ' + d[0].navn + '.');
+      ga('pamelding', { kurs: d[0] });
+    }).catch(function (e) { varsle(feilmelding(e), true); });
+  }
+  function meldPa() {
+    var c = T.kurs;
+    k.from('kurs_deltaker').insert({ kurs: c.id, student: bruker.id, samtykke_innsyn: !!c.krev_innsyn }).then(sjekk).then(function () {
+      return hentAlt();
+    }).then(function () { varsle('Du er påmeldt ' + c.navn + '.'); ga('kurs'); }).catch(function (e) { varsle(feilmelding(e), true); });
+  }
+  function meldAv(id) {
+    k.from('kurs_deltaker').delete().eq('kurs', id).eq('student', bruker.id).then(sjekk).then(function () {
+      T.deltar = T.deltar.filter(function (x) { return x.kurs !== id; }); varsle('Du er meldt av.'); tegn();
+    }).catch(function (e) { varsle(feilmelding(e), true); });
+  }
+  function apneKurs(id) {
+    var c = T.mine.find(function (x) { return x.id === id; });
+    T.kursData = { c: c, laster: true }; ga('kursLarer');
+    Promise.all([k.rpc('kurs_oversikt', { k: id }).then(sjekk), k.rpc('kurs_antall', { k: id }).then(sjekk),
+                 c.krev_innsyn ? k.rpc('kurs_deltakere', { k: id }).then(sjekk) : Promise.resolve([])])
+      .then(function (r) { T.kursData = { c: c, oversikt: r[0] || [], antall: r[1] || 0, deltakere: r[2] || [] }; })
+      .catch(function (e) { T.kursData = { c: c, feil: feilmelding(e) }; }).then(tegn);
+  }
+  function visStudent(id, epost) {
+    T.kursData.student = { epost: epost, laster: true }; tegn();
+    k.from('studie_svar').select('*').eq('eier', id).limit(5000).then(sjekk)
+      .then(function (d) { T.kursData.student = { epost: epost, svar: d.map(fraRad) }; })
+      .catch(function (e) { T.kursData.student = { epost: epost, feil: feilmelding(e) }; }).then(tegn);
+  }
+  function slettKurs(id) {
+    if (T.slett !== id) { T.slett = id; return tegn(); }
+    k.from('kurs').delete().eq('id', id).then(sjekk).then(function () { T.mine = T.mine.filter(function (x) { return x.id !== id; }); T.slett = null; varsle('Kurset er slettet.'); ga('kurs'); })
+      .catch(function (e) { varsle(feilmelding(e), true); });
+  }
+
+  // ---------------------------------------------------------------- skjermer
+  function skala(t) {
+    var v = T.ukevurd[t];
+    return '<div class="st-skala">' + [1, 2, 3, 4, 5].map(function (n) { return '<button type="button" class="' + (v === n ? 'pa' : '') + '" data-h="vurd" data-t="' + t + '" data-n="' + n + '">' + n + '</button>'; }).join('') +
+      '</div><div class="st-rad st-sm"><span>Lett</span><span>Vanskelig</span></div>';
+  }
+  var SKJ = {
+    hjem: function () {
+      var v = valgt(), alle = skar(T.svar.filter(function (s) { return s.nettsted === NETTSTED && v.indexOf(s.tema) >= 0; }));
+      var o = '<p class="st-hand">Hei, ' + esc(bruker.email) + '!</p>';
+      if (!v.length) o += '<div class="st-kort st-viktig"><b>Kom i gang</b><p>Velg temaene du skal studere, så lager vi en løype med én uke per tema.</p></div>';
+      else o += '<h2>Din løype</h2>' + v.map(function (t, i) {
+        return '<button type="button" class="st-kort" data-h="uke" data-t="' + t + '"><div class="st-rad"><b>Uke ' + (i + 1) + ': ' + esc(tittel(t)) + '</b><span class="st-sm">' + (T.ukevurd[t] ? 'Vurdert ' + T.ukevurd[t] + '/5' : '→') + '</span></div>' +
+          '<span class="st-sm">' + Object.keys(S[t].undertemaer).length + ' undertemaer · nivå: ' + NIV[niva(t)] + ' · ' + Math.min(denneUken(t), OKT) + ' av ' + OKT + ' spørsmål denne uken</span></button>';
+      }).join('');
+      if (alle) o += '<h2>Kunnskapsprofil</h2>' + stolper(alle) + '<p><button type="button" class="st-btn g" data-h="ga" data-v="profil">Se hele profilen</button></p>';
+      o += '<h2>Temaer du studerer</h2><p class="st-sm">Rekkefølgen her blir rekkefølgen i løypa.</p>' + temavalg();
+      o += '<h2>Innstillinger for quiz</h2>' +
+        '<label class="st-valg"><input type="radio" name="st-modus" value="alle"' + (T.inn.modus === 'alle' ? ' checked' : '') + '> Alle spørsmålene på én gang</label>' +
+        '<label class="st-valg"><input type="radio" name="st-modus" value="dag"' + (T.inn.modus === 'dag' ? ' checked' : '') + '> Noen spørsmål hver dag (' + PER_DAG + ' per tema)</label>' +
+        '<label class="st-valg"><input type="checkbox" data-inn="repetisjon"' + (T.inn.repetisjon ? ' checked' : '') + '> Repetisjonsspørsmål</label>' +
+        '<label class="st-valg"><input type="checkbox" data-inn="varsler"' + (T.inn.varsler ? ' checked' : '') + '> Påminnelser</label>' +
+        '<p class="st-sm">Påminnelser sendes når studieappen kommer som app på mobilen. Valget ditt blir husket til da.</p>';
+      return o;
+    },
+    uke: function () {
+      var t = T.t, nr = valgt().indexOf(t) + 1, u = S[t].undertemaer, dag = T.inn.modus === 'dag';
+      return '<button type="button" class="st-tilbake" data-h="ga" data-v="hjem">← Løypa</button><h2 class="st-h1">Uke ' + nr + ': ' + esc(tittel(t)) + '</h2>' +
+        '<h3>Undertemaer</h3>' + Object.keys(u).map(function (id) { return '<a class="st-kort" href="' + temaUrl(t, id) + '"><div class="st-rad"><span>' + esc(u[id]) + '</span><span class="st-sm">Lærestoff og video →</span></div></a>'; }).join('') +
+        '<h3>Ukens quiz</h3><p class="st-ind">Du starter på nivå <b>' + NIV[niva(t)] + '</b>, og nivået følger svarene dine. ' +
+        (dag ? 'Du får ' + PER_DAG + ' spørsmål om dagen (' + iDag(t) + ' tatt i dag).' : 'Du får ' + OKT + ' spørsmål' + (T.inn.repetisjon ? ' og opptil ' + REP + ' repetisjonsspørsmål' : '') + '.') + '</p>' +
+        '<p><button type="button" class="st-btn" data-h="quiz" data-t="' + t + '">Start quiz</button></p>' +
+        '<h3>Hvor vanskelig var ukens tema?</h3>' + skala(t) +
+        '<p class="st-sm">Faglæreren din ser bare samletall for kurset, og bare når minst 5 har svart.</p>';
+    },
+    ferdigIdag: function () {
+      return '<h2 class="st-h1">Dagens spørsmål er tatt</h2><p>Du har svart på ' + PER_DAG + ' spørsmål i ' + esc(tittel(T.t)) + ' i dag. Kom tilbake i morgen!</p>' +
+        '<p><button type="button" class="st-btn g" data-h="quizFlere" data-t="' + T.t + '">Ta flere likevel</button> <button type="button" class="st-btn" data-h="ga" data-v="hjem">Til løypa</button></p>';
+    },
+    quiz: function () {
+      var q = T.q, x = q.na, sv = q.svart, a = sv == null ? null : x.alt[sv], fb = '';
+      if (a) {
+        var kl = a.type === 'riktig' ? '' : (a.type === 'regnefeil' ? 'r' : 'n');
+        var ti = a.type === 'riktig' ? 'Riktig!' : (a.type === 'regnefeil' ? 'Riktig tanke, men regnefeil.' : 'Ikke riktig.');
+        fb = '<div class="st-fb ' + kl + '"><b>' + ti + '</b><p>' + tx(x.forklaring) + '</p></div>';
+        var kis = q.kiSvar;
+        if (kis && !kis.feil) {
+          var kt = { riktig: 'KI: Riktig fysikk og riktig regning.', regnefeil: 'KI: Riktig tankegang, men en regnefeil.', begrep: 'KI: Her bør du se på fysikken igjen.', uklar: 'KI: Klarte ikke å lese besvarelsen.' }[kis.vurdering];
+          fb += '<div class="st-fb ki"><b>' + kt + '</b><p>' + tx(kis.tilbakemelding) + '</p>' + (kis.vurdering !== 'uklar' ? '<p class="st-sm">Denne vurderingen teller i kunnskapsprofilen din.</p>' : '') + '</div>';
+        } else {
+          fb += '<h3>Vis hvordan du tenkte</h3><p class="st-sm">Valgfritt. Ta bilde av utregningen eller forklar med egne ord, så vurderer KI om du har forstått fysikken. Bildet lagres ikke.</p>' +
+            '<textarea id="st-forklaring" placeholder="Forklar hvordan du tenkte …">' + esc(q.tekst || '') + '</textarea>' +
+            '<div class="st-vedlegg">' + (Tale ? '<button type="button" class="st-btn g" data-h="tale">🎤 Snakk</button>' : '') +
+            '<label class="st-btn g">📷 ' + (q.bilde ? 'Bytt bilde' : 'Ta bilde') + '<input type="file" accept="image/*" capture="environment" id="st-bilde"></label>' +
+            '<button type="button" class="st-btn" data-h="vurder"' + (q.venter ? ' disabled' : '') + '>' + (q.venter ? 'Vurderer …' : 'Få tilbakemelding') + '</button></div>' +
+            (q.bilde ? '<img class="st-forhand" alt="Bildet ditt" src="' + q.bilde + '">' : '') +
+            (kis && kis.feil ? '<p class="st-feil">' + esc(kis.feil) + '</p>' : '');
+        }
+        fb += '<p class="st-videre"><button type="button" class="st-btn" data-h="videre">' + (q.nr + 1 >= q.antall ? 'Se resultat' : 'Neste') + '</button></p>';
+      }
+      return '<div class="st-rad st-sm"><span>' + esc(tittel(x.tema)) + ' · ' + esc(S[x.tema].undertemaer[x.undertema] || '') + (x.rep ? ' · repetisjon' : '') + '</span><span>' + (q.nr + 1) + ' av ' + q.antall + '</span></div>' +
+        '<div class="st-fram"><i style="width:' + (q.nr / q.antall * 100) + '%"></i></div>' +
+        '<span class="st-mrk ' + x.vanskelighet + '">' + x.vanskelighet + '</span><p class="st-sporsmal">' + tx(x.tekst) + '</p>' +
+        x.alt.map(function (o, i) { var c = ''; if (a) { if (o.type === 'riktig') c = 'ok'; else if (i === sv) c = 'nei'; } return '<button type="button" class="st-alt ' + c + '"' + (a ? ' disabled' : '') + ' data-h="svar" data-i="' + i + '">' + tx(o.svar) + '</button>'; }).join('') + fb;
+    },
+    resultat: function () {
+      var q = T.q, r = q.res, c = function (t) { return r.filter(function (x) { return x === t; }).length; };
+      return '<h2 class="st-h1">Quizzen er ferdig</h2><p class="st-hand">' + c('riktig') + ' av ' + r.length + ' riktige</p>' +
+        '<div class="st-kort"><div class="st-rad"><span>Riktig</span><b>' + c('riktig') + '</b></div><div class="st-rad"><span>Riktig tanke, regnefeil</span><b>' + c('regnefeil') + '</b></div><div class="st-rad"><span>Må jobbes mer med</span><b>' + c('begrep') + '</b></div></div>' +
+        '<p>Neste gang starter du på nivå <b>' + NIV[niva(q.tema)] + '</b>.</p><h3>Hvor vanskelig var ukens tema?</h3>' + skala(q.tema) +
+        '<p style="margin-top:1rem"><button type="button" class="st-btn" data-h="ga" data-v="profil">Se kunnskapsprofilen</button> <button type="button" class="st-btn g" data-h="ga" data-v="hjem">Til løypa</button></p>';
+    },
+    profil: function () {
+      var bl = valgt().map(function (t) {
+        var l = mineSvar(t), s = skar(l);
+        if (!s) return '<div class="st-kort"><b>' + esc(tittel(t)) + '</b><p class="st-sm">Ingen svar ennå.</p></div>';
+        var u = S[t].undertemaer;
+        return '<div class="st-kort"><b>' + esc(tittel(t)) + '</b><span class="st-sm"> · ' + s.n + ' svar' + (s.ki ? ', ' + s.ki + ' vurdert av KI' : '') + '</span>' + stolper(s) +
+          Object.keys(u).map(function (id) { var d = skar(l.filter(function (x) { return x.undertema === id; })); return d ? '<details><summary class="st-sm">' + esc(u[id]) + ' (' + d.n + ' svar)</summary>' + stolper(d) + '</details>' : ''; }).join('') + '</div>';
+      }).join('') || '<p class="st-ind">Velg temaer på løypa først.</p>';
+      var kr = T.kiRad, kiDel = !kr ? '<p><button type="button" class="st-btn g" data-h="rad">Få personlig råd fra KI</button></p>'
+        : kr.venter ? '<p class="st-ind">KI skriver rådene dine …</p>' : kr.feil ? '<p class="st-feil">' + esc(kr.feil) + '</p>'
+        : '<div class="st-fb ki">' + kr.tekst.split(/\n\s*\n/).map(function (p) { return '<p>' + tx(p) + '</p>'; }).join('') + '</div>';
+      return '<h2 class="st-h1">Kunnskapsprofil</h2><p class="st-sm"><b>Forståelse</b> er viktigst. <b>Presisjon</b> viser om du regner riktig når tanken er riktig. <b>Hurtighet</b> er minst viktig, men kan gi deg bedre tid på eksamen.</p>' +
+        bl + '<h2>Slik forbereder du deg til eksamen</h2>' + regelRad() + kiDel;
+    },
+    kurs: function () {
+      var o = '<h2 class="st-h1">Kurs</h2><h3>Kurs du er med i</h3>';
+      o += T.deltar.length ? T.deltar.map(function (d) {
+        var c = d.kursinfo || {};
+        return '<div class="st-kort"><div class="st-rad"><b>' + esc(c.navn) + '</b><button type="button" class="st-btn g liten" data-h="meldAv" data-id="' + d.kurs + '">Meld av</button></div><span class="st-sm">' +
+          (d.samtykke_innsyn ? 'Faglærer ser kunnskapsprofilen din. Meld deg av for å trekke samtykket.' : 'Faglærer ser bare samletall for kurset.') + '</span></div>';
+      }).join('') : '<p class="st-ind">Du er ikke med i noe kurs.</p>';
+      o += '<div class="st-kort"><label class="st-sm" for="st-kode">Meld deg på med kurskoden fra faglæreren</label><div class="st-rad"><input id="st-kode" maxlength="12" placeholder="F.eks. K7Q2MX" autocomplete="off"><button type="button" class="st-btn" data-h="finnKurs">Finn kurs</button></div></div>';
+      o += '<h3>For faglærere</h3>' + T.mine.map(function (c) {
+        return '<div class="st-kort"><div class="st-rad"><b>' + esc(c.navn) + '</b><span class="st-sm">Kode <b class="st-kode">' + esc(c.kode) + '</b></span></div><p class="st-sm">' +
+          (c.krev_innsyn ? 'Innsyn i studentenes kunnskapsprofil er påkrevd.' : 'Bare samletall, ingen enkeltprofiler.') + '</p>' +
+          '<button type="button" class="st-btn liten" data-h="apneKurs" data-id="' + c.id + '">Åpne</button> <button type="button" class="st-btn g liten" data-h="slettKurs" data-id="' + c.id + '">' + (T.slett === c.id ? 'Bekreft sletting' : 'Slett') + '</button></div>';
+      }).join('');
+      o += '<div class="st-kort"><b>Lag nytt kurs</b><label class="st-sm" for="st-kursnavn">Navn på kurset</label><input id="st-kursnavn" maxlength="120">' +
+        '<label class="st-valg"><input type="checkbox" id="st-kurskrev"> Krev innsyn i studentenes kunnskapsprofil (studentene må godta ved påmelding)</label>' +
+        '<button type="button" class="st-btn" data-h="lagKurs">Lag kurs</button></div>';
+      return o;
+    },
+    pamelding: function () {
+      var c = T.kurs;
+      return '<button type="button" class="st-tilbake" data-h="ga" data-v="kurs">← Kurs</button><h2 class="st-h1">Meld deg på ' + esc(c.navn) + '</h2>' +
+        (c.krev_innsyn ? '<div class="st-fb r"><b>Faglærer krever innsyn</b><p>I dette kurset ser faglærer kunnskapsprofilen din: svarene dine og forståelse, presisjon og hurtighet for hvert tema og undertema. Du må godta dette for å melde deg på. Du kan trekke samtykket når som helst ved å melde deg av.</p></div>'
+          : '<p>Faglærer ser bare samletall for kurset, aldri profilen din.</p>') +
+        '<p style="margin-top:1rem"><button type="button" class="st-btn" data-h="meldPa">' + (c.krev_innsyn ? 'Godta og meld på' : 'Meld på') + '</button> <button type="button" class="st-btn g" data-h="ga" data-v="kurs">Avbryt</button></p>';
+    },
+    kursLarer: function () {
+      var d = T.kursData, c = d.c, o = '<button type="button" class="st-tilbake" data-h="ga" data-v="kurs">← Kurs</button><h2 class="st-h1">' + esc(c.navn) + '</h2><p class="st-sm">Kode <b class="st-kode">' + esc(c.kode) + '</b></p>';
+      if (d.laster) return o + '<p class="st-ind">Laster …</p>';
+      if (d.feil) return o + '<p class="st-feil">' + esc(d.feil) + '</p>';
+      o += '<p>' + (d.antall === 1 ? '1 påmeldt student' : d.antall + ' påmeldte studenter') + '.</p><h3>Hva synes kurset er vanskelig?</h3>';
+      var ov = d.oversikt.filter(function (r) { return r.nettsted === NETTSTED; });
+      o += ov.length ? ov.map(function (r) {
+        return '<div class="st-kort"><div class="st-rad"><span>' + esc(tittel(r.tema)) + '</span>' + (r.vurdering != null ? '<b>' + Number(r.vurdering).toFixed(1) + ' / 5</b>' : '<span class="st-sm">Under 5 svar</span>') + '</div>' +
+          (r.vurdering != null ? '<div class="st-bar"><i class="v" style="width:' + (r.vurdering / 5 * 100) + '%"></i></div>' : '') + '<span class="st-sm">' + r.studenter_vurdering + ' anonyme vurderinger</span>' +
+          (r.forstaelse != null ? stolper({ f: +r.forstaelse, p: r.presisjon == null ? null : +r.presisjon, h: r.hurtighet == null ? null : +r.hurtighet }) + '<span class="st-sm">Kursets profil, ' + r.studenter_svar + ' studenter</span>'
+            : '<p class="st-sm">Kursets profil vises når minst 5 studenter har svart (nå ' + r.studenter_svar + ').</p>') + '</div>';
+      }).join('') : '<p class="st-ind">Ingen svar ennå.</p>';
+      if (c.krev_innsyn) {
+        o += '<h3>Studenter</h3>' + (d.deltakere.length ? d.deltakere.map(function (s) { return '<button type="button" class="st-kort" data-h="visStudent" data-id="' + s.student + '" data-epost="' + esc(s.epost) + '">' + esc(s.epost) + '</button>'; }).join('') : '<p class="st-ind">Ingen påmeldte ennå.</p>');
+        var st = d.student;
+        if (st) {
+          o += '<div class="st-kort st-viktig"><b>' + esc(st.epost) + '</b>';
+          if (st.laster) o += '<p class="st-ind">Laster …</p>';
+          else if (st.feil) o += '<p class="st-feil">' + esc(st.feil) + '</p>';
+          else {
+            var temaer = []; st.svar.forEach(function (s) { if (s.nettsted === NETTSTED && temaer.indexOf(s.tema) < 0) temaer.push(s.tema); });
+            o += temaer.length ? temaer.map(function (t) { var s = skar(st.svar.filter(function (x) { return x.nettsted === NETTSTED && x.tema === t; })); return '<p style="margin:.6rem 0 0"><b>' + esc(tittel(t)) + '</b> <span class="st-sm">' + s.n + ' svar</span></p>' + stolper(s); }).join('') : '<p class="st-ind">Ingen svar ennå.</p>';
+          }
+          o += '</div>';
+        }
+      }
+      return o;
+    },
+  };
+  function temavalg() {
+    var v = valgt(), gr = {}, rek = [];
+    Object.keys(S).forEach(function (id) { var o = S[id].omrade; if (!gr[o]) { gr[o] = []; rek.push(o); } gr[o].push(id); });
+    return rek.map(function (o) {
+      return '<p class="st-sm" style="margin:.7rem 0 .2rem"><b>' + esc(T.omrader[o] || o) + '</b></p>' + gr[o].map(function (id) {
+        return '<label class="st-valg"><input type="checkbox" data-tema="' + id + '"' + (v.indexOf(id) >= 0 ? ' checked' : '') + '> ' + esc(S[id].tittel) + '</label>';
+      }).join('') + (o === 'elektromagnetisme' ? '<label class="st-valg av"><input type="checkbox" disabled> Magnetisme og induksjon (kommer)</label>' : '');
+    }).join('');
+  }
+
+  function ga(v, p) { Object.assign(T, { vis: v }, p || {}); if (v !== 'profil') T.kiRad = T.kiRad && T.kiRad.tekst ? T.kiRad : null; tegn(); rot.scrollIntoView({ block: 'start' }); }
+  function tegn() {
+    var faner = [['hjem', 'Løype'], ['profil', 'Profil'], ['kurs', 'Kurs']];
+    var aktiv = { uke: 'hjem', quiz: 'hjem', resultat: 'hjem', ferdigIdag: 'hjem', pamelding: 'kurs', kursLarer: 'kurs' }[T.vis] || T.vis;
+    rot.innerHTML = '<nav class="st-faner" role="tablist">' + faner.map(function (f) { return '<button type="button" role="tab" aria-selected="' + (aktiv === f[0]) + '" data-h="ga" data-v="' + f[0] + '">' + f[1] + '</button>'; }).join('') + '</nav>' +
+      '<div class="st-innhold">' + SKJ[T.vis]() + '</div><p id="st-varsel" class="st-varsel" role="status" hidden></p>';
+  }
+
+  // Alle klikk og endringer håndteres her (ingen inline-skript i HTML-en).
+  rot.addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-h]'); if (!b || b.disabled) return;
+    var d = b.dataset;
+    ({
+      ga: function () { ga(d.v); },
+      uke: function () { ga('uke', { t: d.t }); },
+      quiz: function () { startQuiz(d.t); },
+      quizFlere: function () { startQuiz(d.t, true); },
+      svar: function () { svar(+d.i); },
+      videre: videre,
+      vurder: vurder,
+      tale: function () { tale(b); },
+      rad: hentRad,
+      vurd: function () {
+        T.ukevurd[d.t] = +d.n; tegn();
+        k.from('studie_ukevurdering').upsert({ eier: bruker.id, nettsted: NETTSTED, tema: d.t, vurdering: +d.n, endret: new Date().toISOString() }).then(sjekk)
+          .catch(function (e) { varsle('Fikk ikke lagret: ' + feilmelding(e), true); });
+      },
+      finnKurs: finnKurs, meldPa: meldPa, lagKurs: lagKurs,
+      meldAv: function () { meldAv(d.id); },
+      apneKurs: function () { apneKurs(d.id); },
+      slettKurs: function () { slettKurs(d.id); },
+      visStudent: function () { visStudent(d.id, d.epost); },
+    }[d.h] || function () {})();
+  });
+  rot.addEventListener('change', function (ev) {
+    var el = ev.target;
+    if (el.dataset.tema) {
+      var id = el.dataset.tema, v = valgt(), ny = el.checked ? Object.keys(S).filter(function (t) { return v.indexOf(t) >= 0 || t === id; }) : v.filter(function (t) { return t !== id; });
+      var andre = (T.inn.valgt || []).filter(function (x) { return x.indexOf(NETTSTED + '/') !== 0; });
+      T.inn.valgt = andre.concat(ny.map(nokkel)); lagreInn(); tegn();
+    } else if (el.name === 'st-modus') { T.inn.modus = el.value; lagreInn(); }
+    else if (el.dataset.inn) { T.inn[el.dataset.inn] = el.checked; lagreInn(); }
+    else if (el.id === 'st-bilde' && el.files[0]) {
+      var tekst = (document.getElementById('st-forklaring') || {}).value || '';
+      lesBilde(el.files[0]).then(function (url) { T.q.bilde = url; T.q.tekst = tekst; tegn(); }).catch(function (e) { varsle(e.message, true); });
+    }
+  });
+  rot.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' && ev.target.id === 'st-kode') finnKurs(); });
+
+  // ---------------------------------------------------------------- oppstart
+  if (!window.fhKonto || !window.fhKonto.sattOpp) { rot.innerHTML = '<p class="st-ind">Innlogging er ikke satt opp ennå.</p>'; return; }
+  Promise.all([
+    fetch('sporsmal.json').then(function (r) { if (!r.ok) throw new Error('Fant ikke spørsmålene.'); return r.json(); }),
+    window.fhKonto(),
+  ]).then(function (r) {
+    S = r[0].struktur; Q = r[0].sporsmal; T.omrader = r[0].omrader || {}; k = r[1];
+    return k.auth.getSession();
+  }).then(function (r) {
+    var sesjon = r.data.session;
+    if (!sesjon) {
+      rot.innerHTML = '<div class="st-kort st-viktig"><b>Logg inn for å bruke studieappen</b><p>Med en gratis konto får du en løype gjennom temaene, ukentlige quizer tilpasset nivået ditt og en kunnskapsprofil. Samme konto gjelder på alle nettstedene til Realfagsambassaden.</p>' +
+        '<p><a class="st-btn" href="../konto/index.html?neste=studie">Logg inn eller registrer deg</a></p></div>';
+      return;
+    }
+    bruker = sesjon.user;
+    return hentAlt().then(function () { tegn(); if (T.ny) lagreInn(); });
+  }).catch(function (e) {
+    rot.innerHTML = '<p class="st-feil">Fikk ikke startet studieappen: ' + esc(feilmelding(e)) + '</p>';
+  });
+
+  // For testene (verktoy/sporsmal/test_studie.js)
+  window.__studie = { T: T, mat: mat, tx: tx, skar: skar, get Q() { return Q; } };
+}

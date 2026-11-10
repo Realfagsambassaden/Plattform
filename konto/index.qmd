@@ -51,7 +51,11 @@ toc: false
         <h3>Design din forelesning</h3>
         <p>Plukk sider, eksempler og oppgaver, sett dem i din rekkefølge og vis dem som tavleslides. Lagres på kontoen din.</p>
       </a>
-      <div class="track"><span class="status">Kommer</span><h3>Test deg selv</h3><p>Finn ut hva du behersker, og få en ferdighetsprofil basert på oppgavene du har løst.</p></div>
+      <a class="track live" href="../studie/index.html">
+        <span class="status">Ny · test</span>
+        <h3>Test deg selv</h3>
+        <p>Velg temaer, få en løype uke for uke, ta quizer tilpasset nivået ditt og se kunnskapsprofilen din.</p>
+      </a>
       <div class="track"><span class="status">Kommer</span><h3>Estimert karakter</h3><p>Et anslag på hvor du ligger an før eksamen.</p></div>
       <div class="track"><span class="status">Kommer</span><h3>Veiledning</h3><p>Bestill veiledning med Dr. Normann.</p></div>
     </div>

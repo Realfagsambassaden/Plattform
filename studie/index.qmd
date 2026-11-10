@@ -1,0 +1,71 @@
+---
+title: "Test deg selv"
+subtitle: "Velg temaer, følg løypa uke for uke, ta quizer tilpasset nivået ditt og se kunnskapsprofilen din."
+toc: false
+---
+
+```{=html}
+<div id="studie" class="studie" aria-live="polite"><p class="st-ind">Laster …</p></div>
+<style>
+.studie { max-width: 640px; }
+.studie h2 { font-size: 1.25rem; margin: 1.6rem 0 .5rem; }
+.studie h3 { font-size: 1.05rem; margin: 1.3rem 0 .45rem; }
+.studie .st-h1 { margin-top: .4rem; }
+.studie .st-ind, .studie .st-sm { color: var(--bs-secondary-color); }
+.studie .st-sm { font-size: .86rem; }
+.studie .st-hand { font-family: "Architects Daughter", cursive; color: var(--bs-warning); font-size: 1.1rem; }
+.studie .st-faner { display: flex; gap: .3rem; border-bottom: 1px solid var(--bs-border-color); margin-bottom: 1rem; }
+.studie .st-faner button { background: none; border: 0; border-bottom: 3px solid transparent; color: var(--bs-secondary-color); font-weight: 700; padding: .55rem .9rem; }
+.studie .st-faner button[aria-selected="true"] { color: var(--bs-primary); border-bottom-color: var(--bs-primary); }
+.studie .st-kort { display: block; width: 100%; text-align: left; background: rgba(127,127,127,.06); border: 1px solid var(--bs-border-color); border-radius: 10px;
+  padding: .75rem .9rem; margin: .5rem 0; color: inherit; text-decoration: none; }
+.studie button.st-kort:hover, .studie a.st-kort:hover { border-color: var(--bs-primary); }
+.studie .st-kort.st-viktig { border-color: var(--bs-primary); }
+.studie .st-kort p { margin: .35rem 0; }
+.studie .st-rad { display: flex; justify-content: space-between; align-items: center; gap: .6rem; }
+.studie .st-btn { display: inline-flex; align-items: center; gap: .3rem; background: var(--bs-primary); color: var(--bs-body-bg) !important; border: 2px solid var(--bs-primary);
+  border-radius: 8px; padding: .5rem .95rem; font-weight: 700; text-decoration: none; cursor: pointer; margin: .15rem 0; }
+.studie .st-btn.g { background: none; color: var(--bs-primary) !important; }
+.studie .st-btn.liten { padding: .25rem .6rem; font-size: .88rem; }
+.studie .st-btn:disabled { opacity: .5; cursor: default; }
+.studie .st-btn.pa { background: var(--bs-danger); border-color: var(--bs-danger); color: var(--bs-body-bg) !important; }
+.studie .st-tilbake { background: none; border: 0; color: var(--bs-primary); padding: 0; margin-bottom: .3rem; }
+.studie .st-valg { display: flex; align-items: center; gap: .55rem; padding: .3rem 0; cursor: pointer; }
+.studie .st-valg input { width: 18px; height: 18px; accent-color: var(--bs-primary); }
+.studie .st-valg.av { color: var(--bs-secondary-color); cursor: default; }
+.studie input#st-kode, .studie input#st-kursnavn, .studie textarea { width: 100%; background: transparent; color: inherit; border: 1px solid var(--bs-border-color); border-radius: 8px; padding: .45rem .6rem; font: inherit; }
+.studie textarea { min-height: 80px; }
+.studie .st-sporsmal { font-size: 1.1rem; margin: .5rem 0 .6rem; }
+.studie .st-mat { white-space: nowrap; }
+.studie .st-alt { display: block; width: 100%; text-align: left; background: rgba(127,127,127,.06); border: 2px solid var(--bs-border-color); border-radius: 10px; color: inherit; padding: .6rem .8rem; margin: .45rem 0; }
+.studie .st-alt:hover:not(:disabled) { border-color: var(--bs-primary); }
+.studie .st-alt.ok { border-color: var(--bs-success, #6ef04a); }
+.studie .st-alt.nei { border-color: var(--bs-danger); }
+.studie .st-mrk { display: inline-block; font-size: .75rem; font-weight: 700; border-radius: 20px; padding: .05rem .55rem; border: 1px solid currentColor; }
+.studie .st-mrk.lett { color: var(--bs-info); } .studie .st-mrk.middels { color: var(--bs-warning); } .studie .st-mrk.vanskelig { color: var(--bs-danger); }
+.studie .st-fb { border-left: 4px solid var(--bs-primary); background: rgba(127,127,127,.06); border-radius: 0 8px 8px 0; padding: .55rem .8rem; margin: .7rem 0; }
+.studie .st-fb p { margin: .3rem 0; }
+.studie .st-fb.r { border-color: var(--bs-warning); } .studie .st-fb.n { border-color: var(--bs-danger); } .studie .st-fb.ki { border-color: var(--bs-info); }
+.studie .st-vedlegg { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0; }
+.studie .st-vedlegg input[type=file] { display: none; }
+.studie .st-forhand { max-width: 100%; max-height: 260px; border-radius: 8px; margin: .3rem 0; }
+.studie .st-videre { margin-top: 1rem; }
+.studie .st-fram { height: 6px; background: var(--bs-border-color); border-radius: 4px; margin: .45rem 0 .9rem; }
+.studie .st-fram i { display: block; height: 100%; background: var(--bs-primary); border-radius: 4px; }
+.studie .st-stolpe { display: grid; grid-template-columns: 96px 1fr 46px; align-items: center; gap: .5rem; font-size: .9rem; margin: .25rem 0; }
+.studie .st-bar { height: 10px; background: var(--bs-border-color); border-radius: 5px; overflow: hidden; margin: .3rem 0; }
+.studie .st-stolpe .st-bar { margin: 0; }
+.studie .st-bar i { display: block; height: 100%; }
+.studie .st-bar i.f { background: var(--bs-primary); } .studie .st-bar i.p { background: var(--bs-info); } .studie .st-bar i.h { background: var(--bs-secondary-color); } .studie .st-bar i.v { background: var(--bs-warning); }
+.studie .st-skala { display: flex; gap: .4rem; margin: .4rem 0; }
+.studie .st-skala button { flex: 1; padding: .5rem 0; background: none; border: 2px solid var(--bs-border-color); border-radius: 8px; color: inherit; font-weight: 700; }
+.studie .st-skala button.pa { border-color: var(--bs-primary); color: var(--bs-primary); }
+.studie .st-kode { font-family: monospace; letter-spacing: .08em; }
+.studie .st-feil { color: var(--bs-danger); }
+.studie .st-varsel { position: fixed; left: 50%; bottom: 1.2rem; transform: translateX(-50%); background: var(--bs-body-bg); border: 1px solid var(--bs-primary);
+  border-radius: 10px; padding: .6rem 1rem; z-index: 1000; max-width: 90vw; box-shadow: 0 4px 18px rgba(0,0,0,.35); }
+.studie .st-varsel.feil { border-color: var(--bs-danger); }
+.studie details summary { cursor: pointer; margin-top: .3rem; }
+</style>
+<script src="../assets/js/studie.js"></script>
+```

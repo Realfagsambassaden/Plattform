@@ -87,6 +87,21 @@ Nytt fag: legg til en «Hent …»-blokk i `.github/workflows/bygg.yml`, et kall
 - `dekning.qmd` + `assets/js/dekning.js`: «Dekker vi faget ditt?». Krever innlogging. Sender emnebeskrivelsen til KI-tjeneren (`/dekning` i `hint-tjener/worker.js`), som sammenligner den med `innhold.json` (lages av `verktoy/innhold.py` ved hver bygging).
 - KI-tjeneren trenger `SUPABASE_URL` og `SUPABASE_ANON_KEY` for å sjekke at brukeren er logget inn.
 
+### Studieappen («Test deg selv», `/studie/`)
+
+- `studie/index.qmd` + `assets/js/studie.js`: temavalg, løype (én uke per tema), ukens quiz med tilpasset nivå, egenvurdering, kunnskapsprofil (forståelse, presisjon, hurtighet), eksamensråd og kurs. Krever innlogging.
+- **Én konto for alle nettstedene.** Dataene hører til kontoen. Svarene merkes med `nettsted`, og temavalget lagres som `nettsted/tema`.
+- Spørsmålene: `studie/sporsmal.json`, laget av `python3 verktoy/sporsmal/lag_bank.py tema.yml studie/sporsmal.json`. Skriptet regner ut fasiten og stopper ved feil. Hvert galt alternativ er merket `regnefeil` eller `begrep`.
+- Tilpasset nivå per tema: to riktige på rad gir ett nivå opp, begrepsfeil ett ned, regnefeil beholder nivået.
+- Kurs: faglærer lager et kurs og kan kreve innsyn i studentenes profil. Studenten må da godta ved påmelding, og trekker samtykket ved å melde seg av. Uten krav, eller med under 5 studenter, ser faglærer bare samletall. Reglene håndheves i databasen (`supabase/oppsett.sql`), ikke bare på siden.
+- KI (`/vurder` og `/rad` i `hint-tjener/worker.js`): vurderer studentens forklaring (tekst, tale eller bilde) og skriver eksamensråd. Navn, e-post og bruker-id sendes aldri til KI-en. Bilder lagres ikke.
+
+**Oppsett (én gang):**
+
+1. Supabase → SQL Editor: lim inn hele `supabase/oppsett.sql` og trykk «Run» (trygt å kjøre flere ganger).
+2. KI-tjeneren: publiser `hint-tjener/` på nytt (`cd hint-tjener && npx wrangler deploy`). Den trenger `SUPABASE_URL`, `SUPABASE_ANON_KEY` og en KI-leverandør (se øverst i `worker.js`). NTNUs modeller kan bare nås fra NTNU-nettet, så de krever en mellomtjener inne i NTNU-nettet.
+3. Sjekk at `fysikkhjelp-hint-api` i `_quarto.yml` peker på tjeneren. Studieappen bruker samme adresse, med `/vurder` og `/rad` i stedet for `/hint`.
+
 ## 8. Nye fag (fra malen)
 
 Nye fag lages fra malen **Realfagsambassaden/fag-mal** (Use this template). Faget legges inn med én linje i `fag.yml` her i plattformen:
