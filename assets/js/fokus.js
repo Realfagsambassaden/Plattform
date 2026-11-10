@@ -89,11 +89,28 @@ function fokusStart() {
         if (x.uke !== forrigeUke) { forrigeUke = x.uke; html += '<div class="fk-uke">Uke ' + x.uke + '</div>' + besk.filter(function (y) { return y.uke === x.uke; }).map(beskHtml).join(''); }
       }
       var kl = 'fk-punkt' + (i === her ? ' her' : '') + (x.type === 'krav' ? ' krav' + (godkjent(x.o) ? ' ok' : '') : '') + (x.type === 'ut' && !x.url ? ' mangler' : '');
-      html += '<button type="button" class="' + kl + '" data-h="ga" data-i="' + i + '">' +
+      html += '<button type="button" class="' + kl + '" data-h="ga" data-i="' + i + '"' + (x.type === 'ut' ? ' data-ut="' + esc(x.id) + '"' : ' data-krav="' + esc(x.o.id) + '" style="border-color:' + (godkjent(x.o) ? 'var(--bs-primary)' : kravFarge(x.o)) + '"') + '>' +
         (x.type === 'krav' ? '<span class="fk-flagg">' + (godkjent(x.o) ? '✓' : '🚩') + '</span><span><b>Arbeidskrav: ' + esc(x.tittel) + '</b><br><span class="fk-frist">' + (x.o.frist ? 'frist ' + dato(x.o.frist) : 'ingen frist') + (godkjent(x.o) ? ' · godkjent' : '') + '</span></span>' : esc(x.tittel) + (x.url ? '' : ' <span class="fk-sm">(kommer)</span>')) + '</button>';
     });
-    rot.querySelector('.fk-rull').innerHTML = html || '<p class="fk-tom">Faget har ingen moduler ennå.</p>';
+    rot.querySelector('.fk-rull').innerHTML = html ? '<div class="fk-rullinn"><div class="fk-stolper" aria-hidden="true"></div><div class="fk-liste">' + html + '</div></div>' : '<p class="fk-tom">Faget har ingen moduler ennå.</p>';
+    stolper();
     var aktiv = rot.querySelector('.fk-punkt.her'); if (aktiv) aktiv.scrollIntoView({ block: 'nearest' });
+  }
+  function kravFarge(o) { var i = krav.indexOf(o); return MODFARGE[(Math.max(0, i) + 2) % MODFARGE.length]; }
+  // Hvert arbeidskrav får en smal stolpe fra det første undertemaet det dekker og ned til selve arbeidskravet.
+  function stolper() {
+    var inn = rot.querySelector('.fk-rullinn'), kol = inn && inn.querySelector('.fk-stolper'); if (!kol) return;
+    var bunn = inn.getBoundingClientRect().top, st = [];
+    krav.forEach(function (o) {
+      var ids = kravIder(o), top = Infinity, slutt = -Infinity;
+      inn.querySelectorAll('.fk-punkt[data-ut]').forEach(function (b) { if (ids.indexOf(b.dataset.ut) < 0) return; var r = b.getBoundingClientRect(); top = Math.min(top, r.top - bunn); slutt = Math.max(slutt, r.bottom - bunn); });
+      var k = inn.querySelector('.fk-punkt[data-krav="' + o.id + '"]'); if (k) { var r = k.getBoundingClientRect(); top = Math.min(top, r.top - bunn); slutt = Math.max(slutt, r.top - bunn + r.height / 2); }
+      if (top < Infinity) st.push({ o: o, top: top, slutt: slutt });
+    });
+    var baner = [];
+    st.sort(function (a, b) { return a.top - b.top; }).forEach(function (x) { for (var b = 0; b < baner.length && baner[b] > x.top + 2; b++); x.bane = b; baner[b] = x.slutt; });
+    kol.style.width = baner.length * 10 + 'px';
+    kol.innerHTML = st.map(function (x) { return '<span class="fk-stolpe" title="' + esc(x.o.tittel + (x.o.frist ? ' · frist ' + dato(x.o.frist) : '')) + '" style="top:' + x.top + 'px;height:' + Math.max(12, x.slutt - x.top) + 'px;left:' + x.bane * 10 + 'px;background:' + (godkjent(x.o) ? 'var(--bs-primary)' : kravFarge(x.o)) + '"></span>'; }).join('');
   }
   function oppdater() {
     var x = rekke[her];

@@ -42,6 +42,10 @@ html.fk-tidfast.fk-delt .fokus .fk-hoved { width: calc(100% - var(--fk-tid) - va
 .fokus .fk-panelhode { display: flex; justify-content: space-between; align-items: center; padding: .5rem .8rem; border-bottom: 1px solid var(--bs-border-color); }
 /* Tidslinjen ruller for seg selv og «lekker» ikke rullingen videre til hovedvinduet. */
 .fokus .fk-rull { overflow-y: auto; overscroll-behavior: contain; padding: .4rem .6rem 1rem; flex: 1; }
+.fokus .fk-rullinn { display: flex; gap: .4rem; position: relative; }
+.fokus .fk-stolper { position: relative; flex: none; }
+.fokus .fk-liste { flex: 1; min-width: 0; }
+.fokus .fk-stolpe { position: absolute; width: 6px; border-radius: 3px; opacity: .85; }
 .fokus .fk-mod { font-weight: 700; margin: .8rem 0 .2rem; }
 .fokus .fk-uke { font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; color: var(--bs-secondary-color); margin: .5rem 0 .15rem; }
 .fokus .fk-besk { font-size: .85rem; background: rgba(127,127,127,.12); border-radius: 8px; padding: .25rem .5rem; margin: .2rem 0; }
