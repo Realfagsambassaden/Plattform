@@ -99,7 +99,7 @@ Nytt fag: legg til en «Hent …»-blokk i `.github/workflows/bygg.yml`, et kall
 **Oppsett (én gang):**
 
 1. Supabase → SQL Editor: lim inn hele `supabase/oppsett.sql` og trykk «Run» (trygt å kjøre flere ganger).
-2. KI-tjeneren bruker Claude (besluttet 10. nov. 2026). Lag en API-nøkkel på console.anthropic.com. Legg den inn som hemmelighet på workeren `fysikkhjelp-hint` i Cloudflare (Settings → Variables and Secrets → `ANTHROPIC_API_KEY`), sammen med `SUPABASE_URL` og `SUPABASE_ANON_KEY` (samme verdier som i `_quarto.yml`). Publiser så den nye koden: `cd hint-tjener && npx wrangler deploy`. Standardmodellen er `claude-haiku-5-5`. Vil du ha grundigere vurdering av håndskrift, sett `MODELL_BILDE` til en større Claude-modell.
+2. KI-tjeneren bruker Claude (besluttet 10. nov. 2026) og publiseres automatisk til `hint.fysikkhjelp.no` (jobben `hint-tjener` i `.github/workflows/bygg.yml`). Nøkkelen lages på platform.claude.com (organisasjonen Realfagsambassaden, tjenestekontoen `realfagsambassaden`) og legges inn som GitHub-hemmelighet `ANTHROPIC_API_KEY` i dette repoet (Settings → Secrets and variables → Actions). Supabase-verdiene står i `hint-tjener/wrangler.toml`. Standardmodellen er `claude-haiku-5-5`. Vil du ha grundigere vurdering av håndskrift, sett `MODELL_BILDE` under `[vars]`.
 3. Sjekk at `fysikkhjelp-hint-api` i `_quarto.yml` peker på tjeneren. Studieappen bruker samme adresse, med `/vurder` og `/rad` i stedet for `/hint`.
 
 ## 8. Nye fag (fra malen)

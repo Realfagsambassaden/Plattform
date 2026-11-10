@@ -94,6 +94,34 @@ jobs:
           workingDirectory: matematikkhjelp
           command: deploy
 
+  # KI-tjeneren (hint, dekningskart og studieappen) på hint.fysikkhjelp.no. Nøkkelen til Claude ligger som
+  # GitHub-hemmeligheten ANTHROPIC_API_KEY (Settings → Secrets and variables → Actions) og settes på workeren her.
+  hint-tjener:
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publiser KI-tjeneren
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: hint-tjener
+          command: deploy
+      - name: Nøkkel for Claude (hvis den finnes)
+        if: env.ANTHROPIC_API_KEY != ''
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: hint-tjener
+          command: deploy
+          secrets: |
+            ANTHROPIC_API_KEY
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
   # Realfagsambassaden (paraplysiden) – ren HTML, publiseres direkte uten bygging.
   realfagsambassaden:
     runs-on: ubuntu-latest
