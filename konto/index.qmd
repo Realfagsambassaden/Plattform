@@ -14,7 +14,7 @@ toc: false
       <button type="button" role="tab" data-fane="inn" aria-selected="true">Logg inn</button>
       <button type="button" role="tab" data-fane="ny" aria-selected="false">Registrer deg</button>
     </div>
-    <p class="konto-ingress" data-for="ny">Det er gratis å registrere seg. Som registrert bruker kan du blant annet sjekke hvor godt fysikkhjelp.no dekker faget du skal ta eksamen i.</p>
+    <p class="konto-ingress" data-for="ny">Det er gratis å registrere seg. Som registrert bruker kan du blant annet sjekke hvor godt fysikkhjelp.no dekker et fag.</p>
     <form class="konto-skjema">
       <label>E-post <input type="email" name="epost" autocomplete="email" required></label>
       <label>Passord <input type="password" name="passord" autocomplete="current-password" minlength="8" required></label>
@@ -23,8 +23,9 @@ toc: false
         <legend>Jeg registrerer meg som</legend>
         <label class="konto-valg"><input type="radio" name="rolle" value="student" checked> Student</label>
         <label class="konto-valg"><input type="radio" name="rolle" value="underviser"> Underviser</label>
-        <label class="konto-kode" hidden>Underviserkode <input type="text" name="kode" autocomplete="off" maxlength="12" placeholder="10 tegn"></label>
-        <p class="konto-hjelp konto-kode" hidden>Undervisere godkjennes foreløpig av administratoren. Du får en personlig kode som bare kan brukes én gang.</p>
+        <label class="konto-kode" hidden>Underviserkode (valgfri) <input type="text" name="kode" autocomplete="off" maxlength="12" placeholder="Har du fått en kode? Skriv den her."></label>
+        <label class="konto-kode" hidden>Hvor underviser du? <input type="text" name="info" maxlength="300" placeholder="F.eks. fysikk ved NTNU, forkurs"></label>
+        <p class="konto-hjelp konto-kode" hidden>Med kode blir du underviser med en gang. Uten kode sender vi en forespørsel til administratoren. Til den er godkjent, er kontoen en vanlig studentkonto.</p>
       </fieldset>
       <button type="submit" class="btn-chalk">Logg inn</button>
       <p class="konto-melding" role="status"></p>
@@ -47,7 +48,9 @@ toc: false
 <template id="mal-inne">
   <div class="profil">
     <p class="profil-hei">Hei, <span class="profil-navn"></span>! <span class="profil-rolle"></span></p>
+    <div class="profil-foresporsel konto-boks" role="status" hidden></div>
 
+    <div class="profil-studentdel">
     <h2 class="profil-del">Studentdel</h2>
     <div class="profil-kort">
       <a class="track live" href="../studie/index.html">
@@ -63,14 +66,15 @@ toc: false
       <a class="track live" href="../dekning.html">
         <span class="status">Klar</span>
         <h3>Dekker vi faget ditt?</h3>
-        <p>Lim inn emnebeskrivelsen til faget du skal ta, og få et kart over hva fysikkhjelp.no dekker.</p>
+        <p>Lim inn fagets emnebeskrivelse, og få et kart over hva fysikkhjelp.no dekker.</p>
       </a>
       <div class="track"><span class="status">Kommer</span><h3>Estimert karakter</h3><p>Et anslag på hvor du ligger an før eksamen.</p></div>
       <div class="track"><span class="status">Kommer</span><h3>Veiledning</h3><p>Bestill veiledning med Dr. Normann.</p></div>
     </div>
+    </div>
 
     <div class="profil-underviser" hidden>
-      <h2 class="profil-del">Underviserdel</h2>
+      <h2 class="profil-del">Undervisning</h2>
       <div class="profil-fagliste"></div>
       <div class="profil-kort">
         <a class="track live" href="../studie/index.html#fag">
@@ -83,20 +87,32 @@ toc: false
           <h3>Design din forelesning</h3>
           <p>Plukk sider, eksempler og oppgaver, sett dem i din rekkefølge og vis dem som tavleslides.</p>
         </a>
+        <a class="track live" href="../dekning.html">
+          <span class="status">Klar</span>
+          <h3>Dekker nettstedet faget?</h3>
+          <p>Lim inn fagets emnebeskrivelse, og få et kart over hva fysikkhjelp.no dekker.</p>
+        </a>
         <a class="track live" href="../studie/index.html#eksempel">
-          <span class="status">Eksempelmodus</span>
+          <span class="status">Studentvisning</span>
           <h3>Se appen som student</h3>
-          <p>Prøv studieappen som en fiktiv student med ferdige svar. Ingenting lagres.</p>
+          <p>Prøv studieappen som en fiktiv student med ferdige svar. Hvert fag har også en knapp for å se akkurat det faget som student.</p>
         </a>
       </div>
     </div>
 
+    <p class="profil-studentknapp" hidden><button type="button" class="btn-chalk ghost" aria-expanded="false">Vis studentvisning</button></p>
+
     <div class="profil-blivunderviser konto-boks" hidden>
       <h3>Er du underviser?</h3>
-      <p class="konto-ingress">Skriv inn den personlige underviserkoden du har fått av administratoren.</p>
-      <form class="konto-skjema konto-rad">
+      <p class="konto-ingress">Har du fått en underviserkode, skriver du den inn her.</p>
+      <form class="konto-skjema konto-rad blivkode">
         <input type="text" name="kode" autocomplete="off" maxlength="12" placeholder="Underviserkode" required>
         <button type="submit" class="btn-chalk">Bli underviser</button>
+      </form>
+      <p class="konto-ingress">Har du ingen kode, kan du be om tilgang. Administratoren godkjenner forespørselen.</p>
+      <form class="konto-skjema konto-rad blivforesporsel">
+        <input type="text" name="info" maxlength="300" placeholder="Hvor underviser du? F.eks. fysikk ved NTNU">
+        <button type="submit" class="btn-chalk ghost">Be om underviser-tilgang</button>
       </form>
       <p class="konto-melding" role="status"></p>
     </div>
@@ -104,10 +120,14 @@ toc: false
     <div class="profil-admin" hidden>
       <h2 class="profil-del">Administrator</h2>
       <div class="konto-boks">
+        <h3>Forespørsler om underviser-tilgang</h3>
+        <div class="admin-foresporsler"><p class="konto-ingress">Laster …</p></div>
+      </div>
+      <div class="konto-boks">
         <h3>Underviserkoder</h3>
-        <p class="konto-ingress">Lag en personlig kode til hver underviser du godkjenner. Koden kan bare brukes én gang, enten ved registrering eller på Min side.</p>
+        <p class="konto-ingress">Lag en personlig kode til hver underviser du vil godkjenne på forhånd, og send den til personen. Koden kan bare brukes én gang, enten ved registrering eller på Min side. Navnet er bare til din egen oversikt, så du ser hvem som har tatt koden i bruk.</p>
         <form class="konto-skjema konto-rad admin-ny">
-          <input type="text" name="navn" maxlength="120" placeholder="Hvem er koden til?" required>
+          <input type="text" name="navn" maxlength="120" placeholder="Hvem er koden til? F.eks. Kari Nordmann, NTNU" required>
           <button type="submit" class="btn-chalk">Lag kode</button>
         </form>
         <p class="konto-melding admin-melding" role="status"></p>
@@ -134,6 +154,8 @@ toc: false
 .profil-fagliste ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem; }
 .profil-fagliste a { display: inline-block; border: 1px solid var(--bs-border-color); border-radius: 20px; padding: .3rem .9rem; text-decoration: none; }
 .profil-admin .konto-boks, .profil-blivunderviser { margin: 1rem 0; }
+.profil-foresporsel { margin: 1rem 0; border-color: #eee462 !important; }
+.profil-foresporsel b { color: #eee462; }
 .admin-tabell { width: 100%; border-collapse: collapse; font-size: .92rem; margin-top: .8rem; }
 .admin-tabell th, .admin-tabell td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid var(--bs-border-color); }
 .admin-tabell .kode { font-family: monospace; letter-spacing: .08em; font-weight: 700; }

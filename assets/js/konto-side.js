@@ -80,7 +80,7 @@ function start() {
     };
 
     // Rollevalg ved registrering: student er standard. Underviser krever en personlig kode fra administratoren.
-    function visKode() { var u = skjema.querySelector('input[name="rolle"]:checked').value === 'underviser'; skjema.querySelectorAll('.konto-kode').forEach(function (el) { el.hidden = !u; }); skjema.kode.required = u; }
+    function visKode() { var u = skjema.querySelector('input[name="rolle"]:checked').value === 'underviser'; skjema.querySelectorAll('.konto-kode').forEach(function (el) { el.hidden = !u; }); skjema.kode.required = false; }
     skjema.querySelectorAll('input[name="rolle"]').forEach(function (r) { r.onchange = visKode; });
     visKode();
 
@@ -90,19 +90,20 @@ function start() {
       var data = { email: skjema.epost.value.trim(), password: skjema.passord.value };
       var underviser = fane === 'ny' && skjema.querySelector('input[name="rolle"]:checked').value === 'underviser';
       var kode = underviser ? skjema.kode.value.trim().toUpperCase() : '';
-      var sjekk = underviser ? k.rpc('sjekk_underviserkode', { k: kode }).then(function (r) {
+      var info = underviser ? skjema.info.value.trim() : '';
+      var sjekk = underviser && kode ? k.rpc('sjekk_underviserkode', { k: kode }).then(function (r) {
         if (r.error) throw r.error;
-        if (!r.data) throw new Error('Underviserkoden er ugyldig eller allerede brukt. Sjekk koden, eller registrer deg som student.');
+        if (!r.data) throw new Error('Underviserkoden er ugyldig eller allerede brukt. Sjekk koden, eller la feltet stå tomt for å be om tilgang.');
       }) : Promise.resolve();
       var p = sjekk.then(function () {
         return fane === 'ny'
-          ? k.auth.signUp(Object.assign(data, { options: { data: kode ? { underviserkode: kode } : {}, emailRedirectTo: location.origin + location.pathname + (neste ? '?neste=' + neste : '') } }))
+          ? k.auth.signUp(Object.assign(data, { options: { data: kode ? { underviserkode: kode } : underviser ? { be_om_underviser: 'true', underviser_info: info } : {}, emailRedirectTo: location.origin + location.pathname + (neste ? '?neste=' + neste : '') } }))
           : k.auth.signInWithPassword(data);
       }).catch(function (e) { return { error: e }; });
       p.then(function (r) {
         knapp.disabled = false;
         if (r.error) { melding(norsk(r.error), true); return; }
-        if (fane === 'ny' && !r.data.session) melding('Nesten ferdig! Vi har sendt deg en e-post. Klikk på lenken i den for å bekrefte kontoen.' + (underviser ? ' Kontoen blir en underviserkonto.' : ''));
+        if (fane === 'ny' && !r.data.session) melding('Nesten ferdig! Vi har sendt deg en e-post. Klikk på lenken i den for å bekrefte kontoen.' + (underviser ? (kode ? ' Kontoen blir en underviserkonto.' : ' Forespørselen om underviser-tilgang sendes til administratoren når kontoen er bekreftet.') : ''));
       });
     };
   }
@@ -116,6 +117,14 @@ function start() {
       var rolle = (r && r.data) || 'student', underviser = rolle === 'underviser' || rolle === 'admin';
       rot.querySelector('.profil-rolle').textContent = { student: 'Student', underviser: 'Underviser', admin: 'Administrator' }[rolle];
       rot.querySelector('.profil-underviser').hidden = !underviser;
+      // For undervisere: undervisningen først, studentdelen skjult bak «Vis studentvisning».
+      var sd = rot.querySelector('.profil-studentdel'), knappP = rot.querySelector('.profil-studentknapp'), knapp = knappP.querySelector('button');
+      knappP.hidden = !underviser;
+      if (underviser) {
+        var ud = rot.querySelector('.profil-underviser'); ud.parentNode.insertBefore(knappP, ud.nextSibling); knappP.parentNode.insertBefore(sd, knappP.nextSibling);
+        sd.hidden = true;
+        knapp.onclick = function () { sd.hidden = !sd.hidden; knapp.textContent = sd.hidden ? 'Vis studentvisning' : 'Skjul studentvisning'; knapp.setAttribute('aria-expanded', String(!sd.hidden)); };
+      } else sd.hidden = false;
       rot.querySelector('.profil-blivunderviser').hidden = underviser;
       rot.querySelector('.profil-admin').hidden = rolle !== 'admin';
       if (underviser) k.from('kurs').select('id,navn,kode,status').eq('eier', sesjon.user.id).order('opprettet').then(function (r2) {
@@ -124,8 +133,18 @@ function start() {
           : '<p class="konto-ingress">Du har ingen fag ennå.</p>';
       });
       if (rolle === 'admin') admin(k);
+      if (!underviser) visForesporsel(k, sesjon);
     });
-    var blivForm = rot.querySelector('.profil-blivunderviser form');
+    var forespForm = rot.querySelector('.profil-blivunderviser .blivforesporsel');
+    forespForm.onsubmit = function (ev) {
+      ev.preventDefault();
+      var m = rot.querySelector('.profil-blivunderviser .konto-melding');
+      k.rpc('be_om_underviser', { tekst: forespForm.info.value.trim() }).then(function (r) {
+        if (r.error || !r.data) { m.textContent = r.error ? norsk(r.error) : 'Fikk ikke sendt forespørselen.'; m.classList.add('feil'); return; }
+        m.textContent = ''; visForesporsel(k, sesjon);
+      });
+    };
+    var blivForm = rot.querySelector('.profil-blivunderviser .blivkode');
     blivForm.onsubmit = function (ev) {
       ev.preventDefault();
       var m = rot.querySelector('.profil-blivunderviser .konto-melding');
@@ -137,9 +156,28 @@ function start() {
     };
   }
 
+  // Statuslinje øverst på Min side når brukeren har bedt om underviser-tilgang.
+  function visForesporsel(k, sesjon) {
+    k.from('profiler').select('foresporsel, foresporsel_tid').eq('id', sesjon.user.id).maybeSingle().then(function (r) {
+      var p = r && r.data, el = rot.querySelector('.profil-foresporsel'), skjema = rot.querySelector('.profil-blivunderviser .blivforesporsel');
+      if (!p || !p.foresporsel) { el.hidden = true; return; }
+      el.hidden = false;
+      el.innerHTML = p.foresporsel === 'venter'
+        ? '<b>Du har bedt om underviser-tilgang.</b> Forespørselen din behandles' + (p.foresporsel_tid ? ' (sendt ' + dato(p.foresporsel_tid) + ')' : '') + '. Til den er godkjent, er kontoen en studentkonto.'
+        : '<b>Forespørselen om underviser-tilgang ble ikke godkjent.</b> Ta kontakt med administratoren hvis du mener dette er feil, eller send en ny forespørsel under.';
+      if (p.foresporsel === 'venter') { skjema.hidden = true; if (skjema.previousElementSibling) skjema.previousElementSibling.hidden = true; }
+    });
+  }
+
   function admin(k) {
     var boks = rot.querySelector('.profil-admin'), m = boks.querySelector('.admin-melding');
     function tegnAdmin() {
+      k.rpc('admin_foresporsler').then(function (r) {
+        var l = (r && r.data) || [], el = boks.querySelector('.admin-foresporsler');
+        el.innerHTML = l.length ? '<table class="admin-tabell"><thead><tr><th>E-post</th><th>Hvor underviser du?</th><th>Sendt</th><th></th></tr></thead><tbody>' + l.map(function (f) {
+          return '<tr><td>' + esc(f.epost) + '</td><td>' + esc(f.tekst || '–') + '</td><td>' + dato(f.tid) + '</td><td><button type="button" data-godkjenn="' + f.id + '">Godkjenn</button> <button type="button" data-avsla="' + f.id + '">Avslå</button></td></tr>';
+        }).join('') + '</tbody></table>' : '<p class="konto-ingress">Ingen ventende forespørsler.</p>';
+      });
       Promise.all([k.from('underviserkoder').select('*').order('opprettet', { ascending: false }), k.rpc('admin_undervisere')]).then(function (r) {
         var koder = r[0].data || [], und = r[1].data || [], epost = {};
         und.forEach(function (u) { epost[u.id] = u.epost; });
@@ -166,6 +204,11 @@ function start() {
     boks.onclick = function (ev) {
       var b = ev.target.closest('button'); if (!b) return;
       if (b.dataset.slettKode) k.from('underviserkoder').delete().eq('kode', b.dataset.slettKode).then(tegnAdmin);
+      if (b.dataset.godkjenn) k.rpc('svar_foresporsel', { b: b.dataset.godkjenn, godkjenn: true }).then(tegnAdmin);
+      if (b.dataset.avsla) {
+        if (b.dataset.bekreft !== '1') { b.dataset.bekreft = '1'; b.textContent = 'Bekreft avslag'; return; }
+        k.rpc('svar_foresporsel', { b: b.dataset.avsla, godkjenn: false }).then(tegnAdmin);
+      }
       if (b.dataset.fjern) {
         if (b.dataset.bekreft !== '1') { b.dataset.bekreft = '1'; b.textContent = 'Bekreft'; return; }
         k.rpc('sett_student', { b: b.dataset.fjern }).then(tegnAdmin);

@@ -14,7 +14,7 @@ toc: false
       <button type="button" role="tab" data-fane="inn" aria-selected="true">Logg inn</button>
       <button type="button" role="tab" data-fane="ny" aria-selected="false">Registrer deg</button>
     </div>
-    <p class="konto-ingress" data-for="ny">Det er gratis å registrere seg. Som registrert bruker kan du blant annet sjekke hvor godt matematikkhjelp.no dekker faget du skal ta eksamen i.</p>
+    <p class="konto-ingress" data-for="ny">Det er gratis å registrere seg. Som registrert bruker kan du blant annet sjekke hvor godt matematikkhjelp.no dekker et fag.</p>
     <form class="konto-skjema">
       <label>E-post <input type="email" name="epost" autocomplete="email" required></label>
       <label>Passord <input type="password" name="passord" autocomplete="current-password" minlength="8" required></label>
@@ -44,7 +44,7 @@ toc: false
       <a class="track live" href="../dekning.html">
         <span class="status">Klar</span>
         <h3>Dekker vi faget ditt?</h3>
-        <p>Lim inn emnebeskrivelsen til faget du skal ta, og få et kart over hva matematikkhjelp.no dekker.</p>
+        <p>Lim inn fagets emnebeskrivelse, og få et kart over hva matematikkhjelp.no dekker.</p>
       </a>
       <a class="track live" href="../larer/index.html">
         <span class="status">For lærere · test</span>

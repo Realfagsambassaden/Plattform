@@ -86,7 +86,7 @@ Velg løype
   <img src="assets/img/tegninger/sau-maling.webp" alt="Dashman måler en sau med linjal" loading="lazy">
   <span class="banner-tekst"><span class="eyebrow">Nytt</span>
   <strong>Dekker vi faget ditt?</strong>
-  <span>Lim inn emnebeskrivelsen til faget du skal ta eksamen i, og få et kart over hva du finner her. →</span></span>
+  <span>Lim inn fagets emnebeskrivelse, og få et kart over hva du finner her. →</span></span>
 </a>
 
 <section class="profiler">

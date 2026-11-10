@@ -430,3 +430,60 @@ create or replace function public.finn_kurs(k text)
 drop policy if exists "kurs: lese" on public.kurs;
 create policy "kurs: lese" on public.kurs for select to authenticated
   using (eier = auth.uid() or (status = 'publisert' and public.er_deltaker(id)));
+
+-- =====================================================================
+-- Forespørsel om underviser-tilgang uten kode. Brukeren er student til administratoren godkjenner.
+-- foresporsel: null (ingen), 'venter' eller 'avslatt'. Settes ved registrering (metadata «be_om_underviser») eller på Min side.
+-- =====================================================================
+alter table public.profiler add column if not exists foresporsel text check (foresporsel in ('venter', 'avslatt'));
+alter table public.profiler add column if not exists foresporsel_tekst text not null default '' check (char_length(foresporsel_tekst) <= 500);
+alter table public.profiler add column if not exists foresporsel_tid timestamptz;
+
+create or replace function public.ny_bruker() returns trigger
+  language plpgsql security definer set search_path = public as
+$$
+declare k text := upper(trim(coalesce(new.raw_user_meta_data ->> 'underviserkode', '')));
+begin
+  insert into profiler (id) values (new.id) on conflict (id) do nothing;
+  if k <> '' then
+    update underviserkoder set brukt_av = new.id, brukt = now() where kode = k and brukt_av is null;
+    if found then update profiler set rolle = 'underviser' where id = new.id; return new; end if;
+  end if;
+  if coalesce(new.raw_user_meta_data ->> 'be_om_underviser', '') = 'true' then
+    update profiler set foresporsel = 'venter', foresporsel_tid = now(),
+      foresporsel_tekst = left(coalesce(new.raw_user_meta_data ->> 'underviser_info', ''), 500) where id = new.id;
+  end if;
+  return new;
+end $$;
+
+-- Be om tilgang senere (fra Min side).
+create or replace function public.be_om_underviser(tekst text) returns boolean
+  language plpgsql security definer set search_path = public as
+$$
+begin
+  if auth.uid() is null then return false; end if;
+  insert into profiler (id) values (auth.uid()) on conflict (id) do nothing;
+  update profiler set foresporsel = 'venter', foresporsel_tid = now(), foresporsel_tekst = left(coalesce(tekst, ''), 500)
+   where id = auth.uid() and rolle = 'student';
+  return found;
+end $$;
+
+-- Administrator: ventende forespørsler, godkjenn eller avslå.
+create or replace function public.admin_foresporsler()
+  returns table (id uuid, epost text, tekst text, tid timestamptz)
+  language sql stable security definer set search_path = public, auth as
+  $$ select p.id, u.email::text, p.foresporsel_tekst, p.foresporsel_tid from profiler p join auth.users u on u.id = p.id
+      where public.er_admin() and p.foresporsel = 'venter' order by p.foresporsel_tid $$;
+create or replace function public.svar_foresporsel(b uuid, godkjenn boolean) returns boolean
+  language plpgsql security definer set search_path = public as
+$$
+begin
+  if not public.er_admin() then return false; end if;
+  update profiler set rolle = case when godkjenn and rolle = 'student' then 'underviser' else rolle end,
+                      foresporsel = case when godkjenn then null else 'avslatt' end
+   where id = b and foresporsel = 'venter';
+  return found;
+end $$;
+
+revoke execute on function public.be_om_underviser(text), public.admin_foresporsler(), public.svar_foresporsel(uuid, boolean) from public, anon;
+grant execute on function public.be_om_underviser(text), public.admin_foresporsler(), public.svar_foresporsel(uuid, boolean) to authenticated;

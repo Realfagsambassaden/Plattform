@@ -96,7 +96,7 @@ function studieStart() {
     var el = document.getElementById('st-varsel');
     if (!el) return;
     el.textContent = tekst; el.className = 'st-varsel' + (feil ? ' feil' : ''); el.hidden = false;
-    clearTimeout(varsle.t); varsle.t = setTimeout(function () { el.hidden = true; }, feil ? 8000 : 3000);
+    clearTimeout(varsle.t); varsle.t = setTimeout(function () { var x = document.getElementById('st-varsel'); if (x) x.hidden = true; }, feil ? 8000 : 3000);
   }
   var sjekk = function (r) { if (r.error) throw r.error; return r.data; };
 
@@ -627,11 +627,14 @@ function studieStart() {
 
   // ---------------------------------------------------------------- eksempelmodus
   // Underviseren ser appen som en fiktiv student. Alt ligger i minnet og forsvinner når siden lastes på nytt.
-  function eksempelKlient(ekte) {
-    var db = { studie_innstillinger: [], studie_svar: [], studie_ukevurdering: [], kurs: [], kurs_deltaker: [] }, nr = 1;
-    var meg = 'eksempel';
-    db.studie_innstillinger.push({ eier: meg, valgt: ['kinematikk', 'newtons-lover', 'arbeid-og-energi'].map(nokkel), modus: 'alle', repetisjon: true, varsler: true, niva: {} });
-    var plan = { kinematikk: [0.9, 0.7], 'newtons-lover': [0.55, 0.6] }, frø = 11;
+  // Med et fag (studentvisning av faget) blir den fiktive studenten påmeldt faget, med fagets løype og arbeidskrav.
+  function eksempelKlient(ekte, fag, ovelser) {
+    var db = { studie_innstillinger: [], studie_svar: [], studie_ukevurdering: [], kurs: [], kurs_deltaker: [], ovelser: ovelser || [], studie_quiz: [] }, nr = 1;
+    var meg = 'eksempel', fagTemaer = fag ? (fag.temaer || []).filter(function (x) { return S[x.split('/')[1]]; }) : [];
+    db.studie_innstillinger.push({ eier: meg, valgt: fagTemaer.length ? fagTemaer : ['kinematikk', 'newtons-lover', 'arbeid-og-energi'].map(nokkel), modus: 'alle', repetisjon: true, varsler: true, niva: {} });
+    if (fag) db.kurs_deltaker.push({ kurs: fag.id, student: meg, samtykke_innsyn: !!fag.krev_innsyn, pameldt: new Date().toISOString(), kursinfo: { id: fag.id, navn: fag.navn, krev_innsyn: fag.krev_innsyn, temaer: fag.temaer, beskrivelse: fag.beskrivelse } });
+    var planTemaer = fagTemaer.length ? fagTemaer.slice(0, 2).map(function (x) { return x.split('/')[1]; }) : ['kinematikk', 'newtons-lover'];
+    var plan = {}, frø = 11; plan[planTemaer[0]] = [0.9, 0.7]; if (planTemaer[1]) plan[planTemaer[1]] = [0.55, 0.6];
     var rnd = function () { frø = frø * 16807 % 2147483647; return frø / 2147483647; };
     Object.keys(plan).forEach(function (t) {
       Q.filter(function (x) { return x.tema === t; }).slice(0, 12).forEach(function (x, i) {
@@ -804,7 +807,8 @@ function studieStart() {
     fag: function () {
       var f = T.fag, c = f.c;
       var o = '<button type="button" class="st-tilbake" data-h="ga" data-v="kurs">← Fagene dine</button><h2 class="st-h1">' + esc(c.navn) + (c.status === 'pabegynt' ? ' <span class="st-pabegynt">(påbegynt)</span>' : '') + '</h2>' +
-        '<p class="st-sm">Kode til studentene: <b class="st-kode">' + esc(c.kode) + '</b> · ' + (c.krev_innsyn ? 'innsyn i studentenes profil' : 'bare samletall') + '</p>' +
+        '<div class="st-rad" style="flex-wrap:wrap"><p class="st-sm" style="margin:0">Kode til studentene: <b class="st-kode">' + esc(c.kode) + '</b> · ' + (c.krev_innsyn ? 'innsyn i studentenes profil' : 'bare samletall') + '</p>' +
+        '<button type="button" class="st-btn g liten" data-h="studentvisning" data-id="' + c.id + '">Se faget som student</button></div>' +
         '<nav class="st-underfaner">' + [['design', 'Utforming'], ['ovinger', 'Arbeidskrav'], ['studenter', 'Studenter'], ['statistikk', 'Statistikk']].filter(function (x) { return x[0] !== 'ovinger' || f.u.elementer.arbeidskrav; }).map(function (x) {
           return '<button type="button" aria-selected="' + (f.fane === x[0]) + '" data-h="fagFane" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</nav>';
       if (f.fane === 'design') return o + byggerHtml();
@@ -905,10 +909,13 @@ function studieStart() {
 
   function ga(v, p) { stoppTale(); if (T.fag && T.fag.lagrer) { clearTimeout(T.fag.tid); lagreUtkast(); } Object.assign(T, { vis: v }, p || {}); if (v !== 'profil') T.kiRad = T.kiRad && T.kiRad.rad ? T.kiRad : null; tegn(); rot.scrollIntoView({ block: 'start' }); }
   function tegn() {
-    var faner = [['hjem', 'Løype'], ['profil', 'Profil'], ['kurs', 'Fag']];
+    // Et synlig varsel skal overleve at siden tegnes på nytt.
+    var gml = document.getElementById('st-varsel'), vis = gml && !gml.hidden ? { t: gml.textContent, k: gml.className } : null;
+    var faner = erUnderviser() && !T.eksempel ? [['kurs', 'Fagene mine'], ['hjem', 'Løype'], ['profil', 'Profil']] : [['hjem', 'Løype'], ['profil', 'Profil'], ['kurs', 'Fag']];
     var aktiv = { uke: 'hjem', quiz: 'hjem', resultat: 'hjem', ferdigIdag: 'hjem', pamelding: 'kurs', fag: 'kurs' }[T.vis] || T.vis;
-    rot.innerHTML = (T.eksempel ? '<div class="st-eksempel"><b>Eksempelmodus.</b> Du ser appen som en fiktiv student. Ingenting lagres. <a href="#" data-h="avsluttEksempel">Avslutt</a></div>' : '') + '<nav class="st-faner" role="tablist">' + faner.map(function (f) { return '<button type="button" role="tab" aria-selected="' + (aktiv === f[0]) + '" data-h="ga" data-v="' + f[0] + '">' + f[1] + '</button>'; }).join('') + '</nav>' +
+    rot.innerHTML = (T.eksempel ? '<div class="st-eksempel"><b>Studentvisning.</b> Du ser ' + (T.eksempelFag ? '«' + esc(T.eksempelFag.navn) + '»' : 'appen') + ' som en fiktiv student. Ingenting lagres. <a href="#" data-h="avsluttEksempel">Tilbake til undervisning</a></div>' : '') + '<nav class="st-faner" role="tablist">' + faner.map(function (f) { return '<button type="button" role="tab" aria-selected="' + (aktiv === f[0]) + '" data-h="ga" data-v="' + f[0] + '">' + f[1] + '</button>'; }).join('') + '</nav>' +
       '<div class="st-innhold">' + SKJ[T.vis]() + '</div><p id="st-varsel" class="st-varsel" role="status" hidden></p>';
+    if (vis) { var ny = document.getElementById('st-varsel'); ny.textContent = vis.t; ny.className = vis.k; ny.hidden = false; }
   }
 
   // Alle klikk og endringer håndteres her (ingen inline-skript i HTML-en).
@@ -952,7 +959,8 @@ function studieStart() {
       lagOvelse: lagOvelse, excel: lastNedExcel,
       slettOvelse: function () { slettOvelse(d.id); },
       eksempel: function () { ev.preventDefault(); location.hash = 'eksempel'; location.reload(); },
-      avsluttEksempel: function () { ev.preventDefault(); history.replaceState(null, '', location.pathname); location.reload(); },
+      avsluttEksempel: function () { ev.preventDefault(); history.replaceState(null, '', location.pathname + (T.eksempelFag ? '#fag-' + T.eksempelFag.id : '')); location.reload(); },
+      studentvisning: function () { if (T.fag && T.fag.lagrer) { clearTimeout(T.fag.tid); lagreUtkast(); } location.hash = 'eksempel-' + d.id; location.reload(); },
     }[d.h] || function () {})();
   });
   rot.addEventListener('change', function (ev) {
@@ -990,6 +998,15 @@ function studieStart() {
   // Ulagrede endringer i fagbyggeren lagres når siden lukkes.
   window.addEventListener('pagehide', function () { if (T.fag && T.fag.lagrer) { clearTimeout(T.fag.tid); lagreUtkast(); } });
 
+  // Undervisere får en side tilpasset dem: egen overskrift og undertekst, og fagene først. Eksempelmodus viser studentens side.
+  function settOverskrift() {
+    if (!erUnderviser() || T.eksempel) return;
+    var h = document.querySelector('#title-block-header .title, header h1.title'), u = document.querySelector('#title-block-header .subtitle, header .subtitle');
+    if (h) h.textContent = 'Fag og undervisning';
+    if (u) u.textContent = 'Bygg fag, lag arbeidskrav og følg studentene. Under «Løype» og «Profil» kan du prøve appen slik studentene ser den.';
+    document.title = document.title.replace(/^Test deg selv/, 'Fag og undervisning');
+  }
+
   // ---------------------------------------------------------------- oppstart
   if (!window.fhKonto || !window.fhKonto.sattOpp) { rot.innerHTML = '<p class="st-ind">Innlogging er ikke satt opp ennå.</p>'; return; }
   Promise.all([
@@ -1012,12 +1029,21 @@ function studieStart() {
     }
     bruker = sesjon.user;
     return k.rpc('min_rolle').then(function (r) { T.rolle = r.data || 'student'; }).then(function () {
-      if (location.hash === '#eksempel' && erUnderviser()) { T.eksempel = true; bruker = { id: 'eksempel', email: 'eksempelstudent' }; k = eksempelKlient(k); }
+      var ex = /^#eksempel(?:-(.+))?$/.exec(location.hash);
+      if (!ex || !erUnderviser()) return;
+      var ekte = k;
+      return (ex[1] ? Promise.all([ekte.from('kurs').select('*').eq('id', ex[1]).maybeSingle().then(sjekk), ekte.from('ovelser').select('*').eq('kurs', ex[1]).then(sjekk).catch(function () { return []; })])
+        : Promise.resolve([null, []])).then(function (r) {
+        T.eksempel = true; T.eksempelFag = r[0]; bruker = { id: 'eksempel', email: 'eksempelstudent' }; k = eksempelKlient(ekte, r[0], r[1]);
+        if (r[0]) T.vis = 'kurs';
+      });
+    }).then(function () {
+      settOverskrift();
       return hentAlt();
     }).then(function () {
       var m = /^#fag-(.+)$/.exec(location.hash);
       if (m && !T.eksempel && T.mine.some(function (c) { return c.id === m[1]; })) { T.vis = 'kurs'; apneKurs(m[1]); }
-      else if (location.hash === '#fag') ga('kurs');
+      else if (location.hash === '#fag' || (erUnderviser() && !T.eksempel && !location.hash)) { T.vis = 'kurs'; tegn(); }
       else tegn();
       if (T.ny && !T.eksempel) lagreInn();
     });
