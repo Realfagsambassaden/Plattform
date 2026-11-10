@@ -8,6 +8,236 @@
 "bolger": "Bølger og optikk",
 "moderne": "Moderne fysikk"
 },
+"katalog": {
+"hva-er-fysikk": {
+"omrade": "grunnlag",
+"tittel": "Hva er fysikk?",
+"undertemaer": {
+"hva-er-fysikk": "Hva er fysikk",
+"overslag": "Overslag og størrelsesordener"
+}
+},
+"storrelser-og-enheter": {
+"omrade": "grunnlag",
+"tittel": "Størrelser og enheter",
+"undertemaer": {
+"si": "Fysiske størrelser og SI",
+"enhetsregning": "Å regne med enheter"
+}
+},
+"maling-og-usikkerhet": {
+"omrade": "grunnlag",
+"tittel": "Tall, måling og usikkerhet",
+"undertemaer": {
+"gjeldende-siffer": "Gjeldende siffer",
+"standardform": "Standardform",
+"usikkerhet": "Måleusikkerhet og beregning",
+"forsok-og-rapport": "Forsøk og rapport"
+}
+},
+"matematiske-verktoy": {
+"omrade": "grunnlag",
+"tittel": "Matematiske verktøy",
+"undertemaer": {
+"algebra": "Likninger og algebra",
+"funksjoner": "Funksjoner og grafer",
+"trigonometri": "Trigonometri"
+}
+},
+"vektorer": {
+"omrade": "grunnlag",
+"tittel": "Vektorer",
+"undertemaer": {
+"dekomponering": "Vektorer og dekomponering",
+"vektorregning": "Regning med vektorer"
+}
+},
+"modellering": {
+"omrade": "grunnlag",
+"tittel": "Modellering og problemløsning",
+"undertemaer": {
+"modellering": "Matematisk modellering",
+"regresjon": "Grafer og regresjon"
+}
+},
+"programmering": {
+"omrade": "grunnlag",
+"tittel": "Fysikk og programmering",
+"undertemaer": {
+"python": "Python i fysikk",
+"plotting": "Plotting av data og funksjoner",
+"numeriske-metoder": "Numerisk løsning av bevegelse"
+}
+},
+"kinematikk": {
+"omrade": "mekanikk",
+"tittel": "Kinematikk",
+"undertemaer": {
+"posisjon-fart-akselerasjon": "Posisjon, fart og akselerasjon",
+"konstant-akselerasjon": "Konstant akselerasjon",
+"to-dimensjoner": "Bevegelse i to dimensjoner"
+}
+},
+"sirkelbevegelse": {
+"omrade": "mekanikk",
+"tittel": "Sirkelbevegelse",
+"undertemaer": {
+"sentripetal": "Sentripetalakselerasjon",
+"sirkel-krefter": "Krefter i sirkelbevegelse"
+}
+},
+"newtons-lover": {
+"omrade": "mekanikk",
+"tittel": "Newtons lover og krefter",
+"undertemaer": {
+"newtons-lover": "Newtons lover",
+"krefter-i-planet": "Krefter i planet",
+"friksjon-fjaer-snorer": "Friksjon, fjær og snorer",
+"luftmotstand": "Luftmotstand"
+}
+},
+"bevegelsesmengde": {
+"omrade": "mekanikk",
+"tittel": "Bevegelsesmengde og støt",
+"undertemaer": {
+"kraftstot": "Bevegelsesmengde og kraftstøt",
+"kollisjoner": "Bevaring og kollisjoner"
+}
+},
+"arbeid-og-energi": {
+"omrade": "mekanikk",
+"tittel": "Arbeid og energi",
+"undertemaer": {
+"arbeid": "Arbeid",
+"energiformer": "Kinetisk og potensiell energi",
+"energibevaring": "Energibevaring og energitap",
+"effekt": "Effekt"
+}
+},
+"statikk": {
+"omrade": "mekanikk",
+"tittel": "Likevekt og kraftmoment",
+"undertemaer": {
+"kraftlikevekt": "Kraftlikevekt",
+"kraftmoment": "Kraftmoment og rotasjonslikevekt",
+"massesenter": "Massesenter"
+}
+},
+"rotasjon": {
+"omrade": "mekanikk",
+"tittel": "Rotasjon og spinn",
+"undertemaer": {
+"rotasjonskinematikk": "Rotasjonskinematikk",
+"treghetsmoment": "Treghetsmoment og rotasjonsenergi",
+"rulling": "Kraftmoment og rulling",
+"dreieimpuls": "Dreieimpuls"
+}
+},
+"gravitasjon": {
+"omrade": "mekanikk",
+"tittel": "Gravitasjon",
+"undertemaer": {
+"gravitasjonsloven": "Newtons gravitasjonslov",
+"satellitter": "Satellitter og planetbaner"
+}
+},
+"svingninger": {
+"omrade": "mekanikk",
+"tittel": "Svingninger",
+"undertemaer": {
+"harmoniske": "Harmoniske svingninger",
+"pendel": "Fjær og pendel"
+}
+},
+"hydrostatikk": {
+"omrade": "fluider",
+"tittel": "Trykk og oppdrift",
+"undertemaer": {
+"trykk": "Trykk og Pascals lov",
+"oppdrift": "Oppdrift og Arkimedes' lov"
+}
+},
+"temperatur-og-varme": {
+"omrade": "termofysikk",
+"tittel": "Temperatur og varme",
+"undertemaer": {
+"indre-energi": "Indre energi, varme og temperatur",
+"kalorimetri": "Faseoverganger og kalorimetri",
+"varmetransport": "Varmetransport"
+}
+},
+"termodynamikk": {
+"omrade": "termofysikk",
+"tittel": "Termodynamikkens lover",
+"undertemaer": {
+"forste-lov": "Termodynamikkens 1. lov",
+"prosesser": "Prosesser og pV-diagram",
+"andre-lov": "Termodynamikkens 2. lov"
+}
+},
+"gasser": {
+"omrade": "termofysikk",
+"tittel": "Gasser og kinetisk teori",
+"undertemaer": {
+"idealgass": "Idealgass"
+}
+},
+"elektrisk-felt": {
+"omrade": "elektromagnetisme",
+"tittel": "Ladning og elektrisk felt",
+"undertemaer": {
+"ladning": "Elektrisk ladning",
+"coulomb": "Coulombs lov",
+"felt": "Elektrisk felt",
+"homogent-felt": "Ladning i homogent felt"
+}
+},
+"elektrisk-potensial": {
+"omrade": "elektromagnetisme",
+"tittel": "Elektrisk potensial",
+"undertemaer": {
+"potensiell-energi": "Elektrisk potensiell energi",
+"potensial": "Potensial og spenning"
+}
+},
+"kretser": {
+"omrade": "elektromagnetisme",
+"tittel": "Strøm og kretser",
+"undertemaer": {
+"strom-spenning": "Strøm og spenning",
+"motstand": "Motstand og Ohms lov",
+"kirchhoff": "Kirchhoffs lover",
+"emf": "Elektromotorisk spenning og indre resistans",
+"effekt": "Elektrisk effekt"
+}
+},
+"bolger-og-lyd": {
+"omrade": "bolger",
+"tittel": "Bølger og lyd",
+"undertemaer": {
+"bolger": "Bølger og bølgeegenskaper"
+}
+},
+"straling": {
+"omrade": "bolger",
+"tittel": "Stråling og drivhuseffekt",
+"undertemaer": {
+"em-straling": "Elektromagnetisk stråling",
+"varmestraling": "Varmestråling",
+"drivhuseffekt": "Drivhuseffekten og klima"
+}
+},
+"atom-og-kjerne": {
+"omrade": "moderne",
+"tittel": "Atom- og kjernefysikk",
+"undertemaer": {
+"atomet": "Atomets oppbygning",
+"spektre": "Spektre og energinivåer",
+"radioaktivitet": "Radioaktivitet og stråling",
+"kjerneenergi": "Kjernereaksjoner og kjerneenergi"
+}
+}
+},
 "struktur": {
 "kinematikk": {
 "omrade": "mekanikk",

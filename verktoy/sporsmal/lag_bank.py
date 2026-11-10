@@ -218,6 +218,9 @@ print(len(B), "spørsmål;", "feil:", feil)
 for t in dict.fromkeys(x["tema"] for x in B):
     c = Counter(x["vanskelighet"] for x in B if x["tema"] == t)
     print(f"{t:22s}", c[L], c[M], c[V])
-ut = {"omrader": {o["id"]: o["tittel"] for o in kart["omrader"]}, "struktur": {t: dict(omrade=tre[t][0], tittel=tre[t][1], undertemaer=tre[t][2]) for t in dict.fromkeys(x["tema"] for x in B)},
+# katalog: alle temaer med undertemaer på nettsiden (fagbyggeren bygger fag av dem, også uten spørsmål ennå)
+katalog = {e["id"]: dict(omrade=o["id"], tittel=e["tittel"], undertemaer={d["id"]: d["tittel"] for d in e.get("undertemaer", [])})
+           for o in kart["omrader"] for e in o["temaer"] if e.get("undertemaer")}
+ut = {"omrader": {o["id"]: o["tittel"] for o in kart["omrader"]}, "katalog": katalog, "struktur": {t: dict(omrade=tre[t][0], tittel=tre[t][1], undertemaer=tre[t][2]) for t in dict.fromkeys(x["tema"] for x in B)},
       "sporsmal": [{k: v for k, v in x.items() if k != "ck"} for x in B]}
 json.dump(ut, open(sys.argv[2], "w"), ensure_ascii=False, indent=0)

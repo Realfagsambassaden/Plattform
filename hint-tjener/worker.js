@@ -2,6 +2,7 @@
 //   POST /hint     – ETT hint til en oppgave (åpent for alle)
 //   POST /vurder   – studieappen: vurderer studentens forklaring (tekst og/eller bilde) til et quizspørsmål. Krever innlogging.
 //   POST /rad      – studieappen: personlig råd om eksamensforberedelse ut fra kunnskapsprofilen. Krever innlogging.
+//   POST /fagforslag – fagbyggeren: forslag til moduler og uker ut fra emnebeskrivelse og læringsutbytte. Bare for undervisere.
 //   POST /dekning  – dekningskart: hvor godt dekker fysikkhjelp.no et emne? Åpent for alle;
 //                    innloggede brukere får i tillegg sidene/veikartet.
 // API-nøkler ligger som hemmeligheter i Cloudflare og vises aldri på nettsiden.
@@ -97,6 +98,64 @@ Norsk bokmål, desimalpunktum.
 Svar KUN med gyldig JSON:
 {"forstaelse":{"undertemaer":[],"tiltak":[],"formel":""},"presisjon":{"undertemaer":[],"tiltak":[],"formel":""},"hurtighet":{"undertemaer":[],"tiltak":[],"formel":""},"bra":""}`;
 
+const SYSTEM_FAG = `Du er en erfaren fysikklærer og hjelper en underviser å legge opp et fag på NETTSTED.
+Du får emnebeskrivelsen og læringsutbyttet (begge kan mangle), rammen (antall uker og undervisningsform) og en KATALOG over undertemaer som finnes på nettstedet, med id og tittel.
+
+Lag et oppsett:
+- Del faget i 3–8 moduler med korte navn (1–3 ord), i en naturlig faglig rekkefølge.
+- Hver modul har én eller flere uker. Hver uke dekker 1–3 undertemaer fra katalogen.
+- Bruk høyst så mange uker som rammen sier. La gjerne de siste 1–2 ukene være uten undertemaer (repetisjon), med notatet «Repetisjon».
+- Bruk BARE id-er som står i katalogen, skrevet nøyaktig likt. Ta bare med det som passer emnebeskrivelsen og læringsutbyttet. Uten beskrivelse: lag et vanlig oppsett for faget ut fra navnet.
+- Undervisningsformen påvirker ikke innholdet, bare notatene: ved omvendt klasserom kan notatet si hva studentene forbereder.
+- "kommentar": 1–2 setninger til underviseren om valgene, for eksempel hva i læringsutbyttet katalogen ikke dekker.
+Norsk bokmål.
+
+Svar KUN med gyldig JSON:
+{"moduler":[{"navn":"…","uker":[{"undertemaer":["id"],"notat":""}]}],"kommentar":"…"}`;
+
+async function erUnderviser(request, env) {
+  const token = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
+  if (!token || !env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) return false;
+  const r = await fetch(`${env.SUPABASE_URL}/rest/v1/rpc/min_rolle`, {
+    method: "POST", headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: "{}" });
+  if (!r.ok) return false;
+  const rolle = await r.json().catch(() => "");
+  return rolle === "underviser" || rolle === "admin";
+}
+
+async function fagforslag(request, env, b, h) {
+  const bruker = await innloggetBruker(request, env);
+  if (!bruker) return json({ feil: "Du må være logget inn." }, 401, h);
+  if (!(await erUnderviser(request, env))) return json({ feil: "Bare godkjente undervisere kan få forslag til fagoppsett." }, 403, h);
+  if (!(await innenforGrense(env, `fag:${bruker.id}:${new Date().toISOString().slice(0, 10)}`, 20, 90000)))
+    return json({ feil: "Du har bedt om mange forslag i dag. Prøv igjen i morgen." }, 429, h);
+  const katalog = (Array.isArray(b.katalog) ? b.katalog.slice(0, 400) : [])
+    .filter((x) => x && typeof x.id === "string" && /^[a-z0-9-]+\/[a-z0-9-]+\/[a-z0-9-]+$/.test(x.id))
+    .map((x) => ({ id: x.id, tittel: kort(x.tittel, 120) }));
+  if (!katalog.length) return json({ feil: "Fant ingen temaer å bygge faget av." }, 400, h);
+  const ramme = b.ramme || {};
+  const uker = Math.max(1, Math.min(40, parseInt(ramme.uker, 10) || 14));
+  const form = { forelesninger: "forelesninger", omvendt: "omvendt klasserom", ingen: "ingen faste samlinger" }[ramme.form] || "forelesninger";
+  const melding = `Fagets navn: ${kort(b.navn, 120)}\nRamme: ${uker} uker, ${form}` + (ramme.samlinger ? `, ${parseInt(ramme.samlinger, 10) || 0} samlinger à ${parseInt(ramme.lengde, 10) || 90} min per uke` : "") +
+    `\n\nEmnebeskrivelse:\n${kort(b.emnebeskrivelse, 8000) || "(ingen)"}\n\nLæringsutbytte:\n${kort(b.laringsutbytte, 3000) || "(ingen)"}\n\nKATALOG (id | tittel):\n` +
+    katalog.map((x) => `${x.id} | ${x.tittel}`).join("\n");
+  const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_FAG.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 4000));
+  if (!r || !Array.isArray(r.moduler)) throw feil("Fikk ikke noe forslag fra KI denne gangen. Prøv igjen.", 502);
+  // Rydd: bare kjente id-er, høyst så mange uker som rammen sier.
+  const gyldig = new Set(katalog.map((x) => x.id));
+  let igjen = uker;
+  const moduler = r.moduler.slice(0, 12).map((m) => {
+    const u = (Array.isArray(m && m.uker) ? m.uker : []).slice(0, Math.max(0, igjen)).map((x) => ({
+      undertemaer: (Array.isArray(x && x.undertemaer) ? x.undertemaer : []).filter((id) => gyldig.has(id)).slice(0, 4),
+      notat: kort(x && x.notat, 200),
+    }));
+    igjen -= u.length;
+    return { navn: kort(m && m.navn, 60) || "Modul", uker: u };
+  }).filter((m) => m.uker.length);
+  if (!moduler.length) throw feil("Forslaget fra KI kunne ikke brukes. Prøv igjen, eller bygg selv.", 502);
+  return json({ moduler, kommentar: kort(r.kommentar, 600) }, 200, h);
+}
+
 function cors(origin) {
   const ok = TILLATTE_OPPRINNELSER.includes(origin);
   return {
@@ -126,6 +185,7 @@ export default {
       if (sti.endsWith("/dekning")) return await dekning(request, env, b, h);
       if (sti.endsWith("/vurder")) return await vurder(request, env, b, h);
       if (sti.endsWith("/rad")) return await rad(request, env, b, h);
+      if (sti.endsWith("/fagforslag")) return await fagforslag(request, env, b, h);
       return await hint(request, env, b, h);
     } catch (e) {
       return json({ feil: e.brukermelding || "Tjenesten er midlertidig utilgjengelig. Prøv igjen om litt." }, e.status || 502, h);

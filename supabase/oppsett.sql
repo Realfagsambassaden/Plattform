@@ -406,3 +406,27 @@ $$
 $$;
 revoke execute on function public.kurs_godkjenning(uuid) from public, anon;
 grant execute on function public.kurs_godkjenning(uuid) to authenticated;
+
+-- =====================================================================
+-- Fagbyggeren: et fag kan lagres som utkast («påbegynt») og publiseres. Studenter finner bare publiserte fag.
+-- ramme:     {"uker":14,"form":"forelesninger|omvendt|ingen","samlinger":2,"lengde":90,"startuke":34}
+-- elementer: {"moduler":true,"arbeidskrav":true,"samlinger":true,"tidslinje":true}
+-- moduler:   [{"navn":"Bevegelse","uker":[{"undertemaer":["fysikkhjelp/kinematikk/konstant-akselerasjon"],"notat":""}]}]
+-- =====================================================================
+alter table public.kurs add column if not exists status text not null default 'publisert' check (status in ('pabegynt', 'publisert'));
+alter table public.kurs add column if not exists emnebeskrivelse text not null default '' check (char_length(emnebeskrivelse) <= 20000);
+alter table public.kurs add column if not exists laringsutbytte text not null default '' check (char_length(laringsutbytte) <= 5000);
+alter table public.kurs add column if not exists ramme jsonb not null default '{}'::jsonb check (pg_column_size(ramme) < 4000);
+alter table public.kurs add column if not exists elementer jsonb not null default '{}'::jsonb check (pg_column_size(elementer) < 2000);
+alter table public.kurs add column if not exists moduler jsonb not null default '[]'::jsonb check (pg_column_size(moduler) < 200000);
+alter table public.kurs add column if not exists endret timestamptz not null default now();
+
+create or replace function public.finn_kurs(k text)
+  returns table (id uuid, navn text, krev_innsyn boolean)
+  language sql stable security definer set search_path = public as
+  $$ select id, navn, krev_innsyn from kurs where kode = upper(trim(k)) and status = 'publisert' $$;
+
+-- Påmeldte studenter ser ikke utkastet: kurs: lese gjelder deltakere bare for publiserte fag.
+drop policy if exists "kurs: lese" on public.kurs;
+create policy "kurs: lese" on public.kurs for select to authenticated
+  using (eier = auth.uid() or (status = 'publisert' and public.er_deltaker(id)));

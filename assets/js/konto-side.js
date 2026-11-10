@@ -118,9 +118,9 @@ function start() {
       rot.querySelector('.profil-underviser').hidden = !underviser;
       rot.querySelector('.profil-blivunderviser').hidden = underviser;
       rot.querySelector('.profil-admin').hidden = rolle !== 'admin';
-      if (underviser) k.from('kurs').select('id,navn,kode').eq('eier', sesjon.user.id).order('opprettet').then(function (r2) {
+      if (underviser) k.from('kurs').select('id,navn,kode,status').eq('eier', sesjon.user.id).order('opprettet').then(function (r2) {
         var l = (r2 && r2.data) || [], el = rot.querySelector('.profil-fagliste');
-        el.innerHTML = l.length ? '<p><b>Fagene dine</b></p><ul>' + l.map(function (c) { return '<li><a href="../studie/index.html#fag-' + c.id + '">' + esc(c.navn) + '</a></li>'; }).join('') + '</ul>'
+        el.innerHTML = l.length ? '<p><b>Fagene dine</b></p><ul>' + l.map(function (c) { return '<li><a href="../studie/index.html#fag-' + c.id + '">' + esc(c.navn) + (c.status === 'pabegynt' ? ' <span style="color:#eee462">(påbegynt)</span>' : '') + '</a></li>'; }).join('') + '</ul>'
           : '<p class="konto-ingress">Du har ingen fag ennå.</p>';
       });
       if (rolle === 'admin') admin(k);
