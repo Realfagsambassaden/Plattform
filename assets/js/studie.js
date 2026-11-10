@@ -1238,27 +1238,49 @@ function studieStart() {
   // Arbeidskrav som stolper til venstre for modulene: en stolpe går langs de undertemaene den dekker. Dekker den hele modul 3
   // og ett av fire undertemaer i modul 4, går den langs hele modul 3 og en firedel av uka i modul 4. Overlappende stolper
   // legges i hver sin bane.
-  function tegnKravStolper() {
-    var ler = document.getElementById('st-lerret'), kol = document.getElementById('st-kravkol'), uten = document.getElementById('st-kravuten');
-    if (!ler || !kol || !T.fag) return;
-    var c = T.fag.c, bunn = ler.getBoundingClientRect().top, l = (T.ovelser || []).filter(function (x) { return x.kurs === c.id; }), staver = [], ikke = [];
-    l.forEach(function (o, oi) {
-      var ids = kravIder(o), top = Infinity, slutt = -Infinity;
-      ler.querySelectorAll('.st-chip[data-ut]').forEach(function (ch) {
-        if (ids.indexOf(ch.dataset.ut) < 0) return;
-        var uke = ch.closest('.st-uke'), alle = uke.querySelectorAll('.st-chip'), i = Array.prototype.indexOf.call(alle, ch), n = alle.length, r = uke.getBoundingClientRect();
-        top = Math.min(top, r.top - bunn + r.height * i / n); slutt = Math.max(slutt, r.top - bunn + r.height * (i + 1) / n);
-      });
-      if (top === Infinity) ikke.push(o); else staver.push({ o: o, top: top, slutt: slutt, farge: MODFARGE[(oi + 2) % MODFARGE.length] });
+  // Felles for lerretet og tidslinjene: stolper i baner til venstre. segmenter(o) gir [topp, bunn] (px fra toppen av «ler»).
+  function plasserStolper(ler, kol, l, segmenter, handling) {
+    var bunn = ler.getBoundingClientRect().top, staver = [], ikke = [];
+    l.forEach(function (o) {
+      var top = Infinity, slutt = -Infinity;
+      segmenter(o, bunn).forEach(function (x) { top = Math.min(top, x[0]); slutt = Math.max(slutt, x[1]); });
+      if (top === Infinity) ikke.push(o); else staver.push({ o: o, top: top, slutt: slutt, farge: kravFarge(o) });
     });
     var baner = [];
     staver.sort(function (a, b) { return a.top - b.top; }).forEach(function (x) { for (var b = 0; b < baner.length && baner[b] > x.top + 2; b++); x.bane = b; baner[b] = x.slutt; });
-    kol.style.width = Math.max(1, baner.length) * 34 + 'px';
+    kol.style.width = (baner.length ? baner.length * 34 : 0) + 'px';
     kol.innerHTML = staver.map(function (x) {
       var t = x.o.tittel + (x.o.frist ? ' · frist ' + dato(x.o.frist) : '');
-      return '<button type="button" class="st-kravstolpe" data-h="kravStolpe" data-id="' + x.o.id + '" title="' + esc(t + ' – ' + dekkerTekst(x.o)) + '" style="top:' + x.top + 'px;height:' + Math.max(28, x.slutt - x.top) + 'px;left:' + x.bane * 34 + 'px;border-color:' + x.farge + ';color:' + x.farge + '"><span>' + esc(t) + '</span></button>';
+      return '<button type="button" class="st-kravstolpe" data-h="' + handling + '" data-id="' + x.o.id + '" title="' + esc(t + ' – ' + dekkerTekst(x.o)) + '" style="top:' + x.top + 'px;height:' + Math.max(28, x.slutt - x.top) + 'px;left:' + x.bane * 34 + 'px;border-color:' + x.farge + ';color:' + x.farge + '"><span>' + esc(t) + '</span></button>';
     }).join('');
-    if (uten) uten.textContent = ikke.length ? 'Arbeidskrav som ikke dekker noe i modulene: ' + ikke.map(function (o) { return o.tittel; }).join(', ') + '.' : '';
+    return ikke;
+  }
+  // Samme farge på et arbeidskrav overalt (stolpe og flagg), ut fra rekkefølgen i faget.
+  function kravFarge(o) { var l = (T.ovelser || []).filter(function (x) { return x.kurs === o.kurs; }), i = l.indexOf(o); if (i < 0) i = l.findIndex(function (x) { return x.id === o.id; }); return MODFARGE[(Math.max(0, i) + 2) % MODFARGE.length]; }
+  function tegnKravStolper() {
+    var ler = document.getElementById('st-lerret'), kol = document.getElementById('st-kravkol'), uten = document.getElementById('st-kravuten');
+    if (ler && kol && T.fag) {
+      var ikke = plasserStolper(ler, kol, (T.ovelser || []).filter(function (x) { return x.kurs === T.fag.c.id; }), function (o, bunn) {
+        var ids = kravIder(o), seg = [];
+        ler.querySelectorAll('.st-chip[data-ut]').forEach(function (ch) {
+          if (ids.indexOf(ch.dataset.ut) < 0) return;
+          var uke = ch.closest('.st-uke'), alle = uke.querySelectorAll('.st-chip'), i = Array.prototype.indexOf.call(alle, ch), n = alle.length, r = uke.getBoundingClientRect();
+          seg.push([r.top - bunn + r.height * i / n, r.top - bunn + r.height * (i + 1) / n]);
+        });
+        return seg;
+      }, 'kravStolpe');
+      if (uten) uten.textContent = ikke.length ? 'Arbeidskrav som ikke dekker noe i modulene: ' + ikke.map(function (o) { return o.tittel; }).join(', ') + '.' : '';
+    }
+    // Tidslinjene: stolpen går fra det første til det siste undertemaet arbeidskravet dekker, og ned til flagget.
+    rot.querySelectorAll('.st-tl-lerret').forEach(function (tl) {
+      var ids0 = (tl.dataset.krav || '').split(',').filter(Boolean), l = (T.ovelser || []).filter(function (o) { return ids0.indexOf(o.id) >= 0; });
+      plasserStolper(tl, tl.querySelector('.st-tl-kravkol'), l, function (o, bunn) {
+        var ids = kravIder(o), seg = [];
+        tl.querySelectorAll('.st-tl-ut[data-ut]').forEach(function (ch) { if (ids.indexOf(ch.dataset.ut) < 0) return; var r = ch.getBoundingClientRect(); seg.push([r.top - bunn - 2, r.bottom - bunn + 2]); });
+        tl.querySelectorAll('.st-tl-flagg[data-flagg="' + o.id + '"]').forEach(function (f) { var r = f.getBoundingClientRect(); seg.push([r.top - bunn, r.top - bunn + r.height / 2]); });
+        return seg;
+      }, tl.dataset.handling || 'ovelse');
+    });
   }
   window.addEventListener('resize', function () { clearTimeout(tegnKravStolper.t); tegnKravStolper.t = setTimeout(tegnKravStolper, 150); });
 
@@ -1291,14 +1313,13 @@ function studieStart() {
           '<div class="st-tl-tid"><b>Uke ' + nr + '</b>' + (start ? '<span class="st-sm">kal.uke ' + (((start + nr - 2) % 52) + 1) + ' · ' + dato0.toLocaleDateString('nb-NO', { day: 'numeric', month: 'short', timeZone: 'UTC' }) + '</span>' : '') + '</div>' +
           '<div class="st-tl-inn">' + (wi === 0 ? '<div class="st-tl-modul" style="color:' + farge + '">Modul ' + (mi + 1) + ': ' + esc(m.navn) + '</div>' + besk.filter(function (x) { return x.uke === null && x.mi === mi; }).map(beskHtml).join('') + (notater && notater[m.id] ? '<div class="st-tl-notat">🔒 ' + esc(notater[m.id]) + '</div>' : '') : '') +
           besk.filter(function (x) { return x.uke === nr; }).sort(function (a, b) { return a.b.tid.localeCompare(b.b.tid); }).map(beskHtml).join('') +
-          (w.undertemaer.length ? '<div>' + w.undertemaer.map(function (id) { var url = utUrlK(id); return url ? '<a class="st-tl-ut" href="' + url + '">' + esc(utNavnKort(id)) + '</a>' : '<span class="st-tl-ut" title="Lærestoffet kommer">' + esc(utNavnKort(id)) + '</span>'; }).join('') + '</div>' : '<div class="st-sm">' + (w.notat ? '' : 'Ingen undertemaer') + '</div>') +
+          (w.undertemaer.length ? '<div>' + w.undertemaer.map(function (id) { var url = utUrlK(id); return url ? '<a class="st-tl-ut" data-ut="' + esc(id) + '" href="' + url + '">' + esc(utNavnKort(id)) + '</a>' : '<span class="st-tl-ut" data-ut="' + esc(id) + '" title="Lærestoffet kommer">' + esc(utNavnKort(id)) + '</span>'; }).join('') + '</div>' : '<div class="st-sm">' + (w.notat ? '' : 'Ingen undertemaer') + '</div>') +
           (w.notat ? '<div class="st-sm">' + esc(w.notat) + '</div>' : '') + (samlingTekst(r, el) ? '<div class="st-sm">' + samlingTekst(r, el) + '</div>' : '') +
-          dekker.filter(function (o) { return frister.indexOf(o) < 0 && flagg.indexOf(o) < 0; }).map(function (o) { return '<button type="button" class="st-tl-krav" data-h="ovelse" data-id="' + o.id + '">Øver mot: ' + esc(o.tittel) + '</button>'; }).join('') +
-          frister.concat(flagg).map(function (o) { var ok = godkjent(o); return '<button type="button" class="st-tl-flagg' + (ok ? ' ok' : '') + '" data-h="ovelse" data-id="' + o.id + '"><span class="st-tl-flaggikon">' + (ok ? '✓' : '🚩') + '</span><span><b>Arbeidskrav: ' + esc(o.tittel) + '</b><br><span class="st-sm">' + (o.frist ? 'Frist ' + dato(o.frist) : 'Ingen frist') + ' · minst ' + o.krav + ' av ' + o.antall + ' riktige' + (ok ? ' · godkjent' : '') + '</span></span></button>'; }).join('') + '</div></li>');
+          frister.concat(flagg).map(function (o) { var ok = godkjent(o); return '<button type="button" class="st-tl-flagg' + (ok ? ' ok' : '') + '" data-h="ovelse" data-id="' + o.id + '" data-flagg="' + o.id + '"' + (ok ? '' : ' style="border-color:' + kravFarge(o) + '"') + '><span class="st-tl-flaggikon">' + (ok ? '✓' : '🚩') + '</span><span><b>Arbeidskrav: ' + esc(o.tittel) + '</b><br><span class="st-sm">' + (o.frist ? 'Frist ' + dato(o.frist) : 'Ingen frist') + ' · minst ' + o.krav + ' av ' + o.antall + ' riktige' + (ok ? ' · godkjent' : '') + '</span></span></button>'; }).join('') + '</div></li>');
       });
     });
     var andre = krav.filter(function (o) { return o.frist && !brukt[o.id]; });
-    return '<ol class="st-tidslinje">' + rader.join('') + '</ol>' + (andre.length ? '<p class="st-sm">Andre frister: ' + andre.map(function (o) { return esc(o.tittel) + ' ' + dato(o.frist); }).join(', ') + '</p>' : '') +
+    return '<div class="st-tl-lerret" data-krav="' + krav.map(function (o) { return o.id; }).join(',') + '"><div class="st-tl-kravkol" aria-hidden="true"></div><ol class="st-tidslinje">' + rader.join('') + '</ol></div>' + (andre.length ? '<p class="st-sm">Andre frister: ' + andre.map(function (o) { return esc(o.tittel) + ' ' + dato(o.frist); }).join(', ') + '</p>' : '') +
       (!start ? '<p class="st-sm">Sett «Første kalenderuke» under Beskrivelse og ramme for å få datoer og frister inn i tidslinjen.</p>' : '');
   }
 

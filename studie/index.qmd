@@ -139,6 +139,9 @@ html.fh-innebygd .studie .st-faner { display: none; }   /* i fokusvisningens arb
 .studie .st-dekkmod { border-left: 4px solid; padding: .2rem 0 .2rem .7rem; margin: .5rem 0; }
 .studie .st-dekk { font-size: .92rem; padding: .15rem 0; }
 .studie .st-andre { margin-top: .5rem; }
+.studie .st-tl-lerret { display: flex; gap: .5rem; position: relative; align-items: stretch; }
+.studie .st-tl-kravkol { position: relative; flex: none; }
+.studie .st-tl-lerret > .st-tidslinje { flex: 1; min-width: 0; }
 .studie .st-tidslinje { list-style: none; padding: 0; margin: .8rem 0; }
 .studie .st-tl-uke { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: .8rem; border-left: 4px solid; padding: .5rem 0 .5rem .8rem; margin: 0 0 .25rem; }
 .studie .st-tl-tid { display: flex; flex-direction: column; }
