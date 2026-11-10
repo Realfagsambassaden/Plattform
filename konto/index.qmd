@@ -52,6 +52,7 @@ toc: false
 
     <div class="profil-studentdel">
     <h2 class="profil-del">Studentdel</h2>
+    <p class="profil-studentinfo konto-boks" hidden><b>Du ser nå studentdelen.</b> Dette er det studentene ser. Du kan bruke det til å prøve appen selv; det påvirker ikke fagene dine.</p>
     <div class="profil-kort">
       <a class="track live" href="../studie/index.html">
         <span class="status">Ny · test</span>
