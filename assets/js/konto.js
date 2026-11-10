@@ -1,6 +1,20 @@
 // Brukerkontoer (Supabase). Lastes på alle sider.
 // - Oppdaterer «Logg inn» i menyen til «Min side» når du er innlogget (uten å laste Supabase-biblioteket).
 // - window.fhKonto() gir et løfte om Supabase-klienten, for sidene som trenger den (konto, dekning).
+// Appen: registrer tjenestearbeideren (bare der nettstedet har et app-manifest), og ta vare på installasjonstilbudet
+// fra nettleseren, så studieappen kan vise en «Installer appen»-knapp.
+(function () {
+  window.fhApp = { kanInstallere: false, installert: false, hendelse: null };
+  try { window.fhApp.installert = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) {}
+  try { if (window.self !== window.top) return; } catch (e) { return; }   // ikke inne i fokusvisningen
+  if ('serviceWorker' in navigator && document.querySelector('link[rel="manifest"]') && (location.protocol === 'https:' || location.hostname === 'localhost'))
+    navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function () {});
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault(); window.fhApp.hendelse = e; window.fhApp.kanInstallere = true;
+    document.dispatchEvent(new CustomEvent('fh-app'));
+  });
+  window.addEventListener('appinstalled', function () { window.fhApp.installert = true; window.fhApp.kanInstallere = false; document.dispatchEvent(new CustomEvent('fh-app')); });
+})();
 // Sider som vises inne i fokusvisningen (en iframe på samme nettsted) vises uten meny, sidemeny og bunntekst.
 (function () {
   var innebygd = false; try { innebygd = window.self !== window.top && window.top.location.origin === location.origin; } catch (e) {}

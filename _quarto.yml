@@ -9,6 +9,9 @@ project:
     - assets/
     - innhold.json
     - loyper.json
+    - manifest.webmanifest
+    - sw.js
+    - offline.html
     - studie/sporsmal.json
 
 lang: nb
@@ -385,6 +388,14 @@ format:
           <meta name="supabase-key" content="sb_publishable_mapCEnSSxrSSwTbBKao6hw_qMOClLSS">
           <!-- Navn og bakgrunnssett for dette nettstedet (brukes av assets/js) -->
           <meta name="nettsted-navn" content="fysikkhjelp.no">
+          <!-- Appen (installerbar nettapp): manifest, ikon og farge. Tjenestearbeideren (sw.js) registreres i assets/js/konto.js. -->
+          <link rel="manifest" href="/manifest.webmanifest">
+          <meta name="theme-color" content="#0d1110">
+          <link rel="apple-touch-icon" href="/assets/img/app/apple-touch-icon.png">
+          <meta name="apple-mobile-web-app-capable" content="yes">
+          <meta name="mobile-web-app-capable" content="yes">
+          <meta name="apple-mobile-web-app-title" content="Fysikkhjelp">
+          <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
           <meta name="bakgrunn-sett" content="fysikk">
     include-after-body:
       - text: |
