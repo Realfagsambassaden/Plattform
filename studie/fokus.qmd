@@ -1,0 +1,64 @@
+---
+title: "Fokusvisning"
+toc: false
+page-layout: full
+---
+
+```{=html}
+<div id="fokus" class="fokus" aria-live="polite"><p style="padding:2rem">Laster …</p></div>
+<style>
+/* Fokusvisningen fyller hele vinduet: lærestoff i midten, tidslinje til venstre og arbeidskrav til høyre som uttrekkskort. */
+html.fk-aktiv #quarto-header, html.fk-aktiv header.headroom, html.fk-aktiv .nav-footer, html.fk-aktiv footer.footer,
+html.fk-aktiv #title-block-header, html.fk-aktiv #quarto-sidebar { display: none !important; }
+html.fk-aktiv, html.fk-aktiv body { overflow: hidden; }
+.fokus { position: fixed; inset: 0; z-index: 1040; background: var(--bs-body-bg); display: flex; flex-direction: column; --fk-tid: 300px; --fk-krav: min(460px, 45vw); }
+.fokus .fk-topp, .fokus .fk-bunn { display: flex; align-items: center; gap: .7rem; padding: .4rem .9rem; border-bottom: 1px solid var(--bs-border-color); flex: none; }
+.fokus .fk-bunn { border-top: 1px solid var(--bs-border-color); border-bottom: 0; justify-content: space-between; }
+.fokus .fk-fag { font-weight: 700; } .fokus .fk-her { flex: 1; color: var(--bs-secondary-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fokus .fk-ut { text-decoration: none; font-size: 1.1rem; padding: 0 .3rem; }
+.fokus .fk-knapp { background: none; border: 1px solid var(--bs-border-color); color: inherit; border-radius: 999px; padding: .25rem .8rem; cursor: pointer; font: inherit; font-size: .92rem; }
+.fokus .fk-knapp:hover:not(:disabled) { border-color: var(--bs-primary); color: var(--bs-primary); }
+.fokus .fk-knapp:disabled { opacity: .4; cursor: default; }
+.fokus .fk-knapp.liten { padding: .1rem .5rem; font-size: .85rem; }
+.fokus .fk-pos { color: var(--bs-secondary-color); font-size: .9rem; }
+.fokus .fk-hoved { flex: 1; width: 100%; border: 0; background: var(--bs-body-bg); transition: padding .2s; }
+html.fk-delt .fokus .fk-hoved { width: calc(100% - var(--fk-krav)); }
+html.fk-tidfast .fokus .fk-hoved { margin-left: var(--fk-tid); width: calc(100% - var(--fk-tid)); }
+html.fk-tidfast.fk-delt .fokus .fk-hoved { width: calc(100% - var(--fk-tid) - var(--fk-krav)); }
+/* Uttrekkskortene */
+.fokus .fk-skuff { position: fixed; top: 3rem; bottom: 3rem; display: flex; z-index: 2; pointer-events: none; }
+.fokus .fk-skuff > * { pointer-events: auto; }
+.fokus .fk-tid { left: 0; flex-direction: row-reverse; transform: translateX(calc(-1 * var(--fk-tid))); transition: transform .2s; }
+.fokus .fk-tid.apen { transform: none; }
+.fokus .fk-krav { right: 0; transform: translateX(var(--fk-krav)); transition: transform .2s; }
+.fokus .fk-krav.apen { transform: none; }
+.fokus .fk-fane { writing-mode: vertical-rl; align-self: center; background: var(--bs-body-bg); border: 1px solid var(--bs-border-color); color: inherit; font: inherit; font-weight: 700;
+  padding: .9rem .35rem; cursor: pointer; }
+.fokus .fk-tid .fk-fane { border-left: 0; border-radius: 0 10px 10px 0; transform: rotate(180deg); border-radius: 10px 0 0 10px; }
+.fokus .fk-krav .fk-fane { border-right: 0; border-radius: 10px 0 0 10px; }
+.fokus .fk-panel { background: var(--bs-body-bg); border: 1px solid var(--bs-border-color); display: flex; flex-direction: column; box-shadow: 0 6px 24px rgba(0,0,0,.35); }
+.fokus .fk-tid .fk-panel { width: var(--fk-tid); border-left: 0; border-radius: 0 12px 12px 0; }
+.fokus .fk-krav .fk-panel { width: var(--fk-krav); border-right: 0; border-radius: 12px 0 0 12px; }
+.fokus .fk-panelhode { display: flex; justify-content: space-between; align-items: center; padding: .5rem .8rem; border-bottom: 1px solid var(--bs-border-color); }
+/* Tidslinjen ruller for seg selv og «lekker» ikke rullingen videre til hovedvinduet. */
+.fokus .fk-rull { overflow-y: auto; overscroll-behavior: contain; padding: .4rem .6rem 1rem; flex: 1; }
+.fokus .fk-mod { font-weight: 700; margin: .8rem 0 .2rem; }
+.fokus .fk-uke { font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; color: var(--bs-secondary-color); margin: .5rem 0 .15rem; }
+.fokus .fk-besk { font-size: .85rem; background: rgba(127,127,127,.12); border-radius: 8px; padding: .25rem .5rem; margin: .2rem 0; }
+.fokus .fk-besk span { color: var(--bs-secondary-color); }
+.fokus .fk-punkt { display: block; width: 100%; text-align: left; background: none; border: 0; border-left: 3px solid transparent; color: inherit; font: inherit; font-size: .93rem; padding: .25rem .5rem; border-radius: 0 6px 6px 0; cursor: pointer; }
+.fokus .fk-punkt:hover { background: rgba(127,127,127,.12); }
+.fokus .fk-punkt.her { border-left-color: var(--bs-primary); background: rgba(127,127,127,.16); font-weight: 700; }
+.fokus .fk-punkt.krav { color: var(--bs-warning); }
+.fokus .fk-punkt.mangler { opacity: .6; }
+.fokus .fk-frist, .fokus .fk-sm { font-size: .78rem; color: var(--bs-secondary-color); }
+.fokus .fk-kravinn { flex: 1; display: flex; }
+.fokus .fk-kravramme { flex: 1; border: 0; width: 100%; }
+.fokus .fk-tom, .fokus .fk-feil { padding: 1rem; color: var(--bs-secondary-color); }
+@media (max-width: 800px) {
+  .fokus { --fk-tid: 85vw; --fk-krav: 92vw; }
+  html.fk-delt .fokus .fk-hoved, html.fk-tidfast .fokus .fk-hoved { width: 100%; margin-left: 0; }
+}
+</style>
+<script src="../assets/js/fokus.js"></script>
+```

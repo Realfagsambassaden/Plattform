@@ -11,6 +11,8 @@
 function studieStart() {
   'use strict';
   var rot = document.getElementById('studie');
+  // Inne i fokusvisningen (arbeidskrav-kortet) trengs ikke sidens overskrift.
+  if (document.documentElement.classList.contains('fh-innebygd')) { var tb = document.getElementById('title-block-header'); if (tb) tb.style.display = 'none'; }
   var NETTSTED = ((document.querySelector('meta[name="nettsted-navn"]') || {}).content || 'fysikkhjelp.no').replace(/\.no$/, '');
   var apiMeta = (document.querySelector('meta[name="fysikkhjelp-hint-api"]') || {}).content || '';
   var API = apiMeta.replace(/\/hint\/?$/, '');
@@ -257,7 +259,8 @@ function studieStart() {
     var riktige = q.hovedRes.filter(function (x) { return x === 'riktig'; }).length;
     var rad = { nettsted: NETTSTED, tema: q.tema, ovelse: q.ovelse ? q.ovelse.id : null, antall: antall, riktige: riktige };
     T.quizer.push(Object.assign({ fullfort: new Date().toISOString() }, rad));
-    k.from('studie_quiz').insert(rad).then(sjekk).catch(function (e) { varsle('Resultatet ble ikke lagret: ' + feilmelding(e), true); });
+    k.from('studie_quiz').insert(rad).then(sjekk).then(function () { try { if (window.parent !== window) window.parent.postMessage({ type: 'fh-quiz', ovelse: rad.ovelse }, location.origin); } catch (e) {} })
+      .catch(function (e) { varsle('Resultatet ble ikke lagret: ' + feilmelding(e), true); });
   }
   function startQuiz(t, flere) {
     var dag = T.inn.modus === 'dag' && !flere;
@@ -615,7 +618,8 @@ function studieStart() {
     o += '<div class="st-rad st-visning"><p class="st-sm" style="margin:0">Temaer og undertemaer er nettstedets faste innhold. Moduler er din egen inndeling av faget i uker, og en modul kan hente undertemaer fra flere temaer.</p>' +
       '<button type="button" class="st-btn g liten" data-h="tidslinje">Vis som tidslinje</button></div>';
     if (f.tidslinje) return topp + '<div class="st-rad st-visning"><b>Tidslinje</b><button type="button" class="st-btn g liten" data-h="tidslinje">Tilbake til redigering</button></div>' +
-      tidslinjeHtml(u.moduler, r, el.arbeidskrav ? (T.ovelser || []).filter(function (x) { return x.kurs === c.id; }) : [], f.notater || {}, el);
+      '<p class="st-sm">Slik ser studentene tidslinjen. <a href="fokus.html#' + encodeURIComponent(c.id) + '" target="_blank" rel="noopener">Åpne faget i fokusvisning</a></p>' +
+      tidslinjeHtml(u.moduler, r, el.arbeidskrav ? (T.ovelser || []).filter(function (x) { return x.kurs === c.id; }) : [], null, el);
     var mineKrav = el.arbeidskrav ? (T.ovelser || []).filter(function (x) { return x.kurs === c.id; }) : [];
     o += '<p class="st-sm" id="st-kravuten"></p><div class="st-lerret" id="st-lerret">' + (mineKrav.length ? '<div class="st-kravkol" id="st-kravkol" aria-label="Arbeidskrav"></div>' : '') + '<div class="st-modkol">';
     o += u.moduler.map(function (m, mi) {
@@ -1104,7 +1108,7 @@ function studieStart() {
       var f = T.fag, c = f.c;
       var o = '<button type="button" class="st-tilbake" data-h="ga" data-v="kurs">← Fagene dine</button><h2 class="st-h1">' + esc(c.navn) + (c.status === 'pabegynt' ? ' <span class="st-pabegynt">(påbegynt)</span>' : '') + '</h2>' +
         '<div class="st-rad" style="flex-wrap:wrap"><p class="st-sm" style="margin:0">Kode til studentene: <b class="st-kode">' + esc(c.kode) + '</b> · ' + (c.krev_innsyn ? 'innsyn i studentenes profil' : 'bare samletall') + '</p>' +
-        '<button type="button" class="st-btn g liten" data-h="studentvisning" data-id="' + c.id + '">Se faget som student</button></div>' +
+        '<span><a class="st-btn g liten" href="fokus.html#' + encodeURIComponent(c.id) + '" target="_blank" rel="noopener">Fokusvisning</a> <button type="button" class="st-btn g liten" data-h="studentvisning" data-id="' + c.id + '">Se faget som student</button></span></div>' +
         '<nav class="st-underfaner">' + [['design', 'Utforming'], ['ovinger', 'Arbeidskrav'], ['studenter', 'Studenter'], ['statistikk', 'Statistikk']].filter(function (x) { return x[0] !== 'ovinger' || f.u.elementer.arbeidskrav; }).map(function (x) {
           return '<button type="button" aria-selected="' + (f.fane === x[0]) + '" data-h="fagFane" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</nav>';
       if (f.fane === 'design') return o + byggerHtml();
@@ -1188,7 +1192,7 @@ function studieStart() {
     if (besk.length) o += '<p class="st-sm" style="margin-top:.6rem"><b>Beskjeder fra faglæreren</b></p>' + besk.map(function (x) { return '<div class="st-tl-beskjed">📣 ' + (x.b.tid ? '<span class="st-sm">' + dato(x.b.tid) + ' · </span>' : '') + '<b>' + esc(x.m.navn) + ':</b> ' + esc(x.b.tekst) + '</div>'; }).join('');
     if (mods.length && (c.elementer || {}).tidslinje !== false) {
       var apen = T.tid && T.tid[d.kurs];
-      o += '<p><button type="button" class="st-btn g liten" data-h="tidStudent" data-id="' + d.kurs + '">' + (apen ? 'Skjul tidslinjen' : 'Se tidslinjen for faget') + '</button></p>';
+      o += '<p><a class="st-btn liten" href="fokus.html#' + encodeURIComponent(d.kurs) + '">Fokusvisning</a> <button type="button" class="st-btn g liten" data-h="tidStudent" data-id="' + d.kurs + '">' + (apen ? 'Skjul tidslinjen' : 'Se tidslinjen for faget') + '</button></p>';
       if (apen) o += tidslinjeHtml(mods, c.ramme || {}, (T.ovelser || []).filter(function (x) { return x.kurs === d.kurs; }), null, Object.assign({}, STD_ELEM, c.elementer || {}));
     }
     return o;
@@ -1256,11 +1260,17 @@ function studieStart() {
   // ---------------------------------------------------------------- tidslinje
   // Uke for uke: kalenderuke og dato (når første kalenderuke er satt), modul, undertemaer, samlinger, beskjeder, arbeidskrav
   // med frist, og for underviseren egne notater. Brukes både i fagbyggeren og av studentene.
+  function utUrlK(id) { var p = id.split('/'), kt = K[p[1]]; if (!kt || !kt.omrade) return null; var sti = '/tema/' + kt.omrade + '/' + p[1] + '/' + p[2] + '.html'; return FINNES && !FINNES[sti] ? null : '..' + sti; }
   function mandag(aar, uke) { var j4 = new Date(Date.UTC(aar, 0, 4)), d = (j4.getUTCDay() || 7) - 1; return new Date(Date.UTC(aar, 0, 4 - d + (uke - 1) * 7)); }
   function tidslinjeHtml(moduler, r, krav, notater, el) {
     el = el || STD_ELEM; r = r || {};
     var start = +r.startuke || 0, naa = new Date(), aar = naa.getFullYear(); if (start && start < isoUke(naa) - 26) aar++;
-    var nr = 0, rader = [], brukt = {};
+    var nr = 0, rader = [], brukt = {}, totalt = (moduler || []).reduce(function (a, m) { return a + m.uker.length; }, 0);
+    // Beskjeder står i uka de ble gitt (ut fra datoen). Uten dato eller første kalenderuke: først i modulen.
+    var besk = []; (moduler || []).forEach(function (m, mi) { alleBeskjeder(m).forEach(function (b) {
+      var w = null; if (b.tid && start) { w = isoUke(new Date(b.tid)) - start + 1; if (w < -26) w += 52; w = Math.max(1, Math.min(totalt, w)); }
+      besk.push({ m: m, mi: mi, b: b, uke: w }); }); });
+    var beskHtml = function (x) { return '<div class="st-tl-beskjed">📣 ' + (x.b.tid ? '<span class="st-sm">' + dato(x.b.tid) + ' · ' + esc(x.m.navn) + ':</span> ' : '') + esc(x.b.tekst) + '</div>'; };
     var iUke = function (o) { if (!o.frist || !start) return false; var w = isoUke(new Date(o.frist)) - start + 1; if (w < 1) w += 52; return w; };
     (moduler || []).forEach(function (m, mi) {
       var farge = MODFARGE[mi % MODFARGE.length];
@@ -1271,11 +1281,12 @@ function studieStart() {
         var dekker = krav.filter(function (o) { var ids = kravIder(o); return w.undertemaer.some(function (id) { return ids.indexOf(id) >= 0; }); });
         rader.push('<li class="st-tl-uke" style="border-color:' + farge + '">' +
           '<div class="st-tl-tid"><b>Uke ' + nr + '</b>' + (start ? '<span class="st-sm">kal.uke ' + (((start + nr - 2) % 52) + 1) + ' · ' + dato0.toLocaleDateString('nb-NO', { day: 'numeric', month: 'short', timeZone: 'UTC' }) + '</span>' : '') + '</div>' +
-          '<div class="st-tl-inn">' + (wi === 0 ? '<div class="st-tl-modul" style="color:' + farge + '">Modul ' + (mi + 1) + ': ' + esc(m.navn) + '</div>' + alleBeskjeder(m).map(function (b) { return '<div class="st-tl-beskjed">📣 ' + (b.tid ? '<span class="st-sm">' + dato(b.tid) + ':</span> ' : '') + esc(b.tekst) + '</div>'; }).join('') + (notater && notater[m.id] ? '<div class="st-tl-notat">🔒 ' + esc(notater[m.id]) + '</div>' : '') : '') +
-          (w.undertemaer.length ? '<div>' + w.undertemaer.map(function (id) { return '<span class="st-tl-ut">' + esc(utNavnKort(id)) + '</span>'; }).join('') + '</div>' : '<div class="st-sm">' + (w.notat ? '' : 'Ingen undertemaer') + '</div>') +
+          '<div class="st-tl-inn">' + (wi === 0 ? '<div class="st-tl-modul" style="color:' + farge + '">Modul ' + (mi + 1) + ': ' + esc(m.navn) + '</div>' + besk.filter(function (x) { return x.uke === null && x.mi === mi; }).map(beskHtml).join('') + (notater && notater[m.id] ? '<div class="st-tl-notat">🔒 ' + esc(notater[m.id]) + '</div>' : '') : '') +
+          besk.filter(function (x) { return x.uke === nr; }).sort(function (a, b) { return a.b.tid.localeCompare(b.b.tid); }).map(beskHtml).join('') +
+          (w.undertemaer.length ? '<div>' + w.undertemaer.map(function (id) { var url = utUrlK(id); return url ? '<a class="st-tl-ut" href="' + url + '">' + esc(utNavnKort(id)) + '</a>' : '<span class="st-tl-ut" title="Lærestoffet kommer">' + esc(utNavnKort(id)) + '</span>'; }).join('') + '</div>' : '<div class="st-sm">' + (w.notat ? '' : 'Ingen undertemaer') + '</div>') +
           (w.notat ? '<div class="st-sm">' + esc(w.notat) + '</div>' : '') + (samlingTekst(r, el) ? '<div class="st-sm">' + samlingTekst(r, el) + '</div>' : '') +
-          dekker.filter(function (o) { return frister.indexOf(o) < 0; }).map(function (o) { return '<span class="st-tl-krav">Arbeidskrav: ' + esc(o.tittel) + '</span>'; }).join('') +
-          frister.map(function (o) { return '<div class="st-tl-frist">⏰ Frist ' + esc(o.tittel) + ': ' + dato(o.frist) + '</div>'; }).join('') + '</div></li>');
+          dekker.filter(function (o) { return frister.indexOf(o) < 0; }).map(function (o) { return '<button type="button" class="st-tl-krav" data-h="ovelse" data-id="' + o.id + '">Arbeidskrav: ' + esc(o.tittel) + '</button>'; }).join('') +
+          frister.map(function (o) { return '<div class="st-tl-frist">⏰ Frist <button type="button" class="st-lenke" data-h="ovelse" data-id="' + o.id + '">' + esc(o.tittel) + '</button>: ' + dato(o.frist) + '</div>'; }).join('') + '</div></li>');
       });
     });
     var andre = krav.filter(function (o) { return o.frist && !brukt[o.id]; });
@@ -1460,6 +1471,8 @@ function studieStart() {
       settOverskrift();
       return hentAlt();
     }).then(function () {
+      var ov = /^#ovelse-(.+)$/.exec(location.hash);
+      if (ov && (T.ovelser || []).some(function (x) { return x.id === decodeURIComponent(ov[1]); })) return startOvelse(decodeURIComponent(ov[1]));
       var m = /^#fag-(.+)$/.exec(location.hash);
       if (m && !T.eksempel && T.mine.some(function (c) { return c.id === m[1]; })) { T.vis = 'kurs'; apneKurs(m[1]); }
       else if (location.hash === '#fag' || (erUnderviser() && !T.eksempel && !location.hash)) { T.vis = 'kurs'; tegn(); }

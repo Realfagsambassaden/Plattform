@@ -118,6 +118,7 @@ toc: false
 .studie .st-var { display: inline-flex; gap: .3rem; align-items: center; flex-wrap: wrap; }
 .studie .st-var .st-felt { padding: .2rem .4rem; }
 .studie .st-eks { border-left: 3px solid var(--st-f); padding: .2rem .7rem; }
+html.fh-innebygd .studie .st-faner { display: none; }   /* i fokusvisningens arbeidskrav-kort */
 .studie.st-bred { max-width: none; width: min(1240px, 96vw); position: relative; left: 50%; transform: translateX(-50%); }
 .studie .st-visning { align-items: center; gap: 1rem; margin: .6rem 0; }
 .studie .st-lerret { display: flex; gap: .6rem; position: relative; align-items: flex-start; }
@@ -145,7 +146,8 @@ toc: false
 .studie .st-tl-ut { display: inline-block; border: 1px solid var(--bs-border-color); border-radius: 999px; padding: .05rem .6rem; margin: .15rem .3rem .15rem 0; font-size: .88rem; }
 .studie .st-tl-beskjed { background: rgba(127,127,127,.1); border-radius: 8px; padding: .3rem .6rem; margin: .3rem 0; }
 .studie .st-tl-notat { color: var(--bs-secondary-color); font-style: italic; margin: .2rem 0; }
-.studie .st-tl-krav { display: inline-block; font-size: .8rem; color: var(--bs-secondary-color); margin-right: .6rem; }
+.studie .st-tl-krav { display: inline-block; font-size: .8rem; color: var(--bs-warning); margin-right: .6rem; background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+.studie a.st-tl-ut { text-decoration: none; color: inherit; } .studie a.st-tl-ut:hover { border-color: var(--bs-primary); color: var(--bs-primary); }
 .studie .st-tl-frist { color: #ff8a8f; font-weight: 700; margin-top: .2rem; }
 @media (max-width: 900px) { .studie .st-modrad { grid-template-columns: 1fr; } .studie .st-sidenotat { position: static; } .studie .st-tl-uke { grid-template-columns: 1fr; gap: .2rem; } }
 .studie .st-pakrevd { font-size: .75rem; font-weight: 700; color: #eee462; border: 1px solid #eee462; border-radius: 999px; padding: .05rem .5rem; vertical-align: middle; }
