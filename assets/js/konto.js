@@ -10,8 +10,14 @@
   function harSesjon() {
     try { return !!(lagringsnavn && localStorage.getItem(lagringsnavn)); } catch (e) { return false; }
   }
+  // Finn menylenker til en bestemt side. Nedtrekksmenyene («Temaer», «Løyper») skal aldri treffes.
+  function menylenker(monster) {
+    return Array.prototype.filter.call(document.querySelectorAll('.navbar a.nav-link:not(.dropdown-toggle)'), function (a) {
+      try { return monster.test(new URL(a.getAttribute('href') || '', location.href).pathname); } catch (e) { return false; }
+    });
+  }
   function oppdaterMeny(inne) {
-    document.querySelectorAll('.navbar a.nav-link[href*="konto/"]').forEach(function (a) {
+    menylenker(/\/konto\/(index\.html)?$/).forEach(function (a) {
       var t = a.querySelector('.menu-text') || a;
       t.textContent = inne ? 'Min side' : 'Logg inn';
       a.classList.toggle('innlogget', !!inne);
@@ -23,7 +29,7 @@
   // Rollen hentes rett fra databasen med brukerens nøkkel, uten å laste Supabase-biblioteket, og huskes per bruker.
   function visRolle(rolle) {
     var u = rolle === 'underviser' || rolle === 'admin';
-    document.querySelectorAll('.navbar a.nav-link[href*="dekning"]').forEach(function (a) { (a.closest('li') || a).style.display = u ? 'none' : ''; });
+    menylenker(/\/dekning(\.html)?$/).forEach(function (a) { (a.closest('li') || a).style.display = u ? 'none' : ''; });
   }
   function hentRolle(sesjon) {
     if (!sesjon || !sesjon.user || !sesjon.access_token) { try { localStorage.removeItem('fh-rolle'); } catch (e) {} return visRolle(null); }
