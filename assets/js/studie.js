@@ -186,7 +186,8 @@ function studieStart() {
     if (!x) { q.ferdig = true; return; }
     q.brukt.push(x.id);
     var alt = [{ svar: x.riktig, type: 'riktig' }].concat(x.feil).map(function (a) { return [Math.random(), a]; }).sort(function (a, b) { return a[0] - b[0]; }).map(function (a) { return a[1]; });
-    q.na = Object.assign({}, x, { alt: alt, rep: rep, start: performance.now() }); q.svart = null; q.kiSvar = null; q.bilde = null;
+    stoppTale();
+    q.na = Object.assign({}, x, { alt: alt, rep: rep, start: performance.now() }); q.svart = null; q.kiSvar = null; q.bilde = null; q.tekst = '';
   }
   function svar(i) {
     var q = T.q, x = q.na, a = x.alt[i], tid = (performance.now() - x.start) / 1000;
@@ -216,12 +217,15 @@ function studieStart() {
   // ---------------------------------------------------------------- KI: tale, bilde, vurdering, råd
   var Tale = window.SpeechRecognition || window.webkitSpeechRecognition;
   var lytter = null;
+  // Stopp talegjenkjenningen før noe nytt vises, så den ikke skriver inn i neste spørsmål.
+  function stoppTale() { if (lytter) { var l = lytter; lytter = null; l.onresult = null; try { l.abort(); } catch (e) {} } }
   function tale(knapp) {
     if (lytter) { lytter.stop(); return; }
     var felt = document.getElementById('st-forklaring');
     lytter = new Tale(); lytter.lang = 'nb-NO'; lytter.continuous = true; lytter.interimResults = false;
     lytter.onresult = function (ev) { for (var i = ev.resultIndex; i < ev.results.length; i++) if (ev.results[i].isFinal) felt.value += (felt.value && !/\s$/.test(felt.value) ? ' ' : '') + ev.results[i][0].transcript; };
-    lytter.onend = function () { lytter = null; knapp.textContent = '🎤 Snakk'; knapp.classList.remove('pa'); };
+    var denne = lytter;
+    lytter.onend = function () { if (lytter === denne) lytter = null; if (knapp.isConnected) { knapp.textContent = '🎤 Snakk'; knapp.classList.remove('pa'); } };
     lytter.onerror = function (e) { varsle(e.error === 'not-allowed' ? 'Gi nettleseren lov til å bruke mikrofonen.' : 'Talegjenkjenningen stoppet.', true); };
     lytter.start(); knapp.textContent = '■ Stopp'; knapp.classList.add('pa');
   }
@@ -253,6 +257,7 @@ function studieStart() {
   }
   function vurder() {
     var q = T.q, x = q.na, s = q.sist, tekst = document.getElementById('st-forklaring').value.trim();
+    stoppTale();
     if (!tekst && !q.bilde) return varsle('Skriv, snakk eller last opp et bilde først.', true);
     q.venter = true; tegn();
     ki('/vurder', { sporsmal: { tekst: x.tekst, riktig: x.riktig, forklaring: x.forklaring }, valgt: x.alt[q.svart].svar, forklaring: tekst, bilde: q.bilde })
@@ -266,7 +271,7 @@ function studieStart() {
   function hentRad() {
     var r = profilRader().map(function (x) { return { tema: tittel(x.t), undertema: S[x.t].undertemaer[x.u], f: x.s.f, p: x.s.p, h: x.s.h, n: x.s.n }; });
     T.kiRad = { venter: true }; tegn();
-    ki('/rad', { profil: r }).then(function (d) { T.kiRad = { tekst: d.rad }; }).catch(function (e) { T.kiRad = { feil: feilmelding(e) }; }).then(tegn);
+    ki('/rad', { profil: r }).then(function (d) { if (!d.rad || !String(d.rad).trim()) throw new Error('Fikk ikke noe råd fra KI denne gangen. Prøv igjen om litt.'); T.kiRad = { tekst: String(d.rad).trim() }; }).catch(function (e) { T.kiRad = { feil: feilmelding(e) }; }).then(tegn);
   }
 
   // ---------------------------------------------------------------- kurs
@@ -420,7 +425,8 @@ function studieStart() {
           (c.krev_innsyn ? 'Innsyn i studentenes kunnskapsprofil er påkrevd.' : 'Bare samletall, ingen enkeltprofiler.') + '</p>' +
           '<button type="button" class="st-btn liten" data-h="apneKurs" data-id="' + c.id + '">Åpne</button> <button type="button" class="st-btn g liten" data-h="slettKurs" data-id="' + c.id + '">' + (T.slett === c.id ? 'Bekreft sletting' : 'Slett') + '</button></div>';
       }).join('');
-      o += '<div class="st-kort"><b>Lag nytt kurs</b><label class="st-sm" for="st-kursnavn">Navn på kurset</label><input id="st-kursnavn" maxlength="120">' +
+      o += '<div class="st-kort"><b>Lag nytt kurs</b>' +
+        '<label class="st-sm" for="st-kursnavn">Navn på kurset</label><input id="st-kursnavn" maxlength="120">' +
         '<label class="st-valg"><input type="checkbox" id="st-kurskrev"> Krev innsyn i studentenes kunnskapsprofil (studentene må godta ved påmelding)</label>' +
         '<button type="button" class="st-btn" data-h="lagKurs">Lag kurs</button></div>';
       return o;
@@ -471,7 +477,7 @@ function studieStart() {
     }).join('');
   }
 
-  function ga(v, p) { Object.assign(T, { vis: v }, p || {}); if (v !== 'profil') T.kiRad = T.kiRad && T.kiRad.tekst ? T.kiRad : null; tegn(); rot.scrollIntoView({ block: 'start' }); }
+  function ga(v, p) { stoppTale(); Object.assign(T, { vis: v }, p || {}); if (v !== 'profil') T.kiRad = T.kiRad && T.kiRad.tekst ? T.kiRad : null; tegn(); rot.scrollIntoView({ block: 'start' }); }
   function tegn() {
     var faner = [['hjem', 'Løype'], ['profil', 'Profil'], ['kurs', 'Kurs']];
     var aktiv = { uke: 'hjem', quiz: 'hjem', resultat: 'hjem', ferdigIdag: 'hjem', pamelding: 'kurs', kursLarer: 'kurs' }[T.vis] || T.vis;
