@@ -109,7 +109,9 @@ Lag et oppsett:
 - Bruk høyst så mange uker som rammen sier. La gjerne de siste 1–2 ukene være uten undertemaer (repetisjon), med notatet «Repetisjon».
 - Bruk BARE id-er som står i katalogen, skrevet nøyaktig likt. Ta bare med det som passer emnebeskrivelsen og læringsutbyttet. Uten beskrivelse: lag et vanlig oppsett for faget ut fra navnet.
 - Undervisningsformen påvirker ikke innholdet, bare notatene: ved omvendt klasserom kan notatet si hva studentene forbereder.
-- "kommentar": 1–2 setninger til underviseren om valgene, for eksempel hva i læringsutbyttet katalogen ikke dekker.
+- Har underviseren skrevet ØNSKER eller lagt ved en tidligere plan: følg dem så tett som katalogen tillater (rekkefølge, uker, notater).
+- Får du NÅVÆRENDE OPPSETT: behold det og gjør bare de endringene underviseren ber om.
+- "kommentar": 1–2 setninger til underviseren om valgene, for eksempel hva i læringsutbyttet eller planen katalogen ikke dekker.
 Norsk bokmål.
 
 Svar KUN med gyldig JSON:
@@ -119,7 +121,16 @@ const SYSTEM_KVISS = `Du er en erfaren fysikklærer og lager flervalgsspørsmål
 Du får tema, eventuelt undertemaer, ønsket antall og vanskelighetsgrad, og kanskje underviserens egne oppgaver (tekst, bilde eller PDF).
 Har du fått egne oppgaver: lag spørsmålene ut fra dem (samme fysikk og omtrent samme tall), og bruk dem i rekkefølge så langt det går.
 
-Hvert spørsmål:
+Regneoppgaver lages som MALER med varierende tall, slik at hver student får egne tall (ett spørsmål = én oppgave):
+- "tekst" med tallene som {{navn}}, f.eks. "En kloss på {{m}} kg trekkes med {{F}} N. Hva er akselerasjonen?"
+- "variabler": [{"navn":"m","min":1,"maks":5,"steg":0.5}, …] – realistiske områder; unngå tall som gir like svar.
+- "svar": fasit som uttrykk i variablene, f.eks. "F/m". "enhet": "m/s^2" (ren tekst, f.eks. m/s^2, N, J). "siffer": 3.
+- "feil": 3 gale svar som uttrykk: {"uttrykk":"m/F","type":"regnefeil"} eller {"uttrykk":"F*m","type":"begrep"}.
+- "forklaring": løsningen med {{svar}} og gjerne {{…}}-uttrykk, f.eks. "$a = F/m$ = {{svar}} m/s^2".
+- Uttrykk kan bruke + - * / ^, parenteser, pi og sqrt, sin, cos, tan (radianer), sind, cosd, tand (grader), asin/asind osv., ln, log, exp, abs. Ingen implisitt multiplikasjon (skriv 2*m).
+Rene begrepsspørsmål uten utregning lages som faste spørsmål (punktene under), uten "variabler".
+
+Faste spørsmål:
 - "tekst": kort oppgavetekst med tall og enheter. Formler i LaTeX mellom $ … $.
 - "riktig": det riktige svaret (kort, med enhet).
 - "feil": nøyaktig 3 gale svar som avslører typiske feil: {"svar":"…","type":"regnefeil"} for riktig fysikk men feil regning
@@ -130,7 +141,8 @@ Hvert spørsmål:
 Bruk bare enkel LaTeX: \\frac{}{}, ^, _, \\cdot, \\sqrt{}, greske bokstaver, \\mathrm{} for enheter.
 Regn ut svarene nøye; et galt fasitsvar er det verste som kan skje. Norsk bokmål.
 
-Svar KUN med gyldig JSON: {"sporsmal":[{"tekst":"…","riktig":"…","feil":[{"svar":"…","type":"regnefeil"}],"forklaring":"…","undertema":"","vanskelighet":"middels"}]}`;
+Alle spørsmål har også "undertema" og "vanskelighet".
+Svar KUN med gyldig JSON: {"sporsmal":[{"tekst":"…","variabler":[{"navn":"m","min":1,"maks":5,"steg":0.5}],"svar":"…","enhet":"…","siffer":3,"feil":[{"uttrykk":"…","type":"regnefeil"}],"forklaring":"…","undertema":"","vanskelighet":"middels"}, {"tekst":"…","riktig":"…","feil":[{"svar":"…","type":"begrep"}],"forklaring":"…","undertema":"","vanskelighet":"lett"}]}`;
 
 async function kvisslag(request, env, b, h) {
   const bruker = await innloggetBruker(request, env);
@@ -148,11 +160,20 @@ async function kvisslag(request, env, b, h) {
     `Antall spørsmål: ${antall}\nVanskelighet: ${niva}\n\nUnderviserens egne oppgaver:\n${kort(b.grunnlag, 8000) || (vedlegg ? "(se vedlegget)" : "(ingen – lag egne)")}`;
   const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_KVISS.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000, vedlegg));
   const gyldigeUt = new Set(ut.map((x) => x.id));
+  const tall = (v) => (Number.isFinite(+v) ? +v : null);
   const sp = (r && Array.isArray(r.sporsmal) ? r.sporsmal : []).slice(0, antall).map((x) => {
-    const feil = (Array.isArray(x && x.feil) ? x.feil : []).slice(0, 3).map((f) => ({ svar: kort(f && f.svar, 200), type: f && f.type === "regnefeil" ? "regnefeil" : "begrep" })).filter((f) => f.svar);
-    return { tekst: kort(x && x.tekst, 1500), riktig: kort(x && x.riktig, 200), feil, forklaring: kort(x && x.forklaring, 1500),
-      undertema: gyldigeUt.has(x && x.undertema) ? x.undertema : "", vanskelighet: ["lett", "middels", "vanskelig"].includes(x && x.vanskelighet) ? x.vanskelighet : "middels" };
-  }).filter((x) => x.tekst && x.riktig && x.feil.length >= 2);
+    x = x || {};
+    const vars = (Array.isArray(x.variabler) ? x.variabler : []).slice(0, 8).map((a) => ({ navn: kort(a && a.navn, 20), min: tall(a && a.min), maks: tall(a && a.maks), steg: tall(a && a.steg) || 1 }))
+      .filter((a) => /^[a-zA-Z_]\w*$/.test(a.navn) && a.min !== null && a.maks !== null && a.maks >= a.min);
+    const mal = vars.length && typeof x.svar === "string" && x.svar.trim();
+    const feil = (Array.isArray(x.feil) ? x.feil : []).slice(0, 3).map((f) => mal
+      ? { uttrykk: kort(f && f.uttrykk, 200), svar: "", type: f && f.type === "regnefeil" ? "regnefeil" : "begrep" }
+      : { svar: kort(f && f.svar, 200), type: f && f.type === "regnefeil" ? "regnefeil" : "begrep" }).filter((f) => f.uttrykk || f.svar);
+    const felles = { tekst: kort(x.tekst, 1500), feil, forklaring: kort(x.forklaring, 1500),
+      undertema: gyldigeUt.has(x.undertema) ? x.undertema : "", vanskelighet: ["lett", "middels", "vanskelig"].includes(x.vanskelighet) ? x.vanskelighet : "middels" };
+    return mal ? { ...felles, riktig: "", variabler: vars, svar: kort(x.svar, 200), enhet: kort(x.enhet, 30), siffer: Math.max(2, Math.min(5, parseInt(x.siffer, 10) || 3)) }
+      : { ...felles, riktig: kort(x.riktig, 200) };
+  }).filter((x) => x.tekst && (x.variabler || x.riktig) && x.feil.length >= 2);
   if (!sp.length) throw feil("Fikk ingen brukbare spørsmål fra KI denne gangen. Prøv igjen.", 502);
   return json({ sporsmal: sp }, 200, h);
 }
@@ -184,13 +205,17 @@ async function fagforslag(request, env, b, h) {
     .filter((x) => x && typeof x.id === "string" && /^[a-z0-9-]+\/[a-z0-9-]+\/[a-z0-9-]+$/.test(x.id))
     .map((x) => ({ id: x.id, tittel: kort(x.tittel, 120) }));
   if (!katalog.length) return json({ feil: "Fant ingen temaer å bygge faget av." }, 400, h);
+  const vedlegg = lesVedlegg(b.vedlegg);
+  if (b.vedlegg && !vedlegg) return json({ feil: "Filen må være et bilde (JPEG, PNG, WebP) eller en PDF på under 4 MB." }, 400, h);
   const ramme = b.ramme || {};
   const uker = Math.max(1, Math.min(40, parseInt(ramme.uker, 10) || 14));
   const form = { forelesninger: "forelesninger", omvendt: "omvendt klasserom", ingen: "ingen faste samlinger" }[ramme.form] || "forelesninger";
   const melding = `Fagets navn: ${kort(b.navn, 120)}\nRamme: ${uker} uker, ${form}` + (ramme.samlinger ? `, ${parseInt(ramme.samlinger, 10) || 0} samlinger à ${parseInt(ramme.lengde, 10) || 90} min per uke` : "") +
     `\n\nEmnebeskrivelse:\n${kort(b.emnebeskrivelse, 8000) || "(ingen)"}\n\nLæringsutbytte:\n${kort(b.laringsutbytte, 3000) || "(ingen)"}\n\nKATALOG (id | tittel):\n` +
-    katalog.map((x) => `${x.id} | ${x.tittel}`).join("\n");
-  const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_FAG.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000));
+    katalog.map((x) => `${x.id} | ${x.tittel}`).join("\n") +
+    (b.onske ? `\n\nØNSKER FRA UNDERVISEREN:\n${kort(b.onske, 8000)}` : "") + (vedlegg ? "\n\nUnderviserens tidligere plan er vedlagt." : "") +
+    (Array.isArray(b.navarende) && b.navarende.length ? `\n\nNÅVÆRENDE OPPSETT:\n${kort(JSON.stringify(b.navarende), 12000)}` : "");
+  const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_FAG.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000, vedlegg));
   if (!r || !Array.isArray(r.moduler)) throw feil("Fikk ikke noe forslag fra KI denne gangen. Prøv igjen.", 502);
   // Rydd: bare kjente id-er, høyst så mange uker som rammen sier.
   const gyldig = new Set(katalog.map((x) => x.id));

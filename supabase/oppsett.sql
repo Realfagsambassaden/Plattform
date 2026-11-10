@@ -397,6 +397,12 @@ alter table public.ovelser add column if not exists undertemaer text[] not null 
 alter table public.ovelser add column if not exists kilde text not null default 'bank' check (kilde in ('bank', 'egne'));
 alter table public.ovelser add column if not exists sporsmal jsonb not null default '[]'::jsonb check (jsonb_typeof(sporsmal) = 'array' and pg_column_size(sporsmal) < 60000);
 alter table public.ovelser add column if not exists svarform text not null default 'valgfri' check (svarform in ('valgfri', 'skriftlig', 'muntlig', 'begge'));
+-- svarform 'bilde' = studenten må laste opp bilde av utregningen (standard for nye arbeidskrav).
+alter table public.ovelser drop constraint if exists ovelser_svarform_check;
+alter table public.ovelser add constraint ovelser_svarform_check check (svarform in ('valgfri', 'skriftlig', 'muntlig', 'begge', 'bilde'));
+alter table public.ovelser alter column svarform set default 'bilde';
+-- Et egendefinert spørsmål kan ha varierende tall: "variabler":[{"navn":"m","min":1,"maks":5,"steg":0.5}], "svar":"m*a" (uttrykk),
+-- "enhet":"N", og gale svar som uttrykk ("uttrykk":"m+a"). Hver student får egne tall, og ett spørsmål = én oppgave (aldri to like).
 alter table public.ovelser add column if not exists beskrivelse text not null default '' check (char_length(beskrivelse) <= 2000);
 
 -- Godkjenning for alle påmeldte i et fag (bare for faglærer): én rad per student og øving.
