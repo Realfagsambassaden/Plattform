@@ -300,15 +300,41 @@ function studieStart() {
   var lytter = null;
   // Stopp talegjenkjenningen før noe nytt vises, så den ikke skriver inn i neste spørsmål.
   function stoppTale() { if (lytter) { var l = lytter; lytter = null; l.onresult = null; try { l.abort(); } catch (e) {} } }
+  // Tale blir til tekst PÅ ENHETEN (processLocally). Lyden sendes aldri til noen tjeneste og lagres ikke; bare teksten brukes.
+  // Kan ikke nettleseren gjøre det lokalt på norsk, startes ikke mikrofonen (vi faller aldri tilbake til en nettjeneste).
+  var TALE_SPRAK = 'nb-NO', taleKlar = null, taleNei = false;
+  function lokalTale() {
+    if (taleKlar) return taleKlar;
+    var opt = { langs: [TALE_SPRAK], processLocally: true };
+    taleKlar = (typeof Tale.available !== 'function' ? Promise.resolve('unavailable') : Tale.available(opt)).then(function (st) {
+      if (st === 'available') return true;
+      if ((st === 'downloadable' || st === 'downloading') && typeof Tale.install === 'function') {
+        varsle('Laster ned norsk talegjenkjenning til enheten din (bare første gang) …');
+        return Tale.install(opt).then(function (ok) { return !!ok; });
+      }
+      return false;
+    }).catch(function () { return false; });
+    taleKlar.then(function (ok) { if (!ok) taleKlar = null; });
+    return taleKlar;
+  }
+  var IKKE_LOKAL = 'Nettleseren din kan ikke gjøre om tale til tekst på enheten. Bruk dikteringsknappen på tastaturet i stedet, eller skriv svaret.';
   function tale(knapp) {
     if (lytter) { lytter.stop(); return; }
-    var felt = document.getElementById('st-forklaring');
-    lytter = new Tale(); lytter.lang = 'nb-NO'; lytter.continuous = true; lytter.interimResults = false;
-    lytter.onresult = function (ev) { for (var i = ev.resultIndex; i < ev.results.length; i++) if (ev.results[i].isFinal) felt.value += (felt.value && !/\s$/.test(felt.value) ? ' ' : '') + ev.results[i][0].transcript; };
-    var denne = lytter;
-    lytter.onend = function () { if (lytter === denne) lytter = null; if (knapp.isConnected) { knapp.textContent = '🎤 Snakk'; knapp.classList.remove('pa'); } };
-    lytter.onerror = function (e) { varsle(e.error === 'not-allowed' ? 'Gi nettleseren lov til å bruke mikrofonen.' : 'Talegjenkjenningen stoppet.', true); };
-    lytter.start(); knapp.textContent = '■ Stopp'; knapp.classList.add('pa');
+    knapp.disabled = true;
+    lokalTale().then(function (ok) {
+      knapp.disabled = false;
+      if (!ok) { taleNei = true; knapp.style.display = 'none'; return varsle(IKKE_LOKAL, true); }
+      var felt = document.getElementById('st-forklaring');
+      if (!felt || !knapp.isConnected) return;
+      lytter = new Tale(); lytter.lang = TALE_SPRAK; lytter.processLocally = true; lytter.continuous = true; lytter.interimResults = false;
+      lytter.onresult = function (ev) { for (var i = ev.resultIndex; i < ev.results.length; i++) if (ev.results[i].isFinal) felt.value += (felt.value && !/\s$/.test(felt.value) ? ' ' : '') + ev.results[i][0].transcript; };
+      var denne = lytter;
+      lytter.onend = function () { if (lytter === denne) lytter = null; if (knapp.isConnected) { knapp.textContent = '🎤 Snakk'; knapp.classList.remove('pa'); } };
+      lytter.onerror = function (e) {
+        varsle(e.error === 'not-allowed' ? 'Gi nettleseren lov til å bruke mikrofonen.' : e.error === 'language-not-supported' ? IKKE_LOKAL : 'Talegjenkjenningen stoppet.', true);
+      };
+      lytter.start(); knapp.textContent = '■ Stopp'; knapp.classList.add('pa');
+    });
   }
   // Bildet skaleres ned til høyst 1600 px før det sendes. Det lagres ikke noe sted.
   function lesBilde(fil) {
@@ -571,9 +597,9 @@ function studieStart() {
           var kt = { riktig: 'KI: Riktig fysikk og riktig regning.', regnefeil: 'KI: Riktig tankegang, men en regnefeil.', begrep: 'KI: Her bør du se på fysikken igjen.', uklar: 'KI: Klarte ikke å lese besvarelsen.' }[kis.vurdering];
           fb += '<div class="st-fb ki"><b>' + kt + '</b><div class="st-avsnitt">' + tx(kis.tilbakemelding) + '</div>' + (kis.vurdering !== 'uklar' ? '<p class="st-sm">Denne vurderingen teller i kunnskapsprofilen din.</p>' : '') + '</div>';
         } else {
-          fb += '<h3>Vis hvordan du tenkte</h3><p class="st-sm">Valgfritt. Ta bilde av utregningen eller forklar med egne ord, så vurderer KI om du har forstått fysikken. Bildet lagres ikke.</p>' +
+          fb += '<h3>Vis hvordan du tenkte</h3><p class="st-sm">Valgfritt. Ta bilde av utregningen eller forklar med egne ord, så vurderer KI om du har forstått fysikken. Bildet lagres ikke. Snakker du, blir talen gjort om til tekst på enheten din, og lyden lagres aldri.</p>' +
             '<textarea id="st-forklaring" placeholder="Forklar hvordan du tenkte …">' + esc(q.tekst || '') + '</textarea>' +
-            '<div class="st-vedlegg">' + (Tale ? '<button type="button" class="st-btn g" data-h="tale">🎤 Snakk</button>' : '') +
+            '<div class="st-vedlegg">' + (Tale && !taleNei ? '<button type="button" class="st-btn g" data-h="tale">🎤 Snakk</button>' : '') +
             '<label class="st-btn g">📷 ' + (q.bilde ? 'Bytt bilde' : 'Ta bilde') + '<input type="file" accept="image/*" capture="environment" id="st-bilde"></label>' +
             '<button type="button" class="st-btn" data-h="vurder"' + (q.venter ? ' disabled' : '') + '>' + (q.venter ? 'Vurderer …' : 'Få tilbakemelding') + '</button></div>' +
             (q.bilde ? '<img class="st-forhand" alt="Bildet ditt" src="' + q.bilde + '">' : '') +

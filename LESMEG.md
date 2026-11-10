@@ -112,6 +112,7 @@ Nytt fag: legg til en «Hent …»-blokk i `.github/workflows/bygg.yml`, et kall
 - Samletall vises bare når minst 5 studenter har svart. Egenvurderingene (1–5) vises aldri enkeltvis.
 - Resultater av quizer kan ikke endres i ettertid, og tidspunktet settes av databasen.
 - Til KI sendes bare spørsmålet og studentens forklaring, aldri navn, e-post eller bruker-id. Bilder lagres ikke.
+- **Tale:** gjøres om til tekst på studentens egen enhet (`processLocally` i Web Speech API). Lyden sendes ikke til noen tjeneste og lagres aldri. Bare teksten brukes. Støtter ikke nettleseren dette på norsk, skjules mikrofonknappen og studenten får beskjed om å bruke diktering på tastaturet. Vi faller aldri tilbake til talegjenkjenning på en tjener (Chrome sender ellers lyden til Google).
 - Slettes en konto (Supabase → Authentication → Users), slettes alle dataene til brukeren automatisk.
 - Ingen personopplysninger i repoet. Administrator settes med en SQL-linje som kjøres for seg (se `supabase/oppsett.sql`).
 - **Bør gjøres før bruk i et emne:** personvernerklæring på nettstedet, databehandleravtaler med Supabase og Anthropic, og avklaring med institusjonen.
