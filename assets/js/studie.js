@@ -905,7 +905,7 @@ function studieStart() {
 
   function ga(v, p) { stoppTale(); if (T.fag && T.fag.lagrer) { clearTimeout(T.fag.tid); lagreUtkast(); } Object.assign(T, { vis: v }, p || {}); if (v !== 'profil') T.kiRad = T.kiRad && T.kiRad.rad ? T.kiRad : null; tegn(); rot.scrollIntoView({ block: 'start' }); }
   function tegn() {
-    var faner = [['hjem', 'Løype'], ['profil', 'Profil'], ['kurs', 'Fag']];
+    var faner = erUnderviser() && !T.eksempel ? [['kurs', 'Fagene mine'], ['hjem', 'Løype'], ['profil', 'Profil']] : [['hjem', 'Løype'], ['profil', 'Profil'], ['kurs', 'Fag']];
     var aktiv = { uke: 'hjem', quiz: 'hjem', resultat: 'hjem', ferdigIdag: 'hjem', pamelding: 'kurs', fag: 'kurs' }[T.vis] || T.vis;
     rot.innerHTML = (T.eksempel ? '<div class="st-eksempel"><b>Eksempelmodus.</b> Du ser appen som en fiktiv student. Ingenting lagres. <a href="#" data-h="avsluttEksempel">Avslutt</a></div>' : '') + '<nav class="st-faner" role="tablist">' + faner.map(function (f) { return '<button type="button" role="tab" aria-selected="' + (aktiv === f[0]) + '" data-h="ga" data-v="' + f[0] + '">' + f[1] + '</button>'; }).join('') + '</nav>' +
       '<div class="st-innhold">' + SKJ[T.vis]() + '</div><p id="st-varsel" class="st-varsel" role="status" hidden></p>';
@@ -990,6 +990,15 @@ function studieStart() {
   // Ulagrede endringer i fagbyggeren lagres når siden lukkes.
   window.addEventListener('pagehide', function () { if (T.fag && T.fag.lagrer) { clearTimeout(T.fag.tid); lagreUtkast(); } });
 
+  // Undervisere får en side tilpasset dem: egen overskrift og undertekst, og fagene først. Eksempelmodus viser studentens side.
+  function settOverskrift() {
+    if (!erUnderviser() || T.eksempel) return;
+    var h = document.querySelector('#title-block-header .title, header h1.title'), u = document.querySelector('#title-block-header .subtitle, header .subtitle');
+    if (h) h.textContent = 'Fag og undervisning';
+    if (u) u.textContent = 'Bygg fag, lag arbeidskrav og følg studentene. Under «Løype» og «Profil» kan du prøve appen slik studentene ser den.';
+    document.title = document.title.replace(/^Test deg selv/, 'Fag og undervisning');
+  }
+
   // ---------------------------------------------------------------- oppstart
   if (!window.fhKonto || !window.fhKonto.sattOpp) { rot.innerHTML = '<p class="st-ind">Innlogging er ikke satt opp ennå.</p>'; return; }
   Promise.all([
@@ -1013,11 +1022,12 @@ function studieStart() {
     bruker = sesjon.user;
     return k.rpc('min_rolle').then(function (r) { T.rolle = r.data || 'student'; }).then(function () {
       if (location.hash === '#eksempel' && erUnderviser()) { T.eksempel = true; bruker = { id: 'eksempel', email: 'eksempelstudent' }; k = eksempelKlient(k); }
+      settOverskrift();
       return hentAlt();
     }).then(function () {
       var m = /^#fag-(.+)$/.exec(location.hash);
       if (m && !T.eksempel && T.mine.some(function (c) { return c.id === m[1]; })) { T.vis = 'kurs'; apneKurs(m[1]); }
-      else if (location.hash === '#fag') ga('kurs');
+      else if (location.hash === '#fag' || (erUnderviser() && !T.eksempel && !location.hash)) { T.vis = 'kurs'; tegn(); }
       else tegn();
       if (T.ny && !T.eksempel) lagreInn();
     });
