@@ -99,7 +99,7 @@ Nytt fag: legg til en «Hent …»-blokk i `.github/workflows/bygg.yml`, et kall
 **Oppsett (én gang):**
 
 1. Supabase → SQL Editor: lim inn hele `supabase/oppsett.sql` og trykk «Run» (trygt å kjøre flere ganger).
-2. KI-tjeneren: publiser `hint-tjener/` på nytt (`cd hint-tjener && npx wrangler deploy`). Den trenger `SUPABASE_URL`, `SUPABASE_ANON_KEY` og en KI-leverandør (se øverst i `worker.js`). NTNUs modeller kan bare nås fra NTNU-nettet, så de krever en mellomtjener inne i NTNU-nettet.
+2. KI-tjeneren bruker Claude (besluttet 10. nov. 2026). Lag en API-nøkkel på console.anthropic.com. Legg den inn som hemmelighet på workeren `fysikkhjelp-hint` i Cloudflare (Settings → Variables and Secrets → `ANTHROPIC_API_KEY`), sammen med `SUPABASE_URL` og `SUPABASE_ANON_KEY` (samme verdier som i `_quarto.yml`). Publiser så den nye koden: `cd hint-tjener && npx wrangler deploy`. Standardmodellen er `claude-haiku-5-5`. Vil du ha grundigere vurdering av håndskrift, sett `MODELL_BILDE` til en større Claude-modell.
 3. Sjekk at `fysikkhjelp-hint-api` i `_quarto.yml` peker på tjeneren. Studieappen bruker samme adresse, med `/vurder` og `/rad` i stedet for `/hint`.
 
 ## 8. Nye fag (fra malen)
