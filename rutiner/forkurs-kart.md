@@ -20,10 +20,10 @@ Tegn: ✓ = dekket, ⚠ = finnes, men tynn eller «under arbeid», P = plasshold
 | 13.2 Krefter i sirkelbevegelse | 04/05 | ✓ |
 | 13.3 Elastisk pendel, svingninger | 07/01–02 | ✓ |
 | **13.4 Sammensatte mekanikkoppgaver** | 04 (ny side) | **NY** |
-| 3.1 Arbeidsmetoder, hypoteser, naturlover | 01/01 + 01/10 | P |
-| 3.2 Måleusikkerhet | 01/08 | P |
-| **3.3 Usikkerhet i sammensatte størrelser** | Samme bolk som signifikante siffer (se punkt 1 under) | **NY** |
-| 3.4 Grafisk utjevning | 01/09 | P |
+| 3.1 Arbeidsmetoder, hypoteser, naturlover | 01/01 + 01/11 (var 10) | P |
+| 3.2 Måleusikkerhet | 01/06 (var 08) | ✓ (PR #21, ikke flettet 10. nov.) |
+| 3.3 Usikkerhet i sammensatte størrelser | 01/07 | ✓ (PR #22, ikke flettet 10. nov.) |
+| 3.4 Grafisk utjevning | 01/10 (var 09) | P |
 | 4.1–4.6 Energi | 05/01–05 | ✓ |
 | 5.1–5.3 Bevegelsesmengde, støt, impuls | 04/01, 04/06, 05/06 | ✓ (04/01 kort) |
 | 6.1–6.3 Massetetthet, trykk, oppdrift | 08/01–04 | ✓ |
