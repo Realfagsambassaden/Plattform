@@ -118,6 +118,31 @@ toc: false
 .studie .st-var { display: inline-flex; gap: .3rem; align-items: center; flex-wrap: wrap; }
 .studie .st-var .st-felt { padding: .2rem .4rem; }
 .studie .st-eks { border-left: 3px solid var(--st-f); padding: .2rem .7rem; }
+.studie.st-bred { max-width: none; width: min(1240px, 96vw); position: relative; left: 50%; transform: translateX(-50%); }
+.studie .st-visning { align-items: center; gap: 1rem; margin: .6rem 0; }
+.studie .st-lerret { display: flex; gap: .6rem; position: relative; align-items: flex-start; }
+.studie .st-kravkol { position: relative; flex: none; align-self: stretch; }
+.studie .st-modkol { flex: 1; min-width: 0; }
+.studie .st-modrad { display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: .7rem; align-items: start; }
+.studie .st-sidenotat { display: flex; flex-direction: column; gap: .5rem; position: sticky; top: 4.5rem; }
+.studie .st-sidenotat textarea { margin-top: .2rem; font-size: .9rem; }
+.studie .st-kravstolpe { position: absolute; width: 28px; border: 2px solid; border-radius: 14px; background: rgba(127,127,127,.12); padding: .4rem 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: .74rem; font-weight: 700; }
+.studie .st-kravstolpe span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-height: 100%; }
+.studie .st-kravstolpe:hover { background: rgba(127,127,127,.25); }
+.studie .st-dekkmod { border-left: 4px solid; padding: .2rem 0 .2rem .7rem; margin: .5rem 0; }
+.studie .st-dekk { font-size: .92rem; padding: .15rem 0; }
+.studie .st-andre { margin-top: .5rem; }
+.studie .st-tidslinje { list-style: none; padding: 0; margin: .8rem 0; }
+.studie .st-tl-uke { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: .8rem; border-left: 4px solid; padding: .5rem 0 .5rem .8rem; margin: 0 0 .25rem; }
+.studie .st-tl-tid { display: flex; flex-direction: column; }
+.studie .st-tl-modul { font-weight: 700; }
+.studie .st-tl-ut { display: inline-block; border: 1px solid var(--bs-border-color); border-radius: 999px; padding: .05rem .6rem; margin: .15rem .3rem .15rem 0; font-size: .88rem; }
+.studie .st-tl-beskjed { background: rgba(127,127,127,.1); border-radius: 8px; padding: .3rem .6rem; margin: .3rem 0; }
+.studie .st-tl-notat { color: var(--bs-secondary-color); font-style: italic; margin: .2rem 0; }
+.studie .st-tl-krav { display: inline-block; font-size: .8rem; color: var(--bs-secondary-color); margin-right: .6rem; }
+.studie .st-tl-frist { color: #ff8a8f; font-weight: 700; margin-top: .2rem; }
+@media (max-width: 900px) { .studie .st-modrad { grid-template-columns: 1fr; } .studie .st-sidenotat { position: static; } .studie .st-tl-uke { grid-template-columns: 1fr; gap: .2rem; } }
 .studie .st-pakrevd { font-size: .75rem; font-weight: 700; color: #eee462; border: 1px solid #eee462; border-radius: 999px; padding: .05rem .5rem; vertical-align: middle; }
 .studie .st-feltsett legend { font-weight: 700; font-size: 1rem; padding: 0 .4rem; width: auto; float: none; margin: 0; }
 .studie .st-piller { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .6rem; }

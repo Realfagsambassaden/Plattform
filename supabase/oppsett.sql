@@ -401,6 +401,22 @@ alter table public.ovelser add column if not exists svarform text not null defau
 alter table public.ovelser drop constraint if exists ovelser_svarform_check;
 alter table public.ovelser add constraint ovelser_svarform_check check (svarform in ('valgfri', 'skriftlig', 'muntlig', 'begge', 'bilde'));
 alter table public.ovelser alter column svarform set default 'bilde';
+-- Et arbeidskrav kan dekke undertemaer fra flere temaer og moduler («nettsted/tema/undertema»). tema = det første temaet.
+alter table public.ovelser drop constraint if exists ovelser_undertemaer_check;
+alter table public.ovelser add constraint ovelser_undertemaer_check check (cardinality(undertemaer) <= 100);
+
+-- Notater i fagbyggeren som bare underviseren (fageieren) ser, per modul: {"<modul-id>": "tekst"}.
+-- Ligger i egen tabell fordi studentene kan lese selve fagraden (moduler og beskjeder).
+create table if not exists public.kurs_notat (
+  kurs     uuid primary key references public.kurs (id) on delete cascade,
+  notater  jsonb not null default '{}'::jsonb check (jsonb_typeof(notater) = 'object' and pg_column_size(notater) < 100000),
+  endret   timestamptz not null default now()
+);
+alter table public.kurs_notat enable row level security;
+drop policy if exists "kurs_notat: eier" on public.kurs_notat;
+create policy "kurs_notat: eier" on public.kurs_notat for all to authenticated using (public.er_kurseier(kurs)) with check (public.er_kurseier(kurs));
+grant select, insert, update, delete on public.kurs_notat to authenticated;
+revoke all on public.kurs_notat from anon;
 -- Et egendefinert spørsmål kan ha varierende tall: "variabler":[{"navn":"m","min":1,"maks":5,"steg":0.5}], "svar":"m*a" (uttrykk),
 -- "enhet":"N", og gale svar som uttrykk ("uttrykk":"m+a"). Hver student får egne tall, og ett spørsmål = én oppgave (aldri to like).
 alter table public.ovelser add column if not exists beskrivelse text not null default '' check (char_length(beskrivelse) <= 2000);
