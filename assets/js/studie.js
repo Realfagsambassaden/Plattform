@@ -355,12 +355,14 @@ function studieStart() {
       r.onerror = nei; r.readAsDataURL(fil);
     });
   }
-  function ki(sti, body) {
+  function ki(sti, body, sek) {
     if (!API) return Promise.reject(new Error('KI-tjenesten er ikke satt opp ennå.'));
+    // Svarer ikke KI innen rimelig tid, avbrytes forespørselen med en tydelig melding.
+    var styr = window.AbortController ? new AbortController() : null, tid = styr && setTimeout(function () { styr.abort(); }, (sek || 60) * 1000);
     return k.auth.getSession().then(function (r) {
       var tok = r.data.session && r.data.session.access_token;
-      return fetch(API + sti, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: JSON.stringify(body) });
-    }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (d) { if (!r.ok) throw new Error(d.feil || 'KI-tjenesten svarte ikke (' + r.status + ').'); return d; }); });
+      return fetch(API + sti, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: JSON.stringify(body), signal: styr ? styr.signal : undefined });
+    }).then(function (r) { clearTimeout(tid); return r; }, function (e) { clearTimeout(tid); throw e && e.name === 'AbortError' ? new Error('KI brukte for lang tid på å svare. Prøv igjen om litt.') : e; }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (d) { if (!r.ok) throw new Error(d.feil || 'KI-tjenesten svarte ikke (' + r.status + ').'); return d; }); });
   }
   function vurder() {
     var q = T.q, x = q.na, s = q.sist, tekst = document.getElementById('st-forklaring').value.trim();
@@ -470,7 +472,7 @@ function studieStart() {
     var f = T.fag, u = f.u;
     if (u.moduler.length && f.bekreftKi !== true) { f.bekreftKi = true; return tegn(); }
     f.bekreftKi = false; f.kiVenter = true; f.kiKommentar = ''; tegn();
-    ki('/fagforslag', { navn: u.navn, emnebeskrivelse: u.emnebeskrivelse, laringsutbytte: u.laringsutbytte, ramme: u.ramme, katalog: katalogListe() })
+    ki('/fagforslag', { navn: u.navn, emnebeskrivelse: u.emnebeskrivelse, laringsutbytte: u.laringsutbytte, ramme: u.ramme, katalog: katalogListe() }, 120)
       .then(function (d) { u.moduler = d.moduler; f.kiKommentar = d.kommentar || ''; f.steg = 'moduler'; return lagreUtkast(); })
       .catch(function (e) { varsle(feilmelding(e), true); })
       .then(function () { f.kiVenter = false; tegn(); });
@@ -513,7 +515,7 @@ function studieStart() {
   var MODFARGE = ['var(--st-f)', 'var(--st-p)', '#eee462', 'var(--st-h)', '#c792ea', '#ff8a8f'];
   function byggerHtml() {
     var f = T.fag, u = f.u, c = f.c, r = u.ramme, el = u.elementer;
-    var topp = '<div class="st-rad st-bygg-topp"><span class="st-sm">' + (c.status === 'publisert' ? '<b class="st-ord f">Publisert</b>' : '<b style="color:#eee462">Påbegynt</b> · ikke synlig for studentene') + '</span>' +
+    var topp = '<div class="st-rad st-bygg-topp"><span class="st-sm">' + (c.status === 'publisert' ? '<b class="st-ord f">Publisert</b> · studentene kan melde seg på med koden ' + esc(c.kode) + ' og ser opplegget' : '<b style="color:#eee462">Påbegynt</b> · studentene finner ikke faget før du publiserer det') + '</span>' +
       '<span class="' + (f.lagreFeil ? 'st-feil' : 'st-sm') + '" id="st-lagret">' + (f.lagreFeil ? 'Ikke lagret!' : f.lagret ? 'Lagret ' + f.lagret.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit' }) : 'Lagres automatisk') + '</span></div>';
     if (f.steg === 'start') {
       var radio = function (v, navn) { return '<label class="st-valg st-pille"><input type="radio" name="st-form" value="' + v + '"' + (r.form === v ? ' checked' : '') + '> ' + navn + '</label>'; };
@@ -531,7 +533,7 @@ function studieStart() {
         forMangeUker() +
         (f.bekreftKi ? '<div class="st-fb r"><b>Erstatte oppsettet?</b><p>Faget har allerede ' + u.moduler.length + ' moduler. Et nytt forslag fra KI erstatter dem.</p><p><button type="button" class="st-btn" data-h="kiOppsett">Ja, lag nytt forslag</button> <button type="button" class="st-btn g" data-h="avbrytKi">Avbryt</button></p></div>' : '') +
         '<div class="st-to st-valgkort">' +
-        '<button type="button" class="st-stor fylt" data-h="kiOppsett"' + (f.kiVenter ? ' disabled' : '') + '><b>' + (f.kiVenter ? 'KI lager forslaget …' : 'La KI foreslå oppsett') + '</b><span>Moduler og temaer per uke ut fra beskrivelsen og læringsutbyttet. Du kan endre alt etterpå.</span></button>' +
+        '<button type="button" class="st-stor fylt" data-h="kiOppsett"' + (f.kiVenter ? ' disabled' : '') + '><b>' + (f.kiVenter ? 'KI lager forslaget … (kan ta opptil et minutt)' : 'La KI foreslå oppsett') + '</b><span>Moduler og temaer per uke ut fra beskrivelsen og læringsutbyttet. Du kan endre alt etterpå.</span></button>' +
         '<button type="button" class="st-stor" data-h="byggSelv"><b>' + (u.moduler.length ? 'Gå til modulene' : 'Bygg selv') + '</b><span>' + (u.moduler.length ? u.moduler.length + ' moduler i utkastet.' : 'Start med én tom modul og legg til temaer selv.') + '</span></button></div>';
     }
     // moduler

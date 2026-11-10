@@ -139,7 +139,7 @@ async function fagforslag(request, env, b, h) {
   const melding = `Fagets navn: ${kort(b.navn, 120)}\nRamme: ${uker} uker, ${form}` + (ramme.samlinger ? `, ${parseInt(ramme.samlinger, 10) || 0} samlinger à ${parseInt(ramme.lengde, 10) || 90} min per uke` : "") +
     `\n\nEmnebeskrivelse:\n${kort(b.emnebeskrivelse, 8000) || "(ingen)"}\n\nLæringsutbytte:\n${kort(b.laringsutbytte, 3000) || "(ingen)"}\n\nKATALOG (id | tittel):\n` +
     katalog.map((x) => `${x.id} | ${x.tittel}`).join("\n");
-  const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_FAG.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 4000));
+  const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_FAG.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000));
   if (!r || !Array.isArray(r.moduler)) throw feil("Fikk ikke noe forslag fra KI denne gangen. Prøv igjen.", 502);
   // Rydd: bare kjente id-er, høyst så mange uker som rammen sier.
   const gyldig = new Set(katalog.map((x) => x.id));

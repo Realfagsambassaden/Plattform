@@ -113,6 +113,7 @@ function start() {
 
   // Min side er todelt: studentdel for alle, underviserdel for godkjente undervisere, og administrasjon for administratoren.
   function fyllMinSide(k, sesjon) {
+    if (!rot.querySelector('.profil-rolle')) return; // Enklere Min side (f.eks. matematikkhjelp.no) har ingen rolledel.
     k.rpc('min_rolle').then(function (r) {
       var rolle = (r && r.data) || 'student', underviser = rolle === 'underviser' || rolle === 'admin';
       rot.querySelector('.profil-rolle').textContent = { student: 'Student', underviser: 'Underviser', admin: 'Administrator' }[rolle];
@@ -123,6 +124,7 @@ function start() {
       if (underviser) {
         var ud = rot.querySelector('.profil-underviser'); ud.parentNode.insertBefore(knappP, ud.nextSibling); knappP.parentNode.insertBefore(sd, knappP.nextSibling);
         sd.hidden = true;
+        sd.querySelector('.profil-studentinfo').hidden = false;
         knapp.onclick = function () { sd.hidden = !sd.hidden; knapp.textContent = sd.hidden ? 'Vis studentvisning' : 'Skjul studentvisning'; knapp.setAttribute('aria-expanded', String(!sd.hidden)); };
       } else sd.hidden = false;
       rot.querySelector('.profil-blivunderviser').hidden = underviser;
