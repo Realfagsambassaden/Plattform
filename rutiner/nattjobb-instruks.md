@@ -24,7 +24,7 @@ Hent åpne issues i Plattform: `gh api 'repos/Realfagsambassaden/plattform/issue
 
 ## 2. Planen: forkurs i fysikk
 
-Lag eller bygg ut **2 sider per natt** i repoet `fysikk-forkurs`, med én PR per side og videoplassholder på nye sider (se punkt 3). Er kvaliteten i tvil, heller færre sider.
+Lag eller bygg ut **inntil 5 sider per natt** i repoet `fysikk-forkurs`, med én PR per side og videoplassholder på nye sider (se punkt 3). Kvalitet går foran antall: Er kvaliteten i tvil, heller færre sider. Hver side skal gjennom hele kontrollen i punkt 5 før PR-en åpnes, også når du lager mange.
 
 Læreren har gitt innholdsfortegnelsen til *Rom Stoff Tid forkurs*, og fysikk-forkurs skal dekke samme temaer. Kartet og skriverekkefølgen står i `plattform/rutiner/forkurs-kart.md`. Faget beholder sin egen rekkefølge: vektorer tidlig som verktøy, og bokas kapitler 12–13 bakt inn i bevegelse og kraft. Bare temaene hentes fra boka. Skriv eget stoff, og nevn aldri boka på sidene. Nivået er forkurs: for elever uten mye fysikk eller matematikk fra før, uten kalkulus der det kan unngås, og med mange regneeksempler. Lærerens eget stoff slettes aldri, men kan finpusses (figurer, bokser).
 
@@ -38,15 +38,14 @@ Slik finner du neste side:
 - Har temaet ingen tematekst i `Plattform/tema-tekster/<tema-id>.md`, lag den også i en egen PR til Plattform når temaets sider er ferdige, og lever den etter punkt 5.
 - Les gjerne `ingeniorfysikk`-sidene om samme tema for terminologi og stil, men skriv for et lavere nivå og kopier ikke.
 
-## 2b. Planen: forkurs i matematikk
+## 2b. Planen: matematikk
 
-Lag i tillegg **1–2 sider per natt** i repoet `matte-forkurs` (matematikkhjelp.no), med én PR per side. Det samme gjelder som i punkt 2 for plassholdere, innhold, kontroll og merking. Temaene står i `Plattform/matematikkhjelp/tema.yml`, og tematekster i `Plattform/matematikkhjelp/tema-tekster/`.
+Lag i tillegg **inntil 5 sider per natt** på matematikkhjelp.no, med én PR per side. Det samme gjelder som i punkt 2 for plassholdere, innhold, kontroll og merking. Temaene står i `Plattform/matematikkhjelp/tema.yml`, og tematekster i `Plattform/matematikkhjelp/tema-tekster/`.
 
-Rekkefølge, slik at fysikken får matematikken den trenger tidlig:
+Rekkefølge:
 
-1. `12-vektorer`.
-2. `09-trigonometri-og-geometri`.
-3. Deretter resten av plassholderne i kapittelrekkefølge, fra `04-faktorisering` og utover.
+1. Plassholdere i `matte-forkurs`, i kapittelrekkefølge (alle 17 kapitler var ferdige 9. nov. 2026, så det er trolig ingen igjen).
+2. Plassholdere i `flervariabel-kalkulus` (nivå ingeniør), i kapittelrekkefølge fra kapittel 1. Numerikkdelen (kapittel 7 og 8) er ferdig og er mønsteret for stil og nivå: eget stoff, egne eksempler, TikZ-figurer, kjørbar Python, tallsvar regnet ut på nytt.
 
 Mattesidene beholder filnavn, `tema:`, `undertema:` og videoplassholderen som står der fra før. Gjør siden eksempelrik, og bruk gjerne fysikk (krefter, fart, skråplan) som anvendelse. Bruk samme notasjon og samme begreper som `02-matematikk` i fysikk-forkurs, og kopier ikke tekst derfra. Lenk mellom fagene der det er naturlig: Fysikksider i `fysikk-forkurs` kan vise til matematikkhjelp.no for matematikken når den finnes, og mattesider kan vise til fysikkhjelp.no for anvendelser. Bruk bare adresser til sider som er publisert.
 
