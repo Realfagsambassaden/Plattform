@@ -62,7 +62,10 @@ function studieStart() {
     return o;
   }
   // Tekst med formler: $$ … $$ (og \[ … \]) blir en formel på egen linje, $ … $ en formel i teksten.
-  function txLinje(s) { return s.split('$').map(function (d, i) { return i % 2 ? '<span class="st-mat">' + mat(d) + '</span>' : esc(d).replace(/\s*\n\s*/g, ' '); }).join(''); }
+  // Forståelse, presisjon og hurtighet får hver sin faste farge (samme som stolpene), så studenten finner dem igjen.
+  var ORD = { 'forståelse': 'f', 'presisjon': 'p', 'hurtighet': 'h' };
+  function fargeOrd(h) { return h.replace(/(forståelse|presisjon|hurtighet)[a-zæøå]*/gi, function (m, rot) { return '<span class="st-ord ' + ORD[rot.toLowerCase()] + '">' + m + '</span>'; }); }
+  function txLinje(s) { return s.split('$').map(function (d, i) { return i % 2 ? '<span class="st-mat">' + mat(d) + '</span>' : fargeOrd(esc(d).replace(/\s*\n\s*/g, ' ')); }).join(''); }
   var tx = function (s) {
     return String(s || '').replace(/\\\[([\s\S]*?)\\\]/g, function (_, f) { return '$$' + f + '$$'; }).split('$$').map(function (d, i) {
       return i % 2 ? '<div class="st-formel">' + mat(d.trim()) + '</div>' : txLinje(d.trim());
@@ -74,7 +77,8 @@ function studieStart() {
   var valgt = function () { return (T.inn.valgt || []).filter(function (x) { return x.indexOf(NETTSTED + '/') === 0; }).map(function (x) { return x.slice(NETTSTED.length + 1); }).filter(function (t) { return S[t]; }); };
   var niva = function (t) { var n = (T.inn.niva || {})[nokkel(t)]; return typeof n === 'number' ? n : 1; };
   var eff = function (s) { var v = s.ki && s.ki.vurdering; return v === 'riktig' || v === 'regnefeil' || v === 'begrep' ? v : s.type; };
-  // Undertemasider finnes bare når det er stoff om dem (se verktoy/tema.py). FINNES lages fra loyper.json.
+  // Undertemasider finnes bare når det er stoff om dem (se verktoy/tema.py). FINNES lages fra loyper.json:
+  // adressen til undertemasiden → sidene om undertemaet ({ url, tittel }).
   var FINNES = null;
   var temaUrl = function (t, u) {
     var sti = '/tema/' + S[t].omrade + '/' + t + (u ? '/' + u : '') + '.html';
@@ -136,23 +140,61 @@ function studieStart() {
     return { n: l.length, f: v / sv, p: tanke ? rett / tanke : null, h: rett ? fort / rett : null, ki: ki };
   }
   var mineSvar = function (t, u) { return T.svar.filter(function (s) { return s.nettsted === NETTSTED && s.tema === t && (!u || s.undertema === u); }); };
-  function stolpe(navn, v, kl) { return '<div class="st-stolpe"><span>' + navn + '</span><div class="st-bar"><i class="' + kl + '" style="width:' + (v == null ? 0 : Math.round(v * 100)) + '%"></i></div><span class="st-sm">' + pst(v) + '</span></div>'; }
+  function stolpe(navn, v, kl) { return '<div class="st-stolpe"><span class="st-ord ' + kl + '">' + navn + '</span><div class="st-bar"><i class="' + kl + '" style="width:' + (v == null ? 0 : Math.round(v * 100)) + '%"></i></div><span class="st-sm">' + pst(v) + '</span></div>'; }
   function stolper(s) { return stolpe('Forståelse', s.f, 'f') + stolpe('Presisjon', s.p, 'p') + stolpe('Hurtighet', s.h, 'h'); }
   function profilRader() {
     var r = [];
     valgt().forEach(function (t) { Object.keys(S[t].undertemaer).forEach(function (u) { var s = skar(mineSvar(t, u)); if (s) r.push({ t: t, u: u, s: s }); }); });
     return r;
   }
+  // Råd om eksamensforberedelse: tre kort i fast rekkefølge (forståelse → presisjon → hurtighet), hvert med undertemaene
+  // det gjelder (lenket til stoffet), konkrete tiltak og eventuelt en nøkkelformel. Samme visning for enkle regler og KI.
+  var RAD_DELER = [
+    { k: 'forstaelse', kl: 'f', navn: 'Forståelse', merk: 'Viktigst', tom: 'Ingenting å jobbe med her nå' },
+    { k: 'presisjon', kl: 'p', navn: 'Presisjon', merk: '', tom: 'Ingenting å jobbe med her nå' },
+    { k: 'hurtighet', kl: 'h', navn: 'Hurtighet', merk: 'Minst viktig, men gir bedre tid på eksamen', tom: 'Ingenting å jobbe med her nå' },
+  ];
+  function undertemaLenke(x) {
+    var url = temaUrl(x.t, x.u), sider = (FINNES && FINNES['/tema/' + S[x.t].omrade + '/' + x.t + '/' + x.u + '.html']) || [];
+    return '<div class="st-rad-ut"><a href="' + (url || temaUrl(x.t)) + '">' + esc(S[x.t].undertemaer[x.u]) + '</a>' +
+      (sider.length ? '<span class="st-sm"> Les: ' + sider.slice(0, 2).map(function (y) { return '<a href="' + y.url + '">' + esc(y.tittel || 'side') + '</a>'; }).join(' · ') + '</span>'
+        : url ? '' : '<span class="st-sm"> (lærestoff kommer)</span>') + '</div>';
+  }
+  function radKort(r) {
+    return '<div class="st-rad-kort">' + RAD_DELER.map(function (d, i) {
+      var x = r[d.k] || {}, ut = x.undertemaer || [], tiltak = x.tiltak || [];
+      var tom = !ut.length && !tiltak.length;
+      return '<div class="st-rad-del ' + d.kl + (tom ? ' tom' : '') + '"><div class="st-rad-hode"><span class="st-rad-nr">' + (i + 1) + '</span><b class="st-ord ' + d.kl + '">' + d.navn + '</b>' +
+        (d.merk ? '<span class="st-sm">' + d.merk + '</span>' : '') + '</div>' +
+        (tom ? '<p class="st-sm">' + (x.ingenData ? 'Ikke nok svar ennå' : '✓ ' + d.tom) + '</p>' :
+          ut.map(undertemaLenke).join('') +
+          (tiltak.length ? '<ul>' + tiltak.map(function (t) { return '<li>' + txLinje(t) + '</li>'; }).join('') + '</ul>' : '') +
+          (x.formel ? '<div class="st-formel">' + mat(x.formel) + '</div>' : '')) + '</div>';
+    }).join('<div class="st-rad-pil" aria-hidden="true">↓</div>') + '</div>';
+  }
   function regelRad() {
     var r = profilRader();
     if (!r.length) return '<p class="st-ind">Ta en quiz, så får du råd her.</p>';
     function min(kk, g) { return r.filter(function (x) { return x.s[kk] != null && x.s[kk] < g; }).sort(function (a, b) { return a.s[kk] - b.s[kk]; }).slice(0, 2); }
-    function nv(x) { return '<a href="' + (temaUrl(x.t, x.u) || temaUrl(x.t)) + '">' + esc(S[x.t].undertemaer[x.u]) + '</a>'; }
-    var f = min('f', 0.7), p = min('p', 0.7), h = min('h', 0.6), o = '';
-    if (f.length) o += '<p><b>Først:</b> Gå gjennom teori og videoer i ' + f.map(nv).join(' og ') + '. Her er det forståelsen som mangler, og den betyr mest.</p>';
-    if (p.length) o += '<p><b>Deretter:</b> Du tenker riktig i ' + p.map(nv).join(' og ') + ', men regner feil. Regn oppgaver for hånd, og kontroller enheter og overslag.</p>';
-    if (h.length) o += '<p><b>Til slutt:</b> Øv med tidtaking i ' + h.map(nv).join(' og ') + '. Hurtighet er det minst viktige, men kan gi deg bedre tid på eksamen.</p>';
-    return o || '<p>Du ligger godt an. Hold det ved like med repetisjonsspørsmål.</p>';
+    var f = min('f', 0.7), p = min('p', 0.7), h = min('h', 0.6);
+    var ingen = function (kk) { return !r.some(function (x) { return x.s[kk] != null; }); };
+    return radKort({
+      forstaelse: { undertemaer: f, tiltak: f.length ? ['Les teorien og se videoen før du regner mer.', 'Forklar med egne ord hvorfor fasiten blir som den blir.'] : [] },
+      presisjon: { undertemaer: p, ingenData: ingen('p'), tiltak: p.length ? ['Skriv alle mellomregninger og enheter.', 'Gjør et overslag og sjekk at svaret er rimelig.'] : [] },
+      hurtighet: { undertemaer: h, ingenData: ingen('h'), tiltak: h.length ? ['Regn oppgaver med tidtaking.'] : [] },
+    });
+  }
+  // KI svarer med navnene på undertemaene. Finn dem igjen i profilen, så de kan lenkes.
+  function fraKi(rad) {
+    var rader = profilRader(), ut = {};
+    RAD_DELER.forEach(function (d) {
+      var x = rad[d.k] || {};
+      ut[d.k] = { tiltak: x.tiltak || [], formel: x.formel || '', undertemaer: (x.undertemaer || []).map(function (navn) {
+        var n = String(navn).trim().toLowerCase();
+        return rader.find(function (y) { return S[y.t].undertemaer[y.u].toLowerCase() === n; }) || null;
+      }).filter(Boolean) };
+    });
+    return ut;
   }
 
   // ---------------------------------------------------------------- quiz
@@ -286,7 +328,7 @@ function studieStart() {
   function hentRad() {
     var r = profilRader().map(function (x) { return { tema: tittel(x.t), undertema: S[x.t].undertemaer[x.u], f: x.s.f, p: x.s.p, h: x.s.h, n: x.s.n }; });
     T.kiRad = { venter: true }; tegn();
-    ki('/rad', { profil: r }).then(function (d) { if (!d.rad || !String(d.rad).trim()) throw new Error('Fikk ikke noe råd fra KI denne gangen. Prøv igjen om litt.'); T.kiRad = { tekst: String(d.rad).trim() }; }).catch(function (e) { T.kiRad = { feil: feilmelding(e) }; }).then(tegn);
+    ki('/rad', { profil: r }).then(function (d) { if (!d.rad || typeof d.rad !== 'object') throw new Error('Fikk ikke noe råd fra KI denne gangen. Prøv igjen om litt.'); T.kiRad = { rad: d.rad }; }).catch(function (e) { T.kiRad = { feil: feilmelding(e) }; }).then(tegn);
   }
 
   // ---------------------------------------------------------------- kurs
@@ -425,11 +467,12 @@ function studieStart() {
         return '<div class="st-kort"><b>' + esc(tittel(t)) + '</b><span class="st-sm"> · ' + s.n + ' svar' + (s.ki ? ', ' + s.ki + ' vurdert av KI' : '') + '</span>' + stolper(s) +
           Object.keys(u).map(function (id) { var d = skar(l.filter(function (x) { return x.undertema === id; })); return d ? '<details><summary class="st-sm">' + esc(u[id]) + ' (' + d.n + ' svar)</summary>' + stolper(d) + '</details>' : ''; }).join('') + '</div>';
       }).join('') || '<p class="st-ind">Velg temaer på løypa først.</p>';
-      var kr = T.kiRad, kiDel = !kr ? '<p><button type="button" class="st-btn g" data-h="rad">Få personlig råd fra KI</button></p>'
-        : kr.venter ? '<p class="st-ind">KI skriver rådene dine …</p>' : kr.feil ? '<p class="st-feil">' + esc(kr.feil) + '</p>'
-        : '<div class="st-fb ki">' + kr.tekst.split(/\n\s*\n/).map(function (p) { return '<div class="st-avsnitt">' + tx(p) + '</div>'; }).join('') + '</div>';
+      var kr = T.kiRad, radDel = kr && kr.rad
+        ? '<p class="st-sm">Personlige råd fra KI' + (kr.rad.bra ? ': ' + txLinje(kr.rad.bra) : '') + '</p>' + radKort(fraKi(kr.rad))
+        : regelRad() + (!profilRader().length ? '' : kr && kr.venter ? '<p class="st-ind">KI lager rådene dine …</p>'
+          : (kr && kr.feil ? '<p class="st-feil">' + esc(kr.feil) + '</p>' : '') + '<p><button type="button" class="st-btn g" data-h="rad">Få personlige råd fra KI</button></p>');
       return '<h2 class="st-h1">Kunnskapsprofil</h2><p class="st-sm"><b>Forståelse</b> er viktigst. <b>Presisjon</b> viser om du regner riktig når tanken er riktig. <b>Hurtighet</b> er minst viktig, men kan gi deg bedre tid på eksamen.</p>' +
-        bl + '<h2>Slik forbereder du deg til eksamen</h2>' + regelRad() + kiDel;
+        bl + '<h2>Slik forbereder du deg til eksamen</h2>' + radDel;
     },
     kurs: function () {
       var o = '<h2 class="st-h1">Kurs</h2><h3>Kurs du er med i</h3>';
@@ -496,7 +539,7 @@ function studieStart() {
     }).join('');
   }
 
-  function ga(v, p) { stoppTale(); Object.assign(T, { vis: v }, p || {}); if (v !== 'profil') T.kiRad = T.kiRad && T.kiRad.tekst ? T.kiRad : null; tegn(); rot.scrollIntoView({ block: 'start' }); }
+  function ga(v, p) { stoppTale(); Object.assign(T, { vis: v }, p || {}); if (v !== 'profil') T.kiRad = T.kiRad && T.kiRad.rad ? T.kiRad : null; tegn(); rot.scrollIntoView({ block: 'start' }); }
   function tegn() {
     var faner = [['hjem', 'Løype'], ['profil', 'Profil'], ['kurs', 'Kurs']];
     var aktiv = { uke: 'hjem', quiz: 'hjem', resultat: 'hjem', ferdigIdag: 'hjem', pamelding: 'kurs', kursLarer: 'kurs' }[T.vis] || T.vis;
@@ -551,7 +594,8 @@ function studieStart() {
     fetch('sporsmal.json').then(function (r) { if (!r.ok) throw new Error('Fant ikke spørsmålene.'); return r.json(); }),
     fetch('../loyper.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }).then(function (d) {
       if (!d || !d.sider) return;   // uten oversikten lenker vi til alle undertemaer
-      FINNES = {}; Object.keys(d.sider).forEach(function (k) { var u = d.sider[k].undertemaUrl; if (u) FINNES[u] = 1; });
+      var titler = {}; (d.temarekke || []).forEach(function (x) { titler[x.url] = x.tittel; });
+      FINNES = {}; Object.keys(d.sider).forEach(function (k) { var u = d.sider[k].undertemaUrl; if (u) (FINNES[u] = FINNES[u] || []).push({ url: '..' + k, tittel: titler[k] || '' }); });
     }),
     window.fhKonto(),
   ]).then(function (r) {

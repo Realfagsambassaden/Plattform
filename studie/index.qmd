@@ -7,7 +7,19 @@ toc: false
 ```{=html}
 <div id="studie" class="studie" aria-live="polite"><p class="st-ind">Laster …</p></div>
 <style>
-.studie { max-width: 640px; }
+.studie { max-width: 640px; --st-f: var(--bs-primary); --st-p: var(--bs-info); --st-h: var(--bs-warning); }
+.studie .st-ord { font-weight: 700; } .studie .st-ord.f { color: var(--st-f); } .studie .st-ord.p { color: var(--st-p); } .studie .st-ord.h { color: var(--st-h); }
+.studie .st-rad-kort { margin: .6rem 0; }
+.studie .st-rad-del { border: 1px solid var(--bs-border-color); border-left: 5px solid var(--st-f); border-radius: 0 10px 10px 0; padding: .6rem .85rem; background: rgba(127,127,127,.06); }
+.studie .st-rad-del.p { border-left-color: var(--st-p); } .studie .st-rad-del.h { border-left-color: var(--st-h); }
+.studie .st-rad-del.tom { opacity: .7; padding: .45rem .85rem; }
+.studie .st-rad-del ul { margin: .35rem 0 .2rem; padding-left: 1.2rem; }
+.studie .st-rad-del li { margin: .15rem 0; }
+.studie .st-rad-del p { margin: .2rem 0 0; }
+.studie .st-rad-hode { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
+.studie .st-rad-nr { display: inline-grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; border: 2px solid currentColor; font-weight: 700; font-size: .85rem; color: var(--bs-secondary-color); }
+.studie .st-rad-ut { margin: .35rem 0 0; } .studie .st-rad-ut > a { font-weight: 700; }
+.studie .st-rad-pil { text-align: center; color: var(--bs-secondary-color); line-height: 1.4; }
 .studie h2 { font-size: 1.25rem; margin: 1.6rem 0 .5rem; }
 .studie h3 { font-size: 1.05rem; margin: 1.3rem 0 .45rem; }
 .studie .st-h1 { margin-top: .4rem; }
@@ -60,7 +72,7 @@ toc: false
 .studie .st-bar { height: 10px; background: var(--bs-border-color); border-radius: 5px; overflow: hidden; margin: .3rem 0; }
 .studie .st-stolpe .st-bar { margin: 0; }
 .studie .st-bar i { display: block; height: 100%; }
-.studie .st-bar i.f { background: var(--bs-primary); } .studie .st-bar i.p { background: var(--bs-info); } .studie .st-bar i.h { background: var(--bs-secondary-color); } .studie .st-bar i.v { background: var(--bs-warning); }
+.studie .st-bar i.f { background: var(--st-f); } .studie .st-bar i.p { background: var(--st-p); } .studie .st-bar i.h { background: var(--st-h); } .studie .st-bar i.v { background: var(--bs-secondary-color); }
 .studie .st-skala { display: flex; gap: .4rem; margin: .4rem 0; }
 .studie .st-skala button { flex: 1; padding: .5rem 0; background: none; border: 2px solid var(--bs-border-color); border-radius: 8px; color: inherit; font-weight: 700; }
 .studie .st-skala button.pa { border-color: var(--bs-primary); color: var(--bs-primary); }

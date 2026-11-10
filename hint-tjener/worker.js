@@ -83,12 +83,19 @@ Svar KUN med gyldig JSON:
 const SYSTEM_RAD = `Du er en erfaren fysikklærer på NETTSTED, laget av Dr. Normann. Du får kunnskapsprofilen til en student: for hvert tema og undertema andelen (0–1) for
 forståelse (riktig tankegang), presisjon (riktig regning når tanken er riktig) og hurtighet (riktig innen forventet tid), og antall svar.
 
-Skriv et kort, personlig råd om hvordan studenten best forbereder seg til eksamen, på norsk bokmål i du-form, høyst 100 ord, i 2–4 korte avsnitt:
-- Begynn med det viktigste: undertemaer med svak forståelse. Forståelse er viktigst.
-- Deretter presisjon: konkrete vaner som gir færre regnefeil.
-- Til slutt hurtighet. Si tydelig at den er minst viktig, men kan gi bedre tid og karakter på eksamen.
-- Ros det som går bra, kort. Vær ærlig når det er få svar å bygge på.
-Ingen overskrifter eller Markdown. Trengs en formel, står den på egen linje med $$ ... $$ rundt.`;
+Lag et kort, personlig råd om eksamensforberedelse i tre deler, i denne rekkefølgen etter viktighet:
+- forstaelse: undertemaer med svak forståelse. Viktigst.
+- presisjon: undertemaer der tanken er riktig, men regningen svikter.
+- hurtighet: undertemaer der studenten får det til, men bruker lang tid. Minst viktig.
+For hver del:
+- "undertemaer": 0–2 undertemaer det gjelder, med navnet NØYAKTIG slik det står i profilen (teksten etter «/»).
+- "tiltak": 1–3 konkrete tiltak, hvert høyst 12 ord, i du-form. Ingen hele setninger med forklaringer.
+- "formel": én nøkkelformel studenten bør kunne for disse undertemaene, i LaTeX uten $-tegn (for eksempel "p_{\\text{før}} = p_{\\text{etter}}"), eller "" om det ikke passer.
+Er en del uten svakheter, gi tomme lister og "". "bra": én kort setning om det som går bra, høyst 15 ord. Vær ærlig når det er få svar.
+Norsk bokmål, desimalpunktum.
+
+Svar KUN med gyldig JSON:
+{"forstaelse":{"undertemaer":[],"tiltak":[],"formel":""},"presisjon":{"undertemaer":[],"tiltak":[],"formel":""},"hurtighet":{"undertemaer":[],"tiltak":[],"formel":""},"bra":""}`;
 
 function cors(origin) {
   const ok = TILLATTE_OPPRINNELSER.includes(origin);
@@ -186,9 +193,12 @@ async function rad(request, env, b, h) {
     return `${kort(x.tema, 80)} / ${kort(x.undertema, 80)}: forståelse ${p(x.f)}, presisjon ${p(x.p)}, hurtighet ${p(x.h)}, ${parseInt(x.n, 10) || 0} svar`;
   });
   if (!linjer.length) return json({ feil: "Ta en quiz først, så har vi noe å bygge rådene på." }, 400, h);
-  const svar = await spor(env, SYSTEM_RAD.replace("NETTSTED", NETTSTEDNAVN(request)), `Kunnskapsprofil:\n${linjer.join("\n")}`, 2000);
-  if (!svar) throw feil("Fikk ikke noe råd fra KI denne gangen. Prøv igjen om litt.", 502);
-  return json({ rad: svar }, 200, h);
+  const raa = await spor(env, SYSTEM_RAD.replace("NETTSTED", NETTSTEDNAVN(request)), `Kunnskapsprofil:\n${linjer.join("\n")}`, 2500);
+  const r = lesJson(raa);
+  if (!r) throw feil("Fikk ikke noe råd fra KI denne gangen. Prøv igjen om litt.", 502);
+  const liste = (v, n, m) => (Array.isArray(v) ? v : []).filter((x) => typeof x === "string" && x.trim()).slice(0, n).map((x) => kort(x.trim(), m));
+  const del = (d) => ({ undertemaer: liste(d && d.undertemaer, 2, 80), tiltak: liste(d && d.tiltak, 3, 160), formel: kort(d && typeof d.formel === "string" ? d.formel.trim() : "", 200) });
+  return json({ rad: { forstaelse: del(r.forstaelse), presisjon: del(r.presisjon), hurtighet: del(r.hurtighet), bra: kort(r.bra, 200) } }, 200, h);
 }
 
 function lesBilde(d) {
