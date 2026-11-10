@@ -96,9 +96,31 @@ Nytt fag: legg til en «Hent …»-blokk i `.github/workflows/bygg.yml`, et kall
 - Kurs: faglærer lager et kurs og kan kreve innsyn i studentenes profil. Studenten må da godta ved påmelding, og trekker samtykket ved å melde seg av. Uten krav, eller med under 5 studenter, ser faglærer bare samletall. Reglene håndheves i databasen (`supabase/oppsett.sql`), ikke bare på siden.
 - KI (`/vurder` og `/rad` i `hint-tjener/worker.js`): vurderer studentens forklaring (tekst, tale eller bilde) og skriver eksamensråd. Navn, e-post og bruker-id sendes aldri til KI-en. Bilder lagres ikke.
 
+### Roller, fag og øvinger
+
+- **Roller:** student (standard), underviser og administrator (tabellen `profiler`). Undervisere godkjennes med en personlig **underviserkode** (10 tegn, kan brukes én gang). Administratoren lager kodene på Min side. Koden oppgis ved registrering eller senere på Min side.
+- **Min side** er todelt: studentdel for alle, underviserdel (fag, forelesninger, eksempelmodus) for undervisere, og administrasjon (koder og undervisere) for administratoren.
+- **Fag** (tabellen `kurs`): underviseren velger temaer i rekkefølge. Det blir studentenes løype når de melder seg på med fagkoden. Fagområdet har fanene Utforming, Øvinger, Studenter (liste med nøkkeltall, klikk for hele profilen, bare med samtykke) og Statistikk (undertemaer med svakest forståelse først, minst 5 studenter).
+- **Obligatoriske øvinger** (tabellen `ovelser`): «ta quiz i tema X og få minst N av 6 riktige», eventuelt innen en frist. Hver fullførte quiz lagres i `studie_quiz`. Studenten ser hva som er godkjent, underviseren ser en tabell og kan laste den ned som Excel-ark (`assets/js/xlsx-lite.js`, uten eksterne biblioteker). Svarene sjekkes i nettleseren, og fasiten ligger i `studie/sporsmal.json`. Øvingene viser at arbeidet er gjort, men de er ikke juksesikre.
+- **Eksempelmodus** (`/studie/#eksempel`, bare undervisere): appen med en fiktiv student. Alt ligger i minnet, og ingenting lagres.
+- **Forelesningsverktøyet** og oppretting av fag er sperret for studenter, både på siden og i databasen.
+
+### Personvern og sikkerhet
+
+- Studentdata ligger i Supabase (EU). Tilgangen styres med radsikkerhet (RLS) i databasen, ikke bare på siden. Alle reglene er testet mot en lokal Postgres.
+- En student ser bare sine egne data. Underviseren ser enkeltprofiler bare når faget krever innsyn **og** studenten har godtatt det ved påmelding. Samtykket trekkes ved å melde seg av. Godkjenning av øvinger ser underviseren for alle påmeldte, og det står i påmeldingen.
+- Samletall vises bare når minst 5 studenter har svart. Egenvurderingene (1–5) vises aldri enkeltvis.
+- Resultater av quizer kan ikke endres i ettertid, og tidspunktet settes av databasen.
+- Til KI sendes bare spørsmålet og studentens forklaring, aldri navn, e-post eller bruker-id. Bilder lagres ikke.
+- **Tale:** gjøres om til tekst på studentens egen enhet (`processLocally` i Web Speech API). Lyden sendes ikke til noen tjeneste og lagres aldri. Bare teksten brukes. Støtter ikke nettleseren dette på norsk, skjules mikrofonknappen og studenten får beskjed om å bruke diktering på tastaturet. Vi faller aldri tilbake til talegjenkjenning på en tjener (Chrome sender ellers lyden til Google).
+- Slettes en konto (Supabase → Authentication → Users), slettes alle dataene til brukeren automatisk.
+- Ingen personopplysninger i repoet. Administrator settes med en SQL-linje som kjøres for seg (se `supabase/oppsett.sql`).
+- **Bør gjøres før bruk i et emne:** personvernerklæring på nettstedet, databehandleravtaler med Supabase og Anthropic, og avklaring med institusjonen.
+
 **Oppsett (én gang):**
 
 1. Supabase → SQL Editor: lim inn hele `supabase/oppsett.sql` og trykk «Run» (trygt å kjøre flere ganger).
+   Gjør deg selv til administrator med SQL-linjen øverst i rolle-delen av `oppsett.sql` (med din e-post, kjøres for seg og legges ikke i repoet).
 2. KI-tjeneren bruker Claude (besluttet 10. nov. 2026) og publiseres automatisk til `hint.fysikkhjelp.no` (jobben `hint-tjener` i `.github/workflows/bygg.yml`). Nøkkelen lages på platform.claude.com (organisasjonen Realfagsambassaden, tjenestekontoen `realfagsambassaden`) og legges inn som GitHub-hemmelighet `ANTHROPIC_API_KEY` i dette repoet (Settings → Secrets and variables → Actions). Supabase-verdiene står i `hint-tjener/wrangler.toml`. Standardmodellen er `claude-haiku-5-5`. Vil du ha grundigere vurdering av håndskrift, sett `MODELL_BILDE` under `[vars]`.
 3. Sjekk at `fysikkhjelp-hint-api` i `_quarto.yml` peker på tjeneren. Studieappen bruker samme adresse, med `/vurder` og `/rad` i stedet for `/hint`.
 

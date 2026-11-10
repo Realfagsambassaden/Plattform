@@ -11,8 +11,16 @@
       rot.innerHTML = '<div class="konto-boks"><h2>Logg inn som lærer</h2><p>Forelesningsverktøyet er for forelesere og lærere. Logg inn (eller registrer deg gratis) for å lage dine egne forelesninger. De lagres på kontoen din, så du finner dem igjen på alle maskiner.</p><p><a class="btn-chalk" href="' + R + 'konto/index.html?neste=larer">Logg inn</a></p></div>';
       return;
     }
-    try { localStorage.setItem('fh-larer', '1'); } catch (e) {}
-    return Promise.all([fetch(R + 'innhold.json').then(function (r) { return r.json(); }), fetch(R + 'loyper.json').then(function (r) { return r.json(); })]).then(function (d) { bygg(d[0].sider, d[1], t); });
+    // Bare godkjente undervisere kan lage forelesninger (sjekkes også i databasen).
+    var rolle = t === 'inne' ? window.fhKonto().then(function (k) { return k.rpc('min_rolle'); }).then(function (r) { return (r && r.data) || 'student'; }).catch(function () { return 'student'; }) : Promise.resolve('test');
+    return rolle.then(function (rl) {
+      if (rl === 'student') {
+        rot.innerHTML = '<div class="konto-boks"><h2>For undervisere</h2><p>Forelesningsverktøyet er for godkjente undervisere. Har du fått en underviserkode av administratoren, legger du den inn på Min side.</p><p><a class="btn-chalk" href="' + R + 'konto/index.html">Til Min side</a></p></div>';
+        return;
+      }
+      try { localStorage.setItem('fh-larer', '1'); } catch (e) {}
+      return Promise.all([fetch(R + 'innhold.json').then(function (r) { return r.json(); }), fetch(R + 'loyper.json').then(function (r) { return r.json(); })]).then(function (d) { bygg(d[0].sider, d[1], t); });
+    });
   });
 
   function bygg(sider, lj, tilgang) {
