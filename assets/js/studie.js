@@ -707,13 +707,14 @@ function studieStart() {
         }).join('') + '</div>';
       }).join('') + '</div></div>';
   }
-  function slideHtml(sl) {
+  function slideHtml(sl, medLos) {
     var o = '', run = [], kul = [];
     function tomRun() { var t = run.join('\n').trim(); if (t) o += t.split(/\n\s*\n/).map(function (a) { return '<div class="uv-avsn">' + tx(a) + '</div>'; }).join(''); run = []; }
     function tomKul() { if (kul.length) o += '<ul>' + kul.map(function (x) { return '<li>' + txLinje(x) + '</li>'; }).join('') + '</ul>'; kul = []; }
     String((sl && sl.tekst) || '').split('\n').forEach(function (x) { var m = /^\s*[-*•]\s+(.*)$/.exec(x); if (m) { tomRun(); kul.push(m[1]); } else { tomKul(); run.push(x); } });
     tomRun(); tomKul();
-    return '<h2 class="uv-stittel">' + txLinje((sl && sl.tittel) || '') + '</h2><div class="uv-skropp">' + o + '</div>';
+    return '<div class="uv-sinn"><h2 class="uv-stittel">' + txLinje((sl && sl.tittel) || '') + '</h2><div class="uv-skropp">' + o + '</div>' +
+      (medLos && sl.losning ? '<div class="uv-losning"><b>Løsning</b>' + tx(sl.losning) + '</div>' : '') + '</div>';
   }
   function apneMat(mi, wi, s) {
     var f = T.fag; medId(f.u.moduler);
@@ -788,13 +789,14 @@ function studieStart() {
           knapp('matPlanFlytt', i + ':-1', '↑', 'Flytt opp', !i) + knapp('matPlanSlett', i, '✕', 'Fjern punktet') + '</div>';
       }).join('') +
       '<div class="st-rad"><button type="button" class="st-btn g liten" data-h="matPlanNy">+ Punkt</button><span class="st-sm' + (lengde && sum > lengde ? ' st-feil' : '') + '" id="st-plansum">' + (v.plan.length ? 'Sum ' + sum + (lengde ? ' av ' + lengde : '') + ' min' : '') + '</span></div>' +
-      '<h4>Slides (' + v.slides.length + ')</h4><p class="st-sm">En linje som begynner med «- » blir et punkt. Formler: $F = ma$ i teksten eller $$…$$ på egen linje. Notatet ser bare du (i undervisningsmodus).</p>' +
+      '<h4>Slides (' + v.slides.length + ')</h4><p class="st-sm">En linje som begynner med «- » blir et punkt. Formler: $F = ma$ i teksten eller $$…$$ på egen linje. Notatet og løsningsforslaget ser bare du (i undervisningsmodus), men løsningen kan vises på skjermen når du vil.</p>' +
       v.slides.map(function (x, i) {
         return '<div class="st-matslide"><div class="st-rad"><b class="st-sm">' + (i + 1) + '</b><input class="st-felt" data-matslide="' + i + '.tittel" maxlength="200" value="' + esc(x.tittel) + '" placeholder="Tittel">' +
           knapp('matSlideFlytt', i + ':-1', '↑', 'Flytt opp', !i) + knapp('matSlideFlytt', i + ':1', '↓', 'Flytt ned', i === v.slides.length - 1) + knapp('matSlideSlett', i, '✕', 'Slett sliden') + '</div>' +
           '<textarea class="st-felt" rows="4" data-matslide="' + i + '.tekst" maxlength="3000" placeholder="- Et punkt&#10;- $F = ma$">' + esc(x.tekst) + '</textarea>' +
           '<textarea class="st-felt st-sm" rows="1" data-matslide="' + i + '.notat" maxlength="2000" placeholder="Notat til deg (vises ikke på skjermen)">' + esc(x.notat) + '</textarea>' +
-          '<div class="uv-slide liten" id="st-sv-' + i + '">' + slideHtml(x) + '</div></div>';
+          '<textarea class="st-felt st-sm" rows="' + (x.losning ? 3 : 1) + '" data-matslide="' + i + '.losning" maxlength="3000" placeholder="Løsningsforslag (du ser det på din skjerm, og kan vise det på storskjermen)">' + esc(x.losning) + '</textarea>' +
+          '<div class="uv-slide liten" id="st-sv-' + i + '">' + slideHtml(x, true) + '</div></div>';
       }).join('') +
       '<button type="button" class="st-btn g liten" data-h="matSlideNy">+ Slide</button></div>' +
       '<div class="st-matpanel-fot"><span class="st-sm st-matstatus' + (v.status && v.status.feil ? ' st-feil' : '') + '">' + (v.status ? v.status.t : (f.mat || {})[v.nokkel] ? 'Lagret' : 'Lagres automatisk') + '</span>' +
@@ -826,12 +828,26 @@ function studieStart() {
     tegn(); return true;
   }
   function uvSlides() { var v = T.uv, x = v && v.mat[v.valgt]; return (x && x.slides) || []; }
+  // Skalerer ned teksten til sliden får plass (lange slides skal ikke kuttes).
+  function passInn(el) {
+    var s = el && el.querySelector('.uv-sinn'); if (!s) return;
+    s.style.fontSize = ''; var f = 100;
+    while (s.scrollHeight > s.clientHeight + 1 && f > 45) { f -= 5; s.style.fontSize = f + '%'; }
+  }
+  function projisert(sl, medLos) {
+    return sl ? slideHtml(sl, medLos) : '<div class="uv-sinn"><p class="uv-tom">Ingen slides for denne samlingen ennå.</p></div>';
+  }
   function visSlide() {
     var v = T.uv, l = uvSlides(), el = document.getElementById('uv-slide'); if (!el) return;
-    v.i = Math.max(0, Math.min(l.length - 1, v.i));
-    el.innerHTML = l.length ? slideHtml(l[v.i]) : '<p class="uv-tom">Ingen slides for denne samlingen ennå.</p>';
+    var ny = Math.max(0, Math.min(l.length - 1, v.i)); if (ny !== v.forrigeI) { v.visLos = false; v.forrigeI = ny; } v.i = ny;
+    var sl = l[v.i];
+    el.innerHTML = projisert(sl, v.visLos); passInn(el);
+    if (v.pop && !v.pop.closed) { var pe = v.pop.document.getElementById('uv-slide'); if (pe) { pe.innerHTML = projisert(sl, v.visLos); passInn(pe); } }
     var p = document.getElementById('uv-pos'); if (p) p.textContent = l.length ? (v.i + 1) + ' / ' + l.length : '';
-    var n = document.getElementById('uv-notat'); if (n) { n.innerHTML = l[v.i] && l[v.i].notat ? tx(l[v.i].notat) : '<span class="st-sm">Ingen notat til denne sliden.</span>'; n.hidden = !v.notat; }
+    var nb = document.getElementById('uv-nesteslide'); if (nb) { nb.innerHTML = l[v.i + 1] ? slideHtml(l[v.i + 1]) : '<div class="uv-sinn"><p class="uv-tom">Siste slide</p></div>'; passInn(nb); }
+    var n = document.getElementById('uv-notat'); if (n) n.innerHTML = sl && sl.notat ? tx(sl.notat) : '<span class="st-sm">Ingen notat til denne sliden.</span>';
+    var ls = document.getElementById('uv-los'); if (ls) ls.innerHTML = sl && sl.losning ? tx(sl.losning) : '<span class="st-sm">Ingen løsningsforslag til denne sliden.</span>';
+    var lk = document.getElementById('uv-losknapp'); if (lk) { lk.disabled = !(sl && sl.losning); lk.textContent = v.visLos ? 'Skjul løsningen på skjermen (L)' : 'Vis løsningen på skjermen (L)'; }
     document.querySelectorAll('[data-h=uvForrige]').forEach(function (b) { b.disabled = v.i <= 0; });
     document.querySelectorAll('[data-h=uvNeste]').forEach(function (b) { b.disabled = v.i >= l.length - 1; });
   }
@@ -840,7 +856,7 @@ function studieStart() {
     var v = T.uv, c = v.c, u = v.u, r = u.ramme, el = u.elementer, l = samlingListe(u), x = l.find(function (y) { return y.nokkel === v.valgt; });
     var start = +r.startuke || 0, naa = start ? isoUke(new Date()) - start + 1 : 0; if (start && naa < -26) naa += 52;
     var krav = el.arbeidskrav ? (T.ovelser || []).filter(function (o) { return o.kurs === c.id; }) : [];
-    var tid = '', forrigeM = -1, forrigeU = -1;
+    var tid = '', forrigeM = -1, forrigeU = -1, to = !!(v.pop && !v.pop.closed);
     l.forEach(function (y) {
       if (y.mi !== forrigeM) { forrigeM = y.mi; tid += '<div class="uv-mod" style="color:' + MODFARGE[y.mi % MODFARGE.length] + '">Modul ' + (y.mi + 1) + ': ' + esc(y.m.navn) + '</div>'; }
       if (y.uke !== forrigeU) {
@@ -858,32 +874,79 @@ function studieStart() {
       (plan.length ? '<ol class="uv-planliste">' + plan.map(function (p) { var fra = t0; t0 += +p.min || 0; return '<li><span class="uv-tid">' + (v.start ? klokkeTil(v.start, fra) : fra + '–' + t0 + ' min') + '</span><span>' + txLinje(p.tekst || '') + '</span></li>'; }).join('') + '</ol>' +
         '<p class="st-sm">Til sammen ' + t0 + (r.lengde ? ' av ' + r.lengde : '') + ' min' + (v.start ? ', ferdig kl. ' + klokkeTil(v.start, t0) : '') + '.</p>' : '<p class="st-sm">Ingen plan for denne samlingen.</p>') +
       (x ? '<p><a class="st-btn g liten" href="index.html#fag-' + encodeURIComponent(c.id) + '@' + encodeURIComponent(x.nokkel) + '" target="_blank" rel="noopener" data-h="ingen">✎ Rediger i Utforming</a></p>' : '');
-    var sl = uvSlides();
-    return '<div class="uv"><div class="uv-topp"><a class="uv-ut" href="index.html#fag-' + encodeURIComponent(c.id) + '" title="Avslutt undervisningsmodus" data-h="uvUt">✕</a><b>' + esc(c.navn) + '</b>' +
+    var sl = uvSlides(), notater = to || v.notat;
+    // Talerinfo: notat og løsningsforslag. Vises alltid med to skjermer, ellers bare når du slår det på (skjermen kan være speilet).
+    var taler = '<div class="uv-taler"' + (notater ? '' : ' hidden') + '>' +
+      (to ? '<div class="uv-klokke" id="uv-klokke"></div><div class="st-sm">Neste slide</div><div class="uv-slide liten" id="uv-nesteslide"></div>' : '') +
+      '<div class="uv-boks"><b class="st-sm">Notat</b><div id="uv-notat"></div></div>' +
+      '<div class="uv-boks los"><b class="st-sm">Løsningsforslag</b><div id="uv-los"></div><button type="button" class="st-btn g liten" id="uv-losknapp" data-h="uvLos">Vis løsningen på skjermen (L)</button></div></div>';
+    return '<div class="uv' + (to ? ' to-skjermer' : '') + '"><div class="uv-topp"><a class="uv-ut" href="index.html#fag-' + encodeURIComponent(c.id) + '" title="Avslutt undervisningsmodus" data-h="uvUt">✕</a><b>' + esc(c.navn) + '</b>' +
       '<span class="uv-her">' + (x ? 'Uke ' + x.uke + ' · ' + samlingNavn(r, el, x.s) + (mt && mt.tittel ? ': ' + esc(mt.tittel) : '') : '') + '</span>' +
-      '<button type="button" class="st-btn g liten' + (v.tid ? ' pa2' : '') + '" data-h="uvTid">☰ Tidslinje</button><button type="button" class="st-btn g liten' + (v.plan ? ' pa2' : '') + '" data-h="uvPlan">📋 Plan</button>' +
-      '<button type="button" class="st-btn g liten" data-h="uvNotat">🗒 Notater</button><button type="button" class="st-btn liten" data-h="uvFull"' + (sl.length ? '' : ' disabled') + '>⛶ Fullskjerm</button></div>' +
-      '<div class="uv-kropp' + (v.tid ? '' : ' uten-tid') + (v.plan ? '' : ' uten-plan') + '">' +
-      '<aside class="uv-tidslinje" aria-label="Tidslinje">' + (v.laster ? '<p class="st-ind">Laster …</p>' : v.feil ? '<p class="st-feil">' + esc(v.feil) + '</p>' : tid || '<p class="st-ind">Faget har ingen moduler ennå.</p>') + '</aside>' +
-      '<section class="uv-plan">' + planHtml + '</section>' +
-      '<section class="uv-scene" id="uv-scene"><div class="uv-slide" id="uv-slide"></div>' +
-      '<div class="uv-kontroll"><button type="button" class="st-btn g liten" data-h="uvForrige">←</button><span id="uv-pos" class="st-sm"></span><button type="button" class="st-btn g liten" data-h="uvNeste">→</button></div>' +
-      '<div class="uv-notat" id="uv-notat" hidden></div>' +
+      '<span class="uv-knapper"><button type="button" class="st-btn g liten' + (v.tid ? ' pa2' : '') + '" data-h="uvTid">☰ Tidslinje</button><button type="button" class="st-btn g liten' + (v.plan ? ' pa2' : '') + '" data-h="uvPlan">📋 Plan</button>' +
+      (to ? '' : '<button type="button" class="st-btn g liten' + (v.notat ? ' pa2' : '') + '" data-h="uvNotat" title="Notater og løsningsforslag (N)">🗒 Notater</button>') +
+      '<button type="button" class="st-btn g liten' + (to ? ' pa2' : '') + '" data-h="uvTo" title="Slides på den andre skjermen, notater og løsningsforslag her">🖥 ' + (to ? 'Lukk andre skjerm' : 'To skjermer') + '</button>' +
+      (to ? '' : '<button type="button" class="st-btn liten" data-h="uvFull"' + (sl.length ? '' : ' disabled') + '>⛶ Fullskjerm</button>') + '</span></div>' +
+      '<div class="uv-kropp' + (v.tid ? '' : ' uten-tid') + (v.plan || notater ? '' : ' uten-side') + '">' +
+      '<div class="uv-tidslinje" role="navigation" aria-label="Tidslinje">' + (v.laster ? '<p class="st-ind">Laster …</p>' : v.feil ? '<p class="st-feil">' + esc(v.feil) + '</p>' : tid || '<p class="st-ind">Faget har ingen moduler ennå.</p>') + '</div>' +
+      '<div class="uv-scene" id="uv-scene"><div class="uv-ramme" id="uv-ramme"><div class="uv-slide" id="uv-slide"></div></div>' +
+      '<div class="uv-kontroll"><button type="button" class="st-btn g liten" data-h="uvForrige" aria-label="Forrige slide">←</button><span id="uv-pos" class="st-sm"></span><button type="button" class="st-btn g liten" data-h="uvNeste" aria-label="Neste slide">→</button></div>' +
       (!sl.length && x && !v.laster ? '<p class="st-sm" style="text-align:center">Lag slides under Utforming → Mitt materiale, eller <a href="index.html#fag-' + encodeURIComponent(c.id) + '@' + encodeURIComponent(x.nokkel) + '" target="_blank" rel="noopener" data-h="ingen">åpne denne samlingen der</a>.</p>' : '') +
-      '</section></div></div>';
+      '</div><div class="uv-side">' + taler + (v.plan ? '<div class="uv-plan">' + planHtml + '</div>' : '') + '</div></div></div>';
   }
-  document.addEventListener('keydown', function (ev) {
-    if (T.vis !== 'undervis' || !T.uv || /^(INPUT|TEXTAREA|SELECT)$/.test((ev.target && ev.target.tagName) || '')) return;
+  function uvTast(ev) {
+    var t = (ev.target && ev.target.tagName) || '';
+    if (T.vis !== 'undervis' || !T.uv || /^(INPUT|TEXTAREA|SELECT)$/.test(t)) return;
     var v = T.uv;
-    if (ev.key === 'ArrowRight' || ev.key === 'PageDown' || ev.key === ' ') { ev.preventDefault(); v.i++; visSlide(); }
-    else if (ev.key === 'ArrowLeft' || ev.key === 'PageUp') { ev.preventDefault(); v.i--; visSlide(); }
-    else if (ev.key === 'f' || ev.key === 'F') uvFull();
-    else if (ev.key === 'n' || ev.key === 'N') { v.notat = !v.notat; visSlide(); }
-  });
-  function uvFull() {
-    var s = document.getElementById('uv-scene'); if (!s) return;
-    if (document.fullscreenElement) document.exitFullscreen(); else if (s.requestFullscreen) s.requestFullscreen().catch(function () { varsle('Nettleseren tillot ikke fullskjerm.', true); });
+    if (ev.key === 'ArrowRight' || ev.key === 'ArrowDown' || ev.key === 'PageDown' || ev.key === ' ') { ev.preventDefault(); v.i++; visSlide(); }
+    else if (ev.key === 'ArrowLeft' || ev.key === 'ArrowUp' || ev.key === 'PageUp') { ev.preventDefault(); v.i--; visSlide(); }
+    else if (ev.key === 'f' || ev.key === 'F') uvFull(ev.view && ev.view !== window ? ev.view : null);
+    else if (ev.key === 'n' || ev.key === 'N') { if (!(v.pop && !v.pop.closed)) { v.notat = !v.notat; tegn(); } }
+    else if (ev.key === 'l' || ev.key === 'L') uvLos();
   }
+  document.addEventListener('keydown', uvTast);
+  window.addEventListener('resize', function () { if (T.vis === 'undervis') { passInn(document.getElementById('uv-slide')); passInn(document.getElementById('uv-nesteslide')); } });
+  function uvLos() { var v = T.uv, sl = uvSlides()[v.i]; if (!sl || !sl.losning) return; v.visLos = !v.visLos; visSlide(); }
+  function uvFull(vindu) {
+    var d = (vindu || window).document, s = d.getElementById('uv-ramme'); if (!s) return;
+    if (d.fullscreenElement) d.exitFullscreen(); else if (s.requestFullscreen) s.requestFullscreen().catch(function () { varsle('Nettleseren tillot ikke fullskjerm.', true); });
+  }
+  // To skjermer: slidene i et eget vindu (dras til projektoren, eller plasseres der automatisk i Chrome/Edge), mens dette
+  // vinduet viser notater, løsningsforslag, neste slide og klokke. Vinduet styres herfra (samme opphav, ingen ekstra lasting).
+  function uvTo() {
+    var v = T.uv;
+    if (v.pop && !v.pop.closed) { v.pop.close(); v.pop = null; tegn(); return; }
+    var apne = function (skjerm) {
+      var mal = skjerm ? 'left=' + skjerm.availLeft + ',top=' + skjerm.availTop + ',width=' + skjerm.availWidth + ',height=' + skjerm.availHeight : 'width=1280,height=720';
+      var w = window.open('', 'uv-skjerm', 'popup,' + mal);
+      if (!w) return varsle('Nettleseren stoppet det nye vinduet. Tillat sprettoppvinduer for fysikkhjelp.no og prøv igjen.', true);
+      var stil = Array.prototype.map.call(document.querySelectorAll('link[rel=stylesheet], style'), function (e) { return e.tagName === 'LINK' ? '<link rel="stylesheet" href="' + esc(e.href) + '">' : '<style>' + e.textContent + '</style>'; }).join('');
+      w.document.open();
+      w.document.write('<!DOCTYPE html><html lang="nb" data-bs-theme="dark"><head><meta charset="utf-8"><title>' + esc(v.c.navn) + ' – slides</title>' + stil +
+        '<style>html,body{margin:0;height:100%;background:#000;overflow:hidden}.studie.uv-pop{max-width:none;margin:0;padding:0;height:100%}.uv-pop .uv-ramme{position:fixed;inset:0}' +
+        '.uv-pop .uv-slide{border:0;border-radius:0}#uv-fs{position:fixed;left:50%;bottom:1.2rem;transform:translateX(-50%);z-index:5;font:600 1rem system-ui;padding:.6rem 1.1rem;border-radius:10px;border:0;background:#2b6;color:#000;cursor:pointer}' +
+        ':fullscreen #uv-fs{display:none}</style></head><body><div class="studie uv-pop"><div class="uv-ramme" id="uv-ramme"><div class="uv-slide" id="uv-slide"></div></div>' +
+        '<button id="uv-fs">Klikk her for fullskjerm (F)</button></div></body></html>');
+      w.document.close();
+      w.document.addEventListener('keydown', uvTast);
+      w.document.getElementById('uv-fs').addEventListener('click', function () { uvFull(w); });
+      w.addEventListener('resize', function () { passInn(w.document.getElementById('uv-slide')); });
+      w.addEventListener('pagehide', function () { setTimeout(function () { if (T.uv && T.uv.pop === w && w.closed) { T.uv.pop = null; tegn(); } }, 300); });
+      v.pop = w; v.t0 = Date.now(); tegn(); setTimeout(visSlide, 200);
+      if (!skjerm) varsle('Dra det nye vinduet over til projektoren og klikk «fullskjerm» der. Her ser du notater og løsningsforslag.');
+    };
+    // Window Management API (Chrome/Edge): finn den andre skjermen og legg vinduet der.
+    if (window.getScreenDetails) {
+      window.getScreenDetails().then(function (d) {
+        var annen = d.screens.find(function (s) { return s !== d.currentScreen; }); apne(annen || null);
+      }).catch(function () { apne(null); });
+    } else apne(null);
+  }
+  setInterval(function () {
+    var el = document.getElementById('uv-klokke'), v = T.uv; if (!el || !v) return;
+    var n = new Date(), s = Math.floor((Date.now() - (v.t0 || Date.now())) / 1000);
+    el.textContent = klokke(n) + ' · ' + Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0') + ' brukt';
+    if (v.pop && v.pop.closed) { v.pop = null; tegn(); }
+  }, 1000);
   // ---------------------------------------------------------------- varierende tall i egne spørsmål
   // Et spørsmål med "variabler" er en oppgavemal: hver student (og hvert forsøk) får egne tall, og fasit og gale svar regnes ut
   // her i nettleseren fra uttrykk (f.eks. "0.5*a*t^2"). Én mal = én oppgave, så studenten får aldri to like med bare nye tall.
@@ -1632,7 +1695,7 @@ function studieStart() {
       matPlanNy: function () { T.fag.matRed.plan.push({ min: 10, tekst: '' }); lagreMat(); tegn(); },
       matPlanSlett: function () { T.fag.matRed.plan.splice(+d.i, 1); lagreMat(); tegn(); },
       matPlanFlytt: function () { var a = d.i.split(':'); flytt(T.fag.matRed.plan, +a[0], +a[1]); lagreMat(); tegn(); },
-      matSlideNy: function () { T.fag.matRed.slides.push({ tittel: '', tekst: '', notat: '' }); lagreMat(); tegn(); },
+      matSlideNy: function () { T.fag.matRed.slides.push({ tittel: '', tekst: '', notat: '', losning: '' }); lagreMat(); tegn(); },
       matSlideSlett: function () { T.fag.matRed.slides.splice(+d.i, 1); lagreMat(); tegn(); },
       matSlideFlytt: function () { var a = d.i.split(':'); flytt(T.fag.matRed.slides, +a[0], +a[1]); lagreMat(); tegn(); },
       kiMat: function () { kiMat(d.v === 'endre'); },
@@ -1642,7 +1705,7 @@ function studieStart() {
       uvVelg: function () { T.uv.valgt = d.k; T.uv.i = 0; tegn(); if (matchMedia('(max-width: 900px)').matches) { var sc = document.getElementById('uv-scene'); if (sc) sc.scrollIntoView({ block: 'start' }); } },
       uvForrige: function () { T.uv.i--; visSlide(); }, uvNeste: function () { T.uv.i++; visSlide(); },
       uvUt: function () { ev.preventDefault(); if (document.fullscreenElement) document.exitFullscreen(); location.hash = 'fag-' + T.uv.c.id; location.reload(); },
-      uvFull: uvFull, uvNotat: function () { T.uv.notat = !T.uv.notat; visSlide(); },
+      uvFull: function () { uvFull(); }, uvNotat: function () { T.uv.notat = !T.uv.notat; tegn(); }, uvTo: uvTo, uvLos: uvLos,
       uvTid: function () { T.uv.tid = !T.uv.tid; tegn(); }, uvPlan: function () { T.uv.plan = !T.uv.plan; tegn(); },
       studentvisning: function () { if (T.fag && T.fag.lagrer) { clearTimeout(T.fag.tid); lagreUtkast(); } location.hash = 'eksempel-' + d.id; location.reload(); },
     }[d.h] || function () {})();
@@ -1723,7 +1786,7 @@ function studieStart() {
       if (el.dataset.mat) v.tittel = el.value;
       else if (el.dataset.matplan) { var pp = el.dataset.matplan.split('.'); v.plan[+pp[0]][pp[1]] = pp[1] === 'min' ? (parseInt(el.value, 10) || 0) : el.value;
         var sum = v.plan.reduce(function (a, x) { return a + (+x.min || 0); }, 0), lg = +T.fag.u.ramme.lengde || 0, se = document.getElementById('st-plansum'); if (se) { se.textContent = 'Sum ' + sum + (lg ? ' av ' + lg : '') + ' min'; se.classList.toggle('st-feil', !!lg && sum > lg); } }
-      else { var ps = el.dataset.matslide.split('.'), sl = v.slides[+ps[0]]; sl[ps[1]] = el.value; var vb = document.getElementById('st-sv-' + ps[0]); if (vb) { clearTimeout(vb.t); vb.t = setTimeout(function () { vb.innerHTML = slideHtml(sl); }, 300); } }
+      else { var ps = el.dataset.matslide.split('.'), sl = v.slides[+ps[0]]; sl[ps[1]] = el.value; var vb = document.getElementById('st-sv-' + ps[0]); if (vb) { clearTimeout(vb.t); vb.t = setTimeout(function () { vb.innerHTML = slideHtml(sl, true); }, 300); } }
       lagreMat(); return;
     }
     if (T.fag && el.dataset && el.dataset.nybeskjed) { T.fag.nyBeskjed = T.fag.nyBeskjed || {}; T.fag.nyBeskjed[el.dataset.nybeskjed] = el.value; return; }

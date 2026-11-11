@@ -156,15 +156,17 @@ Lag:
   Varier: kort oppstart (hva skal vi lære), gjennomgang i korte bolker, eksempler, konseptspørsmål til salen (stem/diskuter med sidemannen),
   oppgaveregning, og oppsummering. Ved omvendt klasserom: lite gjennomgang, mest aktiviteter, og si hva studentene skulle forberede.
   Nevn arbeidskrav med frist når det passer.
-- "slides": 6–16 slides {"tittel": "…", "tekst": "…", "notat": "…"}. Én idé per slide, få ord.
+- "slides": 6–16 slides {"tittel": "…", "tekst": "…", "notat": "…", "losning": "…"}. Én idé per slide, få ord.
   "tekst": linjer som begynner med "- " blir punkter. Formler med $…$ i teksten eller $$…$$ på egen linje (enkel LaTeX: \\frac{}{}, ^, _, \\cdot, \\sqrt{}, \\vec{}, greske bokstaver).
-  Ta med minst ett regneeksempel (oppgave på én slide, løsning på neste), ett konseptspørsmål med svaralternativer A–D, og en oppsummering til slutt.
-  "notat": hva underviseren kan si, og fasit til spørsmål. Studentene ser ikke notatet.
+  Ta med minst ett regneeksempel, ett konseptspørsmål med svaralternativer A–D, og en oppsummering til slutt.
+  "notat": hva underviseren kan si. Studentene ser ikke notatet.
+  "losning": løsningsforslag til oppgaver og spørsmål på sliden: full utregning steg for steg med formler og svar med enhet,
+  eller riktig alternativ med begrunnelse. Underviseren ser det på sin skjerm og kan vise det på storskjermen. Tom streng når sliden ikke har noen oppgave.
 - "kommentar": 1–2 setninger til underviseren (f.eks. hva du har lagt vekt på, eller hva lærestoffet ikke dekker).
 Bruk samme notasjon og begreper som lærestoffet på nettstedet. Regn nøye. Tilpass nivået. Norsk bokmål.
 Har underviseren lagt ved et opplegg: følg det så tett som mulig. Får du NÅVÆRENDE MATERIALE: behold det og gjør bare endringene underviseren ber om.
 
-Svar KUN med gyldig JSON: {"tittel":"…","plan":[{"min":10,"tekst":"…"}],"slides":[{"tittel":"…","tekst":"- …","notat":"…"}],"kommentar":"…"}`;
+Svar KUN med gyldig JSON: {"tittel":"…","plan":[{"min":10,"tekst":"…"}],"slides":[{"tittel":"…","tekst":"- …","notat":"…","losning":""}],"kommentar":"…"}`;
 
 async function materiale(request, env, b, h) {
   const bruker = await innloggetBruker(request, env);
@@ -201,7 +203,7 @@ async function materiale(request, env, b, h) {
   const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_MAT.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000, vedlegg));
   if (!r) throw feil("Fikk ikke noe materiale fra KI denne gangen. Prøv igjen.", 502);
   const plan = (Array.isArray(r.plan) ? r.plan : []).slice(0, 25).map((x) => ({ min: Math.max(0, Math.min(300, parseInt(x && x.min, 10) || 0)), tekst: kort(x && x.tekst, 600) })).filter((x) => x.tekst);
-  const slides = (Array.isArray(r.slides) ? r.slides : []).slice(0, 40).map((x) => ({ tittel: kort(x && x.tittel, 200), tekst: kort(x && x.tekst, 3000), notat: kort(x && x.notat, 2000) })).filter((x) => x.tittel || x.tekst);
+  const slides = (Array.isArray(r.slides) ? r.slides : []).slice(0, 40).map((x) => ({ tittel: kort(x && x.tittel, 200), tekst: kort(x && x.tekst, 3000), notat: kort(x && x.notat, 2000), losning: kort(x && x.losning, 3000) })).filter((x) => x.tittel || x.tekst);
   if ((hva !== "slides" && !plan.length) && (hva !== "plan" && !slides.length)) throw feil("Fikk ikke noe brukbart materiale fra KI denne gangen. Prøv igjen.", 502);
   return json({ tittel: kort(r.tittel, 200), plan, slides, kommentar: kort(r.kommentar, 600) }, 200, h);
 }
