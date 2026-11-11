@@ -1,13 +1,17 @@
 # Hvilke filer som er sjekket mot notasjonsreglene (NOTASJON.md).
 # Oppdateres av verktoy/notasjon_status.py – ikke rediger for hånd.
 filer:
+  flervariabel-kalkulus/kapitler/01-dobbeltintegraler/01-dobbeltintegraler-over-rektangler.qmd:
+    blob: 82b48a9a8542161ba74f5b9bd5b8699b88ef2ebf
+    dato: '2026-11-11'
+    versjon: 2
   flervariabel-kalkulus/kapitler/01-dobbeltintegraler/02-generelle-omrader.qmd:
-    blob: a207bb821c1fdc09b19b749c5388b86af286d408
-    dato: '2026-11-10'
+    blob: 2688cf2f59887bee13f195a99c6b85c9e8123adf
+    dato: '2026-11-11'
     versjon: 2
   flervariabel-kalkulus/kapitler/01-dobbeltintegraler/03-polarkoordinater.qmd:
-    blob: 1cd22a190c47c137587be740dcbd723263930f7d
-    dato: '2026-11-10'
+    blob: e83dd34ad0c88c943325fecd2bd039e948f8190c
+    dato: '2026-11-11'
     versjon: 2
   flervariabel-kalkulus/kapitler/01-dobbeltintegraler/04-variabelbytte.qmd:
     blob: 794f845181d70c400581248c00838d08ac02da5d
@@ -60,6 +64,74 @@ filer:
   flervariabel-kalkulus/kapitler/03-kurver-og-flater/01-linjeintegraler.qmd:
     blob: 58c2698c3d1832fc18324daf1cd434a4b1c693cc
     dato: '2026-11-10'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/03-kurver-og-flater/02-parametriske-flater.qmd:
+    blob: 7bd8b38f108b1eb72fe5a4b1f7483b99b6304858
+    dato: '2026-11-11'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/03-kurver-og-flater/03-flateintegraler.qmd:
+    blob: b47b1fc1a1d0efdfe3067cb054dcd7a66ec0f342
+    dato: '2026-11-11'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/03-kurver-og-flater/04-oppgaver.qmd:
+    blob: f3597abe8da1e22be77879635295167c680dcb0d
+    dato: '2026-11-11'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/03-kurver-og-flater/index.qmd:
+    blob: d07cca1d6992e0b24904f68ed9de5ffd46aacb6a
+    dato: '2026-11-11'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/04-vektorfelt/01-vektorfelt.qmd:
+    blob: a27df8cafb56d360cccb5242f397a299dae616ca
+    dato: '2026-11-11'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/04-vektorfelt/02-divergens-og-curl.qmd:
+    blob: 21dbff06c90bd79fcb3639243406247d74b83994
+    dato: '2026-11-11'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/04-vektorfelt/03-linjeintegraler-av-vektorfelt.qmd:
+    blob: 48d43c35836f54551525ef8349c806a5b0b2644f
+    dato: '2026-11-11'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/04-vektorfelt/04-konservative-felt.qmd:
+    blob: 6f1a7f595d78697606ab08c333b2d45632d0e04e
+    dato: '2026-11-11'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/04-vektorfelt/05-oppgaver.qmd:
+    blob: 22f27bfdbd68f39e408a0ba14defeada1d179090
+    dato: '2026-11-11'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/04-vektorfelt/index.qmd:
+    blob: 43d528d58c81b999c402984815da1e4d837df5d0
+    dato: '2026-11-11'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/05-integralsetninger/01-fluks-i-planet.qmd:
+    blob: 610657c15b808934f6aba64bb8db4edebea10c3f
+    dato: '2026-11-11'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/05-integralsetninger/02-greens-teorem.qmd:
+    blob: bddec8eb6937d86891f8c727268c0ec198240d43
+    dato: '2026-11-11'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/05-integralsetninger/03-fluks-i-rommet.qmd:
+    blob: be79f482d3a0883d93a3fe3dc4b93dff338296f2
+    dato: '2026-11-11'
+    versjon: 2
+  fysikk-forkurs/kapitler/01-hva-er-fysikk/10-grafer-og-regresjon.qmd:
+    blob: 5d6c9c97978b918ac7e3090e28fd1bddf32e4bf9
+    dato: '2026-11-11'
+    versjon: 2
+  fysikk-forkurs/kapitler/01-hva-er-fysikk/11-forsok-og-rapport.qmd:
+    blob: b0da08c10fa190a402ac7859da9a781db82b529e
+    dato: '2026-11-11'
+    versjon: 2
+  fysikk-forkurs/kapitler/04-krefter/07-sammensatte-mekanikkoppgaver.qmd:
+    blob: 9829c3d8ac92f49bb03caf93a07e9d18bbd43b1e
+    dato: '2026-11-11'
+    versjon: 2
+  fysikk-forkurs/kapitler/09-termofysikk/05-stoffmengde.qmd:
+    blob: 6884b28c5772a8b9baf3d1f537c7cc4a30486c40
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/01-introduksjon/01-hva-er-fysikk.qmd:
     blob: 0fe6f15762a24c56203ab9722fd81a69748b93be
