@@ -12,7 +12,13 @@ Dette er det eneste du gjør hvis det ikke er noe nytt. Ikke klon andre repoer, 
    ```
    gh api "repos/Realfagsambassaden/donasjoner/issues?state=open&labels=donasjon&per_page=100&sort=created&direction=asc" --jq '[.[] | select(.pull_request|not) | select(([.labels[].name] | index("behandlet") or index("under-arbeid") or index("trenger-avklaring")) | not) | {number,title}]'
    ```
-2. Er lista tom: avslutt med en gang, uten melding.
+2. Hent også saker som har stått fast: merket `under-arbeid`, men ikke endret på over 12 timer (en tidligere økt startet og stoppet uten å levere). Disse behandles som nye:
+   ```
+   gh api "repos/Realfagsambassaden/donasjoner/issues?state=open&labels=donasjon,under-arbeid&per_page=100&sort=created&direction=asc" --jq '[.[] | select(.pull_request|not) | select((now - (.updated_at|fromdateiso8601)) > 43200) | {number,title}]'
+   ```
+   For hver slik sak: fjern merket `under-arbeid` og skriv en kort kommentar om at saken tas opp igjen.
+3. Er begge listene tomme: avslutt med en gang, uten melding.
+4. Svarer `gh api` med 403 eller «not enabled for this session», er det en tilgangsfeil og **ikke** en tom kø. Avslutt da med et varsel som siterer feilmeldingen ordrett.
 
 ## 2. Oppsett (bare når det finnes nye donasjoner)
 
