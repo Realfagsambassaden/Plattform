@@ -2,17 +2,19 @@
 
 Nattjobben leser og oppdaterer denne filen hver natt. Instruksen står i `rutiner/nattjobb-instruks.md`, skriverekkefølgen i `rutiner/forkurs-kart.md`. Logg fra før 9. nov. 2026 ligger i prosjektdokumentet `claude/fysikkhjelp-oversikt.md`.
 
-## Status (10. november 2026)
+## Status (11. november 2026)
 
 Nivå og dekning per tema vises på `dekning.qmd`.
 
-**Plassholdersider i fysikk-forkurs** (`plassholder: true`): 01-hva-er-fysikk/10-grafer-og-regresjon, 11-forsok-og-rapport; 10-bolger-og-straling/01–04; 11-elektrisitet/06-elektromotorisk-spenning; 12-atom-og-kjernefysikk/01–04; 13-programmering/01–03.
+**Plassholdersider i fysikk-forkurs** (`plassholder: true`): 10-bolger-og-straling/01–04; 11-elektrisitet/06-elektromotorisk-spenning; 12-atom-og-kjernefysikk/01–04; 13-programmering/01–03. Kapittel 1 (måling og usikkerhet) er ferdig. Neste i kartet: termofysikk (utvide 09/07 prosesser, rydde 09/04 og 09/07), så elektrisitet.
 
-**Notasjon:** 334 av 345 filer usjekket 10. nov. (matte-forkurs og flervariabel-kalkulus er nå med i lista, og sidene i fysikk-forkurs står som «ny»). 15 filer i flervariabel-kalkulus sjekket 10. nov. (Plattform#46). I fysikk-forkurs står `k_\text{B}` i kursiv ca. 11 steder og `9.8` uten 1 ca. 4 steder. `notasjon_status.py liste` gir gjeldende tall.
+**Flervariabel kalkulus:** 01/01–03 ferdige. Neste: 01/04 variabelbytte, 01/05 anvendelser, 01/07 oppgaver, så kapittel 2.
 
-**Kjente svakheter:** Termofysikk (kapittel 9) og elektrisitet (kapittel 11) i fysikk-forkurs har svak struktur. Sidene 04 og 06 i termofysikk har en `:::: {.oppgaver}`-blokk rundt hele teorien og «Under arbeid»-boks. Mange figur- og tabellhenvisninger mangler nummer.
+**Notasjon:** 304 av 348 filer usjekket 11. nov. (20 merket i natt, Plattform#74). Lista fortsetter med flervariabel-kalkulus 05-04 og utover. I fysikk-forkurs står `k_\text{B}` i kursiv ca. 11 steder (bl.a. 09/06 tilstandslikningen) og `9.8` uten 1 ca. 4 steder. `notasjon_status.py liste` gir gjeldende tall.
 
-**Venter på video:** `videoer/fysikk-forkurs/01-06-maleusikkerhet`, `01-07-usikkerhet-i-sammensatte-storrelser`, `videoer/flervariabel-kalkulus/01-01-dobbeltintegraler-over-rektangler`, `videoer/fysikk-forkurs/03-06-bevegelse-i-to-dimensjoner`, `07-01-harmoniske-svingninger`, `07-02-fjaer-og-pendel`, `09-07-termodynamikkens-2-lov`, `09-08-varmetransport`, og 13 plassholdere i mekanikken i ingeniorfysikk. På vent etter lærerens avgjørelse: `videoer/fysikk-forkurs/01-hva-er-fysikk` og `01-02-overslag`.
+**Kjente svakheter:** Termofysikk (kapittel 9) og elektrisitet (kapittel 11) i fysikk-forkurs har svak struktur. Sidene 04 og 07 (prosesser, var 06) i termofysikk har en `:::: {.oppgaver}`-blokk rundt hele teorien og «Under arbeid»-boks. Mange figur- og tabellhenvisninger mangler nummer.
+
+**Venter på video:** `videoer/fysikk-forkurs/01-10-grafer-og-regresjon`, `01-11-forsok-og-rapport`, `04-07-sammensatte-mekanikkoppgaver`, `09-05-stoffmengde`, `videoer/flervariabel-kalkulus/01-02-generelle-omrader`, `01-03-polarkoordinater`, `videoer/fysikk-forkurs/01-06-maleusikkerhet`, `01-07-usikkerhet-i-sammensatte-storrelser`, `videoer/flervariabel-kalkulus/01-01-dobbeltintegraler-over-rektangler`, `videoer/fysikk-forkurs/03-06-bevegelse-i-to-dimensjoner`, `07-01-harmoniske-svingninger`, `07-02-fjaer-og-pendel`, `09-07-termodynamikkens-2-lov`, `09-08-varmetransport`, og 13 plassholdere i mekanikken i ingeniorfysikk. På vent etter lærerens avgjørelse: `videoer/fysikk-forkurs/01-hva-er-fysikk` og `01-02-overslag`.
 
 **Åpne spørsmål fra lærerens gjennomlesing:** v_maks via sirkelbevegelse og ω på forkursnivå? Carnot/COP uten syklusen? U-verdi på forkursnivå? Figurene med svak fargefyll i lys og mørk modus.
 
@@ -28,6 +30,7 @@ Nivå og dekning per tema vises på `dekning.qmd`.
 
 Nyeste øverst. Én kort linje eller to per natt.
 
+- **11. nov. 2026:** Seks sider publisert via automatisk fletting: fysikk-forkurs#24 Grafer og regresjon, #25 Forsøk og rapport, #26 Sammensatte mekanikkoppgaver (ekstraoppgaver → 08), #27 Stoffmengde (termofysikk 05–09 → 06–10 med aliaser); flervariabel-kalkulus#4 Generelle områder, #5 Polarkoordinater. Notasjon: 14 filer gått gjennom uten funn, 20 merket (Plattform#74). Ingen videoer å bytte inn, ingen bestillinger.
 - **10. nov. 2026, morgen (manuell økt):** PR-ene fra natta flettet manuelt etter gjennomsyn. Ny ordning: GitHub fletter `natt/`-PR-er automatisk (Plattform#48 og tilsvarende i fagrepoene). Denne PR-en er testen av ordningen.
 - **10. nov. 2026:** Fletting av PR-er ble avvist av sikkerhetsfilteret i økta («Merge Without Review»), så alt står som åpne PR-er: fysikk-forkurs#21 (Måleusikkerhet, nye nummer i kapittel 1, flettes først), #22 (Usikkerhet i sammensatte størrelser), flervariabel-kalkulus#2 (Dobbeltintegraler over rektangler; matte-forkurs har ingen plassholdere igjen), Plattform#46 (notasjonsstatus, 15 filer). Ingen videoer å bytte inn, ingen bestillinger.
 - **9. nov. 2026:** Nattjobben flyttet ut av Claude-prosjektet, slik at den får valgt repoene sine. Kart, status og instruks flyttet hit.
