@@ -843,6 +843,8 @@ function studieStart() {
     var sl = l[v.i];
     el.innerHTML = projisert(sl, v.visLos); passInn(el);
     if (v.pop && !v.pop.closed) { var pe = v.pop.document.getElementById('uv-slide'); if (pe) { pe.innerHTML = projisert(sl, v.visLos); passInn(pe); } }
+    var pt = planTrekk(); document.querySelectorAll('.uv-trekk-innhold').forEach(function (e) { e.innerHTML = pt; });
+    if (v.pop && !v.pop.closed) v.pop.document.querySelectorAll('.uv-trekk-innhold').forEach(function (e) { e.innerHTML = pt; });
     var p = document.getElementById('uv-pos'); if (p) p.textContent = l.length ? (v.i + 1) + ' / ' + l.length : '';
     var nb = document.getElementById('uv-nesteslide'); if (nb) { nb.innerHTML = l[v.i + 1] ? slideHtml(l[v.i + 1]) : '<div class="uv-sinn"><p class="uv-tom">Siste slide</p></div>'; passInn(nb); }
     var n = document.getElementById('uv-notat'); if (n) n.innerHTML = sl && sl.notat ? tx(sl.notat) : '<span class="st-sm">Ingen notat til denne sliden.</span>';
@@ -851,6 +853,12 @@ function studieStart() {
     document.querySelectorAll('[data-h=uvForrige]').forEach(function (b) { b.disabled = v.i <= 0; });
     document.querySelectorAll('[data-h=uvNeste]').forEach(function (b) { b.disabled = v.i >= l.length - 1; });
   }
+  // Plan for dagen som uttrekksmeny i fullskjerm og i vinduet på den andre skjermen: pek helt til venstre, så kommer den fram.
+  function planTrekk() {
+    var v = T.uv, mt = v && v.mat[v.valgt], plan = (mt && mt.plan) || [], t0 = 0;
+    return '<b>Plan for dagen</b>' + (plan.length ? '<ol class="uv-planliste">' + plan.map(function (p) { var fra = t0; t0 += +p.min || 0; return '<li><span class="uv-tid">' + (v.start ? klokkeTil(v.start, fra) : fra + '–' + t0 + ' min') + '</span><span>' + txLinje(p.tekst || '') + '</span></li>'; }).join('') + '</ol>' : '<p>Ingen plan for denne samlingen.</p>');
+  }
+  function trekkHtml() { return '<div class="uv-trekk" aria-hidden="true"><span class="uv-trekk-flik">Plan</span><div class="uv-trekk-innhold"></div></div>'; }
   function klokkeTil(start, min) { var m = /^(\d{1,2}):(\d{2})$/.exec(start || ''); if (!m) return ''; var t = +m[1] * 60 + +m[2] + min; return String(Math.floor(t / 60) % 24).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); }
   function undervisHtml() {
     var v = T.uv, c = v.c, u = v.u, r = u.ramme, el = u.elementer, l = samlingListe(u), x = l.find(function (y) { return y.nokkel === v.valgt; });
@@ -888,7 +896,7 @@ function studieStart() {
       (to ? '' : '<button type="button" class="st-btn liten" data-h="uvFull"' + (sl.length ? '' : ' disabled') + '>⛶ Fullskjerm</button>') + '</span></div>' +
       '<div class="uv-kropp' + (v.tid ? '' : ' uten-tid') + (v.plan || notater ? '' : ' uten-side') + '">' +
       '<div class="uv-tidslinje" role="navigation" aria-label="Tidslinje">' + (v.laster ? '<p class="st-ind">Laster …</p>' : v.feil ? '<p class="st-feil">' + esc(v.feil) + '</p>' : tid || '<p class="st-ind">Faget har ingen moduler ennå.</p>') + '</div>' +
-      '<div class="uv-scene" id="uv-scene"><div class="uv-ramme" id="uv-ramme"><div class="uv-slide" id="uv-slide"></div></div>' +
+      '<div class="uv-scene" id="uv-scene"><div class="uv-ramme" id="uv-ramme"><div class="uv-slide" id="uv-slide"></div>' + trekkHtml() + '</div>' +
       '<div class="uv-kontroll"><button type="button" class="st-btn g liten" data-h="uvForrige" aria-label="Forrige slide">←</button><span id="uv-pos" class="st-sm"></span><button type="button" class="st-btn g liten" data-h="uvNeste" aria-label="Neste slide">→</button></div>' +
       (!sl.length && x && !v.laster ? '<p class="st-sm" style="text-align:center">Lag slides under Utforming → Mitt materiale, eller <a href="index.html#fag-' + encodeURIComponent(c.id) + '@' + encodeURIComponent(x.nokkel) + '" target="_blank" rel="noopener" data-h="ingen">åpne denne samlingen der</a>.</p>' : '') +
       '</div><div class="uv-side">' + taler + (v.plan ? '<div class="uv-plan">' + planHtml + '</div>' : '') + '</div></div></div>';
@@ -924,7 +932,7 @@ function studieStart() {
       w.document.write('<!DOCTYPE html><html lang="nb" data-bs-theme="dark"><head><meta charset="utf-8"><title>' + esc(v.c.navn) + ' – slides</title>' + stil +
         '<style>html,body{margin:0;height:100%;background:#000;overflow:hidden}.studie.uv-pop{max-width:none;margin:0;padding:0;height:100%}.uv-pop .uv-ramme{position:fixed;inset:0}' +
         '.uv-pop .uv-slide{border:0;border-radius:0}#uv-fs{position:fixed;left:50%;bottom:1.2rem;transform:translateX(-50%);z-index:5;font:600 1rem system-ui;padding:.6rem 1.1rem;border-radius:10px;border:0;background:#2b6;color:#000;cursor:pointer}' +
-        ':fullscreen #uv-fs{display:none}</style></head><body><div class="studie uv-pop"><div class="uv-ramme" id="uv-ramme"><div class="uv-slide" id="uv-slide"></div></div>' +
+        ':fullscreen #uv-fs{display:none}</style></head><body><div class="studie uv-pop"><div class="uv-ramme" id="uv-ramme"><div class="uv-slide" id="uv-slide"></div>' + trekkHtml() + '</div>' +
         '<button id="uv-fs">Klikk her for fullskjerm (F)</button></div></body></html>');
       w.document.close();
       w.document.addEventListener('keydown', uvTast);
