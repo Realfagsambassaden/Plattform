@@ -367,18 +367,15 @@ website:
 
 format:
   html:
-    theme:
-      dark: [cosmo, assets/tavle.scss]
-      light: [cosmo, assets/tavle.scss, assets/lys.scss]
+    # Bare mørk modus (tavla). Lys modus (assets/lys.scss) er slått av til den er kvalitetssikret.
+    theme: [cosmo, assets/tavle.scss]
     html-math-method: mathjax
     toc: true
     toc-title: "På denne siden"
     toc-depth: 2
     lightbox: true
     code-copy: true
-    highlight-style:
-      dark: github-dark
-      light: github
+    highlight-style: github-dark
     include-in-header:
       - text: |
           <!-- Adressen til hint-tjeneren (Cloudflare Worker). Bytt ut når den er satt opp. -->

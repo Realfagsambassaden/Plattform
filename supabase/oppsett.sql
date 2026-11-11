@@ -535,3 +535,78 @@ end $$;
 
 revoke execute on function public.be_om_underviser(text), public.admin_foresporsler(), public.svar_foresporsel(uuid, boolean) from public, anon;
 grant execute on function public.be_om_underviser(text), public.admin_foresporsler(), public.svar_foresporsel(uuid, boolean) to authenticated;
+
+-- ============================================================================================================
+-- Brukernavn (valgfritt) og innlogging med brukernavn
+-- Supabase logger bare inn med e-post. Har brukeren valgt et brukernavn, slår epost_for_innlogging opp e-posten
+-- bak brukernavnet, men BARE når passordet er riktig (sjekkes mot passordhashen), så ingen kan finne andres e-post.
+-- Klienten logger deretter inn som vanlig med e-post og passord. Gjentatte feil sperres (10 forsøk per 15 min).
+-- ============================================================================================================
+alter table public.profiler add column if not exists brukernavn text check (brukernavn ~ '^[a-z0-9._-]{3,30}$');
+create unique index if not exists profiler_brukernavn on public.profiler (brukernavn);
+
+create table if not exists public.innlogging_forsok (
+  brukernavn text not null,
+  tid        timestamptz not null default now()
+);
+create index if not exists innlogging_forsok_idx on public.innlogging_forsok (brukernavn, tid);
+alter table public.innlogging_forsok enable row level security;   -- ingen regler: bare funksjonene under kommer til
+revoke all on public.innlogging_forsok from anon, authenticated;
+
+create or replace function public.sett_brukernavn(b text) returns text
+  language plpgsql security definer set search_path = public as
+$$
+declare n text := nullif(lower(trim(coalesce(b, ''))), '');
+begin
+  if auth.uid() is null then return 'Du må være logget inn.'; end if;
+  if n is not null and n !~ '^[a-z0-9._-]{3,30}$' then return 'Brukernavnet må ha 3–30 tegn: små bokstaver a–z, tall, punktum, bindestrek eller understrek.'; end if;
+  if n is not null and exists (select 1 from profiler where brukernavn = n and id <> auth.uid()) then return 'Brukernavnet er opptatt.'; end if;
+  insert into profiler (id, brukernavn) values (auth.uid(), n) on conflict (id) do update set brukernavn = n;
+  return 'ok';
+end $$;
+revoke execute on function public.sett_brukernavn(text) from public, anon;
+grant execute on function public.sett_brukernavn(text) to authenticated;
+
+create or replace function public.epost_for_innlogging(b text, p text) returns text
+  language plpgsql security definer set search_path = public, auth, extensions as
+$$
+declare n text := lower(trim(coalesce(b, ''))); e text; h text;
+begin
+  if n = '' or coalesce(p, '') = '' then return null; end if;
+  delete from innlogging_forsok where tid < now() - interval '1 day';
+  if (select count(*) from innlogging_forsok where brukernavn = n and tid > now() - interval '15 minutes') >= 10 then
+    raise exception 'For mange forsøk. Vent et kvarter og prøv igjen.';
+  end if;
+  select u.email, u.encrypted_password into e, h from profiler pr join auth.users u on u.id = pr.id where pr.brukernavn = n;
+  if h is not null and h = crypt(p, h) then return e; end if;
+  insert into innlogging_forsok (brukernavn) values (n);
+  return null;
+end $$;
+revoke execute on function public.epost_for_innlogging(text, text) from public;
+grant execute on function public.epost_for_innlogging(text, text) to anon, authenticated;
+
+-- ============================================================================================================
+-- Tilbakemeldinger fra chatten nederst til høyre på alle sider (feil og forslag)
+-- Alle kan sende (også uten å være logget inn). Bare administratorer kan lese og endre status.
+-- ============================================================================================================
+create table if not exists public.tilbakemeldinger (
+  id        bigserial primary key,
+  tid       timestamptz not null default now(),
+  nettsted  text not null default '' check (char_length(nettsted) <= 40),
+  side      text not null default '' check (char_length(side) <= 300),
+  tekst     text not null check (char_length(tekst) between 2 and 2000),
+  epost     text check (epost is null or char_length(epost) <= 200),
+  bruker    uuid default auth.uid(),
+  status    text not null default 'ny' check (status in ('ny', 'lest', 'fikset'))
+);
+alter table public.tilbakemeldinger enable row level security;
+drop policy if exists "tilbakemeldinger: alle kan sende" on public.tilbakemeldinger;
+create policy "tilbakemeldinger: alle kan sende" on public.tilbakemeldinger for insert to anon, authenticated
+  with check (status = 'ny' and (bruker is null or bruker = auth.uid()));
+drop policy if exists "tilbakemeldinger: admin leser" on public.tilbakemeldinger;
+create policy "tilbakemeldinger: admin leser" on public.tilbakemeldinger for select to authenticated using (public.er_admin());
+drop policy if exists "tilbakemeldinger: admin endrer" on public.tilbakemeldinger;
+create policy "tilbakemeldinger: admin endrer" on public.tilbakemeldinger for update to authenticated using (public.er_admin()) with check (public.er_admin());
+grant insert on public.tilbakemeldinger to anon, authenticated;
+grant select, update on public.tilbakemeldinger to authenticated;
+grant usage on sequence public.tilbakemeldinger_id_seq to anon, authenticated;

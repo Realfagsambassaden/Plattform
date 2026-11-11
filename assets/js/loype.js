@@ -64,7 +64,9 @@
                    (info.undertema ? ' › <a href="' + info.undertemaUrl + '">' + esc(info.undertema) + '</a>' : '') + '</span>';
     if (L) {
       var k = L.sider.findIndex(function (s) { return s.url === sti; });
-      h += '<span class="ll-loype"><a href="' + L.url + '"><span class="ll-merke">Løype</span>' + esc(L.tittel) + '</a> <span class="ll-pos">' + (k + 1) + ' av ' + L.sider.length + '</span></span>';
+      h += '<span class="ll-loype"><a href="' + L.url + '"><span class="ll-merke">Løype</span>' + esc(L.tittel) + '</a> <span class="ll-pos">' + (k + 1) + ' av ' + L.sider.length + '</span>' +
+           // Fokusvisning finnes i studieappen på fysikkhjelp.no
+           (/fysikkhjelp|localhost/.test(location.hostname) ? ' <a class="ll-fokus" href="/studie/fokus.html#loype-' + encodeURIComponent(L.id) + '@' + encodeURIComponent(sti) + '" title="Les løypa i fokusvisning">Fokusvisning</a>' : '') + '</span>';
     }
     if (f || n) h += '<span class="ll-knapper">' + (f ? '<a href="' + f.url + '" title="' + esc(f.tittel) + '">← Forrige</a>' : '') + (n ? '<a href="' + n.url + '" title="' + esc(n.tittel) + '">Neste →</a>' : '') + '</span>';
     // Bla etter løype eller tema (bare når begge finnes)
