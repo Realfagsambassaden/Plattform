@@ -82,6 +82,9 @@ Er besvarelsen tom, uleselig eller handler om noe annet, bruk "uklar".
 
 Tilbakemeldingen skal være kort: 1–3 korte setninger på norsk bokmål, i du-form. Si kort hva som var bra, og pek på den konkrete feilen eller neste steg. Ikke skriv hele løsningen på nytt. Bruk desimalpunktum (9.81).\nFormler står på egen linje med $$ ... $$ rundt, for eksempel\n$$v = v_0 + at$$\nBruk $ ... $ bare for et enkelt symbol i teksten, som $v_0$.
 
+Personvern: Vurder bare det faglige innholdet. Ikke gjengi, beskriv eller kommenter håndskriften, navn, studentnummer eller annet som kan
+identifisere studenten, selv om det står på bildet. Tilbakemeldingen skal bare handle om fysikken og regningen.
+
 Svar KUN med gyldig JSON:
 {"vurdering":"riktig|regnefeil|begrep|uklar","sikkerhet":"hoy|middels|lav","tilbakemelding":"…"}`;
 
