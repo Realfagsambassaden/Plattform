@@ -981,7 +981,7 @@ function studieStart() {
     hjem: function () {
       var v = valgt(), alle = skar(T.svar.filter(function (s) { return s.nettsted === NETTSTED && v.indexOf(s.tema) >= 0; }));
       var fornavn = (T.navn || '').split(/\s+/)[0];
-      var o = '<p class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</p>' + (!T.navn && !T.eksempel ? '<p class="st-sm">Legg inn navnet ditt på <a href="../konto/index.html">Min side</a>, så ser faglæreren navnet ditt i stedet for e-posten.</p>' : '');
+      var o = '<p class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</p>' + (!T.navn && !T.eksempel ? '<p class="st-sm">Legg inn navnet ditt på <a href="../konto/index.html">Min side</a>, så ser faglæreren navnet ditt i stedet for e-posten.</p>' : '') + appKort();
       if (!v.length) o += '<div class="st-kort st-viktig"><b>Kom i gang</b><p>Velg temaene du skal studere, så lager vi en løype med én uke per tema.</p></div>';
       else o += '<h2>Din løype</h2>' + v.map(function (t, i) {
         return '<button type="button" class="st-kort" data-h="uke" data-t="' + t + '"><div class="st-rad"><b>Uke ' + (i + 1) + ': ' + esc(tittel(t)) + '</b><span class="st-sm">' + (T.ukevurd[t] ? 'Vurdert ' + T.ukevurd[t] + '/5' : '→') + '</span></div>' +
@@ -1189,6 +1189,19 @@ function studieStart() {
       return o;
     },
   };
+  // «Få appen på telefonen»: installerbar nettapp. Android/Chrome gir en knapp; iPhone/iPad må bruke Del-menyen.
+  function appKort() {
+    var a = window.fhApp || {}, ua = navigator.userAgent || '';
+    var ios = /iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && navigator.maxTouchPoints > 1), mobil = ios || /android|mobile/i.test(ua);
+    try { if (a.installert || T.eksempel || localStorage.getItem('fh-app-skjul')) return ''; } catch (e) {}
+    if (!a.kanInstallere && !mobil) return '';
+    var hjelp = a.kanInstallere ? '<button type="button" class="st-btn liten" data-h="installer">Installer appen</button>'
+      : ios ? '<span class="st-sm">I Safari: trykk <b>Del</b>-knappen (firkant med pil opp) og velg <b>«Legg til på Hjem-skjerm»</b>.</span>'
+      : '<span class="st-sm">Åpne nettlesermenyen (⋮) og velg <b>«Installer app»</b> eller <b>«Legg til på startskjermen»</b>.</span>';
+    return '<div class="st-kort st-appkort"><div class="st-rad"><b>📱 Få appen på telefonen</b><button type="button" class="st-lenke st-sm" data-h="skjulApp">Ikke nå</button></div>' +
+      '<p class="st-sm" style="margin:.2rem 0 .5rem">Med appen åpner du løypa, quizene og fagene dine rett fra hjemskjermen, i fullskjerm.</p>' + hjelp + '</div>';
+  }
+  document.addEventListener('fh-app', function () { if (T.svar) tegn(); });
   // Beskjeder fra underviseren og fagets tidslinje for studenten.
   function studentFagTillegg(d) {
     var c = d.kursinfo || {}, mods = c.moduler || [], o = '';
@@ -1347,6 +1360,8 @@ function studieStart() {
       avbrytKi: function () { T.fag.bekreftKi = false; tegn(); },
       kiEndre: function () { kiOppsett(true); }, angreKi: angreKi,
       tidslinje: function () { T.fag.tidslinje = !T.fag.tidslinje; tegn(); },
+      installer: function () { var a = window.fhApp; if (!a || !a.hendelse) return; a.hendelse.prompt(); a.hendelse.userChoice.then(function (v) { if (v && v.outcome === 'accepted') { a.installert = true; varsle('Appen er installert. Du finner den på hjemskjermen.'); } a.hendelse = null; a.kanInstallere = false; tegn(); }); },
+      skjulApp: function () { try { localStorage.setItem('fh-app-skjul', '1'); } catch (e) {} tegn(); },
       sendBeskjed: function () { sendBeskjed(+d.m); }, slettBeskjed: function () { slettBeskjed(+d.m, +d.i); }, lagreNotat: function () { lagreNotater(true); },
       kravStolpe: function () { var o = (T.ovelser || []).find(function (x) { return x.id === d.id; }); T.fag.fane = 'ovinger'; nyttKrav(o); rot.scrollIntoView({ block: 'start' }); },
       tidStudent: function () { T.tid = T.tid || {}; T.tid[d.id] = !T.tid[d.id]; tegn(); },

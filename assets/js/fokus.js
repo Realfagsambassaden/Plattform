@@ -60,8 +60,12 @@ function fokusStart() {
       '<aside class="fk-skuff fk-krav" aria-label="Arbeidskrav"><button type="button" class="fk-fane" data-h="kravkort">Arbeidskrav</button><div class="fk-panel"><div class="fk-panelhode"><b class="fk-kravtittel">Arbeidskrav</b><button type="button" class="fk-knapp liten" data-h="lukkKrav" title="Skjul">✕</button></div><div class="fk-kravinn"><p class="fk-tom">Velg et arbeidskrav i tidslinjen.</p></div></div></aside>';
     var tid = rot.querySelector('.fk-tid');
     // Kommer frem når musen er over fanen, og forsvinner når den går ut (med mindre tidslinjen er festet).
-    tid.addEventListener('mouseenter', function () { tid.classList.add('apen'); });
-    tid.addEventListener('mouseleave', function () { if (!tid.classList.contains('festet')) tid.classList.remove('apen'); });
+    // (Bare der musen kan «sveve». På mobil åpnes og lukkes den med et trykk.)
+    var sveve = true; try { sveve = matchMedia('(hover: hover)').matches; } catch (e) {}
+    if (sveve) {
+      tid.addEventListener('mouseenter', function () { tid.classList.add('apen'); });
+      tid.addEventListener('mouseleave', function () { if (!tid.classList.contains('festet')) tid.classList.remove('apen'); });
+    }
     rot.querySelector('.fk-hoved').addEventListener('load', etterLasting);
   }
 
