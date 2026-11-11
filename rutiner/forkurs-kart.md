@@ -19,21 +19,21 @@ Tegn: ✓ = dekket, ⚠ = finnes, men tynn eller «under arbeid», P = plasshold
 | 13.1 Newtons lover i planet | 04/04 | ✓ |
 | 13.2 Krefter i sirkelbevegelse | 04/05 | ✓ |
 | 13.3 Elastisk pendel, svingninger | 07/01–02 | ✓ |
-| **13.4 Sammensatte mekanikkoppgaver** | 04 (ny side) | **NY** |
-| 3.1 Arbeidsmetoder, hypoteser, naturlover | 01/01 + 01/11 (var 10) | P |
-| 3.2 Måleusikkerhet | 01/06 (var 08) | ✓ (PR #21, ikke flettet 10. nov.) |
-| 3.3 Usikkerhet i sammensatte størrelser | 01/07 | ✓ (PR #22, ikke flettet 10. nov.) |
-| 3.4 Grafisk utjevning | 01/10 (var 09) | P |
+| 13.4 Sammensatte mekanikkoppgaver | 04/07 | ✓ (11. nov.) |
+| 3.1 Arbeidsmetoder, hypoteser, naturlover | 01/01 + 01/11 | ✓ (11. nov.) |
+| 3.2 Måleusikkerhet | 01/06 (var 08) | ✓ |
+| 3.3 Usikkerhet i sammensatte størrelser | 01/07 | ✓ |
+| 3.4 Grafisk utjevning | 01/10 | ✓ (11. nov.) |
 | 4.1–4.6 Energi | 05/01–05 | ✓ |
 | 5.1–5.3 Bevegelsesmengde, støt, impuls | 04/01, 04/06, 05/06 | ✓ (04/01 kort) |
 | 6.1–6.3 Massetetthet, trykk, oppdrift | 08/01–04 | ✓ |
 | 6.4 Temperatur | 09/01 | ✓ ⚠ |
-| 6.5 Tilstandslikningen | 09/05 | ✓ ⚠ |
+| 6.5 Tilstandslikningen | 09/06 (var 05) | ✓ ⚠ |
 | 7.1–7.3 Indre energi, 1. lov, kalorimetri | 09/01–04 | ✓ ⚠ |
-| 7.4–7.5 2. lov, kjøleskap, varmepumper | 09/07 | ✓ |
-| **8.1 Stoffmengde** | 09 (ny side, nå bare en merknad i 09/05) | **NY** |
-| 8.2–8.3 Prosesser, arbeid ved ekspansjon | 09/06 | ⚠ (717 ord) |
-| 8.4 Varmetransport | 09/08 | ✓ |
+| 7.4–7.5 2. lov, kjøleskap, varmepumper | 09/08 (var 07) | ✓ |
+| 8.1 Stoffmengde | 09/05 | ✓ (11. nov.) |
+| 8.2–8.3 Prosesser, arbeid ved ekspansjon | 09/07 (var 06) | ⚠ (717 ord) |
+| 8.4 Varmetransport | 09/09 (var 08) | ✓ |
 | 9.1–9.2 Bølger, lysbølger | 10/01 | P |
 | 9.3 Atomet | 12/01 | P |
 | **9.4 Kvanter og fotoner** | 12 (ny side) | **NY** |
@@ -54,9 +54,9 @@ Tegn: ✓ = dekket, ⚠ = finnes, men tynn eller «under arbeid», P = plasshold
 **Rekkefølge for skriving:**
 
 0. **Rydding først, i én egen PR (gren `natt/krefter-rydd-plassholdere`):** Slett de tre plassholderfilene over, og gi `10-ekstraoppgaver.qmd` nytt nummer `07` med den gamle adressen i `aliases:`. Ingen andre sider eller løyper lenker til dem (sjekket 9. nov.). Sammensatte mekanikkoppgaver settes så inn før ekstraoppgavene.
-1. Arbeidsmetoder, utvidet etter lærerens ønske: Usikkerhet skal stå i samme bolk som signifikante siffer, standardform og regning med enheter, i temaet `maling-og-usikkerhet` i kapitlet `01-hva-er-fysikk`. Flytt plassholderen for måleusikkerhet (`08`) rett etter `05-signifikante-siffer`, skriv den, og legg ny side om usikkerhet i sammensatte størrelser rett etter den. Gi de påfølgende filene nye nummer med gamle adresser i `aliases:`. Utvid `05-signifikante-siffer` med en kobling mellom gjeldende siffer og usikkerhet (behold lærerens tekst). Skriv deretter 09 (grafisk utjevning) og 10 (forsøk og rapport).
-2. Sammensatte mekanikkoppgaver (1 ny).
-3. Termofysikk: stoffmengde (ny), utvide 09/06, rydde «under arbeid».
+1. Arbeidsmetoder, utvidet etter lærerens ønske: Usikkerhet skal stå i samme bolk som signifikante siffer, standardform og regning med enheter, i temaet `maling-og-usikkerhet` i kapitlet `01-hva-er-fysikk`. Flytt plassholderen for måleusikkerhet (`08`) rett etter `05-signifikante-siffer`, skriv den, og legg ny side om usikkerhet i sammensatte størrelser rett etter den. Gi de påfølgende filene nye nummer med gamle adresser i `aliases:`. Utvid `05-signifikante-siffer` med en kobling mellom gjeldende siffer og usikkerhet (behold lærerens tekst). Skriv deretter 10 (grafer og regresjon) og 11 (forsøk og rapport). ✓ 11. nov.
+2. Sammensatte mekanikkoppgaver (✓ 11. nov., 04/07).
+3. Termofysikk: stoffmengde (✓ 11. nov., 09/05), utvide 09/07 (prosesser, var 06), rydde «under arbeid» (09/04 og 09/07, var 06).
 4. Elektrisitet: utvide 11/01–05, skrive 11/06. Lærerens tekst beholdes og bygges ut.
 5. Bølger og stråling: 10/01–04.
 6. Atom og kjerne: 12/01–04 + to nye.
