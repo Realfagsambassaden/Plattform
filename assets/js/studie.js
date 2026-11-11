@@ -451,9 +451,11 @@ function studieStart() {
     Promise.all([k.rpc('kurs_oversikt', { k: id }).then(sjekk), k.rpc('kurs_statistikk', { k: id }).then(sjekk),
                  c.krev_innsyn ? k.rpc('kurs_deltakere', { k: id }).then(sjekk) : Promise.resolve([]),
                  k.rpc('kurs_godkjenning', { k: id }).then(sjekk),
-                 k.from('kurs_notat').select('notater').eq('kurs', id).maybeSingle().then(function (r) { return (r && r.data && r.data.notater) || {}; }, function () { return {}; })])
-      .then(function (r) { Object.assign(T.fag, { laster: false, oversikt: r[0] || [], statistikk: r[1] || [], deltakere: r[2] || [], godkjenning: r[3] || [], notater: r[4] || {} }); })
-      .catch(function (e) { Object.assign(T.fag, { laster: false, feil: feilmelding(e) }); }).then(tegn);
+                 k.from('kurs_notat').select('notater').eq('kurs', id).maybeSingle().then(function (r) { return (r && r.data && r.data.notater) || {}; }, function () { return {}; }),
+                 k.from('kurs_materiale').select('*').eq('kurs', id).then(function (r) { var o = {}; ((r && r.data) || []).forEach(function (x) { o[x.nokkel] = x; }); return o; }, function () { return {}; })])
+      .then(function (r) { Object.assign(T.fag, { laster: false, oversikt: r[0] || [], statistikk: r[1] || [], deltakere: r[2] || [], godkjenning: r[3] || [], notater: r[4] || {}, mat: r[5] || {} });
+        if (T.fag.apneMat) { var nk = T.fag.apneMat; T.fag.apneMat = null; T.fag.u.moduler.forEach(function (m, mi) { m.uker.forEach(function (w, wi) { for (var s = 1; s <= 7; s++) if (matNokkel(m, w, s) === nk) T.fag.matRed0 = [mi, wi, s]; }); }); } })
+      .catch(function (e) { Object.assign(T.fag, { laster: false, feil: feilmelding(e) }); }).then(function () { var a = T.fag.matRed0; if (a) { T.fag.matRed0 = null; T.fag.fane = 'design'; T.fag.steg = 'moduler'; apneMat(a[0], a[1], a[2]); } else tegn(); });
   }
   // ---------------------------------------------------------------- fagbyggeren
   // Et fag bygges av moduler (bokser nedover). Hver modul har uker, og hver uke undertemaer fra katalogen (alle temaer på
@@ -465,7 +467,7 @@ function studieStart() {
   var utTema = function (id) { var t = K[id.split('/')[1]]; return t ? t.tittel : id.split('/')[1]; };
   function nyId() { return Math.random().toString(36).slice(2, 10); }
   // Hver modul har en fast id (for notater) og en liste med beskjeder [{tekst, tid}]. Gammelt felt «beskjed» gjøres om.
-  function medId(l) { (l || []).forEach(function (m) { if (!m.id) m.id = nyId(); if (!Array.isArray(m.beskjeder)) m.beskjeder = []; if ((m.beskjed || '').trim()) m.beskjeder.push({ tekst: m.beskjed, tid: '' }); delete m.beskjed; }); return l; }
+  function medId(l) { (l || []).forEach(function (m) { if (!m.id) m.id = nyId(); if (!Array.isArray(m.beskjeder)) m.beskjeder = []; (m.uker || []).forEach(function (w) { if (!w.id) { w.id = nyId(); T.idNye = true; } }); if ((m.beskjed || '').trim()) m.beskjeder.push({ tekst: m.beskjed, tid: '' }); delete m.beskjed; }); return l; }
   function alleBeskjeder(m) { var l = (m.beskjeder || []).slice(); if ((m.beskjed || '').trim()) l.push({ tekst: m.beskjed, tid: '' }); return l.sort(function (a, b) { return (b.tid || '').localeCompare(a.tid || ''); }); }
   function klokke(d) { return d.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit' }); }
   function sendBeskjed(mi) {
@@ -511,6 +513,7 @@ function studieStart() {
   }
   function lagreUtkast() {
     var f = T.fag, u = f.u; if (!u) return Promise.resolve();
+    medId(u.moduler);
     var rad = { navn: (u.navn || '').trim() || f.c.navn, emnebeskrivelse: u.emnebeskrivelse, laringsutbytte: u.laringsutbytte, ramme: u.ramme, elementer: u.elementer, moduler: u.moduler, endret: new Date().toISOString() };
     return k.from('kurs').update(rad).eq('id', f.c.id).then(sjekk).then(function () {
       Object.assign(f.c, rad); f.lagrer = false; f.lagreFeil = null; f.lagret = new Date();
@@ -579,12 +582,13 @@ function studieStart() {
   }
   function kuttUker() {
     var u = T.fag.u, igjen = +u.ramme.uker || 0;
-    u.moduler = u.moduler.map(function (m) { var w = m.uker.slice(0, Math.max(0, igjen)); igjen -= w.length; return { navn: m.navn, uker: w }; }).filter(function (m) { return m.uker.length; });
+    u.moduler = u.moduler.map(function (m) { var w = m.uker.slice(0, Math.max(0, igjen)); igjen -= w.length; return Object.assign({}, m, { uker: w }); }).filter(function (m) { return m.uker.length; });
     planlagreFag(); varsle('Ukene etter uke ' + u.ramme.uker + ' er fjernet.'); tegn();
   }
   var MODFARGE = ['var(--st-f)', 'var(--st-p)', '#eee462', 'var(--st-h)', '#c792ea', '#ff8a8f'];
   function byggerHtml() {
     var f = T.fag, u = f.u, c = f.c, r = u.ramme, el = u.elementer;
+    medId(u.moduler);
     var topp = '<div class="st-rad st-bygg-topp"><span class="st-sm">' + (c.status === 'publisert' ? '<b class="st-ord f">Publisert</b> · studentene kan melde seg på med koden ' + esc(c.kode) + ' og ser opplegget' : '<b style="color:#eee462">Påbegynt</b> · studentene finner ikke faget før du publiserer det') + '</span>' +
       '<span class="' + (f.lagreFeil ? 'st-feil' : 'st-sm') + '" id="st-lagret">' + (f.lagreFeil ? 'Ikke lagret!' : f.lagret ? 'Lagret ' + f.lagret.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit' }) : 'Lagres automatisk') + '</span></div>';
     if (f.steg === 'start') {
@@ -599,6 +603,9 @@ function studieStart() {
         radio('forelesninger', 'Forelesninger') + radio('omvendt', 'Omvendt klasserom') + radio('ingen', 'Ingen faste samlinger') + '</div>' +
         '<div class="st-tallrad">' + tall('uker', 'Uker') + tall('samlinger', 'Samlinger per uke') + tall('lengde', 'Lengde (min)') + tall('startuke', 'Første kalenderuke', 90) + '</div>' +
         '<p class="st-sm">Slides kan lages fra opplegget uansett form, også uten faste forelesninger.</p></fieldset>' +
+        '<fieldset class="st-feltsett"><legend>Nivå</legend><div class="st-piller" role="radiogroup" aria-label="Nivå">' +
+        [['', 'Alle nivåer']].concat(NIVAER).map(function (n) { return '<label class="st-valg st-pille"><input type="radio" name="st-niva" value="' + n[0] + '"' + ((r.niva || '') === n[0] ? ' checked' : '') + '> ' + n[1] + '</label>'; }).join('') + '</div>' +
+        '<p class="st-sm">Lenkene i tidslinjen, fokusvisningen og undervisningsmodus går rett til sidene på dette nivået når de finnes. I modulene kan du velge et annet nivå for enkelte undertemaer.</p></fieldset>' +
         '<fieldset class="st-feltsett"><legend>Dette skal faget ha</legend><div class="st-to">' + boks('moduler', 'Moduler') + boks('arbeidskrav', 'Arbeidskrav') + boks('samlinger', 'Samlinger og slides') + boks('tidslinje', 'Tidslinje') + '</div></fieldset>' +
         forMangeUker() +
         (f.bekreftKi ? '<div class="st-fb r"><b>Erstatte oppsettet?</b><p>Faget har allerede ' + u.moduler.length + ' moduler. Et nytt forslag fra KI erstatter dem.</p><p><button type="button" class="st-btn" data-h="kiOppsett">Ja, lag nytt forslag</button> <button type="button" class="st-btn g" data-h="avbrytKi">Avbryt</button></p></div>' : '') +
@@ -617,9 +624,11 @@ function studieStart() {
       (f.forrige ? '<p><button type="button" class="st-btn g liten" data-h="angreKi">Angre: hent tilbake forrige oppsett</button></p>' : '') + '</div>';
     o += sparBoks(true);
     o += '<div class="st-rad st-visning"><p class="st-sm" style="margin:0">Temaer og undertemaer er nettstedets faste innhold. Moduler er din egen inndeling av faget i uker, og en modul kan hente undertemaer fra flere temaer.</p>' +
-      '<button type="button" class="st-btn g liten" data-h="tidslinje">Vis som tidslinje</button></div>';
+      '<span class="st-knapper"><label class="st-sm st-nivavalg">Nivå <select data-felt="fagNiva">' + [['', 'Alle nivåer']].concat(NIVAER).map(function (n) { return '<option value="' + n[0] + '"' + ((r.niva || '') === n[0] ? ' selected' : '') + '>' + n[1] + '</option>'; }).join('') + '</select></label> ' +
+      '<button type="button" class="st-btn g liten" data-h="tidslinje">Vis som tidslinje</button> ' +
+      '<a class="st-btn liten" href="index.html#undervis-' + encodeURIComponent(c.id) + '" target="_blank" rel="noopener" data-h="ingen">🎓 Undervisningsmodus</a></span></div>';
     if (f.tidslinje) return topp + '<div class="st-rad st-visning"><b>Tidslinje</b><button type="button" class="st-btn g liten" data-h="tidslinje">Tilbake til redigering</button></div>' +
-      '<p class="st-sm">Slik ser studentene tidslinjen. <a href="fokus.html#' + encodeURIComponent(c.id) + '" target="_blank" rel="noopener">Åpne faget i fokusvisning</a></p>' +
+      '<p class="st-sm">Slik ser studentene tidslinjen. Studentene kan også åpne faget i fokusvisning; vil du se den, gå til «Se faget som student».</p>' +
       tidslinjeHtml(u.moduler, r, el.arbeidskrav ? (T.ovelser || []).filter(function (x) { return x.kurs === c.id; }) : [], null, el);
     var mineKrav = el.arbeidskrav ? (T.ovelser || []).filter(function (x) { return x.kurs === c.id; }) : [];
     o += '<p class="st-sm" id="st-kravuten"></p><div class="st-lerret" id="st-lerret">' + (mineKrav.length ? '<div class="st-kravkol" id="st-kravkol" aria-label="Arbeidskrav"></div>' : '') + '<div class="st-modkol">';
@@ -635,7 +644,10 @@ function studieStart() {
         m.uker.map(function (w, wi) {
           var uke = fra + wi, kal = (+r.startuke || 0) ? ((+r.startuke + uke - 2) % 52) + 1 : null, krav = el.arbeidskrav ? kravIUke(uke) : [], st = samlingTekst(r, el);
           return '<div class="st-uke"><div class="st-ukenr">Uke ' + uke + (kal ? '<span class="st-sm">kal.uke ' + kal + '</span>' : '') + '</div><div class="st-ukeinn">' +
-            '<div class="st-chips">' + w.undertemaer.map(function (id, ti) { return '<span class="st-chip" data-ut="' + esc(id) + '" title="' + esc(utTema(id)) + '">' + esc(utNavn(id)) + '<button type="button" data-h="fjernUT" data-m="' + mi + '" data-u="' + wi + '" data-i="' + ti + '" aria-label="Fjern ' + esc(utNavn(id)) + '">×</button></span>'; }).join('') +
+            '<div class="st-chips">' + w.undertemaer.map(function (id, ti) { var nv = utNivaer(id), egen = (w.niva || {})[id] || '';
+              return '<span class="st-chip" data-ut="' + esc(id) + '" title="' + esc(utTema(id)) + '">' + esc(utNavn(id)) +
+              (nv.length > 1 || (egen && nv.length) ? '<select class="st-chipniva" data-felt="utNiva" data-m="' + mi + '" data-u="' + wi + '" data-id="' + esc(id) + '" aria-label="Nivå for ' + esc(utNavn(id)) + '"><option value="">' + (r.niva ? NIVANAVN[r.niva] + ' (faget)' : 'alle nivåer') + '</option>' +
+                nv.map(function (n) { return '<option value="' + n[0] + '"' + (egen === n[0] ? ' selected' : '') + '>' + n[1] + '</option>'; }).join('') + '</select>' : '') + '<button type="button" data-h="fjernUT" data-m="' + mi + '" data-u="' + wi + '" data-i="' + ti + '" aria-label="Fjern ' + esc(utNavn(id)) + '">×</button></span>'; }).join('') +
             '<select class="st-leggut" data-felt="leggUT" data-m="' + mi + '" data-u="' + wi + '" aria-label="Legg til undertema i uke ' + uke + '">' + valg + '</select></div>' +
             '<input class="st-notat" data-felt="notat" data-m="' + mi + '" data-u="' + wi + '" value="' + esc(w.notat || '') + '" placeholder="Notat (valgfritt)' + (r.form === 'omvendt' ? ', f.eks. hva studentene forbereder' : '') + '" maxlength="200">' +
             (st ? '<span class="st-sm">' + st + '</span>' : '') +
@@ -649,13 +661,14 @@ function studieStart() {
         '<textarea class="st-felt" rows="2" data-nybeskjed="' + esc(m.id) + '" maxlength="500" placeholder="Ny beskjed …">' + esc((f.nyBeskjed || {})[m.id] || '') + '</textarea>' +
         '<button type="button" class="st-btn liten" data-h="sendBeskjed" data-m="' + mi + '">' + (c.status === 'publisert' ? 'Publiser beskjed' : 'Lagre beskjed') + '</button></div>' +
         '<div class="st-sideboks"><b class="st-sm">🔒 Notat (bare du ser det)</b><textarea class="st-felt" rows="3" data-notat="' + esc(m.id) + '" maxlength="2000" placeholder="Egne notater til modulen">' + esc((f.notater || {})[m.id] || '') + '</textarea>' +
-        '<div class="st-rad"><span class="st-sm st-notstatus' + (f.notStatus && f.notStatus.feil ? ' st-feil' : '') + '">' + (f.notStatus ? f.notStatus.t : 'Lagres automatisk') + '</span><button type="button" class="st-btn g liten" data-h="lagreNotat">Lagre</button></div></div></div></div>' +
+        '<div class="st-rad"><span class="st-sm st-notstatus' + (f.notStatus && f.notStatus.feil ? ' st-feil' : '') + '">' + (f.notStatus ? f.notStatus.t : 'Lagres automatisk') + '</span><button type="button" class="st-btn g liten" data-h="lagreNotat">Lagre</button></div></div></div>' + matKolonne(m, mi, fra) + '</div>' +
         '<div class="st-pil" aria-hidden="true">↓</div>';
     }).join('');
     o += '<button type="button" class="st-nymodul" data-h="nyModul">+ Ny modul</button></div></div>';
     o += '<div class="st-bygg-bunn">' + (c.status === 'publisert' ? '<p class="st-sm">Faget er publisert. Endringer lagres og vises for studentene med en gang. Løypa oppdateres når du trykker «Publiser» på nytt.</p><button type="button" class="st-btn g" data-h="publiser">Oppdater løypa</button>'
       : '<button type="button" class="st-btn" data-h="publiser">Publiser for studentene</button><p class="st-sm">Til da er faget et utkast, og studentene finner det ikke med koden.</p>') + '</div>';
     o += '<p><button type="button" class="st-btn g liten" data-h="slettKurs" data-id="' + c.id + '">' + (T.slett === c.id ? 'Bekreft: slett faget for godt' : 'Slett faget') + '</button></p>';
+    if (f.matRed) o += matRedigerer();
     return o;
   }
   function studentNavn(x) { return (x.navn || '').trim() || x.epost; }
@@ -669,6 +682,207 @@ function studieStart() {
     if (T.slett !== id) { T.slett = id; return tegn(); }
     k.from('kurs').delete().eq('id', id).then(sjekk).then(function () { T.mine = T.mine.filter(function (x) { return x.id !== id; }); T.slett = null; varsle('Faget er slettet.'); ga('kurs'); })
       .catch(function (e) { varsle(feilmelding(e), true); });
+  }
+  // ---------------------------------------------------------------- mitt materiale (plan for dagen og slides per samling)
+  // Lagres i kurs_materiale, én rad per samling, med nøkkel «modul-id/uke-id/samling». Bare fageieren kan lese og skrive.
+  // Slides er enkel tekst: en linje som begynner med «- » er et punkt, formler skrives med $…$ eller $$…$$.
+  function antSamlinger(r, el) { return el.samlinger && r.form !== 'ingen' && +r.samlinger > 0 ? Math.min(7, +r.samlinger) : 1; }
+  function samlingNavn(r, el, s) { if (!(el.samlinger && r.form !== 'ingen' && +r.samlinger > 0)) return 'Uka'; return (r.form === 'omvendt' ? 'Samling ' : 'Forelesning ') + s; }
+  function matNokkel(m, w, s) { return m.id + '/' + w.id + '/' + s; }
+  function matStatus(x) { var l = []; if ((x.plan || []).length) l.push('plan'); if ((x.slides || []).length) l.push(x.slides.length + ' slides'); return (x.tittel ? esc(x.tittel) + (l.length ? ' · ' : '') : '') + (l.join(' · ') || 'tomt'); }
+  // Alle samlinger i faget i rekkefølge, med uke og nøkkel.
+  function samlingListe(u) {
+    var l = [], nr = 0, n = antSamlinger(u.ramme, u.elementer);
+    (u.moduler || []).forEach(function (m, mi) { m.uker.forEach(function (w, wi) { nr++; for (var s = 1; s <= n; s++) l.push({ m: m, mi: mi, w: w, wi: wi, uke: nr, s: s, nokkel: m.id && w.id ? matNokkel(m, w, s) : '' }); }); });
+    return l;
+  }
+  function matKolonne(m, mi, fra) {
+    var f = T.fag, r = f.u.ramme, el = f.u.elementer, n = antSamlinger(r, el), l = [];
+    for (var s = 1; s <= n; s++) l.push(s);
+    return '<div class="st-matkol"><div class="st-sideboks"><b class="st-sm">🎓 Mitt materiale</b><span class="st-sm">Plan for dagen og slides. Bare du ser dem.</span>' +
+      m.uker.map(function (w, wi) {
+        return '<div class="st-matuke"><span class="st-sm">Uke ' + (fra + wi) + '</span>' + l.map(function (s) {
+          var nk = matNokkel(m, w, s), x = (f.mat || {})[nk];
+          return '<button type="button" class="st-matknapp' + (x ? ' har' : '') + (f.matRed && f.matRed.nokkel === nk ? ' pa' : '') + '" data-h="apneMat" data-m="' + mi + '" data-u="' + wi + '" data-s="' + s + '"><b>' + samlingNavn(r, el, s) + '</b><span class="st-sm">' + (x ? matStatus(x) : '+ Lag plan og slides') + '</span></button>';
+        }).join('') + '</div>';
+      }).join('') + '</div></div>';
+  }
+  function slideHtml(sl) {
+    var o = '', run = [], kul = [];
+    function tomRun() { var t = run.join('\n').trim(); if (t) o += t.split(/\n\s*\n/).map(function (a) { return '<div class="uv-avsn">' + tx(a) + '</div>'; }).join(''); run = []; }
+    function tomKul() { if (kul.length) o += '<ul>' + kul.map(function (x) { return '<li>' + txLinje(x) + '</li>'; }).join('') + '</ul>'; kul = []; }
+    String((sl && sl.tekst) || '').split('\n').forEach(function (x) { var m = /^\s*[-*•]\s+(.*)$/.exec(x); if (m) { tomRun(); kul.push(m[1]); } else { tomKul(); run.push(x); } });
+    tomRun(); tomKul();
+    return '<h2 class="uv-stittel">' + txLinje((sl && sl.tittel) || '') + '</h2><div class="uv-skropp">' + o + '</div>';
+  }
+  function apneMat(mi, wi, s) {
+    var f = T.fag; medId(f.u.moduler);
+    var m = f.u.moduler[mi], w = m && m.uker[wi]; if (!w) return;
+    var nk = matNokkel(m, w, s), x = (f.mat || {})[nk] || {};
+    f.matRed = { nokkel: nk, mi: mi, wi: wi, s: s, tittel: x.tittel || '', plan: JSON.parse(JSON.stringify(x.plan || [])), slides: JSON.parse(JSON.stringify(x.slides || [])), ki: { tekst: '', vedlegg: null, filnavn: '', hva: 'begge' } };
+    tegn();
+  }
+  function matStatusTekst(t, feil) { if (T.fag.matRed) T.fag.matRed.status = { t: t, feil: !!feil }; document.querySelectorAll('.st-matstatus').forEach(function (el) { el.textContent = t; el.classList.toggle('st-feil', !!feil); }); }
+  function lagreMat(naa) {
+    var f = T.fag, v = f.matRed; if (!v) return Promise.resolve();
+    clearTimeout(f.matTid); matStatusTekst('Lagrer …');
+    return new Promise(function (ok) {
+      f.matTid = setTimeout(function () {
+        // Nye uke-id-er må lagres i faget før materialet kan finnes igjen.
+        var forst = f.lagrer || T.idNye ? (T.idNye = false, clearTimeout(f.tid), lagreUtkast()) : Promise.resolve();
+        var rad = { kurs: f.c.id, nokkel: v.nokkel, tittel: (v.tittel || '').slice(0, 200), plan: v.plan, slides: v.slides, endret: new Date().toISOString() };
+        forst.then(function () { return k.from('kurs_materiale').upsert(rad).then(sjekk); })
+          .then(function () { f.mat = f.mat || {}; f.mat[v.nokkel] = JSON.parse(JSON.stringify(rad)); matStatusTekst('Lagret kl. ' + klokke(new Date()) + ' ✓'); var b = document.querySelector('.st-matknapp.pa .st-sm'); if (b) b.innerHTML = matStatus(rad); ok(); })
+          .catch(function (e) { matStatusTekst('Ikke lagret!', true); varsle('Materialet ble ikke lagret: ' + feilmelding(e), true); ok(); });
+      }, naa ? 0 : 1200);
+    });
+  }
+  function slettMat() {
+    var f = T.fag, v = f.matRed; if (!v) return;
+    if (f.slettMat !== v.nokkel) { f.slettMat = v.nokkel; return tegn(); }
+    k.from('kurs_materiale').delete().eq('kurs', f.c.id).eq('nokkel', v.nokkel).then(sjekk)
+      .then(function () { delete (f.mat || {})[v.nokkel]; f.matRed = null; f.slettMat = null; varsle('Materialet er slettet.'); tegn(); })
+      .catch(function (e) { varsle(feilmelding(e), true); });
+  }
+  function kiMat(endre) {
+    var f = T.fag, v = f.matRed, u = f.u, r = u.ramme, el = u.elementer, m = u.moduler[v.mi], w = m.uker[v.wi], ki0 = v.ki;
+    if (endre && !ki0.tekst.trim() && !ki0.vedlegg) return varsle('Skriv hva KI skal endre.', true);
+    var uke = 0; u.moduler.forEach(function (mm, i) { if (i < v.mi) uke += mm.uker.length; }); uke += v.wi + 1;
+    var krav = el.arbeidskrav ? (T.ovelser || []).filter(function (o) { return o.kurs === f.c.id && kravIder(o).some(function (id) { return w.undertemaer.indexOf(id) >= 0; }); }).map(function (o) { return { tittel: o.tittel, frist: o.frist ? o.frist.slice(0, 10) : '' }; }) : [];
+    v.kiVenter = true; tegn();
+    ki('/materiale', { fag: u.navn, ramme: { form: r.form, lengde: +r.lengde || 90, samlinger: antSamlinger(r, el) }, niva: NIVANAVN[r.niva] || '', modul: m.navn, uke: uke, samling: v.s,
+      undertemaer: w.undertemaer.map(function (id) { var url = utLenke(id, nivaFor(w, id, r)); return { id: id, tittel: utTema(id) + ': ' + utNavn(id), url: url ? url.replace(/^\.\./, '') : '', niva: NIVANAVN[nivaFor(w, id, r)] || '' }; }),
+      notat: w.notat || '', arbeidskrav: krav, onske: ki0.tekst, vedlegg: ki0.vedlegg, hva: ki0.hva, navarende: endre ? { tittel: v.tittel, plan: v.plan, slides: v.slides } : null }, 150)
+      .then(function (d) {
+        v.forrige = JSON.parse(JSON.stringify({ tittel: v.tittel, plan: v.plan, slides: v.slides }));
+        if (d.tittel && (!v.tittel || endre)) v.tittel = d.tittel;
+        if (ki0.hva !== 'slides' && Array.isArray(d.plan)) v.plan = d.plan;
+        if (ki0.hva !== 'plan' && Array.isArray(d.slides)) v.slides = d.slides;
+        v.kiKommentar = d.kommentar || ''; ki0.tekst = ''; ki0.vedlegg = null; ki0.filnavn = '';
+        return lagreMat(true);
+      })
+      .catch(function (e) { varsle(feilmelding(e), true); })
+      .then(function () { v.kiVenter = false; tegn(); });
+  }
+  function matRedigerer() {
+    var f = T.fag, v = f.matRed, u = f.u, r = u.ramme, el = u.elementer, m = u.moduler[v.mi], w = m && m.uker[v.wi];
+    if (!w) return '';
+    var uke = 0; u.moduler.forEach(function (mm, i) { if (i < v.mi) uke += mm.uker.length; }); uke += v.wi + 1;
+    var sum = v.plan.reduce(function (a, x) { return a + (+x.min || 0); }, 0), lengde = +r.lengde || 0, har = v.plan.length || v.slides.length;
+    var knapp = function (h, i, tegnet, navn, av) { return '<button type="button" class="st-ikon" data-h="' + h + '" data-i="' + i + '"' + (av ? ' disabled' : '') + ' aria-label="' + navn + '">' + tegnet + '</button>'; };
+    return '<div class="st-matpanel" role="dialog" aria-label="Mitt materiale"><div class="st-matpanel-hode"><div><b>Uke ' + uke + ' · ' + samlingNavn(r, el, v.s) + '</b><br><span class="st-sm">Modul ' + (v.mi + 1) + ': ' + esc(m.navn) + '</span></div>' +
+      '<button type="button" class="st-ikon" data-h="lukkMat" aria-label="Lukk">✕</button></div><div class="st-matrull">' +
+      (w.undertemaer.length ? '<div class="st-matut">' + w.undertemaer.map(function (id) { var url = utLenke(id, nivaFor(w, id, r)); return url ? '<a class="st-tl-ut" href="' + url + '" target="_blank" rel="noopener">' + esc(utNavn(id)) + '</a>' : '<span class="st-tl-ut">' + esc(utNavn(id)) + '</span>'; }).join('') + '</div>' : '<p class="st-sm">Uka har ingen undertemaer.</p>') +
+      '<label class="st-sm">Tittel på samlingen<input class="st-felt" data-mat="tittel" maxlength="200" value="' + esc(v.tittel) + '" placeholder="F.eks. Newtons andre lov"></label>' +
+      '<div class="st-kibox"><b>KI</b><p class="st-sm" style="margin:.2rem 0">' + (har ? 'Be om endringer, f.eks. «Flere eksempler», «Kortere plan» eller «Lag et konseptspørsmål til salen». KI får det du har og endrer bare det du ber om.' : 'KI lager plan for dagen og slides ut fra undertemaene, lærestoffet på nettstedet og lengden på samlingen. Skriv ønsker eller last opp et gammelt opplegg (tekst, bilde eller PDF) om du vil.') + ' Filen sendes bare til KI og lagres ikke.</p>' +
+      '<textarea class="st-felt" rows="2" data-matki="tekst" placeholder="' + (har ? 'Hva skal endres?' : 'Ønsker (valgfritt)') + '">' + esc(v.ki.tekst) + '</textarea>' +
+      '<div class="st-vedlegg"><select data-matki="hva" style="width:auto">' + [['begge', 'Plan og slides'], ['plan', 'Bare plan'], ['slides', 'Bare slides']].map(function (x) { return '<option value="' + x[0] + '"' + (v.ki.hva === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select>' +
+      '<label class="st-btn g liten">📎 ' + (v.ki.filnavn ? esc(v.ki.filnavn) : 'Last opp') + '<input type="file" class="st-mat-fil" accept="image/*,application/pdf,.txt,.md,.tex"></label>' +
+      (v.ki.filnavn ? '<button type="button" class="st-btn g liten" data-h="matFjernFil">Fjern fil</button>' : '') +
+      (har ? '<button type="button" class="st-btn liten" data-h="kiMat" data-v="endre"' + (v.kiVenter ? ' disabled' : '') + '>' + (v.kiVenter ? 'KI jobber …' : 'Send til KI') + '</button><button type="button" class="st-btn g liten" data-h="kiMat"' + (v.kiVenter ? ' disabled' : '') + '>Lag nytt</button>'
+        : '<button type="button" class="st-btn liten" data-h="kiMat"' + (v.kiVenter ? ' disabled' : '') + '>' + (v.kiVenter ? 'KI lager materialet … (opptil et par minutter)' : 'La KI lage forslag') + '</button>') + '</div>' +
+      (v.kiKommentar ? '<div class="st-avsnitt st-sm">' + txLinje(v.kiKommentar) + '</div>' : '') + (v.forrige ? '<button type="button" class="st-btn g liten" data-h="angreMatKi">Angre: hent tilbake det du hadde</button>' : '') + '</div>' +
+      '<h4>Plan for dagen</h4>' + v.plan.map(function (x, i) {
+        return '<div class="st-planrad"><input class="st-felt st-planmin" data-matplan="' + i + '.min" inputmode="numeric" value="' + esc(x.min) + '" aria-label="Minutter"><span class="st-sm">min</span>' +
+          '<textarea class="st-felt" rows="1" data-matplan="' + i + '.tekst" maxlength="600" placeholder="Aktivitet">' + esc(x.tekst) + '</textarea>' +
+          knapp('matPlanFlytt', i + ':-1', '↑', 'Flytt opp', !i) + knapp('matPlanSlett', i, '✕', 'Fjern punktet') + '</div>';
+      }).join('') +
+      '<div class="st-rad"><button type="button" class="st-btn g liten" data-h="matPlanNy">+ Punkt</button><span class="st-sm' + (lengde && sum > lengde ? ' st-feil' : '') + '" id="st-plansum">' + (v.plan.length ? 'Sum ' + sum + (lengde ? ' av ' + lengde : '') + ' min' : '') + '</span></div>' +
+      '<h4>Slides (' + v.slides.length + ')</h4><p class="st-sm">En linje som begynner med «- » blir et punkt. Formler: $F = ma$ i teksten eller $$…$$ på egen linje. Notatet ser bare du (i undervisningsmodus).</p>' +
+      v.slides.map(function (x, i) {
+        return '<div class="st-matslide"><div class="st-rad"><b class="st-sm">' + (i + 1) + '</b><input class="st-felt" data-matslide="' + i + '.tittel" maxlength="200" value="' + esc(x.tittel) + '" placeholder="Tittel">' +
+          knapp('matSlideFlytt', i + ':-1', '↑', 'Flytt opp', !i) + knapp('matSlideFlytt', i + ':1', '↓', 'Flytt ned', i === v.slides.length - 1) + knapp('matSlideSlett', i, '✕', 'Slett sliden') + '</div>' +
+          '<textarea class="st-felt" rows="4" data-matslide="' + i + '.tekst" maxlength="3000" placeholder="- Et punkt&#10;- $F = ma$">' + esc(x.tekst) + '</textarea>' +
+          '<textarea class="st-felt st-sm" rows="1" data-matslide="' + i + '.notat" maxlength="2000" placeholder="Notat til deg (vises ikke på skjermen)">' + esc(x.notat) + '</textarea>' +
+          '<div class="uv-slide liten" id="st-sv-' + i + '">' + slideHtml(x) + '</div></div>';
+      }).join('') +
+      '<button type="button" class="st-btn g liten" data-h="matSlideNy">+ Slide</button></div>' +
+      '<div class="st-matpanel-fot"><span class="st-sm st-matstatus' + (v.status && v.status.feil ? ' st-feil' : '') + '">' + (v.status ? v.status.t : (f.mat || {})[v.nokkel] ? 'Lagret' : 'Lagres automatisk') + '</span>' +
+      '<a class="st-btn liten" href="index.html#undervis-' + encodeURIComponent(f.c.id) + '@' + encodeURIComponent(v.nokkel) + '" target="_blank" rel="noopener" data-h="ingen">Vis i undervisningsmodus</a>' +
+      ((f.mat || {})[v.nokkel] ? '<button type="button" class="st-btn g liten" data-h="slettMat">' + (f.slettMat === v.nokkel ? 'Bekreft sletting' : 'Slett') + '</button>' : '') + '</div></div>';
+  }
+  function flytt(l, i, r) { var j = i + r; if (j < 0 || j >= l.length) return; var x = l[i]; l[i] = l[j]; l[j] = x; }
+
+  // ---------------------------------------------------------------- undervisningsmodus
+  // Tidslinjen med samlingene til venstre. Velg en samling, så får du plan for dagen og slidene. Piltastene (og fjernkontroller
+  // som sender PageUp/PageDown) blar i slidene, F gir fullskjerm og N viser notatene dine.
+  function apneUndervis(id, nk) {
+    var c = T.mine.find(function (x) { return x.id === id; }); if (!c) return false;
+    var u = fraFag(c); medId(u.moduler);
+    var st = ''; try { st = localStorage.getItem('uv-start-' + id) || ''; } catch (e) {}
+    T.uv = { c: c, u: u, valgt: nk || '', i: 0, laster: true, mat: {}, start: st, tid: true, plan: true, notat: false };
+    T.vis = 'undervis'; document.documentElement.classList.add('st-uv-aktiv'); document.title = c.navn + ' – undervisning';
+    k.from('kurs_materiale').select('*').eq('kurs', id).then(sjekk)
+      .then(function (d) { (d || []).forEach(function (x) { T.uv.mat[x.nokkel] = x; }); }, function (e) { T.uv.feil = feilmelding(e); })
+      .then(function () {
+        var v = T.uv, l = samlingListe(v.u), r = v.u.ramme;
+        if (!l.some(function (x) { return x.nokkel === v.valgt; })) {
+          var start = +r.startuke || 0, naa = start ? isoUke(new Date()) - start + 1 : 0; if (start && naa < -26) naa += 52;
+          var x = l.find(function (y) { return y.uke === naa; }) || l.find(function (y) { return v.mat[y.nokkel]; }) || l[0];
+          v.valgt = x ? x.nokkel : '';
+        }
+        v.laster = false; tegn();
+      });
+    tegn(); return true;
+  }
+  function uvSlides() { var v = T.uv, x = v && v.mat[v.valgt]; return (x && x.slides) || []; }
+  function visSlide() {
+    var v = T.uv, l = uvSlides(), el = document.getElementById('uv-slide'); if (!el) return;
+    v.i = Math.max(0, Math.min(l.length - 1, v.i));
+    el.innerHTML = l.length ? slideHtml(l[v.i]) : '<p class="uv-tom">Ingen slides for denne samlingen ennå.</p>';
+    var p = document.getElementById('uv-pos'); if (p) p.textContent = l.length ? (v.i + 1) + ' / ' + l.length : '';
+    var n = document.getElementById('uv-notat'); if (n) { n.innerHTML = l[v.i] && l[v.i].notat ? tx(l[v.i].notat) : '<span class="st-sm">Ingen notat til denne sliden.</span>'; n.hidden = !v.notat; }
+    document.querySelectorAll('[data-h=uvForrige]').forEach(function (b) { b.disabled = v.i <= 0; });
+    document.querySelectorAll('[data-h=uvNeste]').forEach(function (b) { b.disabled = v.i >= l.length - 1; });
+  }
+  function klokkeTil(start, min) { var m = /^(\d{1,2}):(\d{2})$/.exec(start || ''); if (!m) return ''; var t = +m[1] * 60 + +m[2] + min; return String(Math.floor(t / 60) % 24).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); }
+  function undervisHtml() {
+    var v = T.uv, c = v.c, u = v.u, r = u.ramme, el = u.elementer, l = samlingListe(u), x = l.find(function (y) { return y.nokkel === v.valgt; });
+    var start = +r.startuke || 0, naa = start ? isoUke(new Date()) - start + 1 : 0; if (start && naa < -26) naa += 52;
+    var krav = el.arbeidskrav ? (T.ovelser || []).filter(function (o) { return o.kurs === c.id; }) : [];
+    var tid = '', forrigeM = -1, forrigeU = -1;
+    l.forEach(function (y) {
+      if (y.mi !== forrigeM) { forrigeM = y.mi; tid += '<div class="uv-mod" style="color:' + MODFARGE[y.mi % MODFARGE.length] + '">Modul ' + (y.mi + 1) + ': ' + esc(y.m.navn) + '</div>'; }
+      if (y.uke !== forrigeU) {
+        forrigeU = y.uke;
+        var kal = start ? ((start + y.uke - 2) % 52) + 1 : null, fr = krav.filter(function (o) { if (!o.frist || !start) return false; var w = isoUke(new Date(o.frist)) - start + 1; if (w < 1) w += 52; return w === y.uke; });
+        tid += '<div class="uv-uke' + (y.uke === naa ? ' naa' : '') + '"><b>Uke ' + y.uke + '</b>' + (kal ? ' <span class="st-sm">kal.uke ' + kal + '</span>' : '') + (y.uke === naa ? ' <span class="uv-naa">denne uka</span>' : '') +
+          (y.w.undertemaer.length ? '<div>' + y.w.undertemaer.map(function (id) { var url = utLenke(id, nivaFor(y.w, id, r)); return url ? '<a class="st-tl-ut" href="' + url + '" target="_blank" rel="noopener">' + esc(utNavnKort(id)) + '</a>' : '<span class="st-tl-ut">' + esc(utNavnKort(id)) + '</span>'; }).join('') + '</div>' : '') +
+          fr.map(function (o) { return '<div class="uv-krav" style="color:' + kravFarge(o) + '">🚩 ' + esc(o.tittel) + ' · frist ' + dato(o.frist) + '</div>'; }).join('') + '</div>';
+      }
+      var mt = v.mat[y.nokkel];
+      tid += '<button type="button" class="uv-samling' + (y.nokkel === v.valgt ? ' pa' : '') + (mt ? ' har' : '') + '" data-h="uvVelg" data-k="' + esc(y.nokkel) + '"><b>' + samlingNavn(r, el, y.s) + '</b><span class="st-sm">' + (mt ? matStatus(mt) : 'ingen plan eller slides') + '</span></button>';
+    });
+    var mt = x && v.mat[x.nokkel], plan = (mt && mt.plan) || [], t0 = 0;
+    var planHtml = '<div class="uv-planhode"><b>Plan for dagen</b><label class="st-sm">Starter kl. <input type="time" data-uv="start" value="' + esc(v.start) + '"></label></div>' +
+      (plan.length ? '<ol class="uv-planliste">' + plan.map(function (p) { var fra = t0; t0 += +p.min || 0; return '<li><span class="uv-tid">' + (v.start ? klokkeTil(v.start, fra) : fra + '–' + t0 + ' min') + '</span><span>' + txLinje(p.tekst || '') + '</span></li>'; }).join('') + '</ol>' +
+        '<p class="st-sm">Til sammen ' + t0 + (r.lengde ? ' av ' + r.lengde : '') + ' min' + (v.start ? ', ferdig kl. ' + klokkeTil(v.start, t0) : '') + '.</p>' : '<p class="st-sm">Ingen plan for denne samlingen.</p>') +
+      (x ? '<p><a class="st-btn g liten" href="index.html#fag-' + encodeURIComponent(c.id) + '@' + encodeURIComponent(x.nokkel) + '" target="_blank" rel="noopener" data-h="ingen">✎ Rediger i Utforming</a></p>' : '');
+    var sl = uvSlides();
+    return '<div class="uv"><div class="uv-topp"><a class="uv-ut" href="index.html#fag-' + encodeURIComponent(c.id) + '" title="Avslutt undervisningsmodus" data-h="uvUt">✕</a><b>' + esc(c.navn) + '</b>' +
+      '<span class="uv-her">' + (x ? 'Uke ' + x.uke + ' · ' + samlingNavn(r, el, x.s) + (mt && mt.tittel ? ': ' + esc(mt.tittel) : '') : '') + '</span>' +
+      '<button type="button" class="st-btn g liten' + (v.tid ? ' pa2' : '') + '" data-h="uvTid">☰ Tidslinje</button><button type="button" class="st-btn g liten' + (v.plan ? ' pa2' : '') + '" data-h="uvPlan">📋 Plan</button>' +
+      '<button type="button" class="st-btn g liten" data-h="uvNotat">🗒 Notater</button><button type="button" class="st-btn liten" data-h="uvFull"' + (sl.length ? '' : ' disabled') + '>⛶ Fullskjerm</button></div>' +
+      '<div class="uv-kropp' + (v.tid ? '' : ' uten-tid') + (v.plan ? '' : ' uten-plan') + '">' +
+      '<aside class="uv-tidslinje" aria-label="Tidslinje">' + (v.laster ? '<p class="st-ind">Laster …</p>' : v.feil ? '<p class="st-feil">' + esc(v.feil) + '</p>' : tid || '<p class="st-ind">Faget har ingen moduler ennå.</p>') + '</aside>' +
+      '<section class="uv-plan">' + planHtml + '</section>' +
+      '<section class="uv-scene" id="uv-scene"><div class="uv-slide" id="uv-slide"></div>' +
+      '<div class="uv-kontroll"><button type="button" class="st-btn g liten" data-h="uvForrige">←</button><span id="uv-pos" class="st-sm"></span><button type="button" class="st-btn g liten" data-h="uvNeste">→</button></div>' +
+      '<div class="uv-notat" id="uv-notat" hidden></div>' +
+      (!sl.length && x && !v.laster ? '<p class="st-sm" style="text-align:center">Lag slides under Utforming → Mitt materiale, eller <a href="index.html#fag-' + encodeURIComponent(c.id) + '@' + encodeURIComponent(x.nokkel) + '" target="_blank" rel="noopener" data-h="ingen">åpne denne samlingen der</a>.</p>' : '') +
+      '</section></div></div>';
+  }
+  document.addEventListener('keydown', function (ev) {
+    if (T.vis !== 'undervis' || !T.uv || /^(INPUT|TEXTAREA|SELECT)$/.test((ev.target && ev.target.tagName) || '')) return;
+    var v = T.uv;
+    if (ev.key === 'ArrowRight' || ev.key === 'PageDown' || ev.key === ' ') { ev.preventDefault(); v.i++; visSlide(); }
+    else if (ev.key === 'ArrowLeft' || ev.key === 'PageUp') { ev.preventDefault(); v.i--; visSlide(); }
+    else if (ev.key === 'f' || ev.key === 'F') uvFull();
+    else if (ev.key === 'n' || ev.key === 'N') { v.notat = !v.notat; visSlide(); }
+  });
+  function uvFull() {
+    var s = document.getElementById('uv-scene'); if (!s) return;
+    if (document.fullscreenElement) document.exitFullscreen(); else if (s.requestFullscreen) s.requestFullscreen().catch(function () { varsle('Nettleseren tillot ikke fullskjerm.', true); });
   }
   // ---------------------------------------------------------------- varierende tall i egne spørsmål
   // Et spørsmål med "variabler" er en oppgavemal: hver student (og hvert forsøk) får egne tall, og fasit og gale svar regnes ut
@@ -1076,9 +1290,9 @@ function studieStart() {
     kurs: function () {
       var o = '<h2 class="st-h1">Fag</h2>';
       if (erUnderviser() && !T.eksempel) {
-        o += '<h3>Fagene du underviser</h3>' + (T.mine.length ? '<div class="st-tabell-ramme"><table class="st-tabell"><thead><tr><th>Fag</th><th>Kode</th><th>Studenter</th><th>Temaer</th></tr></thead><tbody>' +
+        o += '<h3>Fagene du underviser</h3>' + (T.mine.length ? '<div class="st-tabell-ramme"><table class="st-tabell"><thead><tr><th>Fag</th><th>Kode</th><th>Studenter</th><th>Temaer</th><th></th></tr></thead><tbody>' +
           T.mine.map(function (c) {
-            return '<tr class="st-klikk" data-h="apneKurs" data-id="' + c.id + '" tabindex="0"><td><b>' + esc(c.navn) + '</b>' + (c.status === 'pabegynt' ? ' <span class="st-pabegynt">(påbegynt)</span>' : '') + (c.krev_innsyn ? '' : '<br><span class="st-sm">bare samletall</span>') + '</td><td class="st-kode">' + esc(c.kode) + '</td><td>' + (c.antall == null ? '–' : c.antall) + '</td><td>' + (c.temaer || []).length + '</td></tr>';
+            return '<tr class="st-klikk" data-h="apneKurs" data-id="' + c.id + '" tabindex="0"><td><b>' + esc(c.navn) + '</b>' + (c.status === 'pabegynt' ? ' <span class="st-pabegynt">(påbegynt)</span>' : '') + (c.krev_innsyn ? '' : '<br><span class="st-sm">bare samletall</span>') + '</td><td class="st-kode">' + esc(c.kode) + '</td><td>' + (c.antall == null ? '–' : c.antall) + '</td><td>' + (c.temaer || []).length + '</td><td><a class="st-btn g liten" href="index.html#undervis-' + encodeURIComponent(c.id) + '" target="_blank" rel="noopener" data-h="ingen" title="Tidslinjen med plan for dagen og slides for hver samling">🎓 Undervisningsmodus</a></td></tr>';
           }).join('') + '</tbody></table></div>' : '<p class="st-ind">Du har ingen fag ennå.</p>');
         o += '<details class="st-kort"' + (T.mine.length ? '' : ' open') + '><summary><b>Lag nytt fag</b></summary>' +
           '<label class="st-sm" for="st-kursnavn">Navn på faget</label><input id="st-kursnavn" maxlength="120">' +
@@ -1112,7 +1326,7 @@ function studieStart() {
       var f = T.fag, c = f.c;
       var o = '<button type="button" class="st-tilbake" data-h="ga" data-v="kurs">← Fagene dine</button><h2 class="st-h1">' + esc(c.navn) + (c.status === 'pabegynt' ? ' <span class="st-pabegynt">(påbegynt)</span>' : '') + '</h2>' +
         '<div class="st-rad" style="flex-wrap:wrap"><p class="st-sm" style="margin:0">Kode til studentene: <b class="st-kode">' + esc(c.kode) + '</b> · ' + (c.krev_innsyn ? 'innsyn i studentenes profil' : 'bare samletall') + '</p>' +
-        '<span><a class="st-btn g liten" href="fokus.html#' + encodeURIComponent(c.id) + '" target="_blank" rel="noopener">Fokusvisning</a> <button type="button" class="st-btn g liten" data-h="studentvisning" data-id="' + c.id + '">Se faget som student</button></span></div>' +
+        '<span><a class="st-btn liten" href="index.html#undervis-' + encodeURIComponent(c.id) + '" target="_blank" rel="noopener" data-h="ingen">🎓 Undervisningsmodus</a> <button type="button" class="st-btn g liten" data-h="studentvisning" data-id="' + c.id + '">Se faget som student</button></span></div>' +
         '<nav class="st-underfaner">' + [['design', 'Utforming'], ['ovinger', 'Arbeidskrav'], ['studenter', 'Studenter'], ['statistikk', 'Statistikk']].filter(function (x) { return x[0] !== 'ovinger' || f.u.elementer.arbeidskrav; }).map(function (x) {
           return '<button type="button" aria-selected="' + (f.fane === x[0]) + '" data-h="fagFane" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</nav>';
       if (f.fane === 'design') return o + byggerHtml();
@@ -1240,12 +1454,20 @@ function studieStart() {
   function tegn() {
     // Et synlig varsel skal overleve at siden tegnes på nytt.
     var gml = document.getElementById('st-varsel'), vis = gml && !gml.hidden ? { t: gml.textContent, k: gml.className } : null;
+    var rull = document.querySelector('.st-matrull'), rullTopp = rull ? rull.scrollTop : 0, tidR = document.querySelector('.uv-tidslinje'), tidTopp = tidR ? tidR.scrollTop : null;
+    if (T.vis === 'undervis') {
+      rot.innerHTML = undervisHtml() + '<p id="st-varsel" class="st-varsel" role="status" hidden></p>';
+      if (vis) { var ny0 = document.getElementById('st-varsel'); ny0.textContent = vis.t; ny0.className = vis.k; ny0.hidden = false; }
+      var tl = document.querySelector('.uv-tidslinje'); if (tl) { if (tidTopp != null) tl.scrollTop = tidTopp; else { var pa = tl.querySelector('.uv-samling.pa'); if (pa) tl.scrollTop = Math.max(0, pa.offsetTop - 120); } }
+      visSlide(); return;
+    }
     var faner = erUnderviser() && !T.eksempel ? [['kurs', 'Fagene mine'], ['hjem', 'Løype'], ['profil', 'Profil']] : [['hjem', 'Løype'], ['profil', 'Profil'], ['kurs', 'Fag']];
     var aktiv = { uke: 'hjem', quiz: 'hjem', resultat: 'hjem', ferdigIdag: 'hjem', pamelding: 'kurs', fag: 'kurs' }[T.vis] || T.vis;
     rot.innerHTML = (T.eksempel ? '<div class="st-eksempel"><b>Studentvisning.</b> Du ser ' + (T.eksempelFag ? '«' + esc(T.eksempelFag.navn) + '»' : 'appen') + ' som en fiktiv student. Ingenting lagres. <a href="#" data-h="avsluttEksempel">Tilbake til undervisning</a></div>' : '') + '<nav class="st-faner" role="tablist">' + faner.map(function (f) { return '<button type="button" role="tab" aria-selected="' + (aktiv === f[0]) + '" data-h="ga" data-v="' + f[0] + '">' + f[1] + '</button>'; }).join('') + '</nav>' +
       '<div class="st-innhold">' + SKJ[T.vis]() + '</div><p id="st-varsel" class="st-varsel" role="status" hidden></p>';
     if (vis) { var ny = document.getElementById('st-varsel'); ny.textContent = vis.t; ny.className = vis.k; ny.hidden = false; }
     rot.classList.toggle('st-bred', !!document.getElementById('st-lerret'));
+    var rull2 = document.querySelector('.st-matrull'); if (rull2 && rullTopp) rull2.scrollTop = rullTopp;
     tegnKravStolper();
   }
   // Arbeidskrav som stolper til venstre for modulene: en stolpe går langs de undertemaene den dekker. Dekker den hele modul 3
@@ -1300,6 +1522,17 @@ function studieStart() {
   // ---------------------------------------------------------------- tidslinje
   // Uke for uke: kalenderuke og dato (når første kalenderuke er satt), modul, undertemaer, samlinger, beskjeder, arbeidskrav
   // med frist, og for underviseren egne notater. Brukes både i fagbyggeren og av studentene.
+  // Nivå: et fag kan ha ett nivå (ramme.niva), og hvert undertema i en uke kan ha sitt eget (w.niva[id]). Lenkene går da rett
+  // til siden på det nivået når den finnes, ellers til undertemasiden (som viser alle nivåene).
+  var NIVAER = [['forkurs', 'Forkurs'], ['ingenior', 'Ingeniør'], ['fordypning', 'Fordypning']], NIVANAVN = { forkurs: 'Forkurs', ingenior: 'Ingeniør', fordypning: 'Fordypning' };
+  function utSti(id) { var p = id.split('/'), kt = K[p[1]]; return kt && kt.omrade ? '/tema/' + kt.omrade + '/' + p[1] + '/' + p[2] + '.html' : null; }
+  function utNivaer(id) { var sti = utSti(id), l = (FINNES && sti && FINNES[sti]) || []; return NIVAER.filter(function (n) { return l.some(function (x) { return x.niva === n[1]; }); }); }
+  function nivaFor(w, id, r) { return ((w && w.niva) || {})[id] || (r && r.niva) || ''; }
+  function utLenke(id, niva) {
+    var sti = utSti(id), l = (FINNES && sti && FINNES[sti]) || [];
+    if (niva) { var x = l.find(function (y) { return y.niva === NIVANAVN[niva]; }); if (x) return x.url; }
+    return utUrlK(id);
+  }
   function utUrlK(id) { var p = id.split('/'), kt = K[p[1]]; if (!kt || !kt.omrade) return null; var sti = '/tema/' + kt.omrade + '/' + p[1] + '/' + p[2] + '.html'; return FINNES && !FINNES[sti] ? null : '..' + sti; }
   function mandag(aar, uke) { var j4 = new Date(Date.UTC(aar, 0, 4)), d = (j4.getUTCDay() || 7) - 1; return new Date(Date.UTC(aar, 0, 4 - d + (uke - 1) * 7)); }
   function tidslinjeHtml(moduler, r, krav, notater, el) {
@@ -1326,7 +1559,7 @@ function studieStart() {
           '<div class="st-tl-tid"><b>Uke ' + nr + '</b>' + (start ? '<span class="st-sm">kal.uke ' + (((start + nr - 2) % 52) + 1) + ' · ' + dato0.toLocaleDateString('nb-NO', { day: 'numeric', month: 'short', timeZone: 'UTC' }) + '</span>' : '') + '</div>' +
           '<div class="st-tl-inn">' + (wi === 0 ? '<div class="st-tl-modul" style="color:' + farge + '">Modul ' + (mi + 1) + ': ' + esc(m.navn) + '</div>' + besk.filter(function (x) { return x.uke === null && x.mi === mi; }).map(beskHtml).join('') + (notater && notater[m.id] ? '<div class="st-tl-notat">🔒 ' + esc(notater[m.id]) + '</div>' : '') : '') +
           besk.filter(function (x) { return x.uke === nr; }).sort(function (a, b) { return a.b.tid.localeCompare(b.b.tid); }).map(beskHtml).join('') +
-          (w.undertemaer.length ? '<div>' + w.undertemaer.map(function (id) { var url = utUrlK(id); return url ? '<a class="st-tl-ut" data-ut="' + esc(id) + '" href="' + url + '">' + esc(utNavnKort(id)) + '</a>' : '<span class="st-tl-ut" data-ut="' + esc(id) + '" title="Lærestoffet kommer">' + esc(utNavnKort(id)) + '</span>'; }).join('') + '</div>' : '<div class="st-sm">' + (w.notat ? '' : 'Ingen undertemaer') + '</div>') +
+          (w.undertemaer.length ? '<div>' + w.undertemaer.map(function (id) { var url = utLenke(id, nivaFor(w, id, r)); return url ? '<a class="st-tl-ut" data-ut="' + esc(id) + '" href="' + url + '">' + esc(utNavnKort(id)) + '</a>' : '<span class="st-tl-ut" data-ut="' + esc(id) + '" title="Lærestoffet kommer">' + esc(utNavnKort(id)) + '</span>'; }).join('') + '</div>' : '<div class="st-sm">' + (w.notat ? '' : 'Ingen undertemaer') + '</div>') +
           (w.notat ? '<div class="st-sm">' + esc(w.notat) + '</div>' : '') + (samlingTekst(r, el) ? '<div class="st-sm">' + samlingTekst(r, el) + '</div>' : '') +
           frister.concat(flagg).map(function (o) { var ok = godkjent(o); return '<button type="button" class="st-tl-flagg' + (ok ? ' ok' : '') + '" data-h="ovelse" data-id="' + o.id + '" data-flagg="' + o.id + '"' + (ok ? '' : ' style="border-color:' + kravFarge(o) + '"') + '><span class="st-tl-flaggikon">' + (ok ? '✓' : '🚩') + '</span><span><b>Arbeidskrav: ' + esc(o.tittel) + '</b><br><span class="st-sm">' + (o.frist ? 'Frist ' + dato(o.frist) : 'Ingen frist') + ' · minst ' + o.krav + ' av ' + o.antall + ' riktige' + (ok ? ' · godkjent' : '') + '</span></span></button>'; }).join('') + '</div></li>');
       });
@@ -1394,6 +1627,23 @@ function studieStart() {
       slettOvelse: function () { slettOvelse(d.id); },
       eksempel: function () { ev.preventDefault(); location.hash = 'eksempel'; location.reload(); },
       avsluttEksempel: function () { ev.preventDefault(); history.replaceState(null, '', location.pathname + (T.eksempelFag ? '#fag-' + T.eksempelFag.id : '')); location.reload(); },
+      apneMat: function () { var f = T.fag; if (f.matRed) { clearTimeout(f.matTid); if (f.matRed.status && f.matRed.status.t === 'Lagrer …') lagreMat(true); } apneMat(+d.m, +d.u, +d.s); },
+      lukkMat: function () { var f = T.fag; if (f.matTid && f.matRed && f.matRed.status && f.matRed.status.t === 'Lagrer …') lagreMat(true); f.matRed = null; tegn(); },
+      matPlanNy: function () { T.fag.matRed.plan.push({ min: 10, tekst: '' }); lagreMat(); tegn(); },
+      matPlanSlett: function () { T.fag.matRed.plan.splice(+d.i, 1); lagreMat(); tegn(); },
+      matPlanFlytt: function () { var a = d.i.split(':'); flytt(T.fag.matRed.plan, +a[0], +a[1]); lagreMat(); tegn(); },
+      matSlideNy: function () { T.fag.matRed.slides.push({ tittel: '', tekst: '', notat: '' }); lagreMat(); tegn(); },
+      matSlideSlett: function () { T.fag.matRed.slides.splice(+d.i, 1); lagreMat(); tegn(); },
+      matSlideFlytt: function () { var a = d.i.split(':'); flytt(T.fag.matRed.slides, +a[0], +a[1]); lagreMat(); tegn(); },
+      kiMat: function () { kiMat(d.v === 'endre'); },
+      angreMatKi: function () { var v = T.fag.matRed; if (!v.forrige) return; Object.assign(v, v.forrige); v.forrige = null; v.kiKommentar = ''; lagreMat(true); tegn(); varsle('Det du hadde er hentet tilbake.'); },
+      matFjernFil: function () { var x = T.fag.matRed.ki; x.vedlegg = null; x.filnavn = ''; tegn(); },
+      slettMat: slettMat,
+      uvVelg: function () { T.uv.valgt = d.k; T.uv.i = 0; tegn(); if (matchMedia('(max-width: 900px)').matches) { var sc = document.getElementById('uv-scene'); if (sc) sc.scrollIntoView({ block: 'start' }); } },
+      uvForrige: function () { T.uv.i--; visSlide(); }, uvNeste: function () { T.uv.i++; visSlide(); },
+      uvUt: function () { ev.preventDefault(); if (document.fullscreenElement) document.exitFullscreen(); location.hash = 'fag-' + T.uv.c.id; location.reload(); },
+      uvFull: uvFull, uvNotat: function () { T.uv.notat = !T.uv.notat; visSlide(); },
+      uvTid: function () { T.uv.tid = !T.uv.tid; tegn(); }, uvPlan: function () { T.uv.plan = !T.uv.plan; tegn(); },
       studentvisning: function () { if (T.fag && T.fag.lagrer) { clearTimeout(T.fag.tid); lagreUtkast(); } location.hash = 'eksempel-' + d.id; location.reload(); },
     }[d.h] || function () {})();
   });
@@ -1407,6 +1657,15 @@ function studieStart() {
     else if (el.dataset.inn) { T.inn[el.dataset.inn] = el.checked; lagreInn(); }
     else if (el.dataset.felt === 'leggUT' && el.value) { var w = T.fag.u.moduler[+el.dataset.m].uker[+el.dataset.u]; if (w.undertemaer.indexOf(el.value) < 0) w.undertemaer.push(el.value); planlagreFag(); tegn(); }
     else if (el.name === 'st-form') { T.fag.u.ramme.form = el.value; planlagreFag(); }
+    else if ((el.name === 'st-niva' || el.dataset.felt === 'fagNiva') && T.fag) { T.fag.u.ramme.niva = el.value; planlagreFag(); tegn(); }
+    else if (el.dataset.felt === 'utNiva' && T.fag) { var wn = T.fag.u.moduler[+el.dataset.m].uker[+el.dataset.u]; wn.niva = Object.assign({}, wn.niva); if (el.value) wn.niva[el.dataset.id] = el.value; else delete wn.niva[el.dataset.id]; if (!Object.keys(wn.niva).length) delete wn.niva; planlagreFag(); tegn(); }
+    else if (el.dataset.matki === 'hva' && T.fag && T.fag.matRed) { T.fag.matRed.ki.hva = el.value; }
+    else if (el.dataset.uv === 'start' && T.uv) { T.uv.start = el.value; try { localStorage.setItem('uv-start-' + T.uv.c.id, el.value); } catch (e) {} tegn(); }
+    else if (el.classList.contains('st-mat-fil') && el.files[0] && T.fag && T.fag.matRed) {
+      var mf = el.files[0];
+      lesVedlegg(mf).then(function (r) { var x = T.fag.matRed.ki; x.vedlegg = r.vedlegg || null; x.filnavn = r.vedlegg ? mf.name : ''; if (r.tekst) x.tekst = (x.tekst ? x.tekst + '\n\n' : '') + r.tekst; tegn(); if (r.tekst) varsle('Teksten fra filen er lagt inn i feltet.'); })
+        .catch(function (e) { varsle(feilmelding(e), true); });
+    }
     else if (el.dataset.felt && el.dataset.felt.indexOf('ramme.') === 0 && T.fag) { tegn(); }
     else if (el.dataset.elem) { T.fag.u.elementer[el.dataset.elem] = el.checked; planlagreFag(); tegn(); }
     else if (el.dataset.ovvalg && T.fag && T.fag.ov) { T.fag.ov[el.dataset.ovvalg] = el.value; tegn(); }
@@ -1458,9 +1717,18 @@ function studieStart() {
       if (el.dataset.kk === 'grunnlag') { T.fag.kiKviss.grunnlag = el.value; return; }
     }
     if (T.fag && el.dataset && el.dataset.spar) { kiSpar().tekst = el.value; return; }
+    if (T.fag && T.fag.matRed && el.dataset && (el.dataset.mat || el.dataset.matplan || el.dataset.matslide || el.dataset.matki)) {
+      var v = T.fag.matRed;
+      if (el.dataset.matki) { if (el.dataset.matki === 'tekst') v.ki.tekst = el.value; return; }
+      if (el.dataset.mat) v.tittel = el.value;
+      else if (el.dataset.matplan) { var pp = el.dataset.matplan.split('.'); v.plan[+pp[0]][pp[1]] = pp[1] === 'min' ? (parseInt(el.value, 10) || 0) : el.value;
+        var sum = v.plan.reduce(function (a, x) { return a + (+x.min || 0); }, 0), lg = +T.fag.u.ramme.lengde || 0, se = document.getElementById('st-plansum'); if (se) { se.textContent = 'Sum ' + sum + (lg ? ' av ' + lg : '') + ' min'; se.classList.toggle('st-feil', !!lg && sum > lg); } }
+      else { var ps = el.dataset.matslide.split('.'), sl = v.slides[+ps[0]]; sl[ps[1]] = el.value; var vb = document.getElementById('st-sv-' + ps[0]); if (vb) { clearTimeout(vb.t); vb.t = setTimeout(function () { vb.innerHTML = slideHtml(sl); }, 300); } }
+      lagreMat(); return;
+    }
     if (T.fag && el.dataset && el.dataset.nybeskjed) { T.fag.nyBeskjed = T.fag.nyBeskjed || {}; T.fag.nyBeskjed[el.dataset.nybeskjed] = el.value; return; }
     if (T.fag && el.dataset && el.dataset.notat) { T.fag.notater = T.fag.notater || {}; T.fag.notater[el.dataset.notat] = el.value; lagreNotater(); return; }
-    var felt = el.dataset && el.dataset.felt; if (!T.fag || !felt || felt === 'leggUT') return;
+    var felt = el.dataset && el.dataset.felt; if (!T.fag || !felt || felt === 'leggUT' || felt === 'fagNiva' || felt === 'utNiva') return;
     var u = T.fag.u;
     if (felt === 'mod') u.moduler[+el.dataset.m].navn = el.value;
     else if (felt === 'notat') u.moduler[+el.dataset.m].uker[+el.dataset.u].notat = el.value;
@@ -1488,7 +1756,7 @@ function studieStart() {
     fetch('../loyper.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }).then(function (d) {
       if (!d || !d.sider) return;   // uten oversikten lenker vi til alle undertemaer
       var titler = {}; (d.temarekke || []).forEach(function (x) { titler[x.url] = x.tittel; });
-      FINNES = {}; Object.keys(d.sider).forEach(function (k) { var u = d.sider[k].undertemaUrl; if (u) (FINNES[u] = FINNES[u] || []).push({ url: '..' + k, tittel: titler[k] || '' }); });
+      FINNES = {}; Object.keys(d.sider).forEach(function (k) { var u = d.sider[k].undertemaUrl; if (u) (FINNES[u] = FINNES[u] || []).push({ url: '..' + k, tittel: titler[k] || '', niva: d.sider[k].niva || '' }); });
     }),
     window.fhKonto(),
   ]).then(function (r) {
@@ -1517,8 +1785,10 @@ function studieStart() {
     }).then(function () {
       var ov = /^#ovelse-(.+)$/.exec(location.hash);
       if (ov && (T.ovelser || []).some(function (x) { return x.id === decodeURIComponent(ov[1]); })) return startOvelse(decodeURIComponent(ov[1]));
-      var m = /^#fag-(.+)$/.exec(location.hash);
-      if (m && !T.eksempel && T.mine.some(function (c) { return c.id === m[1]; })) { T.vis = 'kurs'; apneKurs(m[1]); }
+      var uv = /^#undervis-([^@]+)(?:@(.+))?$/.exec(location.hash);
+      if (uv && erUnderviser() && !T.eksempel && apneUndervis(decodeURIComponent(uv[1]), uv[2] ? decodeURIComponent(uv[2]) : '')) return;
+      var m = /^#fag-([^@]+)(?:@(.+))?$/.exec(location.hash);
+      if (m && !T.eksempel && T.mine.some(function (c) { return c.id === m[1]; })) { T.vis = 'kurs'; apneKurs(m[1]); if (m[2]) T.fag.apneMat = decodeURIComponent(m[2]); }
       else if (location.hash === '#fag' || (erUnderviser() && !T.eksempel && !location.hash)) { T.vis = 'kurs'; tegn(); }
       else tegn();
       if (T.ny && !T.eksempel) lagreInn();

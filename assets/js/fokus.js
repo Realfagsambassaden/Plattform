@@ -26,9 +26,12 @@ function fokusStart() {
   var nokkel = 'fokus-' + (lm ? 'loype-' + lm[1] : kursId);
   function lagre(v) { try { sessionStorage.setItem(nokkel, String(v)); } catch (e) {} }
   function hent() { try { return sessionStorage.getItem(nokkel); } catch (e) { return null; } }
-  function utUrl(id) {
+  // Med nivå (fagets eller undertemaets) går lenken rett til siden på det nivået når den finnes.
+  var NIVANAVN = { forkurs: 'Forkurs', ingenior: 'Ingeniør', fordypning: 'Fordypning' };
+  function utUrl(id, niva) {
     var p = id.split('/'), kt = K[p[1]]; if (!kt) return null;
     var sti = '/tema/' + kt.omrade + '/' + p[1] + '/' + p[2] + '.html';
+    if (niva && FINNES && FINNES[sti]) { var x = FINNES[sti].find(function (y) { return y.niva === NIVANAVN[niva]; }); if (x) return x.url; }
     return FINNES && !FINNES[sti] ? null : sti;
   }
   function utNavn(id) { var p = id.split('/'), kt = K[p[1]]; return (kt && kt.undertemaer[p[2]]) || p[2]; }
@@ -42,7 +45,7 @@ function fokusStart() {
       m.uker.forEach(function (w, wi) {
         nr++;
         var uke = kilde === 'fag' ? nr : null;
-        (w.undertemaer || []).forEach(function (id) { r.push({ type: 'ut', id: id, tittel: utNavn(id), url: utUrl(id), uke: uke, mi: mi, wi: wi }); });
+        (w.undertemaer || []).forEach(function (id) { r.push({ type: 'ut', id: id, tittel: utNavn(id), url: utUrl(id, (w.niva || {})[id] || (kurs.ramme || {}).niva), uke: uke, mi: mi, wi: wi }); });
         (w.sider || []).forEach(function (x) { r.push({ type: 'ut', id: x.url, tittel: x.tittel, url: x.url, uke: uke, mi: mi, wi: wi }); });
       });
     });
@@ -184,7 +187,7 @@ function fokusStart() {
     window.fhKonto(),
   ]).then(function (r) {
     K = r[0].katalog || r[0].struktur; LJ = r[1];
-    if (r[1] && r[1].sider) { FINNES = {}; Object.keys(r[1].sider).forEach(function (s) { var u = r[1].sider[s].undertemaUrl; if (u) FINNES[u] = true; }); }
+    if (r[1] && r[1].sider) { FINNES = {}; Object.keys(r[1].sider).forEach(function (s) { var u = r[1].sider[s].undertemaUrl; if (u) (FINNES[u] = FINNES[u] || []).push({ url: s, niva: r[1].sider[s].niva || '' }); }); }
     k = r[2];
     return k.auth.getSession();
   }).then(function (s) {

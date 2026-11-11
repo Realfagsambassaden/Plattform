@@ -610,3 +610,22 @@ create policy "tilbakemeldinger: admin endrer" on public.tilbakemeldinger for up
 grant insert on public.tilbakemeldinger to anon, authenticated;
 grant select, update on public.tilbakemeldinger to authenticated;
 grant usage on sequence public.tilbakemeldinger_id_seq to anon, authenticated;
+
+-- ============================================================================================================
+-- Mitt materiale: plan for dagen og slides per samling i et fag (fagbyggeren og undervisningsmodus)
+-- Én rad per samling, med nøkkel «modul-id/uke-id/samling». Bare fageieren kan lese og skrive.
+-- ============================================================================================================
+create table if not exists public.kurs_materiale (
+  kurs    uuid not null references public.kurs (id) on delete cascade,
+  nokkel  text not null check (char_length(nokkel) between 1 and 60),
+  tittel  text not null default '' check (char_length(tittel) <= 200),
+  plan    jsonb not null default '[]'::jsonb check (jsonb_typeof(plan) = 'array' and pg_column_size(plan) < 50000),
+  slides  jsonb not null default '[]'::jsonb check (jsonb_typeof(slides) = 'array' and pg_column_size(slides) < 400000),
+  endret  timestamptz not null default now(),
+  primary key (kurs, nokkel)
+);
+alter table public.kurs_materiale enable row level security;
+drop policy if exists "kurs_materiale: eier" on public.kurs_materiale;
+create policy "kurs_materiale: eier" on public.kurs_materiale for all to authenticated using (public.er_kurseier(kurs)) with check (public.er_kurseier(kurs));
+grant select, insert, update, delete on public.kurs_materiale to authenticated;
+revoke all on public.kurs_materiale from anon;
