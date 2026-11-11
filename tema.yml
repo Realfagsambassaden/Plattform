@@ -75,6 +75,7 @@ omrader:
           - { id: krefter-i-planet, tittel: "Krefter i planet" }
           - { id: friksjon-fjaer-snorer, tittel: "Friksjon, fjær og snorer" }
           - { id: luftmotstand, tittel: "Luftmotstand" }
+          - { id: sammensatte-problemer, tittel: "Sammensatte problemer" }
       - id: bevegelsesmengde
         tittel: "Bevegelsesmengde og støt"
         undertemaer:
@@ -143,6 +144,7 @@ omrader:
       - id: gasser
         tittel: "Gasser og kinetisk teori"
         undertemaer:
+          - { id: stoffmengde, tittel: "Stoffmengde og mol" }
           - { id: idealgass, tittel: "Idealgass" }
 
   - id: elektromagnetisme
