@@ -5,6 +5,8 @@
 //   POST /fagforslag – fagbyggeren: forslag til moduler og uker ut fra emnebeskrivelse og læringsutbytte. Bare for undervisere.
 //   POST /kvisslag – fagbyggeren: flervalgsspørsmål til et arbeidskrav, eventuelt ut fra underviserens egne oppgaver
 //                    (tekst, bilde eller PDF). Bare for undervisere. Ingenting lagres i tjenesten.
+//   POST /materiale – fagbyggeren («Mitt materiale»): plan for dagen og slides til én samling, ut fra undertemaene og
+//                    lærestoffet på nettstedet, eventuelt et gammelt opplegg (tekst, bilde eller PDF). Bare for undervisere.
 //   POST /dekning  – dekningskart: hvor godt dekker fysikkhjelp.no et emne? Åpent for alle;
 //                    innloggede brukere får i tillegg sidene/veikartet.
 // API-nøkler ligger som hemmeligheter i Cloudflare og vises aldri på nettsiden.
@@ -144,6 +146,66 @@ Regn ut svarene nøye; et galt fasitsvar er det verste som kan skje. Norsk bokm�
 Alle spørsmål har også "undertema" og "vanskelighet".
 Svar KUN med gyldig JSON: {"sporsmal":[{"tekst":"…","variabler":[{"navn":"m","min":1,"maks":5,"steg":0.5}],"svar":"…","enhet":"…","siffer":3,"feil":[{"uttrykk":"…","type":"regnefeil"}],"forklaring":"…","undertema":"","vanskelighet":"middels"}, {"tekst":"…","riktig":"…","feil":[{"svar":"…","type":"begrep"}],"forklaring":"…","undertema":"","vanskelighet":"lett"}]}`;
 
+const SYSTEM_MAT = `Du er en erfaren realfagslærer og lager undervisningsmateriale til ÉN samling i et fag på NETTSTED.
+Du får faget, undervisningsformen og lengden på samlingen, uka og modulen, undertemaene (med lærestoffet fra nettstedet når det finnes),
+eventuelt nivå, ukenotat, arbeidskrav og underviserens ønsker eller gamle opplegg (tekst, bilde eller PDF).
+
+Lag:
+- "tittel": kort tittel på samlingen (2–6 ord).
+- "plan": plan for dagen som en liste med punkter {"min": varighet i minutter, "tekst": hva som skjer}. Summen skal være lik lengden.
+  Varier: kort oppstart (hva skal vi lære), gjennomgang i korte bolker, eksempler, konseptspørsmål til salen (stem/diskuter med sidemannen),
+  oppgaveregning, og oppsummering. Ved omvendt klasserom: lite gjennomgang, mest aktiviteter, og si hva studentene skulle forberede.
+  Nevn arbeidskrav med frist når det passer.
+- "slides": 6–16 slides {"tittel": "…", "tekst": "…", "notat": "…"}. Én idé per slide, få ord.
+  "tekst": linjer som begynner med "- " blir punkter. Formler med $…$ i teksten eller $$…$$ på egen linje (enkel LaTeX: \\frac{}{}, ^, _, \\cdot, \\sqrt{}, \\vec{}, greske bokstaver).
+  Ta med minst ett regneeksempel (oppgave på én slide, løsning på neste), ett konseptspørsmål med svaralternativer A–D, og en oppsummering til slutt.
+  "notat": hva underviseren kan si, og fasit til spørsmål. Studentene ser ikke notatet.
+- "kommentar": 1–2 setninger til underviseren (f.eks. hva du har lagt vekt på, eller hva lærestoffet ikke dekker).
+Bruk samme notasjon og begreper som lærestoffet på nettstedet. Regn nøye. Tilpass nivået. Norsk bokmål.
+Har underviseren lagt ved et opplegg: følg det så tett som mulig. Får du NÅVÆRENDE MATERIALE: behold det og gjør bare endringene underviseren ber om.
+
+Svar KUN med gyldig JSON: {"tittel":"…","plan":[{"min":10,"tekst":"…"}],"slides":[{"tittel":"…","tekst":"- …","notat":"…"}],"kommentar":"…"}`;
+
+async function materiale(request, env, b, h) {
+  const bruker = await innloggetBruker(request, env);
+  if (!bruker) return json({ feil: "Du må være logget inn." }, 401, h);
+  if (!(await erUnderviser(request, env))) return json({ feil: "Bare godkjente undervisere kan lage undervisningsmateriale med KI." }, 403, h);
+  if (!(await innenforGrense(env, `mat:${bruker.id}:${new Date().toISOString().slice(0, 10)}`, 40, 90000)))
+    return json({ feil: "Du har laget mye materiale i dag. Prøv igjen i morgen." }, 429, h);
+  const vedlegg = lesVedlegg(b.vedlegg);
+  if (b.vedlegg && !vedlegg) return json({ feil: "Filen må være et bilde (JPEG, PNG, WebP) eller en PDF på under 4 MB." }, 400, h);
+  const ramme = b.ramme || {};
+  const lengde = Math.max(10, Math.min(600, parseInt(ramme.lengde, 10) || 90));
+  const form = { forelesninger: "forelesning", omvendt: "omvendt klasserom", ingen: "ingen faste samlinger (materiale for uka)" }[ramme.form] || "forelesning";
+  const hva = ["plan", "slides"].includes(b.hva) ? b.hva : "begge";
+  const ut = (Array.isArray(b.undertemaer) ? b.undertemaer.slice(0, 6) : []).filter((x) => x && typeof x.id === "string")
+    .map((x) => ({ tittel: kort(x.tittel, 160), url: /^\/[a-z0-9/._-]+\.html$/.test(x.url || "") ? x.url : "", niva: kort(x.niva, 20) }));
+  // Lærestoffet fra nettstedet, så slidene bruker samme notasjon (høyst tre sider, avkortet).
+  const side = nettstedFor(request), stoff = [];
+  for (const x of ut.slice(0, 3)) {
+    if (!x.url) continue;
+    try {
+      const r = await fetch(side + x.url, { headers: { "Accept": "text/html" }, signal: AbortSignal.timeout(8000), cf: { cacheTtl: 600 } });
+      if (r.ok) { const t = htmlTilTekst((await r.text()).replace(/^[\s\S]*?<main\b/i, "<main")).slice(0, 6000); if (t) stoff.push(`--- ${x.tittel}\n${t}`); }
+    } catch { /* uten lærestoffet går det også */ }
+  }
+  const krav = (Array.isArray(b.arbeidskrav) ? b.arbeidskrav.slice(0, 5) : []).map((x) => `${kort(x && x.tittel, 120)}${x && x.frist ? ` (frist ${kort(x.frist, 10)})` : ""}`);
+  const melding = `Fag: ${kort(b.fag, 120)}\nForm: ${form}, ${lengde} min (samling ${parseInt(b.samling, 10) || 1} av ${parseInt(ramme.samlinger, 10) || 1} denne uka)` +
+    (b.niva ? `\nNivå: ${kort(b.niva, 20)}` : "") + `\nUke ${parseInt(b.uke, 10) || 1}, modul: ${kort(b.modul, 60)}` +
+    `\nUndertemaer:\n${ut.map((x) => `- ${x.tittel}${x.niva ? ` (nivå ${x.niva})` : ""}`).join("\n") || "(ingen – repetisjon eller fritt)"}` +
+    (b.notat ? `\nUkenotat: ${kort(b.notat, 300)}` : "") + (krav.length ? `\nArbeidskrav: ${krav.join("; ")}` : "") +
+    `\nLag: ${hva === "begge" ? "plan og slides" : hva === "plan" ? "bare plan (slides kan være tom liste)" : "bare slides (plan kan være tom liste)"}` +
+    (b.onske ? `\n\nØNSKER FRA UNDERVISEREN:\n${kort(b.onske, 8000)}` : "") + (vedlegg ? "\n\nUnderviserens gamle opplegg er vedlagt." : "") +
+    (b.navarende ? `\n\nNÅVÆRENDE MATERIALE:\n${kort(JSON.stringify(b.navarende), 20000)}` : "") +
+    (stoff.length ? `\n\nLÆRESTOFF FRA NETTSTEDET:\n${stoff.join("\n\n")}` : "");
+  const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_MAT.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000, vedlegg));
+  if (!r) throw feil("Fikk ikke noe materiale fra KI denne gangen. Prøv igjen.", 502);
+  const plan = (Array.isArray(r.plan) ? r.plan : []).slice(0, 25).map((x) => ({ min: Math.max(0, Math.min(300, parseInt(x && x.min, 10) || 0)), tekst: kort(x && x.tekst, 600) })).filter((x) => x.tekst);
+  const slides = (Array.isArray(r.slides) ? r.slides : []).slice(0, 40).map((x) => ({ tittel: kort(x && x.tittel, 200), tekst: kort(x && x.tekst, 3000), notat: kort(x && x.notat, 2000) })).filter((x) => x.tittel || x.tekst);
+  if ((hva !== "slides" && !plan.length) && (hva !== "plan" && !slides.length)) throw feil("Fikk ikke noe brukbart materiale fra KI denne gangen. Prøv igjen.", 502);
+  return json({ tittel: kort(r.tittel, 200), plan, slides, kommentar: kort(r.kommentar, 600) }, 200, h);
+}
+
 async function kvisslag(request, env, b, h) {
   const bruker = await innloggetBruker(request, env);
   if (!bruker) return json({ feil: "Du må være logget inn." }, 401, h);
@@ -211,6 +273,7 @@ async function fagforslag(request, env, b, h) {
   const uker = Math.max(1, Math.min(40, parseInt(ramme.uker, 10) || 14));
   const form = { forelesninger: "forelesninger", omvendt: "omvendt klasserom", ingen: "ingen faste samlinger" }[ramme.form] || "forelesninger";
   const melding = `Fagets navn: ${kort(b.navn, 120)}\nRamme: ${uker} uker, ${form}` + (ramme.samlinger ? `, ${parseInt(ramme.samlinger, 10) || 0} samlinger à ${parseInt(ramme.lengde, 10) || 90} min per uke` : "") +
+    ({ forkurs: "\nNivå: forkurs", ingenior: "\nNivå: ingeniør", fordypning: "\nNivå: fordypning" }[ramme.niva] || "") +
     `\n\nEmnebeskrivelse:\n${kort(b.emnebeskrivelse, 8000) || "(ingen)"}\n\nLæringsutbytte:\n${kort(b.laringsutbytte, 3000) || "(ingen)"}\n\nKATALOG (id | tittel):\n` +
     katalog.map((x) => `${x.id} | ${x.tittel}`).join("\n") +
     (b.onske ? `\n\nØNSKER FRA UNDERVISEREN:\n${kort(b.onske, 8000)}` : "") + (vedlegg ? "\n\nUnderviserens tidligere plan er vedlagt." : "") +
@@ -263,6 +326,7 @@ export default {
       if (sti.endsWith("/rad")) return await rad(request, env, b, h);
       if (sti.endsWith("/fagforslag")) return await fagforslag(request, env, b, h);
       if (sti.endsWith("/kvisslag")) return await kvisslag(request, env, b, h);
+      if (sti.endsWith("/materiale")) return await materiale(request, env, b, h);
       return await hint(request, env, b, h);
     } catch (e) {
       return json({ feil: e.brukermelding || "Tjenesten er midlertidig utilgjengelig. Prøv igjen om litt." }, e.status || 502, h);
