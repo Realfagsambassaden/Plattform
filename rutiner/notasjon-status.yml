@@ -134,140 +134,140 @@ filer:
     dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/01-introduksjon/01-hva-er-fysikk.qmd:
-    blob: 0fe6f15762a24c56203ab9722fd81a69748b93be
-    dato: '2026-11-09'
+    blob: 1ce59400433cd0095ab6278927d543ddab469c83
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/01-introduksjon/02-enheter.qmd:
-    blob: dd034ebd13bc40077f334f36b55a572ad0f7c4c0
-    dato: '2026-11-09'
+    blob: 483095f7d67dc565583e29710efd707314b9b694
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/01-introduksjon/03-signifikante-sifre.qmd:
-    blob: e5ddc7e5893dfa72dd863a74aedfeebf3eef8036
-    dato: '2026-11-09'
+    blob: 4b1f4098df58e7711375128050ccbc47064a1d95
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/01-introduksjon/04-vektorer.qmd:
-    blob: 4f5f66f66492118b9cf2f627ce5e2b42e79906e3
-    dato: '2026-11-09'
+    blob: a6e5227a9a2ec0d293e0fb6466b013e59049c54e
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/01-introduksjon/index.qmd:
     blob: edd7baeae2252a2e16fb29210941e6f78b3aac58
     dato: '2026-11-09'
     versjon: 2
   ingeniorfysikk/kapitler/02-kinematikk/01-posisjon-fart-akselerasjon.qmd:
-    blob: bb8829745c9aa9ec24ebdbfd71c26ef936f4f675
-    dato: '2026-11-09'
+    blob: 94187d8baa772ecd43def3acd58631c2b602e7af
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/02-kinematikk/02-konstant-akselerasjon.qmd:
-    blob: b38e5bddae853c8971992734f4243a41e5f68737
-    dato: '2026-11-09'
+    blob: 9c87e7c42a2b4955c8cd8ce075fbb2eb56f99cbf
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/02-kinematikk/03-skratt-kast.qmd:
-    blob: d70f3522e18cc4547715a34a933e3ad7dd5fbcd3
-    dato: '2026-11-09'
+    blob: c870bc88f015c020ae7c70479a5c92883049eeda
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/02-kinematikk/04-sirkelbevegelse.qmd:
-    blob: f67b028754a3628c859ee4fef7c29d0a11acd027
-    dato: '2026-11-09'
+    blob: 6f9ec65398ae22ba2934f823d68600592aa04607
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/02-kinematikk/index.qmd:
     blob: 6420b8cd6fffd531ad674c6acc9de68b2d7bb729
     dato: '2026-11-09'
     versjon: 2
   ingeniorfysikk/kapitler/03-dynamikk/01-newtons-lover.qmd:
-    blob: fe4f7cea43f644bc809c4690a6cb6cd411e227a0
-    dato: '2026-11-09'
+    blob: 4938dda9a3585d8ae8b31293bb659bd5f78ecbc6
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/03-dynamikk/02-friksjon-fjaer-trinser.qmd:
-    blob: 0beb93b879f24050eb1426b9c1526ff0c4aba620
-    dato: '2026-11-09'
+    blob: 73cdbaf3a7a5b885708fccc39f38fef51829b626
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/03-dynamikk/03-krefter-i-planet.qmd:
-    blob: 5551216ab84de26d4d6a4ee22679e699e260eca2
-    dato: '2026-11-09'
+    blob: 2b909e74ceee2d5ac9304cba8119c0e6b35dc851
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/03-dynamikk/04-sirkelbevegelse-og-krefter.qmd:
-    blob: 3a515e4380a6109ec6c6650135dc1c277a8c7d2f
-    dato: '2026-11-09'
+    blob: 82598b385e6ce3c595159a95330f3dfc94d6fa71
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/03-dynamikk/05-luftmotstand.qmd:
-    blob: c920445ac0561cac1933fd79293ef79d6f00d8c8
-    dato: '2026-11-09'
+    blob: 82de6741df16024f9675cc2af4d812aaa3f1e43c
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/03-dynamikk/index.qmd:
     blob: 31fcbad6b88de717cdabd56393f37939945a3603
     dato: '2026-11-09'
     versjon: 2
   ingeniorfysikk/kapitler/04-arbeid-og-energi/01-arbeid-og-kinetisk-energi.qmd:
-    blob: 3e621a33aaa9f1bd421191b6b2829b7feffe4a4f
-    dato: '2026-11-09'
+    blob: c56badb12b8eaa6cdf6f723472e2b460988a1206
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/04-arbeid-og-energi/02-potensiell-energi-og-energibevaring.qmd:
-    blob: bdab2c0680dbff4781f739598083f51f8efcc44e
-    dato: '2026-11-09'
+    blob: bb86df148858f2fea20c840c99d81e0fd6ebaf83
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/04-arbeid-og-energi/03-effekt.qmd:
-    blob: 7a59b1ec0a1374a8da857d1a4dc120d39bca3d33
-    dato: '2026-11-09'
+    blob: 8de50ff66e9ccb3042e05f26bbe39d5d49c7751b
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/04-arbeid-og-energi/index.qmd:
     blob: aaac03f4a21c8af56c9201db051c05b149e2e0d0
     dato: '2026-11-09'
     versjon: 2
   ingeniorfysikk/kapitler/05-bevegelsesmengde/01-bevegelsesmengde-og-kraftstot.qmd:
-    blob: 091a7fc9cf3170a958037b6fcca258a50b1a91c4
-    dato: '2026-11-09'
+    blob: 4cde0f91cdd53751e8c1ecf089c8ffcaf0031dcc
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/05-bevegelsesmengde/02-bevaring-og-kollisjoner.qmd:
-    blob: cc764253d8cad6e3f8eb89d8127135de106f6b12
-    dato: '2026-11-09'
+    blob: f55ef47c1a7760122a313ce90d8d6591b157de01
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/05-bevegelsesmengde/03-massesenter.qmd:
-    blob: 1c052f4ab4a82ae51f6cc5cbd5b6aa07552b2d65
-    dato: '2026-11-09'
+    blob: dd17f575fb460d7332d70667f55e5a6df54adda7
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/05-bevegelsesmengde/index.qmd:
     blob: cc489b9b238b9650ee3709a26e0a00f71f25bcb8
     dato: '2026-11-09'
     versjon: 2
   ingeniorfysikk/kapitler/06-rotasjon/01-rotasjonskinematikk.qmd:
-    blob: 2c7834df83a56614b8d9f7407f7d3c80e3b7d066
-    dato: '2026-11-09'
+    blob: 1452712e1eca5e1f0c8c80608741228c1b8e4c10
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/06-rotasjon/02-treghetsmoment.qmd:
-    blob: 6c2e95e2c78f02b31e1b26753a266092f6371d6c
-    dato: '2026-11-09'
+    blob: 08e772d3367b2659efe7e7c43ffa9d6e7cf450c5
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/06-rotasjon/03-kraftmoment-og-rulling.qmd:
-    blob: 63d59049c5d0f2edf97a3fc1aff1fa9a765e0ca5
-    dato: '2026-11-09'
+    blob: 3ba94cf0984d08ff5f2c87b2b930fedad388c61e
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/06-rotasjon/04-statisk-likevekt.qmd:
-    blob: 34cc4db0f308690461833ab83402f364bd046e70
-    dato: '2026-11-09'
+    blob: f1b633b6f9cf7a19cb4b1b089e34cc193ffe7273
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/06-rotasjon/05-dreieimpuls.qmd:
-    blob: 1632788306c179f7117ac27b9dd84239a5e80eaf
-    dato: '2026-11-09'
+    blob: 185ab34f21724fcbf1a4a726a643f3b602c69c0a
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/06-rotasjon/index.qmd:
     blob: f51d086bef3bed5b35229c832d97e2950708adb1
     dato: '2026-11-09'
     versjon: 2
   ingeniorfysikk/kapitler/07-elektrisk-ladning-og-felt/01-elektrisk-ladning.qmd:
-    blob: 75f6bb45c3b019268f2e5212acc21aff77668d7c
-    dato: '2026-11-09'
+    blob: 2bf56bf63fca3d55d1b89b9814348c45f6b87c53
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/07-elektrisk-ladning-og-felt/02-coulombs-lov.qmd:
-    blob: dbff73e0cd9b49cb2c58ee8ee6c49c68acc09e37
-    dato: '2026-11-09'
+    blob: 3ba6a953508dfa26d28938f9e1c88241e58d9b2e
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/07-elektrisk-ladning-og-felt/03-elektrisk-felt.qmd:
-    blob: 69ffecd1c0ebe75b27017577dae6c22fbb98ee85
-    dato: '2026-11-09'
+    blob: 35451ad153db2b7fe24ddcc5372c78f224ee4af8
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/07-elektrisk-ladning-og-felt/04-felt-fra-flere-ladninger.qmd:
-    blob: c815b9a21b5552e9e06f30163a040bcfb9caf974
-    dato: '2026-11-09'
+    blob: 29564d909d23476fa272fc79770c4f53d3d8e3ae
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/07-elektrisk-ladning-og-felt/05-ladning-i-homogent-felt.qmd:
     blob: e0daf8bd5b97f91660b4d384ad4c05cea308fa82
@@ -278,12 +278,12 @@ filer:
     dato: '2026-11-09'
     versjon: 2
   ingeniorfysikk/kapitler/08-elektrisk-potensial/01-elektrisk-potensiell-energi.qmd:
-    blob: d7476ef337b00d5f8008596937817e7074ee47d7
-    dato: '2026-11-09'
+    blob: 1c56f0f00de6396d34fec614d2850f1eafc3f648
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/08-elektrisk-potensial/02-elektrisk-potensial-og-spenning.qmd:
-    blob: a6a12e36996b618f8dc134d01f165aef3f1eaf91
-    dato: '2026-11-09'
+    blob: a05436c712cbb957272779eef7401bbff7ead118
+    dato: '2026-11-11'
     versjon: 2
   ingeniorfysikk/kapitler/08-elektrisk-potensial/index.qmd:
     blob: 2982d662fdd2cb6156da60540aedda8f7a4d48be
