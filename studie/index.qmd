@@ -227,28 +227,35 @@ html.fh-innebygd .studie .st-faner { display: none; }   /* i fokusvisningens arb
 .studie .st-matslide { border: 1px solid var(--bs-border-color); border-radius: 10px; padding: .5rem .6rem; margin: .5rem 0; display: flex; flex-direction: column; gap: .35rem; }
 .studie .st-matslide textarea { min-height: 0; }
 .studie .st-matslide .st-rad .st-felt { flex: 1; }
-/* slides (deles av redigereren og undervisningsmodus) */
-.studie .uv-slide { container-type: inline-size; aspect-ratio: 16 / 9; width: 100%; background: #14171c; color: #eef0f2; border: 1px solid var(--bs-border-color); border-radius: 10px; padding: 4cqw 5cqw; overflow: hidden; font-size: 2.6cqw; line-height: 1.35; }
-.studie .uv-slide .uv-stittel { font-size: 1.9em; margin: 0 0 .6em; color: var(--bs-primary); }
-.studie .uv-slide .uv-skropp ul { margin: .2em 0 .5em; padding-left: 1.2em; } .studie .uv-slide li { margin: .25em 0; }
-.studie .uv-slide .uv-avsn { margin: .3em 0; } .studie .uv-slide .st-formel { margin: .4em 0; font-size: 1.1em; }
+/* slides (deles av redigereren, undervisningsmodus og vinduet på den andre skjermen).
+   .uv-slide er en container, så teksten i .uv-sinn skaleres med bredden på sliden (cqw). */
+.studie .uv-slide { container-type: inline-size; aspect-ratio: 16 / 9; width: 100%; background: #14171c; color: #eef0f2; border: 1px solid var(--bs-border-color, #333); border-radius: 10px; overflow: hidden; }
+.studie .uv-sinn { height: 100%; box-sizing: border-box; padding: 4cqw 5cqw; font-size: 3cqw; line-height: 1.35; overflow: hidden; }
+.studie .uv-sinn .uv-stittel { font-size: 1.7em; margin: 0 0 .55em; padding: 0; border: 0; color: var(--bs-primary, #6c6); line-height: 1.15; }
+.studie .uv-sinn p { margin: 0 0 .3em; }
+.studie .uv-sinn .uv-skropp ul { margin: .2em 0 .5em; padding-left: 1.2em; } .studie .uv-sinn li { margin: .25em 0; }
+.studie .uv-sinn .uv-avsn { margin: .3em 0; } .studie .uv-sinn .st-formel { margin: .4em 0; font-size: 1.05em; }
+.studie .uv-sinn .uv-losning { margin-top: .6em; padding: .4em .7em; border-left: .25em solid #f0ad4e; background: rgba(240,173,78,.1); border-radius: 0 .4em .4em 0; }
+.studie .uv-sinn .uv-losning > b { display: block; color: #f0ad4e; font-size: .8em; }
 .studie .uv-slide.liten { border-radius: 8px; }
-.studie .uv-tom { color: var(--bs-secondary-color); text-align: center; margin-top: 18%; font-size: 1.4em; }
+.studie .uv-tom { color: #9aa; text-align: center; margin-top: 18%; font-size: 1.4em; }
 /* undervisningsmodus */
 html.st-uv-aktiv #quarto-header, html.st-uv-aktiv header.headroom, html.st-uv-aktiv .nav-footer, html.st-uv-aktiv footer.footer,
-html.st-uv-aktiv #title-block-header, html.st-uv-aktiv #quarto-sidebar { display: none !important; }
+html.st-uv-aktiv #title-block-header, html.st-uv-aktiv #quarto-sidebar, html.st-uv-aktiv #fh-chat { display: none !important; }
 html.st-uv-aktiv, html.st-uv-aktiv body { overflow: hidden; }
 .studie .uv { position: fixed; inset: 0; z-index: 1030; background: var(--bs-body-bg); display: grid; grid-template-rows: auto minmax(0, 1fr); }
-.studie .uv-topp { display: flex; align-items: center; gap: .6rem; padding: .45rem .8rem; border-bottom: 1px solid var(--bs-border-color); flex-wrap: wrap; }
-.studie .uv-topp .uv-her { flex: 1; color: var(--bs-secondary-color); min-width: 10rem; }
+.studie .uv-topp { display: flex; align-items: center; gap: .6rem; padding: .45rem .8rem; border-bottom: 1px solid var(--bs-border-color); flex-wrap: wrap; min-width: 0; }
+.studie .uv-topp .uv-her { flex: 1; color: var(--bs-secondary-color); min-width: 8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.studie .uv-knapper { display: flex; gap: .4rem; flex-wrap: wrap; }
 .studie .uv-ut { font-size: 1.2rem; text-decoration: none; color: inherit; padding: 0 .3rem; }
-.studie .st-btn.pa2 { background: rgba(127,127,127,.18); }
-.studie .uv-kropp { display: grid; grid-template-columns: 290px 300px minmax(0, 1fr); min-height: 0; }
-.studie .uv-kropp.uten-tid { grid-template-columns: 0 300px minmax(0, 1fr); } .studie .uv-kropp.uten-plan { grid-template-columns: 290px 0 minmax(0, 1fr); }
-.studie .uv-kropp.uten-tid.uten-plan { grid-template-columns: 0 0 minmax(0, 1fr); }
-.studie .uv-kropp.uten-tid .uv-tidslinje, .studie .uv-kropp.uten-plan .uv-plan { display: none; }
-.studie .uv-tidslinje, .studie .uv-plan { overflow-y: auto; padding: .6rem .8rem; border-right: 1px solid var(--bs-border-color); }
-.studie .uv-mod { font-weight: 700; margin: .9rem 0 .2rem; }
+.studie .st-btn.pa2 { background: rgba(127,127,127,.22); }
+.studie .uv-kropp { display: grid; grid-template-columns: 270px minmax(0, 1fr) 330px; min-height: 0; }
+.studie .uv-kropp.uten-tid { grid-template-columns: minmax(0, 1fr) 330px; } .studie .uv-kropp.uten-side { grid-template-columns: 270px minmax(0, 1fr); }
+.studie .uv-kropp.uten-tid.uten-side { grid-template-columns: minmax(0, 1fr); }
+.studie .uv-kropp.uten-tid .uv-tidslinje, .studie .uv-kropp.uten-side .uv-side { display: none; }
+.studie .uv-tidslinje, .studie .uv-side { overflow-y: auto; padding: .6rem .8rem; min-height: 0; }
+.studie .uv-tidslinje { border-right: 1px solid var(--bs-border-color); } .studie .uv-side { border-left: 1px solid var(--bs-border-color); }
+.studie .uv-mod { font-weight: 700; margin: .9rem 0 .2rem; } .studie .uv-mod:first-child { margin-top: .2rem; }
 .studie .uv-uke { margin: .5rem 0 .2rem; } .studie .uv-uke.naa { border-left: 3px solid var(--bs-warning); padding-left: .4rem; }
 .studie .uv-naa { font-size: .75rem; font-weight: 700; color: var(--bs-warning); }
 .studie .uv-krav { font-size: .85rem; font-weight: 700; margin: .15rem 0; }
@@ -256,22 +263,30 @@ html.st-uv-aktiv, html.st-uv-aktiv body { overflow: hidden; }
 .studie .uv-samling.har { border-color: var(--st-p); } .studie .uv-samling.pa { border-color: var(--bs-primary); background: rgba(127,127,127,.15); } .studie .uv-samling:hover { border-color: var(--bs-primary); }
 .studie .uv-planhode { display: flex; justify-content: space-between; align-items: center; gap: .5rem; flex-wrap: wrap; }
 .studie .uv-planhode input { background: transparent; color: inherit; border: 1px solid var(--bs-border-color); border-radius: 6px; padding: .1rem .3rem; color-scheme: dark; }
-.studie .uv-planliste { list-style: none; padding: 0; margin: .6rem 0; }
-.studie .uv-planliste li { display: grid; grid-template-columns: 5.2rem minmax(0, 1fr); gap: .5rem; padding: .4rem 0; border-bottom: 1px solid var(--bs-border-color); }
-.studie .uv-tid { font-variant-numeric: tabular-nums; color: var(--bs-warning); font-weight: 700; font-size: .9rem; }
-.studie .uv-scene { overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: .6rem; }
-.studie .uv-scene .uv-slide { max-width: calc((100vh - 11rem) * 16 / 9); }
-.studie .uv-kontroll { display: flex; align-items: center; gap: 1rem; }
-.studie .uv-notat { width: 100%; max-width: 900px; border-left: 4px solid var(--bs-warning); background: rgba(127,127,127,.08); border-radius: 0 8px 8px 0; padding: .5rem .8rem; }
-.studie .uv-scene:fullscreen { background: #000; justify-content: center; padding: 0; overflow: hidden; }
-.studie .uv-scene:fullscreen .uv-slide { max-width: none; width: min(100vw, 177.78vh); border: 0; border-radius: 0; }
-.studie .uv-scene:fullscreen .uv-kontroll { position: fixed; bottom: .5rem; right: 1rem; opacity: .25; } .studie .uv-scene:fullscreen .uv-kontroll:hover { opacity: 1; }
-.studie .uv-scene:fullscreen .uv-notat, .studie .uv-scene:fullscreen > p { display: none !important; }
+.studie .uv-planliste { list-style: none; padding: 0; margin: .5rem 0; }
+.studie .uv-planliste li { display: grid; grid-template-columns: 4.6rem minmax(0, 1fr); gap: .5rem; padding: .35rem 0; border-bottom: 1px solid var(--bs-border-color); font-size: .92rem; }
+.studie .uv-tid { font-variant-numeric: tabular-nums; color: var(--bs-warning); font-weight: 700; font-size: .85rem; }
+.studie .uv-scene { display: flex; flex-direction: column; align-items: stretch; gap: .5rem; padding: .8rem; min-height: 0; min-width: 0; }
+/* Rammen er en container med både bredde og høyde, så sliden blir så stor som mulig uten å gå utenfor (16:9). */
+.studie .uv-ramme { flex: 1; min-height: 0; container-type: size; display: flex; align-items: center; justify-content: center; }
+.studie .uv-ramme > .uv-slide { width: min(100cqw, 177.78cqh); }
+.studie .uv-ramme:fullscreen { background: #000; }
+.studie .uv-ramme:fullscreen > .uv-slide { border: 0; border-radius: 0; }
+.studie .uv-kontroll { display: flex; align-items: center; justify-content: center; gap: 1rem; }
+.studie .uv-taler { display: flex; flex-direction: column; gap: .5rem; margin-bottom: .8rem; } .studie .uv-taler[hidden] { display: none; }
+.studie .uv-boks { border-left: 4px solid var(--bs-warning); background: rgba(127,127,127,.08); border-radius: 0 8px 8px 0; padding: .45rem .7rem; }
+.studie .uv-boks.los { border-left-color: var(--bs-info, #5bc0de); }
+.studie .uv-boks .st-btn { margin-top: .4rem; }
+.studie .uv-klokke { font-variant-numeric: tabular-nums; font-size: 1.3rem; font-weight: 700; }
+.studie .uv.to-skjermer .uv-kropp { grid-template-columns: 270px minmax(0, 1fr) 400px; }
+.studie .uv.to-skjermer .uv-kropp.uten-tid { grid-template-columns: minmax(0, 1fr) 400px; }
+@media (max-width: 1200px) { .studie .uv-kropp { grid-template-columns: 230px minmax(0, 1fr) 280px; } .studie .uv-kropp.uten-tid { grid-template-columns: minmax(0, 1fr) 280px; } .studie .uv-kropp.uten-side { grid-template-columns: 230px minmax(0, 1fr); } }
 @media (max-width: 900px) {
   .studie .uv { overflow-y: auto; display: block; }
-  .studie .uv-kropp, .studie .uv-kropp.uten-tid, .studie .uv-kropp.uten-plan { display: flex; flex-direction: column; }
+  .studie .uv-kropp, .studie .uv-kropp.uten-tid, .studie .uv-kropp.uten-side { display: flex; flex-direction: column; }
+  .studie .uv-scene { order: -1; } .studie .uv-ramme { flex: none; container-type: normal; display: block; } .studie .uv-ramme > .uv-slide { width: 100%; }
   .studie .uv-tidslinje { max-height: 45vh; border-right: 0; border-bottom: 1px solid var(--bs-border-color); }
-  .studie .uv-plan { border-right: 0; } .studie .uv-scene { overflow: visible; }
+  .studie .uv-side { border-left: 0; }
 }
 </style>
 <script src="../assets/js/xlsx-lite.js"></script>
