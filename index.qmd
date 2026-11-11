@@ -76,9 +76,9 @@ Velg løype
   <p class="eyebrow">Slik lærer du her</p>
   <h2>Én idé om gangen</h2>
   <div class="slik-rad">
-    <div><img src="assets/img/tegninger/volumstrom.webp" alt="Tavlenotater om volumstrøm og kontinuitetslikningen" loading="lazy"><h3>Video og tavle</h3><p>Korte videoer og håndskrevne tavlenotater, akkurat som i forelesningen.</p></div>
+    <div><img src="assets/img/tegninger/video-tavle.webp" alt="Bilde fra en video: Dr. Normann forklarer kinetisk energi med en bil som kolliderer, tegnet på tavla" loading="lazy"><h3>Video og tavle</h3><p>Korte videoer og håndskrevne tavlenotater, akkurat som i forelesningen.</p></div>
     <div><img src="assets/img/tegninger/bokser.webp" alt="Dashman får et slag: kraft og motkraft, F og F′" loading="lazy"><h3>Oppgaver med hint</h3><p>Står du fast? Få et hint om gangen, ikke hele svaret.</p></div>
-    <div><img src="assets/img/tegninger/rakett.webp" alt="Rakett i verdensrommet" loading="lazy"><h3>Kode du kan kjøre</h3><p>Endre tallene og kjør Python rett i nettleseren. Ingenting å installere.</p></div>
+    <div><img src="assets/img/tegninger/kode.webp" alt="Et kort Python-program som regner ut rekkevidden til et skrått kast, med Kjør-knapp, utskriften 40.8 m og banen tegnet" loading="lazy"><h3>Kode du kan kjøre</h3><p>Endre tallene og kjør Python rett i nettleseren. Ingenting å installere.</p></div>
   </div>
 </section>
 

@@ -14,15 +14,18 @@ function fokusStart() {
   var rot = document.getElementById('fokus');
   if (!rot) return;
   var NETTSTED = ((document.querySelector('meta[name="nettsted-navn"]') || {}).content || 'fysikkhjelp.no').replace(/\.no$/, '');
+  // Kilde: «#<fag-id>» (et fag), «#loype-<id>[@<side>]» (en ferdig løype på nettstedet) eller «#min» (studentens egen løype).
   var kursId = decodeURIComponent((location.hash || '').slice(1));
+  var lm = /^loype-([^@]+)(?:@(.*))?$/.exec(kursId), kilde = lm ? 'loype' : kursId === 'min' ? 'min' : 'fag';
   var MODFARGE = ['var(--bs-primary)', 'var(--bs-info)', '#eee462', 'var(--bs-warning)', '#c792ea', '#ff8a8f'];
-  var K = {}, FINNES = null, kurs = null, krav = [], quizer = [], rekke = [], her = -1, aktivKrav = null, k = null, bruker = null;
+  var LJ = null, K = {}, FINNES = null, kurs = null, krav = [], quizer = [], rekke = [], her = -1, aktivKrav = null, k = null, bruker = null;
   document.documentElement.classList.add('fk-aktiv');
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function dato(d) { return new Date(d).toLocaleDateString('nb-NO', { day: 'numeric', month: 'short' }); }
-  function lagre(v) { try { sessionStorage.setItem('fokus-' + kursId, String(v)); } catch (e) {} }
-  function hent() { try { return sessionStorage.getItem('fokus-' + kursId); } catch (e) { return null; } }
+  var nokkel = 'fokus-' + (lm ? 'loype-' + lm[1] : kursId);
+  function lagre(v) { try { sessionStorage.setItem(nokkel, String(v)); } catch (e) {} }
+  function hent() { try { return sessionStorage.getItem(nokkel); } catch (e) { return null; } }
   function utUrl(id) {
     var p = id.split('/'), kt = K[p[1]]; if (!kt) return null;
     var sti = '/tema/' + kt.omrade + '/' + p[1] + '/' + p[2] + '.html';
@@ -38,7 +41,9 @@ function fokusStart() {
     (kurs.moduler || []).forEach(function (m, mi) {
       m.uker.forEach(function (w, wi) {
         nr++;
-        w.undertemaer.forEach(function (id) { r.push({ type: 'ut', id: id, tittel: utNavn(id), url: utUrl(id), uke: nr, mi: mi, wi: wi }); });
+        var uke = kilde === 'fag' ? nr : null;
+        (w.undertemaer || []).forEach(function (id) { r.push({ type: 'ut', id: id, tittel: utNavn(id), url: utUrl(id), uke: uke, mi: mi, wi: wi }); });
+        (w.sider || []).forEach(function (x) { r.push({ type: 'ut', id: x.url, tittel: x.tittel, url: x.url, uke: uke, mi: mi, wi: wi }); });
       });
     });
     krav.forEach(function (o) {
@@ -90,7 +95,7 @@ function fokusStart() {
           html += '<div class="fk-mod" style="color:' + MODFARGE[x.mi % MODFARGE.length] + '">Modul ' + (x.mi + 1) + ': ' + esc(m.navn) + '</div>' +
             besk.filter(function (y) { return y.uke === null && y.mi === x.mi; }).map(beskHtml).join('');
         }
-        if (x.uke !== forrigeUke) { forrigeUke = x.uke; html += '<div class="fk-uke">Uke ' + x.uke + '</div>' + besk.filter(function (y) { return y.uke === x.uke; }).map(beskHtml).join(''); }
+        if (x.uke != null && x.uke !== forrigeUke) { forrigeUke = x.uke; html += '<div class="fk-uke">Uke ' + x.uke + '</div>' + besk.filter(function (y) { return y.uke === x.uke; }).map(beskHtml).join(''); }
       }
       var kl = 'fk-punkt' + (i === her ? ' her' : '') + (x.type === 'krav' ? ' krav' + (godkjent(x.o) ? ' ok' : '') : '') + (x.type === 'ut' && !x.url ? ' mangler' : '');
       html += '<button type="button" class="' + kl + '" data-h="ga" data-i="' + i + '"' + (x.type === 'ut' ? ' data-ut="' + esc(x.id) + '"' : ' data-krav="' + esc(x.o.id) + '" style="border-color:' + (godkjent(x.o) ? 'var(--bs-primary)' : kravFarge(x.o)) + '"') + '>' +
@@ -170,7 +175,7 @@ function fokusStart() {
     if (ev.origin !== location.origin || !ev.data || ev.data.type !== 'fh-quiz') return;
     hentQuizer().then(tidslinje);
   });
-  function hentQuizer() { return k.from('studie_quiz').select('ovelse, riktige, fullfort').eq('eier', bruker.id).then(function (r) { quizer = (r && r.data) || []; }); }
+  function hentQuizer() { if (!bruker) return Promise.resolve(); return k.from('studie_quiz').select('ovelse, riktige, fullfort').eq('eier', bruker.id).then(function (r) { quizer = (r && r.data) || []; }); }
 
   skjelett();
   Promise.all([
@@ -178,30 +183,54 @@ function fokusStart() {
     fetch('../loyper.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
     window.fhKonto(),
   ]).then(function (r) {
-    K = r[0].katalog || r[0].struktur;
+    K = r[0].katalog || r[0].struktur; LJ = r[1];
     if (r[1] && r[1].sider) { FINNES = {}; Object.keys(r[1].sider).forEach(function (s) { var u = r[1].sider[s].undertemaUrl; if (u) FINNES[u] = true; }); }
     k = r[2];
     return k.auth.getSession();
   }).then(function (s) {
     var sesjon = s && s.data && s.data.session;
+    bruker = sesjon ? sesjon.user : null;
+    if (kilde === 'loype') {
+      // En ferdig løype: sidene i rekkefølge, gruppert etter tema. Krever ikke innlogging.
+      var L = ((LJ && LJ.loyper) || []).find(function (x) { return x.id === lm[1]; });
+      if (!L) throw new Error('Fant ikke løypa.');
+      var mods = [];
+      L.sider.forEach(function (x) {
+        var t = (LJ.sider[x.url] || {}).tema || L.tittel, m = mods[mods.length - 1];
+        if (!m || m.navn !== t) { m = { navn: t, uker: [{ sider: [] }] }; mods.push(m); }
+        m.uker[0].sider.push(x);
+      });
+      return [{ data: { navn: L.tittel, moduler: mods, ramme: {}, elementer: { arbeidskrav: false } } }, { data: [] }];
+    }
     if (!sesjon) throw new Error('Logg inn for å bruke fokusvisningen.');
-    bruker = sesjon.user;
+    if (kilde === 'min') {
+      // Studentens egen løype: temaene hen har valgt i studieappen, med alle undertemaene.
+      return k.from('studie_innstillinger').select('valgt').eq('eier', bruker.id).maybeSingle().then(function (r) {
+        var valgt = ((r && r.data && r.data.valgt) || []).filter(function (x) { return x.indexOf(NETTSTED + '/') === 0 && K[x.split('/')[1]]; });
+        if (!valgt.length) throw new Error('Du har ikke valgt temaer ennå. Velg temaer i løypa i studieappen først.');
+        return [{ data: { navn: 'Løypa mi', ramme: {}, elementer: { arbeidskrav: false }, moduler: valgt.map(function (x) { var t = x.split('/')[1];
+          return { navn: K[t].tittel, uker: [{ undertemaer: Object.keys(K[t].undertemaer).map(function (u) { return x + '/' + u; }) }] }; }) } }, { data: [] }];
+      });
+    }
     if (!kursId) throw new Error('Velg et fag under «Fag» i studieappen og trykk «Fokusvisning».');
     return Promise.all([k.from('kurs').select('id, navn, moduler, ramme, elementer').eq('id', kursId).maybeSingle(), k.from('ovelser').select('*').eq('kurs', kursId), hentQuizer()]);
   }).then(function (r) {
     kurs = r[0] && r[0].data; if (!kurs) throw new Error('Fant ikke faget. Er du påmeldt?');
+    if (kilde !== 'fag') rot.querySelector('[data-h=kravkort]').hidden = true, rot.querySelector('.fk-krav').hidden = true;
     krav = ((r[1] && r[1].data) || []).filter(function () { return (kurs.elementer || {}).arbeidskrav !== false; });
     rot.querySelector('.fk-fag').textContent = kurs.navn;
     document.title = kurs.navn + ' – fokus';
     rekke = lagRekke();
-    var start = parseInt(hent(), 10); if (!(start >= 0 && start < rekke.length)) start = rekke.findIndex(function (x) { return x.type === 'ut'; });
+    var start = parseInt(hent(), 10);
+    if (lm && lm[2]) { var ii = rekke.findIndex(function (x) { return x.url === decodeURIComponent(lm[2]); }); if (ii >= 0) start = ii; }
+    if (!(start >= 0 && start < rekke.length)) start = rekke.findIndex(function (x) { return x.type === 'ut'; });
     if (start < 0) start = 0;
     var x = rekke[start];
     if (x && x.type === 'krav') { her = start; apneKrav(x.o); oppdater(); var forste = rekke.findIndex(function (y) { return y.type === 'ut'; }); if (forste >= 0) rot.querySelector('.fk-hoved').src = rekke[forste].url ? '..' + rekke[forste].url : 'about:blank'; }
     else if (x) ga(start); else oppdater();
     if (!rekke.length) rot.querySelector('.fk-tid').classList.add('apen');
   }).catch(function (e) {
-    rot.innerHTML = '<div class="fk-feil"><p>' + esc(e && e.message || e) + '</p><p><a href="index.html">Til studieappen</a></p></div>';
+    rot.innerHTML = '<div class="fk-feil"><p>' + esc(e && e.message || e) + '</p><p><a href="index.html">Til studieappen</a> · <a href="../konto/index.html">Logg inn</a></p></div>';
   });
   window.__fokus = { get rekke() { return rekke; }, get her() { return her; } };
 }

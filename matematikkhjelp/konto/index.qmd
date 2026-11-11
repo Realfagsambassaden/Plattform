@@ -17,8 +17,9 @@ toc: false
     <p class="konto-ingress" data-for="ny">Det er gratis å registrere seg. Som registrert bruker kan du blant annet sjekke hvor godt matematikkhjelp.no dekker et fag.</p>
     <form class="konto-skjema">
       <label data-for="ny">Navn <input type="text" name="navn" autocomplete="name" maxlength="80" placeholder="Fornavn og etternavn"></label>
-      <label>E-post <input type="email" name="epost" autocomplete="email" required></label>
+      <label><span class="epost-tekst">E-post</span> <input type="email" name="epost" autocomplete="email" required></label>
       <label>Passord <input type="password" name="passord" autocomplete="current-password" minlength="8" required></label>
+      <label data-for="ny">Gjenta passord <input type="password" name="passord2" autocomplete="new-password" minlength="8"></label>
       <p class="konto-hjelp" data-for="ny">Minst 8 tegn.</p>
       <button type="submit" class="btn-chalk">Logg inn</button>
       <p class="konto-melding" role="status"></p>
@@ -43,6 +44,8 @@ toc: false
     <p class="profil-hei">Hei, <span class="profil-navn"></span>! <button type="button" class="profil-endrenavn" title="Endre navn">✎</button></p>
     <form class="profil-navnskjema" hidden><label>Navnet ditt <input type="text" name="navn" maxlength="80" autocomplete="name" placeholder="Fornavn og etternavn"></label> <button type="submit" class="btn-chalk ghost">Lagre navn</button> <span class="profil-navnmelding" role="status"></span>
       <span class="konto-hjelp">Navnet vises i studieappen og for faglærerne dine i stedet for e-postadressen.</span></form>
+    <form class="profil-brukernavn"><label>Brukernavn <input type="text" name="brukernavn" maxlength="30" autocomplete="username" placeholder="f.eks. kari.n" pattern="[A-Za-z0-9._\-]{3,30}"></label> <button type="submit" class="btn-chalk ghost">Lagre brukernavn</button> <span class="profil-brukernavnmelding" role="status"></span>
+      <span class="konto-hjelp">Valgfritt. Med brukernavn kan du logge inn uten å skrive e-postadressen. 3–30 tegn: bokstaver, tall, punktum, bindestrek eller understrek.</span></form>
     <div class="profil-kort">
       <a class="track live" href="../dekning.html">
         <span class="status">Klar</span>
@@ -65,6 +68,10 @@ toc: false
 <style>
 .profil-endrenavn { background: none; border: 0; color: var(--bs-secondary-color); cursor: pointer; font-size: 1rem; padding: 0 .2rem; vertical-align: middle; }
 .profil-navnskjema[hidden] { display: none; }
+.profil-brukernavn { display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; margin: 0 0 1rem; }
+.profil-brukernavn input { min-width: 12rem; }
+.profil-brukernavn .konto-hjelp { flex-basis: 100%; margin: 0; }
+.profil-brukernavnmelding.feil { color: var(--bs-danger); }
 .profil-navnskjema { display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; margin: 0 0 1rem; }
 .profil-navnskjema input { min-width: 16rem; }
 .profil-navnskjema .konto-hjelp { flex-basis: 100%; margin: 0; }
