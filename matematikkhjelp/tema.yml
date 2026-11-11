@@ -61,6 +61,7 @@ omrader:
           - { id: trigonometriske-likninger, tittel: "Trigonometriske likninger og ulikheter" }
           - { id: trigonometriske-formler, tittel: "Trigonometriske formler" }
           - { id: trigonometriske-funksjoner, tittel: "Trigonometriske funksjoner" }
+          - { id: polarkoordinater, tittel: "Polarkoordinater" }
       - { id: komplekse-tall, tittel: "Komplekse tall" }
 
   - id: kalkulus
@@ -106,6 +107,12 @@ omrader:
         tittel: "Anvendelser av integrasjon"
         undertemaer:
           - { id: volum, tittel: "Integrasjon og volum" }
+      - id: flervariable-funksjoner
+        tittel: "Funksjoner av flere variabler"
+        undertemaer:
+          - { id: kontinuitet, tittel: "Grenseverdier og kontinuitet i flere variabler" }
+          - { id: partiellderiverte, tittel: "Partiellderiverte" }
+          - { id: nivakurver, tittel: "Nivåkurver og gradient" }
       - id: folger-og-rekker
         tittel: "Følger og rekker"
         undertemaer:
