@@ -17,7 +17,6 @@ Instruksene skal ligge her i repoet, ikke bare i en chat eller et prosjektdokume
 | Notasjon | [`NOTASJON.md`](NOTASJON.md) – fasit for all notasjon |
 | Donasjoner | Privat repo `donasjoner`, rutine i [`rutiner/donasjoner.md`](rutiner/donasjoner.md) |
 | Videoer | Repo `Realfagsambassaden/videoer`, instruks i `videoer/CLAUDE.md` og `videoer/LESMEG.md` |
-| Dashman (KI-læringspartneren) | Instruksen i `hint-tjener/dashman-instruks.md`, oversikt i `LESMEG.md`, avsnitt 11 |
 | Teknisk oversikt | [`LESMEG.md`](LESMEG.md), for mennesker: [`BIDRA.md`](BIDRA.md) |
 
 Forkurset ble tidligere skrevet i LaTeX (`kosmoben/TRES0312`). Fra november 2026 ligger alt forkursstoff i `fysikk-forkurs`, og LaTeX-kompendiet hentes ikke lenger inn.
@@ -123,3 +122,7 @@ Klassene `.sporsmal` og `.definisjon` settes av `verktoy/fag.py` ut fra tittelen
 3. Sjekk at alle bilder det lenkes til, finnes.
 4. Sjekk teksten mot reglene for kursnøytral tekst og notasjon.
 5. Les siden én gang som en student.
+
+## 7. Dashman (KI-læringspartneren)
+
+Instruksen til Dashman står i `hint-tjener/dashman-instruks.md` (bygd på Load Reduction Instruction). Endrer læreren hvordan Dashman skal veilede eller oppføre seg, skrives det inn der. Oversikt og oppsett: `LESMEG.md`, avsnitt 11.
