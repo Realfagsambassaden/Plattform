@@ -84,7 +84,8 @@
   // Formler ($…$ og $$…$$) tas ut først, så Markdown ikke ødelegger dem, og settes inn igjen som \(…\) og \[…\] for MathJax.
   function md(s) {
     var formler = [];
-    s = String(s).replace(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g, function (_, blokk, linje) {
+    s = String(s).replace(/\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\$([^$\n]+?)\$|\\\(([\s\S]+?)\\\)/g, function (_, b1, b2, l1, l2) {
+      var blokk = b1 != null ? b1 : b2, linje = l1 != null ? l1 : l2;
       formler.push(blokk != null ? '\\[' + blokk + '\\]' : '\\(' + linje + '\\)'); return '\u0000' + (formler.length - 1) + '\u0000';
     });
     return mdTekst(s).replace(/\u0000(\d+)\u0000/g, function (_, i) { return esc(formler[+i]); });
@@ -98,7 +99,20 @@
     }).join('');
   }
   function inline(s) { return s.replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<i>$2</i>'); }
-  function matte(el) { if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([el]).catch(function () {}); }
+  // Formler: MathJax lastes bare av Quarto på sider som selv har formler. Mangler det, laster vi det her.
+  var mjLofte = null;
+  function mathjax() {
+    if (mjLofte) return mjLofte;
+    if (window.MathJax && (MathJax.startup || MathJax.typesetPromise))
+      return (mjLofte = (MathJax.startup && MathJax.startup.promise) || Promise.resolve());
+    window.MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] }, startup: { typeset: false } };
+    return (mjLofte = new Promise(function (ok) {
+      var s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js'; s.async = true;
+      s.onload = function () { (MathJax.startup && MathJax.startup.promise || Promise.resolve()).then(ok, ok); }; s.onerror = ok;
+      document.head.appendChild(s);
+    }));
+  }
+  function matte(el) { mathjax().then(function () { if (window.MathJax && MathJax.typesetPromise) return MathJax.typesetPromise([el]); }).catch(function () {}); }
 
   function visMelding(m, animer) {
     var d = document.createElement('div');
