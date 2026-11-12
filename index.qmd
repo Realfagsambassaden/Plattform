@@ -8,12 +8,12 @@ page-layout: full
 <section class="hero">
   <div class="hero-tekst">
     <img class="hero-logo" src="assets/img/fh-logo-stor.png" alt="fysikkhjelp.no">
-    <p class="eyebrow">Fysikk på alle nivå!</p>
+    <p class="eyebrow">Fysikk for forkurs og universitet!</p>
     <h1>Fysikk <span class="g">forklart</span></h1>
     <p class="lead">Korte videoer, tydelige formler, kode du kan kjøre selv og oppgaver med hint når du står fast. Laget av de som kan det best: ekte fysikere med formidlerglede!</p>
-    <div class="cta">
-      <a class="btn-chalk" href="fysikk-forkurs/index.html">Gå til forkurset</a>
-    </div>
+    <a class="skroll-pil" href="#velg-loype" aria-label="Skroll ned til løypene">
+      <svg viewBox="0 0 48 64" aria-hidden="true"><path d="M24 4 C23 20 25 36 24 54" /><path d="M10 40 C16 46 20 50 24 56 C28 50 32 46 38 40" /></svg>
+    </a>
   </div>
   <div class="hero-scene">
     <img src="assets/img/tegninger/hero-dashman.webp" alt="Dashman får en aha-opplevelse, med F = ma og E = mc² tegnet i kritt rundt seg på en tavle full av formler">
@@ -22,7 +22,7 @@ page-layout: full
 </section>
 ```
 
-::: {.eyebrow}
+::: {#velg-loype .eyebrow}
 Velg løype
 :::
 

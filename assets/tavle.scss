@@ -642,3 +642,11 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .kort > ul > li:has(a):hover::after { transform: translateX(3px); }
 // Lange ord i smale kort deles i stedet for å flyte ut av kortet.
 .kort > ul > li, .steg > ol > li { hyphens: auto; overflow-wrap: break-word; }
+
+// ---------- grønn pil på forsiden som viser at man skal skrolle ----------
+.skroll-pil { display: inline-block; margin-top: 1.8rem; width: 46px; color: $neon; animation: skroll-pil 1.6s ease-in-out infinite; }
+.skroll-pil svg { display: block; width: 100%; height: auto; fill: none; stroke: currentColor; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 6px rgba($neon, .55)); }
+.skroll-pil:hover, .skroll-pil:focus-visible { color: lighten($neon, 12%); }
+@keyframes skroll-pil { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(12px); } }
+@media (prefers-reduced-motion: reduce) { .skroll-pil { animation: none; } }
+#velg-loype { scroll-margin-top: 5rem; }
