@@ -50,14 +50,15 @@
     // Nivåknappen: viser nivået, og lar deg bytte til samme undertema på et annet nivå
     if (info && info.niva) {
       var tv = info.tvillinger || [];
+      var nvId = function (n) { return { 'Forkurs': 'forkurs', 'Ingeniør': 'ingenior', 'Fordypning': 'fordypning' }[n] || ''; };
       if (tv.length) {
-        h += '<details class="niva-knapp"><summary><span>Nivå: ' + esc(info.niva) + ' ▾</span></summary><div class="niva-meny">' +
+        h += '<details class="niva-knapp" data-nv="' + nvId(info.niva) + '"><summary><span>Nivå: ' + esc(info.niva) + ' ▾</span></summary><div class="niva-meny">' +
              '<span class="nm-tittel">Samme tema på et annet nivå</span>' +
-             '<span class="nm-her"><b>' + esc(info.niva) + '</b> · denne siden</span>' +
-             tv.map(function (t) { return '<a href="' + t.url + '" title="' + esc(t.tittel) + '"><b>' + esc(t.niva || 'Annet') + '</b> · ' + esc(t.kilde) + '</a>'; }).join('') +
+             '<span class="nm-her" data-nv="' + nvId(info.niva) + '"><b>' + esc(info.niva) + '</b> · denne siden</span>' +
+             tv.map(function (t) { return '<a href="' + t.url + '" data-nv="' + nvId(t.niva) + '" title="' + esc(t.tittel) + '"><b>' + esc(t.niva || 'Annet') + '</b> · ' + esc(t.kilde) + '</a>'; }).join('') +
              '</div></details>';
       } else {
-        h += '<span class="niva-knapp alene"><span>Nivå: ' + esc(info.niva) + '</span></span>';
+        h += '<span class="niva-knapp alene" data-nv="' + nvId(info.niva) + '"><span>Nivå: ' + esc(info.niva) + '</span></span>';
       }
     }
     if (info) h += '<span class="ll-tema"><span class="ll-merke">Tema</span><a href="' + info.temaUrl + '">' + esc(info.omrade) + ' › ' + esc(info.tema) + '</a>' +

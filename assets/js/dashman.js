@@ -129,7 +129,7 @@
     if (!profil || profil.niva) return;
     var d = document.createElement('div'); d.className = 'dm-m dm-fra dm-niva';
     d.innerHTML = '<p>Først: hvilket nivå er du på? Da kan jeg tilpasse meg deg.</p><p>' +
-      [['forkurs', 'Forkurs'], ['ingenior', 'Ingeniør'], ['fordypning', 'Fordypning']].map(function (n) { return '<button type="button" data-niva="' + n[0] + '">' + n[1] + '</button>'; }).join(' ') + '</p>';
+      [['forkurs', 'Forkurs'], ['ingenior', 'Ingeniør'], ['fordypning', 'Fordypning']].map(function (n) { return '<button type="button" data-niva="' + n[0] + '" data-nv="' + n[0] + '">' + n[1] + '</button>'; }).join(' ') + '</p>';
     logg.appendChild(d);
     d.addEventListener('click', function (e) {
       var n = e.target.getAttribute && e.target.getAttribute('data-niva'); if (!n) return;
