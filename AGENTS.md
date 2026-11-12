@@ -95,6 +95,7 @@ Fargene settes av stilarket (`assets/tavle.scss`, lys modus i `assets/lys.scss`)
 | Hva | Farge | Slik skriver du det |
 |---|---|---|
 | Overskrifter (sidetittel, `##`, `###`) | oransje | vanlige overskrifter |
+| Temaoverskrifter i temakortene på områdesidene (f.eks. «Kinematikk» under «Mekanikk») | oransje | `.tema-kort .ek h2` |
 | Eksempler | gul | `::: {.eksempel}` med `**Eksempel: Navn.**` først |
 | Spørsmål, «Til ettertanke», «Tenk selv» | gul | `::: {.callout-tip title="Til ettertanke"}` – tittel med *ettertanke*, *tenk selv*, *spørsmål* eller som slutter med «?» blir gul automatisk (klassen `.sporsmal`). Kapitlenes `::: {.spm}` er også gul. |
 | Definisjoner | grønn | `::: {.callout-note title="Definisjon: …"}` – tittel som starter med «Definisjon» blir grønn automatisk (klassen `.definisjon`) |
