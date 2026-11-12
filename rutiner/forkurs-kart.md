@@ -29,10 +29,10 @@ Tegn: ✓ = dekket, ⚠ = finnes, men tynn eller «under arbeid», P = plasshold
 | 6.1–6.3 Massetetthet, trykk, oppdrift | 08/01–04 | ✓ |
 | 6.4 Temperatur | 09/01 | ✓ ⚠ |
 | 6.5 Tilstandslikningen | 09/06 (var 05) | ✓ ⚠ |
-| 7.1–7.3 Indre energi, 1. lov, kalorimetri | 09/01–04 | ✓ ⚠ |
+| 7.1–7.3 Indre energi, 1. lov, kalorimetri | 09/01–04 | ✓ ⚠ (09/04 ryddet 12. nov.) |
 | 7.4–7.5 2. lov, kjøleskap, varmepumper | 09/08 (var 07) | ✓ |
 | 8.1 Stoffmengde | 09/05 | ✓ (11. nov.) |
-| 8.2–8.3 Prosesser, arbeid ved ekspansjon | 09/07 (var 06) | ⚠ (717 ord) |
+| 8.2–8.3 Prosesser, arbeid ved ekspansjon | 09/07 (var 06) | ✓ (12. nov.) |
 | 8.4 Varmetransport | 09/09 (var 08) | ✓ |
 | 9.1–9.2 Bølger, lysbølger | 10/01 | P |
 | 9.3 Atomet | 12/01 | P |
@@ -41,7 +41,7 @@ Tegn: ✓ = dekket, ⚠ = finnes, men tynn eller «under arbeid», P = plasshold
 | **9.6 Atomkjernen** | 12 (ny side) | **NY** |
 | 9.7–9.8 Radioaktivitet, omdanning | 12/03–04 | P |
 | 10.1–10.2 Termisk stråling, drivhuseffekt | 10/02–04 | P |
-| 11.1–11.5, 11.7 Elektrisitet | 11/01–05 | ⚠ (237–616 ord, «under arbeid») |
+| 11.1–11.5, 11.7 Elektrisitet | 11/01–05 | ⚠ (11/01 ✓ 12. nov.; 11/02–05 237–496 ord, «under arbeid») |
 | 11.6 EMS, indre resistans | 11/06 | P |
 | 14.1–14.3 Statikk | 06/01–04 | ✓ |
 | 15.1 Bevegelsesgrafer | 13/02 | P |
@@ -56,8 +56,8 @@ Tegn: ✓ = dekket, ⚠ = finnes, men tynn eller «under arbeid», P = plasshold
 0. **Rydding først, i én egen PR (gren `natt/krefter-rydd-plassholdere`):** Slett de tre plassholderfilene over, og gi `10-ekstraoppgaver.qmd` nytt nummer `07` med den gamle adressen i `aliases:`. Ingen andre sider eller løyper lenker til dem (sjekket 9. nov.). Sammensatte mekanikkoppgaver settes så inn før ekstraoppgavene.
 1. Arbeidsmetoder, utvidet etter lærerens ønske: Usikkerhet skal stå i samme bolk som signifikante siffer, standardform og regning med enheter, i temaet `maling-og-usikkerhet` i kapitlet `01-hva-er-fysikk`. Flytt plassholderen for måleusikkerhet (`08`) rett etter `05-signifikante-siffer`, skriv den, og legg ny side om usikkerhet i sammensatte størrelser rett etter den. Gi de påfølgende filene nye nummer med gamle adresser i `aliases:`. Utvid `05-signifikante-siffer` med en kobling mellom gjeldende siffer og usikkerhet (behold lærerens tekst). Skriv deretter 10 (grafer og regresjon) og 11 (forsøk og rapport). ✓ 11. nov.
 2. Sammensatte mekanikkoppgaver (✓ 11. nov., 04/07).
-3. Termofysikk: stoffmengde (✓ 11. nov., 09/05), utvide 09/07 (prosesser, var 06), rydde «under arbeid» (09/04 og 09/07, var 06).
-4. Elektrisitet: utvide 11/01–05, skrive 11/06. Lærerens tekst beholdes og bygges ut.
+3. Termofysikk: stoffmengde (✓ 11. nov., 09/05), utvide 09/07 (prosesser, var 06), rydde «under arbeid» (09/04 og 09/07, var 06). ✓ 12. nov.
+4. Elektrisitet: utvide 11/01–05, skrive 11/06. Lærerens tekst beholdes og bygges ut. (11/01 ✓ 12. nov.)
 5. Bølger og stråling: 10/01–04.
 6. Atom og kjerne: 12/01–04 + to nye.
 7. Programmering: 13/01–03 + to til tre nye.
