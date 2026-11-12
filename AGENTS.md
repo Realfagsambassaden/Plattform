@@ -29,7 +29,7 @@ Forkurset ble tidligere skrevet i LaTeX (`kosmoben/TRES0312`). Fra november 2026
 - Flett selv bare når læreren har bedt om det. Ellers: lag PR-en og la læreren se over.
 - **Grener som heter `natt/…` flettes automatisk av GitHub** så snart PR-en åpnes (arbeidsflyten `flett-nattjobben.yml` i hvert repo). De er forbeholdt nattjobben, se `rutiner/nattjobb-instruks.md`. Bruk aldri `natt/` for noe som skal ses over av et menneske først.
 - Hent repoer med `add_repo` (eier `Realfagsambassaden`, tilgang `push`). Bruk `gh api repos/...` (REST); GraphQL (`gh pr list/create`) virker ikke fra øktene. Grener kan ikke slettes, og repoer kan ikke opprettes fra øktene.
-- **Ikke rediger genererte filer:** `_site/`, `tema/`, `kilder/`, `innhold.json`, `loyper.json`, `_fag.json`, menyene i `_quarto.yml` nivåkortene mellom `<!-- >>> nivakort -->`-merkene i `index.qmd` (lages fra `nivaer.yml`) og løypekortene mellom `<!-- >>> lopekort -->`-merkene i `matematikkhjelp/index.qmd`.
+- **Ikke rediger genererte filer:** `_site/`, `tema/`, `kilder/`, `innhold.json`, `loyper.json`, `_fag.json`, menyene i `_quarto.yml`, nivåkortene mellom `<!-- >>> nivakort -->`-merkene i `index.qmd` (lages fra `nivaer.yml`) og løypekortene mellom `<!-- >>> lopekort -->`-merkene i `matematikkhjelp/index.qmd`.
 - Bygg og sjekk lokalt når det er mulig (`./bygg.sh`, `./matematikkhjelp/bygg.sh`), og se på resultatet før du leverer.
 
 ## 3. Innholdsmodell: tema → undertema → nivå
