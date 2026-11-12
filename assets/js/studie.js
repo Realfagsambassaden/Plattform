@@ -486,7 +486,8 @@ function studieStart() {
   }
   function fraFag(c) {
     return { navn: c.navn, emnebeskrivelse: c.emnebeskrivelse || '', laringsutbytte: c.laringsutbytte || '', ramme: Object.assign(STD_RAMME(), c.ramme || {}),
-      elementer: Object.assign({}, STD_ELEM, c.elementer || {}), moduler: medId((c.moduler || []).length ? JSON.parse(JSON.stringify(c.moduler)) : fraTemaer(c.temaer || [])) };
+      elementer: Object.assign({}, STD_ELEM, c.elementer || {}), moduler: medId((c.moduler || []).length ? JSON.parse(JSON.stringify(c.moduler)) : fraTemaer(c.temaer || [])),
+      dashman_fase: c.dashman_fase == null ? 2 : c.dashman_fase, dashman_instruks: c.dashman_instruks || '' };
   }
   // Fag laget før fagbyggeren har bare en temaliste. Den gjøres om til moduler: én modul per tema, én uke per tema.
   function fraTemaer(l) {
@@ -515,6 +516,7 @@ function studieStart() {
     var f = T.fag, u = f.u; if (!u) return Promise.resolve();
     medId(u.moduler);
     var rad = { navn: (u.navn || '').trim() || f.c.navn, emnebeskrivelse: u.emnebeskrivelse, laringsutbytte: u.laringsutbytte, ramme: u.ramme, elementer: u.elementer, moduler: u.moduler, endret: new Date().toISOString() };
+    if ('dashman_fase' in f.c) { rad.dashman_fase = Math.max(0, Math.min(4, +u.dashman_fase || 0)); rad.dashman_instruks = String(u.dashman_instruks || '').slice(0, 2000); }   // når databasen har feltene
     return k.from('kurs').update(rad).eq('id', f.c.id).then(sjekk).then(function () {
       Object.assign(f.c, rad); f.lagrer = false; f.lagreFeil = null; f.lagret = new Date();
       var el = document.getElementById('st-lagret'); if (el) el.textContent = 'Lagret ' + f.lagret.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit' });
@@ -606,6 +608,10 @@ function studieStart() {
         '<fieldset class="st-feltsett"><legend>Nivå</legend><div class="st-piller" role="radiogroup" aria-label="Nivå">' +
         [['', 'Alle nivåer']].concat(NIVAER).map(function (n) { return '<label class="st-valg st-pille"><input type="radio" name="st-niva" value="' + n[0] + '"' + ((r.niva || '') === n[0] ? ' checked' : '') + '> ' + n[1] + '</label>'; }).join('') + '</div>' +
         '<p class="st-sm">Lenkene i tidslinjen, fokusvisningen og undervisningsmodus går rett til sidene på dette nivået når de finnes. I modulene kan du velge et annet nivå for enkelte undertemaer.</p></fieldset>' +
+        ('dashman_fase' in f.c ? '<fieldset class="st-feltsett"><legend>Dashman, KI-læringspartneren</legend>' +
+          '<p class="st-sm">Dashman veileder studentene etter LRI (load reduction instruction): hint og spørsmål, aldri fasit. Velg hvilken fase faget er i nå. Du kan endre den underveis.</p><div class="st-piller" role="radiogroup" aria-label="Dashman-fase">' +
+          [[1, '1 Oppstart'], [2, '2 Øving'], [3, '3 Arbeidskrav og mappe'], [4, '4 Selvstendighet'], [0, 'Av']].map(function (x) { return '<label class="st-valg st-pille" title="' + ['Dashman har pause i faget (f.eks. under en prøve)', 'Kartlegger forkunnskaper, tetter hull, mye støtte', 'Læringspartner i øvingene, støtten trappes ned', 'Tilbakemelding på utkast; studenten forklarer den med egne ord', 'Ingen hint: åpne, sammensatte problemer'][x[0]] + '"><input type="radio" name="st-dmfase" value="' + x[0] + '"' + (+u.dashman_fase === x[0] ? ' checked' : '') + '> ' + x[1] + '</label>'; }).join('') + '</div>' +
+          '<label class="st-sm">Dine instrukser til Dashman (valgfritt): fokus nå, vanlige misoppfatninger, hva han ikke skal hjelpe med<textarea data-felt="dashman_instruks" maxlength="2000" placeholder="F.eks. «Denne uka: kraftdiagram. Mange glemmer normalkraften på skråplan. Ikke hjelp med arbeidskrav 2 før fristen.»">' + esc(u.dashman_instruks) + '</textarea></label></fieldset>' : '') +
         '<fieldset class="st-feltsett"><legend>Dette skal faget ha</legend><div class="st-to">' + boks('moduler', 'Moduler') + boks('arbeidskrav', 'Arbeidskrav') + boks('samlinger', 'Samlinger og slides') + boks('tidslinje', 'Tidslinje') + '</div></fieldset>' +
         forMangeUker() +
         (f.bekreftKi ? '<div class="st-fb r"><b>Erstatte oppsettet?</b><p>Faget har allerede ' + u.moduler.length + ' moduler. Et nytt forslag fra KI erstatter dem.</p><p><button type="button" class="st-btn" data-h="kiOppsett">Ja, lag nytt forslag</button> <button type="button" class="st-btn g" data-h="avbrytKi">Avbryt</button></p></div>' : '') +
@@ -1728,6 +1734,7 @@ function studieStart() {
     else if (el.dataset.inn) { T.inn[el.dataset.inn] = el.checked; lagreInn(); }
     else if (el.dataset.felt === 'leggUT' && el.value) { var w = T.fag.u.moduler[+el.dataset.m].uker[+el.dataset.u]; if (w.undertemaer.indexOf(el.value) < 0) w.undertemaer.push(el.value); planlagreFag(); tegn(); }
     else if (el.name === 'st-form') { T.fag.u.ramme.form = el.value; planlagreFag(); }
+    else if (el.name === 'st-dmfase' && T.fag) { T.fag.u.dashman_fase = +el.value; planlagreFag(); }
     else if ((el.name === 'st-niva' || el.dataset.felt === 'fagNiva') && T.fag) { T.fag.u.ramme.niva = el.value; planlagreFag(); tegn(); }
     else if (el.dataset.felt === 'utNiva' && T.fag) { var wn = T.fag.u.moduler[+el.dataset.m].uker[+el.dataset.u]; wn.niva = Object.assign({}, wn.niva); if (el.value) wn.niva[el.dataset.id] = el.value; else delete wn.niva[el.dataset.id]; if (!Object.keys(wn.niva).length) delete wn.niva; planlagreFag(); tegn(); }
     else if (el.dataset.matki === 'hva' && T.fag && T.fag.matRed) { T.fag.matRed.ki.hva = el.value; }

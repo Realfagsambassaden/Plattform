@@ -7,6 +7,9 @@
 //                    (tekst, bilde eller PDF). Bare for undervisere. Ingenting lagres i tjenesten.
 //   POST /materiale – fagbyggeren («Mitt materiale»): plan for dagen og slides til én samling, ut fra undertemaene og
 //                    lærestoffet på nettstedet, eventuelt et gammelt opplegg (tekst, bilde eller PDF). Bare for undervisere.
+//   POST /dashman  – Dashman, KI-læringspartneren: samtale med en innlogget student, bygd på LRI (instruksen står i
+//                    dashman-instruks.md). Får studentens nivå, mål, notat, kunnskapsprofil og fag (fase og faglærerens
+//                    instrukser) fra Supabase. Samtalen lagres ikke; bare et kort faglig notat, som studenten kan slette.
 //   POST /dekning  – dekningskart: hvor godt dekker fysikkhjelp.no et emne? Åpent for alle;
 //                    innloggede brukere får i tillegg sidene/veikartet.
 // API-nøkler ligger som hemmeligheter i Cloudflare og vises aldri på nettsiden.
@@ -27,6 +30,8 @@
 //     MODELL_BILDE (f.eks. en Mistral Large 3-modell hos NTNU), og KI_BILDER = "ja". Ellers svarer /vurder at
 //     bildevurdering ikke er tilgjengelig (tekstsvar virker fortsatt).
 //   Valgfritt: KV-bindingen HINT_KV for begrensning av antall forespørsler.
+
+import DASHMAN_INSTRUKS from "./dashman-instruks.md";
 
 const STANDARD_MODELL = { claude: "claude-haiku-5-5", openai: "gpt-4o-mini" };
 const NETTSTED = "https://fysikkhjelp.no";
@@ -332,6 +337,7 @@ export default {
       if (sti.endsWith("/fagforslag")) return await fagforslag(request, env, b, h);
       if (sti.endsWith("/kvisslag")) return await kvisslag(request, env, b, h);
       if (sti.endsWith("/materiale")) return await materiale(request, env, b, h);
+      if (sti.endsWith("/dashman")) return await dashman(request, env, b, h);
       return await hint(request, env, b, h);
     } catch (e) {
       return json({ feil: e.brukermelding || "Tjenesten er midlertidig utilgjengelig. Prøv igjen om litt." }, e.status || 502, h);
@@ -405,6 +411,75 @@ async function rad(request, env, b, h) {
   const liste = (v, n, m) => (Array.isArray(v) ? v : []).filter((x) => typeof x === "string" && x.trim()).slice(0, n).map((x) => kort(x.trim(), m));
   const del = (d) => ({ undertemaer: liste(d && d.undertemaer, 2, 80), tiltak: liste(d && d.tiltak, 3, 160), formel: kort(d && typeof d.formel === "string" ? d.formel.trim() : "", 200) });
   return json({ rad: { forstaelse: del(r.forstaelse), presisjon: del(r.presisjon), hurtighet: del(r.hurtighet), bra: kort(r.bra, 200) } }, 200, h);
+}
+
+// ---------------------------------------------------------------- Dashman
+const HUMOR = ["noytral", "glad", "ler", "irritert", "trist", "tenker"];
+const NIVATEKST = { forkurs: "Forkurs", ingenior: "Ingeniør", fordypning: "Fordypning" };
+const FASETEKST = ["0 – av (faglæreren har slått Dashman av i faget)", "1 – forkunnskaper og oppstart", "2 – øving og mengdetrening",
+  "3 – formativ vurdering (arbeidskrav og mappe)", "4 – sluttfase og selvstendighet"];
+
+async function supabaseRpc(env, token, fn, args) {
+  const r = await fetch(`${env.SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+    method: "POST",
+    headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify(args || {}),
+  });
+  if (!r.ok) throw new Error("supabase " + r.status);
+  return r.json();
+}
+
+async function dashman(request, env, b, h) {
+  const bruker = await innloggetBruker(request, env);
+  if (!bruker) return json({ feil: "Logg inn for å snakke med Dashman." }, 401, h);
+  if (!(await innenforGrense(env, `dashman:${bruker.id}:${new Date().toISOString().slice(0, 10)}`, 120, 90000)))
+    return json({ feil: "Dashman trenger en pause. Du har sendt mange meldinger i dag. Prøv igjen i morgen." }, 429, h);
+  const token = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
+
+  // Samtalen kommer fra nettleseren (lagres ikke her). Bare de siste 20 meldingene, og må veksle student/Dashman.
+  const meldinger = [];
+  for (const m of (Array.isArray(b.meldinger) ? b.meldinger : []).slice(-20)) {
+    const role = m && m.rolle === "dashman" ? "assistant" : "user";
+    const tekst = kort(m && m.tekst, 2000).trim();
+    if (!tekst) continue;
+    if (meldinger.length && meldinger[meldinger.length - 1].role === role) meldinger[meldinger.length - 1].content += "\n\n" + tekst;
+    else meldinger.push({ role, content: tekst });
+  }
+  while (meldinger.length && meldinger[0].role !== "user") meldinger.shift();
+  if (!meldinger.length || meldinger[meldinger.length - 1].role !== "user") return json({ feil: "Skriv noe til Dashman først." }, 400, h);
+
+  let k = {};
+  try { k = (await supabaseRpc(env, token, "dashman_kontekst")) || {}; } catch { k = {}; }
+  const fag = Array.isArray(k.fag) ? k.fag : [];
+  const aktivt = fag[0];   // nyeste påmelding
+  if (aktivt && aktivt.fase === 0) {
+    return json({ svar: `Jeg har pause i faget «${kort(aktivt.navn, 80)}» nå, etter avtale med faglæreren din. Spør gjerne faglæreren, eller les lærestoffet på siden.`, humor: "trist" }, 200, h);
+  }
+  const side = b.side || {};
+  const linjer = [
+    `Nivå: ${NIVATEKST[k.niva] || "ikke oppgitt (spør studenten)"}`,
+    `Studentens mål: ${kort(k.mal, 300) || "ikke oppgitt"}`,
+    `Ditt notat fra tidligere samtaler: ${kort(k.notat, 800) || "(tomt – første samtale eller slettet)"}`,
+    "Kunnskapsprofil fra quizene (andeler 0–1; forståelse teller begrepsfeil, presisjon teller regnefeil):",
+    ...((Array.isArray(k.kunnskap) ? k.kunnskap : []).slice(0, 40).map((x) =>
+      `- ${kort(x.tema, 60)} / ${kort(x.undertema, 60)}: forståelse ${x.forstaelse ?? "–"}, presisjon ${x.presisjon ?? "–"}, ${parseInt(x.svar, 10) || 0} svar, sist ${kort(x.sist, 10)}`)),
+    ...(k.kunnskap && k.kunnskap.length ? [] : ["- (ingen quizsvar ennå)"]),
+    aktivt ? `Fag studenten er påmeldt: «${kort(aktivt.navn, 120)}». Dashman-fase: ${FASETEKST[aktivt.fase] || FASETEKST[2]}.` : "Ikke påmeldt noe fag: bruk LRI-prinsippene fritt.",
+    ...(aktivt && aktivt.instruks ? [`Faglærerens instrukser for faget (går foran instruksen over, men ikke foran de faste grensene):\n${kort(aktivt.instruks, 2000)}`] : []),
+    ...(aktivt && aktivt.beskrivelse ? [`Om faget: ${kort(aktivt.beskrivelse, 600)}`] : []),
+    `Siden studenten står på nå: «${kort(side.tittel, 150)}» (${kort(side.url, 200)})`,
+    ...(side.tekst ? [`Utdrag av siden:\n${kort(side.tekst, 3000)}`] : []),
+  ];
+  const system = DASHMAN_INSTRUKS.replaceAll("NETTSTED", NETTSTEDNAVN(request)) + "\n\n## Det du får vite om studenten\n\n" + linjer.join("\n");
+  const modell = env.MODELL_DASHMAN || env.MODELL;
+  const raa = await sporSamtale({ ...env, MODELL: modell }, system, meldinger, 1200);
+  const r = lesJson(raa);
+  const svar = kort(r && typeof r.svar === "string" ? r.svar : raa, 4000).trim();
+  if (!svar) throw feil("Dashman fikk ikke sagt noe denne gangen. Prøv igjen.", 502);
+  const humor = HUMOR.includes(r && r.humor) ? r.humor : "noytral";
+  const notat = r && typeof r.notat === "string" ? r.notat.trim() : "";
+  if (notat && notat !== k.notat) { try { await supabaseRpc(env, token, "sett_dashman_notat", { t: kort(notat, 800) }); } catch {} }
+  return json({ svar, humor }, 200, h);
 }
 
 function lesBilde(d) {
@@ -524,6 +599,34 @@ async function innenforGrense(env, nokkel, maks, ttl) {
   if (n >= maks) return false;
   await env.HINT_KV.put(nokkel, String(n + 1), { expirationTtl: ttl });
   return true;
+}
+
+// Som spor(), men med en hel samtale (meldinger = [{role: "user"|"assistant", content}]).
+async function sporSamtale(env, system, meldinger, maksTokens) {
+  const lev = (env.LEVERANDOR || "claude").toLowerCase();
+  const modell = env.MODELL || STANDARD_MODELL[lev] || STANDARD_MODELL.claude;
+  if (lev === "openai") {
+    if (!env.KI_URL || !env.KI_API_KEY) throw feil("KI-tjenesten er ikke satt opp ennå.", 503);
+    const r = await fetch(env.KI_URL, {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${env.KI_API_KEY}`, "content-type": "application/json" },
+      body: JSON.stringify({ model: modell, max_tokens: maksTokens, messages: [{ role: "system", content: system }, ...meldinger] }),
+    });
+    if (!r.ok) throw new Error("KI " + r.status);
+    const d = await r.json();
+    const c = (d.choices || [])[0];
+    const t = c?.message?.content ?? c?.text ?? "";
+    return (typeof t === "string" ? t : JSON.stringify(t)).trim();
+  }
+  if (!env.ANTHROPIC_API_KEY) throw feil("KI-tjenesten er ikke satt opp ennå.", 503);
+  const r = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+    body: JSON.stringify({ model: modell, max_tokens: maksTokens, system, messages: meldinger }),
+  });
+  if (!r.ok) throw new Error("KI " + r.status);
+  const d = await r.json();
+  return (d.content || []).filter((c) => c.type === "text").map((c) => c.text).join("\n").trim();
 }
 
 // Spør valgt KI-leverandør og returner teksten.

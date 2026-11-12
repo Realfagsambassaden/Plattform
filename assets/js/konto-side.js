@@ -42,6 +42,7 @@ function start() {
         vis('mal-inne');
         visNavn(k, sesjon);
         visBrukernavn(k, sesjon);
+        visDashman(k, sesjon);
         fyllMinSide(k, sesjon);
         rot.querySelector('[data-handling="ut"]').onclick = function () { k.auth.signOut().then(function () { tegn(null); }); };
       } else tegnUte(k);
@@ -142,6 +143,26 @@ function start() {
         m.textContent = ok ? (skj.brukernavn.value.trim() ? 'Lagret. Du kan nå logge inn med brukernavnet.' : 'Brukernavnet er fjernet.') : ((r.error && r.error.message) || r.data);
         m.classList.toggle('feil', !ok);
         if (ok) skj.brukernavn.value = skj.brukernavn.value.trim().toLowerCase();
+      });
+    };
+  }
+  // Nivå og mål for Dashman, og notatet han har skrevet (kan slettes).
+  function visDashman(k, sesjon) {
+    var skj = rot.querySelector('.profil-dashman'); if (!skj) return;
+    var m = skj.querySelector('.profil-dashmanmelding'), not = skj.querySelector('.profil-dashmannotat');
+    function visNotat(t) {
+      not.hidden = !t; if (!t) return;
+      not.innerHTML = 'Dashman har notert om hvordan det går faglig: «' + esc(t) + '» <button type="button" class="btn-chalk ghost">Slett notatet</button>';
+      not.querySelector('button').onclick = function () { k.rpc('sett_dashman_notat', { t: '' }).then(function (r) { if (!r.error) visNotat(''); }); };
+    }
+    k.from('profiler').select('niva, mal, dashman_notat').eq('id', sesjon.user.id).maybeSingle().then(function (r) {
+      if (r.error) { skj.hidden = true; return; }   // databasen mangler feltene ennå
+      var d = r.data || {}; skj.niva.value = d.niva || ''; skj.mal.value = d.mal || ''; visNotat(d.dashman_notat);
+    }, function () { skj.hidden = true; });
+    skj.onsubmit = function (ev) {
+      ev.preventDefault();
+      k.rpc('sett_studentprofil', { n: skj.niva.value, m: skj.mal.value }).then(function (r) {
+        var ok = !r.error && r.data === true; m.textContent = ok ? 'Lagret.' : 'Fikk ikke lagret' + (r.error ? ': ' + r.error.message : '.'); m.classList.toggle('feil', !ok);
       });
     };
   }

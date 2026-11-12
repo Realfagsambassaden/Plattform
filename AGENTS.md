@@ -17,6 +17,7 @@ Instruksene skal ligge her i repoet, ikke bare i en chat eller et prosjektdokume
 | Notasjon | [`NOTASJON.md`](NOTASJON.md) – fasit for all notasjon |
 | Donasjoner | Privat repo `donasjoner`, rutine i [`rutiner/donasjoner.md`](rutiner/donasjoner.md) |
 | Videoer | Repo `Realfagsambassaden/videoer`, instruks i `videoer/CLAUDE.md` og `videoer/LESMEG.md` |
+| Dashman (KI-læringspartneren) | Instruksen i `hint-tjener/dashman-instruks.md`, oversikt i `LESMEG.md`, avsnitt 11 |
 | Teknisk oversikt | [`LESMEG.md`](LESMEG.md), for mennesker: [`BIDRA.md`](BIDRA.md) |
 
 Forkurset ble tidligere skrevet i LaTeX (`kosmoben/TRES0312`). Fra november 2026 ligger alt forkursstoff i `fysikk-forkurs`, og LaTeX-kompendiet hentes ikke lenger inn.

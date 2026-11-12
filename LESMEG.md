@@ -122,6 +122,7 @@ Nytt fag: legg til en «Hent …»-blokk i `.github/workflows/bygg.yml`, et kall
 - Samletall vises bare når minst 5 studenter har svart. Egenvurderingene (1–5) vises aldri enkeltvis.
 - Resultater av quizer kan ikke endres i ettertid, og tidspunktet settes av databasen.
 - Til KI sendes bare spørsmålet og studentens forklaring, aldri navn, e-post eller bruker-id. **Besvarelser (bilde, tekst, tale) lagres aldri**, bare vurderingen (riktig/regnefeil/begrep, sikkerhet og en kort faglig tilbakemelding) i `studie_svar.ki`, som går inn i kunnskapsprofilen. Bilder skaleres om i nettleseren (lerret → JPEG), så metadata som GPS-posisjon fjernes før de sendes. KI får beskjed om å se bort fra håndskrift, navn og studentnummer og bare vurdere det faglige.
+- **Dashman** (KI-læringspartneren): samtalen ligger bare i nettleserfanen og lagres ikke. KI-tjeneren får nivå, mål, kunnskapsprofil, fagene studenten er påmeldt (fase og faglærerens instrukser) og siden studenten står på, aldri navn, e-post eller bruker-id. Dashman kan skrive et kort faglig notat (høyst 800 tegn) som studenten ser og kan slette i boblen og på Min side.
 - **Tale:** gjøres om til tekst på studentens egen enhet (`processLocally` i Web Speech API). Lyden sendes ikke til noen tjeneste og lagres aldri. Bare teksten brukes. Støtter ikke nettleseren dette på norsk, skjules mikrofonknappen og studenten får beskjed om å bruke diktering på tastaturet. Vi faller aldri tilbake til talegjenkjenning på en tjener (Chrome sender ellers lyden til Google).
 - Slettes en konto (Supabase → Authentication → Users), slettes alle dataene til brukeren automatisk.
 - Ingen personopplysninger i repoet. Administrator settes med en SQL-linje som kjøres for seg (se `supabase/oppsett.sql`).
@@ -172,3 +173,22 @@ matematikkhjelp.no ligger i mappen `matematikkhjelp/` og bygges med de samme ver
 GitHub-automatikken bygger og publiserer matematikkhjelp.no i samme kjøring som fysikkhjelp.no. Domenet kobles til i Cloudflare under *Workers & Pages → matematikkhjelp → Settings → Domains & Routes*.
 
 KI-hintene bruker den samme hint-tjeneren. Den svarer som matematikklærer når forespørselen kommer fra matematikkhjelp.no.
+
+## 11. Dashman – KI-læringspartneren
+
+Innloggede studenter får en Dashman-knapp nede til venstre på alle sider. Dashman veileder etter Load Reduction Instruction (LRI, Martin mfl. 2025): kartlegger forkunnskaper, gir hint og stillas, øving, tilbakemelding og framovermelding, og trekker støtten tilbake når studenten mestrer stoffet. Han gir aldri fasiten direkte.
+
+| Fil | Hva |
+|---|---|
+| `hint-tjener/dashman-instruks.md` | **Instruksen** (systemteksten), med de faste grensene, LRI-prinsippene, fasene, nivåene og reglene for humøret. Endres her, gjelder fra neste publisering. |
+| `hint-tjener/worker.js` (`/dashman`) | Henter studentens kontekst fra Supabase (`dashman_kontekst`), spør KI-en og lagrer notatet. Grense: 120 meldinger per student per dag (når `HINT_KV` er satt opp). |
+| `assets/js/dashman.js` | Figuren, humøret, munnen som beveger seg og den grønne snakkeboblen. |
+| `supabase/oppsett.sql` | Feltene `niva`, `mal`, `dashman_notat` i `profiler`, og `dashman_fase`, `dashman_instruks` i `kurs`. |
+
+- **Humør:** KI-en velger ett av `noytral`, `glad`, `ler`, `irritert`, `trist`, `tenker` for hvert svar, etter reglene i instruksen. Ler med studenten (aldri av), irritert bare på fysikken eller sin egen dårlige forklaring, trist bare av medfølelse og alltid med noe oppmuntrende etterpå.
+- **Faglæreren styrer:** I fagbyggeren velger faglæreren fase (1 oppstart, 2 øving, 3 arbeidskrav og mappe, 4 selvstendighet, eller av) og kan gi egne instrukser. De går foran instruksen, men ikke foran de faste grensene.
+- **Studenten** velger nivå (og eventuelt mål) første gang i boblen eller på Min side.
+- **Modell:** samme som de andre KI-funksjonene. Vil du ha en sterkere modell for Dashman, sett `MODELL_DASHMAN` under `[vars]` i `hint-tjener/wrangler.toml`.
+- **Figuren** er tegnet i koden (`FIGUR` øverst i `dashman.js`) og skal byttes ut med lærerens egen Dashman: kroppen uten munn, og munner (minst nøytral, åpen og halvåpen for snakking), øyne og bryn for hvert humør som egne SVG-deler.
+
+**Oppsett (én gang):** Kjør `supabase/oppsett.sql` på nytt i Supabase → SQL Editor (trygt å kjøre flere ganger). Før det er gjort, vises ikke Dashman-feltene i fagbyggeren og på Min side, og Dashman svarer uten profil.

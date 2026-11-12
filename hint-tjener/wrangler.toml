@@ -19,3 +19,12 @@ SUPABASE_ANON_KEY = "sb_publishable_mapCEnSSxrSSwTbBKao6hw_qMOClLSS"
 # [[kv_namespaces]]
 # binding = "HINT_KV"
 # id = "LIM-INN-ID-HER"
+
+# Instruksen til Dashman (dashman-instruks.md) bygges inn i workeren som tekst.
+[[rules]]
+type = "Text"
+globs = ["**/*.md"]
+fallthrough = true
+
+# Valgfritt: egen modell for Dashman (ellers MODELL / standardmodellen), f.eks.
+# MODELL_DASHMAN = "claude-sonnet-5-5"   (legg under [vars])

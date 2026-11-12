@@ -54,6 +54,9 @@ toc: false
       <span class="konto-hjelp">Navnet vises i studieappen og for faglærerne dine i stedet for e-postadressen.</span></form>
     <form class="profil-brukernavn"><label>Brukernavn <input type="text" name="brukernavn" maxlength="30" autocomplete="username" placeholder="f.eks. kari.n" pattern="[A-Za-z0-9._\-]{3,30}"></label> <button type="submit" class="btn-chalk ghost">Lagre brukernavn</button> <span class="profil-brukernavnmelding" role="status"></span>
       <span class="konto-hjelp">Valgfritt. Med brukernavn kan du logge inn uten å skrive e-postadressen. 3–30 tegn: bokstaver, tall, punktum, bindestrek eller understrek.</span></form>
+    <form class="profil-dashman"><label>Nivå <select name="niva"><option value="">Ikke valgt</option><option value="forkurs">Forkurs</option><option value="ingenior">Ingeniør</option><option value="fordypning">Fordypning</option></select></label> <label>Mål (valgfritt) <input type="text" name="mal" maxlength="300" placeholder="f.eks. bestå fysikkeksamen i desember"></label> <button type="submit" class="btn-chalk ghost">Lagre</button> <span class="profil-dashmanmelding" role="status"></span>
+      <span class="konto-hjelp">Dashman, KI-læringspartneren, tilpasser seg nivået og målet ditt. Han får aldri navnet eller e-posten din.</span>
+      <span class="profil-dashmannotat konto-hjelp" hidden></span></form>
     <div class="profil-foresporsel konto-boks" role="status" hidden></div>
 
     <div class="profil-studentdel">
@@ -160,6 +163,9 @@ toc: false
 .profil-brukernavn input { min-width: 12rem; }
 .profil-brukernavn .konto-hjelp { flex-basis: 100%; margin: 0; }
 .profil-brukernavnmelding.feil { color: var(--bs-danger); }
+.profil-dashman { display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; margin: 0 0 1rem; }
+.profil-dashman input { min-width: 16rem; }
+.profil-dashman .konto-hjelp { flex-basis: 100%; margin: 0; }
 .profil-navnskjema { display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; margin: 0 0 1rem; }
 .profil-navnskjema input { min-width: 16rem; }
 .profil-navnskjema .konto-hjelp { flex-basis: 100%; margin: 0; }
