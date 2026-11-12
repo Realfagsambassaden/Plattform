@@ -128,3 +128,7 @@ Klassene `.sporsmal` og `.definisjon` settes av `verktoy/fag.py` ut fra tittelen
 ## 7. Dashman (KI-læringspartneren)
 
 Instruksen til Dashman står i `hint-tjener/dashman-instruks.md` (bygd på Load Reduction Instruction). Endrer læreren hvordan Dashman skal veilede eller oppføre seg, skrives det inn der. Oversikt og oppsett: `LESMEG.md`, avsnitt 11.
+
+## 8. Dashman-tegningene (figuren)
+
+Alle tegningene av Dashman (lærerens strekfigur) ligger i repoet [Realfagsambassaden/dashman](https://github.com/Realfagsambassaden/dashman): ferdige tegninger i `tegninger/` (med `OVERSIKT.md`) og en animerbar rigg (poser, øyne, munner, ekstra) i `rigg/`. Læreren vil ha **mye Dashman rundt på nettsidene**: forsider, temasider, oppgaver («Dashman skal …»), hint, tomme tilstander og feilsider. Bruk lærerens tegninger som de er, lyse streker på mørk bakgrunn og svarte på lys. Nye tegninger i samme stil kan lages, men merkes som KI-tegnet i `OVERSIKT.md`. Les README-en i Dashman-repoet før du bruker tegningene.
