@@ -192,3 +192,9 @@ Innloggede studenter får en Dashman-knapp nede til venstre på alle sider. Dash
 - **Figuren** er lærerens egen Dashman fra riggen i [Realfagsambassaden/dashman](https://github.com/Realfagsambassaden/dashman). `verktoy/dashman_bilder.py` lager bildene i `assets/img/dashman/`: snakker = `peker_tavla` (peker mot boblen) med fire munnformer, nøytral = `noytral` (blunker), glad = `armer_opp`, ler = `hoho`/`hoho_x` vekselvis og så `lattermild`, irritert = `mystisk` med utropstegn, trist = `undrende`, tenker = `gruble` med spørsmålstegn. Endres riggen: `python3 verktoy/dashman_bilder.py <dashman-repoet> assets/img/dashman`.
 
 **Oppsett (én gang):** Kjør `supabase/oppsett.sql` på nytt i Supabase → SQL Editor (trygt å kjøre flere ganger). Før det er gjort, vises ikke Dashman-feltene i fagbyggeren og på Min side, og Dashman svarer uten profil.
+
+## 12. Tegne på slidene (tavlepenn)
+
+I forelesningsmodusen (`larer/forelesning.html`) kan foreleseren tegne rett på slidene: knappen **Penn** (tast P) slår tegning av og på, **Tavle** (tast B) gir en tom tavle å regne på. Virker med Apple Pencil og finger på iPad (åpne forelesningen i Safari på iPaden og koble den til projektoren), og med mus eller tegnebrett på Mac. Pennen er trykkfølsom; etter at pennen er brukt, tegner ikke fingeren (håndflaten).
+
+Fem kritt-farger (taster 1–5), tykk/tynn strek, viskelær (E), angre (Z eller Cmd/Ctrl+Z), tøm sliden (Delete), Esc lukker pennen og tavla. Tegningene huskes per slide (og per tavle) mens fanen er åpen, også om siden lastes på nytt. Koden står i `assets/js/tavlepenn.js`.

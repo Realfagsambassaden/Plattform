@@ -546,6 +546,20 @@ body.har-foredrag { overflow: hidden; }
 .fd-knapper { display: flex; gap: .4rem; align-items: center; }
 .fd-knapper button, .fd-knapper a { background: transparent; border: 1px solid $line; color: $chalk; border-radius: 6px; padding: .2rem .6rem; text-decoration: none; }
 .fd-knapper [data-h="løsning"] { border-color: $cyan; color: $cyan; }
+/* Tavlepenn (assets/js/tavlepenn.js): tegn på slidene */
+.foredrag .fd-flate:not(.fd-maaleflate) { position: relative; }
+.tp-lerret { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.tp-lerret.tp-aktiv { pointer-events: auto; touch-action: none; cursor: crosshair; }
+.tp-tavle { position: absolute; inset: 0; z-index: 2; background: $slate; }
+.tp-tavlenavn { position: absolute; top: .7rem; left: 1.2rem; font-family: "Architects Daughter", cursive; color: $dust; font-size: 1.1rem; }
+.tp-verktoy { display: flex; gap: .35rem; align-items: center; padding: 0 .4rem; border-right: 1px solid $line; }
+.tp-verktoy button { background: transparent; border: 1px solid $line; color: $chalk; border-radius: 6px; padding: .2rem .55rem; }
+.tp-verktoy button.valgt { border-color: $neon; color: $neon; }
+.tp-verktoy .tp-farge { width: 1.5rem; height: 1.5rem; padding: 0; border-radius: 50%; background: var(--f); border: 2px solid $slate; }
+.tp-verktoy .tp-farge.valgt { outline: 2px solid $chalk; outline-offset: 1px; }
+.fd-knapper .tp-pa { background: $neon; border-color: $neon; color: $slate; }
+.tp-tegner .fd-slide { user-select: none; -webkit-user-select: none; }
+@media (max-width: 700px) { .fd-linje { flex-wrap: wrap; } .tp-verktoy { border-right: 0; } }
 
 /* Tydelig trestruktur i sidemenyen: hvert nivå rykkes inn med en tynn kritt-strek */
 #quarto-sidebar .sidebar-item-section .sidebar-section { padding-left: .55rem; margin-left: .35rem; border-left: 1px solid $line; }
