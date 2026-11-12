@@ -150,6 +150,9 @@ mjx-container { color: $chalk; }
 .eks-vis { font: 700 13px/1 $headings-font-family; border-radius: 6px; padding: .55rem .85rem; margin: .5rem 0 .2rem; border: 1px solid mix($eksempel, $line, 60%); background: transparent; color: $eksempel; cursor: pointer; }
 .eks-vis:hover { background: rgba($eksempel, .08); }
 .hint-panel { margin-top: .8rem; display: grid; gap: .5rem; }
+.hint-videre { font-size: .9rem; color: $dust; }
+.hint-panel button.hint-dashman { border-color: $neon; color: $neon; }
+.hint-panel button.hint-dashman:hover { background: rgba($neon, .12); }
 .hint-panel label { font-size: .9rem; color: $dust; }
 .hint-panel textarea { width: 100%; min-height: 4.2rem; border-radius: 8px; border: 1px solid $line; background: $slate-2; color: $chalk; padding: .6rem .8rem; font: inherit; font-size: .95rem; }
 .hint-svar { border-radius: 8px; padding: .7rem .9rem; background: rgba($cyan, .08); border: 1px solid mix($cyan, $line, 40%); }
@@ -329,6 +332,7 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 @if $modus == light { .dm-bilde, .dm-ikon { filter: invert(1) brightness(.35); } }   // lærerens tegninger: svarte streker på lys bakgrunn
 .dm-knapp { position: fixed; left: 1rem; bottom: 1rem; z-index: 1040; display: flex; align-items: center; gap: .5rem; padding: .35rem .9rem .35rem .4rem; border: 2px solid $neon; border-radius: 99px; background: $slate-2; color: $neon; font-weight: 700; cursor: pointer; }
 .dm-knapp:hover { background: rgba($neon, .12); }
+.dm-knapp[hidden], .dm-panel[hidden] { display: none !important; }
 .dm-panel { position: fixed; left: 1rem; bottom: 1rem; z-index: 1050; display: flex; align-items: flex-end; gap: .4rem; width: min(640px, calc(100vw - 2rem)); }
 .dm-scene { --dm-skala: 1; flex: 0 0 auto; display: flex; align-items: flex-end; justify-content: center; min-width: 140px; min-height: 215px; padding: 0 .3rem; border-radius: 50%; background: radial-gradient(ellipse at 50% 55%, rgba($slate, .95) 50%, rgba($slate, 0) 72%); }
 .dm-holder { filter: drop-shadow(0 0 8px rgba($neon, .25)); }
@@ -364,6 +368,8 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 .dm-skriv button { border: 0; border-radius: 12px; padding: .55rem 1rem; background: $neon; color: $on-neon; font-weight: 700; cursor: pointer; }
 .dm-venter .dm-skriv button { opacity: .5; cursor: wait; }
 .dm-info { margin: .45rem 0 0; font-size: .75rem; color: $dust; }
+.dm-oppgave { display: flex; flex-direction: column; gap: .2rem; padding: .5rem .7rem; border: 1px dashed $yellow; border-radius: 10px; font-size: .85rem; color: $dust; }
+.dm-oppgave b { color: $yellow; font-weight: 700; }
 @media (max-width: 600px) {
   .dm-knapp span { display: none; }
   .dm-knapp { padding: .35rem; }

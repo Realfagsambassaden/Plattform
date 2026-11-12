@@ -12,7 +12,6 @@
   if (!URL_ || !api || !window.fhKonto) return;
   var lagringsnavn = 'sb-' + URL_.split('//')[1].split('.')[0] + '-auth-token';
   function innlogget() { try { return !!localStorage.getItem(lagringsnavn); } catch (e) { return false; } }
-  if (!innlogget()) return;
 
   // ------------------------------------------------------------ figuren (lærerens Dashman-rigg)
   var POSITUR = { noytral: 'noytral', glad: 'glad', ler: 'ler', irritert: 'irritert', trist: 'trist', tenker: 'tenker' };
@@ -27,6 +26,8 @@
   var samtale = []; try { samtale = JSON.parse(sessionStorage.getItem(LAGER) || '[]'); } catch (e) {}
   function lagre() { try { sessionStorage.setItem(LAGER, JSON.stringify(samtale.slice(-40))); } catch (e) {} }
   var humor = 'noytral', opptatt = false, profil = null;
+  var oppgave = null; try { oppgave = JSON.parse(sessionStorage.getItem('dashman-oppgave') || 'null'); } catch (e) {}
+  function lagreOppgave() { try { if (oppgave) sessionStorage.setItem('dashman-oppgave', JSON.stringify(oppgave)); else sessionStorage.removeItem('dashman-oppgave'); } catch (e) {} }
 
   // ------------------------------------------------------------ DOM
   var knapp = document.createElement('button');
@@ -47,6 +48,17 @@
       '<p class="dm-info">Dashman er en KI-veileder. Han gir hint, ikke fasit. Samtalen lagres ikke. Sjekk viktige ting med faglæreren din.</p>' +
     '</div>';
   document.body.appendChild(knapp); document.body.appendChild(panel);
+  // Knappen vises bare for innloggede. Sjekkes på nytt når siden vises igjen (tilbake-knappen, appen hentes fram)
+  // og når innloggingen endres i en annen fane, så Dashman dukker opp straks studenten har logget inn.
+  function synlig() {
+    var inn = innlogget();
+    if (!inn) panel.hidden = true;
+    knapp.hidden = !inn || !panel.hidden;
+  }
+  synlig();
+  window.addEventListener('pageshow', synlig); window.addEventListener('focus', synlig); window.addEventListener('storage', synlig);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) synlig(); });
+  document.addEventListener('fh-innlogget', synlig);
   var logg = panel.querySelector('.dm-logg'), holder = panel.querySelector('.dm-holder'), felt = panel.querySelector('textarea');
 
   var bilde = null, animTid = null, blunkTid = null;
@@ -133,7 +145,13 @@
   }
   function visAlt() {
     logg.innerHTML = '';
-    if (!samtale.length) visMelding({ rolle: 'dashman', tekst: 'Hei! Jeg er Dashman. Jeg gir deg ikke fasiten, men jeg hjelper deg å finne den selv. Hva jobber du med?' });
+    if (oppgave) {
+      var o = document.createElement('div'); o.className = 'dm-oppgave';
+      var ot = String(oppgave.oppgave || ''); if (oppgave.tittel && ot.indexOf(oppgave.tittel) === 0) ot = ot.slice(oppgave.tittel.length).trim();
+      o.innerHTML = '<b>Oppgaven dere jobber med' + (oppgave.tittel ? ': ' + esc(oppgave.tittel) : '') + '</b><span>' + esc(ot.slice(0, 220)) + (ot.length > 220 ? ' …' : '') + '</span>';
+      logg.appendChild(o);
+    }
+    if (!samtale.length && !oppgave) visMelding({ rolle: 'dashman', tekst: 'Hei! Jeg er Dashman. Jeg gir deg ikke fasiten, men jeg hjelper deg å finne den selv. Hva jobber du med?' });
     samtale.forEach(function (m) { visMelding(m); });
     visNivavalg();
   }
@@ -177,7 +195,7 @@
     var tenk = document.createElement('div'); tenk.className = 'dm-m dm-fra dm-tenker'; tenk.innerHTML = '<p><span></span><span></span><span></span></p>'; logg.appendChild(tenk); logg.scrollTop = logg.scrollHeight;
     token().then(function (t) {
       if (!t) throw { melding: 'Du må logge inn på nytt for å snakke med Dashman.' };
-      return fetch(api, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t }, body: JSON.stringify({ meldinger: samtale, side: sideInfo() }) });
+      return fetch(api, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t }, body: JSON.stringify({ meldinger: samtale, side: sideInfo(), oppgave: oppgave }) });
     }).then(function (r) { return r.json().then(function (d) { if (!r.ok) throw { melding: d.feil }; return d; }); })
       .then(function (d) {
         tenk.remove(); settHumor(d.humor || 'noytral');
@@ -204,7 +222,7 @@
   panel.addEventListener('click', function (e) {
     var h = e.target.getAttribute && e.target.getAttribute('data-h');
     if (h === 'lukk') { panel.hidden = true; knapp.hidden = false; knapp.focus(); }
-    if (h === 'ny') { samtale = []; lagre(); settHumor('glad'); visAlt(); }
+    if (h === 'ny') { samtale = []; lagre(); oppgave = null; lagreOppgave(); settHumor('glad'); visAlt(); }
     if (h === 'husker') {
       hentProfil().then(function (p) {
         profil = p || profil;
@@ -222,4 +240,17 @@
     }
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !panel.hidden) { panel.hidden = true; knapp.hidden = false; } });
+
+  // Fra hint-knappen på en oppgave (assets/js/oppgaver.js): ny samtale om oppgaven.
+  window.addEventListener('dashman:oppgave', function (e) {
+    var d = e.detail || {}; if (!d.oppgave || !innlogget()) return;
+    oppgave = { tittel: String(d.tittel || '').slice(0, 150), oppgave: String(d.oppgave).slice(0, 2000), losning: String(d.losning || '').slice(0, 2500),
+                forsok: String(d.forsok || '').slice(0, 1500), hint: (d.hint || []).slice(0, 3) };
+    lagreOppgave(); samtale = []; lagre();
+    forhandslast(); panel.hidden = false; knapp.hidden = true; settHumor('glad');
+    (profil === null ? hentProfil().then(function (p) { profil = p; }) : Promise.resolve()).then(function () {
+      visAlt();
+      send('Jeg står fast på denne oppgaven' + (oppgave.hint.length ? ' og har fått ' + oppgave.hint.length + ' hint' : '') + '. Kan du hjelpe meg videre?');
+    });
+  });
 })();

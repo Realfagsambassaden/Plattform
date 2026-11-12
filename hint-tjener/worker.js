@@ -348,6 +348,21 @@ export default {
 // ---------------------------------------------------------------- hint
 async function hint(request, env, b, h) {
   const ip = request.headers.get("CF-Connecting-IP") || "ukjent";
+  // Innlogget student i et fag der faglæreren har satt Dashman i fase 4 (selvstendighet) eller av: ingen hint.
+  if (request.headers.get("Authorization") && env.SUPABASE_URL) {
+    try {
+      const bruker = await innloggetBruker(request, env);
+      if (bruker) {
+        const token = request.headers.get("Authorization").replace(/^Bearer\s+/i, "");
+        const k = (await supabaseRpc(env, token, "dashman_kontekst")) || {};
+        const f = (Array.isArray(k.fag) ? k.fag : [])[0];
+        if (f && (f.fase === 4 || f.fase === 0))
+          return json({ sperret: true, feil: f.fase === 4
+            ? `I «${kort(f.navn, 80)}» er dere nå i fasen der du skal jobbe selvstendig, så hint er slått av. Prøv selv – skriv ned hva du vet, og hva du skal finne.`
+            : `Faglæreren har slått av hint i «${kort(f.navn, 80)}» akkurat nå.` }, 403, h);
+      }
+    } catch { /* hint fungerer som før hvis sjekken feiler */ }
+  }
   if (!(await innenforGrense(env, `hint:${ip}:${new Date().toISOString().slice(0, 13)}`, 30, 3700)))
     return json({ feil: "Du har bedt om mange hint den siste timen. Prøv igjen litt senere." }, 429, h);
 
@@ -468,6 +483,13 @@ async function dashman(request, env, b, h) {
     ...(aktivt && aktivt.instruks ? [`Faglærerens instrukser for faget (går foran instruksen over, men ikke foran de faste grensene):\n${kort(aktivt.instruks, 2000)}`] : []),
     ...(aktivt && aktivt.beskrivelse ? [`Om faget: ${kort(aktivt.beskrivelse, 600)}`] : []),
     `Siden studenten står på nå: «${kort(side.tittel, 150)}» (${kort(side.url, 200)})`,
+    ...(b.oppgave && b.oppgave.oppgave ? [
+      "Studenten kom fra hint-knappen på en oppgave og vil jobbe videre med den sammen med deg:",
+      `Oppgave: ${kort(b.oppgave.oppgave, 2000)}`,
+      `Løsningsforslag (bare for deg – vis det ALDRI, verken helt eller delvis): ${kort(b.oppgave.losning, 2500) || "(ikke oppgitt)"}`,
+      `Dette har studenten prøvd: ${kort(b.oppgave.forsok, 1500) || "(ingenting skrevet)"}`,
+      ...((Array.isArray(b.oppgave.hint) ? b.oppgave.hint : []).slice(0, 3).map((x, i) => `Hint ${i + 1} studenten allerede har fått: ${kort(x, 600)}`)),
+    ] : []),
     ...(side.tekst ? [`Utdrag av siden:\n${kort(side.tekst, 3000)}`] : []),
   ];
   const system = DASHMAN_INSTRUKS.replaceAll("NETTSTED", NETTSTEDNAVN(request)) + "\n\n## Det du får vite om studenten\n\n" + linjer.join("\n");

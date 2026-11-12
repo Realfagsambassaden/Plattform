@@ -1,4 +1,7 @@
 // Oppgaver: «Vis løsning» og «Få et hint» (KI-hint via hint-tjeneren).
+// Etter et hint: innloggede kan fortsette med Dashman (assets/js/dashman.js) om oppgaven; andre får lenke til innlogging.
+// Er studenten påmeldt et fag der faglæreren har satt Dashman i fase 4 (selvstendighet) eller av, svarer tjenesten
+// at hint er slått av.
 // Bruk i en .qmd-fil:
 //   ::: {.oppgave niva="Middels"}
 //   Oppgavetekst …
@@ -10,6 +13,12 @@
   var meta = document.querySelector('meta[name="fysikkhjelp-hint-api"]');
   var API = meta ? meta.getAttribute('content') : '';
   var MAX_HINT = 3;
+  var SB = (document.querySelector('meta[name="supabase-url"]') || {}).content || '';
+  function innlogget() { try { return !!SB && !!localStorage.getItem('sb-' + SB.split('//')[1].split('.')[0] + '-auth-token'); } catch (e) { return false; } }
+  function token() {
+    if (!innlogget() || !window.fhKonto) return Promise.resolve(null);
+    return window.fhKonto().then(function (k) { return k.auth.getSession(); }).then(function (r) { return r && r.data && r.data.session && r.data.session.access_token; }).catch(function () { return null; });
+  }
   var emne = ((document.querySelector('h1.title') || {}).textContent || document.title) + ' – ' + ((document.querySelector('.subtitle') || {}).textContent || '');
 
   document.querySelectorAll('div.oppgave').forEach(function (opp, i) {
@@ -67,9 +76,9 @@
       if (tidligere.length >= MAX_HINT) { vis('Du har fått tre hint på denne oppgaven. Prøv litt selv, eller se på løsningen.', true); return; }
       if (!API || API.indexOf('DITTNAVN') >= 0) { vis('Hint-tjenesten er ikke satt opp ennå.', true); return; }
       send.disabled = true; send.textContent = 'Tenker …';
-      fetch(API, {
+      token().then(function (t) { return fetch(API, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: t ? { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t } : { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           emne: emne.trim(),
           oppgave: oppgavetekst,
@@ -77,21 +86,40 @@
           forsok: panel.querySelector('textarea').value.slice(0, 1500),
           tidligereHint: tidligere
         })
-      }).then(function (r) {
+      }); }).then(function (r) {
         return r.json().catch(function () { return {}; }).then(function (j) {
-          if (!r.ok) throw new Error(j.feil || 'Hint-tjenesten svarte ikke (' + r.status + ').');
+          if (!r.ok) { var f = new Error(j.feil || 'Hint-tjenesten svarte ikke (' + r.status + ').'); f.sperret = !!j.sperret; throw f; }
           return j;
         });
       }).then(function (j) {
         tidligere.push(j.hint);
         vis(j.hint, false, tidligere.length);
+        videre();
       }).catch(function (e) {
+        if (e.sperret) { vis(e.message, true); return; }
         vis(e instanceof TypeError ? 'Fikk ikke kontakt med hint-tjenesten. Prøv igjen om litt.' : (e.message || 'Noe gikk galt. Prøv igjen om litt.'), true);
       }).finally(function () {
         send.disabled = false;
         send.textContent = tidligere.length ? 'Gi meg et hint til' : 'Send og få hint';
       });
     });
+    // Videre med Dashman: oppgaven, forsøket, hintene og løsningen (som Dashman ikke viser) sendes med.
+    function videre() {
+      var gml = panel.querySelector('.hint-videre'); if (gml) gml.remove();
+      var d = document.createElement('div'); d.className = 'hint-videre';
+      if (innlogget()) {
+        d.innerHTML = '<button type="button" class="hint-dashman">Snakk med Dashman om denne oppgaven</button>';
+        d.querySelector('button').addEventListener('click', function () {
+          window.dispatchEvent(new CustomEvent('dashman:oppgave', { detail: {
+            emne: emne.trim(), tittel: tittel, oppgave: oppgavetekst, losning: losningstekst,
+            forsok: panel.querySelector('textarea').value.slice(0, 1500), hint: tidligere.slice()
+          } }));
+        });
+      } else {
+        d.innerHTML = 'Står du fortsatt fast? <a href="/konto/">Logg inn</a> for å jobbe videre med Dashman, læringspartneren vår.';
+      }
+      liste.after(d);
+    }
     function vis(tekst, feil, n) {
       var d = document.createElement('div');
       d.className = 'hint-svar' + (feil ? ' feil' : '');

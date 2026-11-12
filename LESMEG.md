@@ -191,6 +191,9 @@ Innloggede studenter får en Dashman-knapp nede til venstre på alle sider. Dash
 - **Modell:** samme som de andre KI-funksjonene. Vil du ha en sterkere modell for Dashman, sett `MODELL_DASHMAN` under `[vars]` i `hint-tjener/wrangler.toml`.
 - **Figuren** er lærerens egen Dashman fra riggen i [Realfagsambassaden/dashman](https://github.com/Realfagsambassaden/dashman). `verktoy/dashman_bilder.py` lager bildene i `assets/img/dashman/`: snakker = `peker_tavla` (peker mot boblen) med fire munnformer, nøytral = `noytral` (blunker), glad = `armer_opp`, ler = `hoho`/`hoho_x` vekselvis og så `lattermild`, irritert = `mystisk` med utropstegn, trist = `undrende`, tenker = `gruble` med spørsmålstegn. Endres riggen: `python3 verktoy/dashman_bilder.py <dashman-repoet> assets/img/dashman`.
 
+- **Fra hint til Dashman:** Etter et hint på en oppgave får innloggede knappen «Snakk med Dashman om denne oppgaven». Dashman får da oppgaven, forsøket, hintene og løsningsforslaget (som han aldri viser). Ikke innloggede får en lenke til innlogging. Er studenten påmeldt et fag i fase 4 (selvstendighet) eller med Dashman slått av, svarer hint-tjenesten at hint er slått av.
+- Knappen vises straks studenten logger inn (også på sider som allerede var åpne), og forsvinner ved utlogging.
+
 **Oppsett (én gang):** Kjør `supabase/oppsett.sql` på nytt i Supabase → SQL Editor (trygt å kjøre flere ganger). Før det er gjort, vises ikke Dashman-feltene i fagbyggeren og på Min side, og Dashman svarer uten profil.
 
 ## 12. Tegne på slidene (tavlepenn)

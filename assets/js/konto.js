@@ -76,7 +76,7 @@
       s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
       s.onload = function () {
         var k = window.supabase.createClient(URL_, NOKKEL, { auth: { persistSession: true, detectSessionInUrl: true, flowType: 'implicit' } });
-        k.auth.onAuthStateChange(function (hendelse, sesjon) { oppdaterMeny(!!sesjon); if (hendelse !== 'TOKEN_REFRESHED') hentRolle(sesjon); });
+        k.auth.onAuthStateChange(function (hendelse, sesjon) { oppdaterMeny(!!sesjon); if (hendelse !== 'TOKEN_REFRESHED') hentRolle(sesjon); document.dispatchEvent(new CustomEvent('fh-innlogget', { detail: !!sesjon })); });   // Dashman lytter
         ok(k);
       };
       s.onerror = function () { nei(new Error('lasting')); };
