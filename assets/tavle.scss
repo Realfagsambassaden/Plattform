@@ -323,6 +323,59 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
   .dekning-banner img { width: 150px; }
 }
 
+// ---------- Dashman, KI-læringspartneren (assets/js/dashman.js) ----------
+.dm-figur { display: block; width: 100%; height: auto; overflow: visible; }
+.dm-figur path, .dm-figur circle, .dm-figur ellipse { fill: none; stroke: $chalk; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.dm-figur .dm-pupill { fill: $chalk; stroke: none; }
+.dm-figur .dm-munn { transition: d .08s; }
+.dm-knapp { position: fixed; left: 1rem; bottom: 1rem; z-index: 1040; display: flex; align-items: center; gap: .5rem; padding: .35rem .9rem .35rem .4rem; border: 2px solid $neon; border-radius: 99px; background: $slate-2; color: $neon; font-weight: 700; cursor: pointer; }
+.dm-knapp .dm-figur { width: 34px; height: 48px; }
+.dm-knapp .dm-figur path, .dm-knapp .dm-figur circle, .dm-knapp .dm-figur ellipse { stroke-width: 7; }
+.dm-knapp:hover { background: rgba($neon, .12); }
+.dm-panel { position: fixed; left: 1rem; bottom: 1rem; z-index: 1050; display: flex; align-items: flex-end; gap: .4rem; width: min(640px, calc(100vw - 2rem)); }
+.dm-scene { flex: 0 0 130px; border-radius: 50%; background: radial-gradient(ellipse at 50% 55%, rgba($slate, .95) 50%, rgba($slate, 0) 72%); }
+.dm-holder { filter: drop-shadow(0 0 8px rgba($neon, .25)); }
+.dm-holder.dm-ler .dm-figur { animation: dm-hopp .35s ease-in-out 4; }
+.dm-holder.dm-irritert .dm-figur { animation: dm-rist .12s linear 5; }
+.dm-holder.dm-trist .dm-figur { transform: translateY(4px); }
+.dm-holder.dm-tenker .dm-figur { animation: dm-vugg 1.4s ease-in-out infinite; }
+@keyframes dm-hopp { 50% { transform: translateY(-7px); } }
+@keyframes dm-rist { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+@keyframes dm-vugg { 50% { transform: rotate(-3deg); } }
+@media (prefers-reduced-motion: reduce) { .dm-holder .dm-figur { animation: none !important; } }
+.dm-boble { position: relative; flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; max-height: min(72vh, 640px); padding: .8rem .9rem .6rem; border: 2px solid $neon; border-radius: 18px; background: mix($neon, $slate, 9%); color: $chalk; box-shadow: 0 10px 40px rgba(0, 0, 0, .45); }
+.dm-boble::before { content: ""; position: absolute; left: -14px; bottom: 70px; border: 12px solid transparent; border-right-color: $neon; border-left: 0; }
+.dm-topp { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .4rem; }
+.dm-topp b { color: $neon; font-family: "Architects Daughter", cursive; font-size: 1.25rem; }
+.dm-verktoy { display: flex; gap: .3rem; }
+.dm-verktoy button, .dm-niva button, .dm-husker button { border: 1px solid mix($neon, $line, 50%); background: transparent; color: $chalk; border-radius: 99px; padding: .15rem .65rem; font-size: .82rem; cursor: pointer; }
+.dm-verktoy button:hover, .dm-niva button:hover, .dm-husker button:hover { border-color: $neon; color: $neon; }
+.dm-verktoy [data-h="lukk"] { font-size: 1.1rem; line-height: 1; padding: .1rem .5rem; }
+.dm-logg { flex: 1 1 auto; overflow-y: auto; display: flex; flex-direction: column; gap: .5rem; padding: .2rem .1rem .4rem; overscroll-behavior: contain; }
+.dm-m { max-width: 88%; padding: .5rem .75rem; border-radius: 14px; line-height: 1.45; font-size: .97rem; }
+.dm-m p { margin: 0 0 .4rem; } .dm-m p:last-child { margin: 0; } .dm-m ul { margin: .2rem 0 .3rem; padding-left: 1.2rem; }
+.dm-fra { align-self: flex-start; background: rgba($slate, .55); border: 1px solid mix($neon, $line, 35%); }
+.dm-til { align-self: flex-end; background: rgba($neon, .2); }
+.dm-feil { border-color: $orange; }
+.dm-tenker span { display: inline-block; width: 7px; height: 7px; margin-right: 4px; border-radius: 50%; background: $neon; animation: dm-prikk 1s infinite; }
+.dm-tenker span:nth-child(2) { animation-delay: .15s; } .dm-tenker span:nth-child(3) { animation-delay: .3s; }
+@keyframes dm-prikk { 50% { opacity: .2; } }
+.dm-skriv { display: flex; gap: .5rem; align-items: flex-end; margin-top: .3rem; }
+.dm-skriv textarea { flex: 1; resize: none; min-height: 2.6rem; max-height: 8rem; padding: .45rem .6rem; border: 1px solid mix($neon, $line, 45%); border-radius: 12px; background: $slate; color: $chalk; font: inherit; }
+.dm-skriv textarea:focus { outline: 2px solid $neon; outline-offset: 0; }
+.dm-skriv button { border: 0; border-radius: 12px; padding: .55rem 1rem; background: $neon; color: $on-neon; font-weight: 700; cursor: pointer; }
+.dm-venter .dm-skriv button { opacity: .5; cursor: wait; }
+.dm-info { margin: .45rem 0 0; font-size: .75rem; color: $dust; }
+@media (max-width: 600px) {
+  .dm-knapp span { display: none; }
+  .dm-knapp { padding: .35rem; }
+  .dm-panel { left: .5rem; bottom: .5rem; width: calc(100vw - 1rem); flex-direction: column; align-items: flex-start; }
+  .dm-scene { flex: 0 0 auto; width: 74px; margin: 0 0 -.2rem .6rem; order: -1; }
+  .dm-boble { width: 100%; max-height: 70vh; }
+  .dm-boble::before { left: 32px; top: -14px; bottom: auto; border: 12px solid transparent; border-bottom-color: $neon; border-top: 0; }
+}
+@media print { .dm-knapp, .dm-panel { display: none !important; } }
+
 // ---------- hero-scene og profiler ----------
 .hero { grid-template-columns: 1fr; min-height: clamp(520px, 46vw, 680px); }
 .hero-tekst { position: relative; z-index: 1; max-width: 560px; }

@@ -629,3 +629,74 @@ drop policy if exists "kurs_materiale: eier" on public.kurs_materiale;
 create policy "kurs_materiale: eier" on public.kurs_materiale for all to authenticated using (public.er_kurseier(kurs)) with check (public.er_kurseier(kurs));
 grant select, insert, update, delete on public.kurs_materiale to authenticated;
 revoke all on public.kurs_materiale from anon;
+
+-- ============================================================================================================
+-- Dashman – KI-læringspartneren (hint-tjener/worker.js, /dashman; instruksen står i hint-tjener/dashman-instruks.md)
+-- Studentens nivå og mål ligger i profilen. Dashman kan holde et kort, faglig notat om studentens utvikling, som
+-- studenten selv kan se og slette. Samtalene lagres ikke.
+-- Faglæreren bestemmer Dashman-fasen i faget sitt (0 = av, 1 oppstart, 2 øving, 3 formativ vurdering, 4 selvstendighet)
+-- og kan gi egne instrukser.
+-- ============================================================================================================
+alter table public.profiler add column if not exists niva text check (niva is null or niva in ('forkurs', 'ingenior', 'fordypning'));
+alter table public.profiler add column if not exists mal text not null default '' check (char_length(mal) <= 300);
+alter table public.profiler add column if not exists dashman_notat text not null default '' check (char_length(dashman_notat) <= 800);
+alter table public.kurs add column if not exists dashman_fase smallint not null default 2 check (dashman_fase between 0 and 4);
+alter table public.kurs add column if not exists dashman_instruks text not null default '' check (char_length(dashman_instruks) <= 2000);
+
+-- Studenten setter nivå og mål selv (null = ikke endre).
+create or replace function public.sett_studentprofil(n text, m text) returns boolean
+  language plpgsql security definer set search_path = public as
+$$
+begin
+  if auth.uid() is null then return false; end if;
+  if n is not null and n not in ('forkurs', 'ingenior', 'fordypning', '') then return false; end if;
+  insert into profiler (id) values (auth.uid()) on conflict (id) do nothing;
+  update profiler set niva = case when n is null then niva when n = '' then null else n end,
+                      mal  = case when m is null then mal else left(trim(m), 300) end
+   where id = auth.uid();
+  return true;
+end $$;
+revoke execute on function public.sett_studentprofil(text, text) from public, anon;
+grant execute on function public.sett_studentprofil(text, text) to authenticated;
+
+-- Dashman skriver notatet (via KI-tjeneren, med studentens egen innlogging). Tom tekst sletter det.
+create or replace function public.sett_dashman_notat(t text) returns boolean
+  language plpgsql security definer set search_path = public as
+$$
+begin
+  if auth.uid() is null then return false; end if;
+  insert into profiler (id) values (auth.uid()) on conflict (id) do nothing;
+  update profiler set dashman_notat = left(trim(coalesce(t, '')), 800) where id = auth.uid();
+  return true;
+end $$;
+revoke execute on function public.sett_dashman_notat(text) from public, anon;
+grant execute on function public.sett_dashman_notat(text) to authenticated;
+
+-- Alt Dashman får vite om studenten: nivå, mål, notat, kunnskapsprofil (egne svar) og fagene hen er påmeldt.
+-- Ingen navn, e-post eller id. Kalles av KI-tjeneren med studentens innlogging, så den ser bare studentens egne data.
+create or replace function public.dashman_kontekst() returns jsonb
+  language sql stable security definer set search_path = public as
+$$
+  select case when auth.uid() is null then null else jsonb_build_object(
+    'niva',  (select niva from profiler where id = auth.uid()),
+    'mal',   coalesce((select mal from profiler where id = auth.uid()), ''),
+    'notat', coalesce((select dashman_notat from profiler where id = auth.uid()), ''),
+    'kunnskap', coalesce((
+      select jsonb_agg(r order by r ->> 'sist' desc) from (
+        select jsonb_build_object('tema', tema, 'undertema', undertema, 'svar', count(*),
+                 'forstaelse', round(sum(case when eff <> 'begrep' then w else 0 end) / sum(w), 2),
+                 'presisjon', round(count(*) filter (where eff = 'riktig')::numeric / nullif(count(*) filter (where eff <> 'begrep'), 0), 2),
+                 'sist', max(opprettet)::date) r
+          from (select a.*, case when a.ki ->> 'vurdering' in ('riktig', 'regnefeil', 'begrep') then a.ki ->> 'vurdering' else a.type end eff,
+                       case a.vanskelighet when 'lett' then 1 when 'middels' then 1.5 else 2 end w
+                  from studie_svar a where a.eier = auth.uid()) x
+         group by tema, undertema
+         order by max(opprettet) desc limit 40) y), '[]'::jsonb),
+    'fag', coalesce((
+      select jsonb_agg(jsonb_build_object('navn', c.navn, 'fase', c.dashman_fase, 'instruks', c.dashman_instruks,
+                                         'beskrivelse', left(c.beskrivelse, 600), 'pameldt', d.pameldt::date) order by d.pameldt desc)
+        from kurs_deltaker d join kurs c on c.id = d.kurs where d.student = auth.uid()), '[]'::jsonb)
+  ) end
+$$;
+revoke execute on function public.dashman_kontekst() from public, anon;
+grant execute on function public.dashman_kontekst() to authenticated;
