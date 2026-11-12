@@ -150,8 +150,8 @@ for o in omrader:
             for d in e['undertemaer']:
                 dss = [x for x in ss if x['undertema'] == d['id']]
                 if not dss: continue
-                nv = [t for k, t in NIVAER if any(x['niva'] == k for x in dss)]
-                q.append(f'<li><a href="{e["id"]}/{d["id"]}.html">{escape(d["tittel"])}</a>' + ''.join(f'<span class="ek-niva">{t}</span>' for t in nv) + '</li>')
+                nv = [(k, t) for k, t in NIVAER if any(x['niva'] == k for x in dss)]
+                q.append(f'<li><a href="{e["id"]}/{d["id"]}.html">{escape(d["tittel"])}</a>' + ''.join(f'<span class="ek-niva" data-nv="{k}">{t}</span>' for k, t in nv) + '</li>')
             for x in ss:
                 if not x['undertema']: q.append(f'<li><a href="../../{x["qmd"].replace(".qmd", ".html")}">{escape(x["tittel"])}</a></li>')
             q.append('</ul>')
@@ -176,11 +176,11 @@ for o in omrader:
             def celle(lst):
                 return ''.join(f'<a href="../../{x["qmd"].replace(".qmd", ".html")}">{escape(x["tittel"])}<span class="tema-kilde">{escape(x["kilde"])}</span></a>' for x in lst)
             h = ['```{=html}', '<div class="niva-tabell-ramme"><table class="niva-tabell"><thead><tr><th>Undertema</th>'
-                 + ''.join(f'<th>{t}</th>' for _, t in nivaer) + '</tr></thead><tbody>']
+                 + ''.join(f'<th data-nv="{k}">{t}</th>' for k, t in nivaer) + '</tr></thead><tbody>']
             for d in rader:
                 navn = f'<a class="dl-lenke" href="{e["id"]}/{d["id"]}.html">{escape(d["tittel"])}</a>' if d['id'] else escape(d['tittel'])
                 h.append(f'<tr><th scope="row">{navn}</th>' + ''.join(
-                    f'<td data-niva="{t}">' + celle([x for x in ss if x['undertema'] == d['id'] and x['niva'] == k]) + '</td>' for k, t in nivaer) + '</tr>')
+                    f'<td data-niva="{t}" data-nv="{k}">' + celle([x for x in ss if x['undertema'] == d['id'] and x['niva'] == k]) + '</td>' for k, t in nivaer) + '</tr>')
             h += ['</tbody></table></div>', '```', '']
             q += h
         else:
@@ -197,7 +197,7 @@ for o in omrader:
             if len(dss) > 1: dq.append('Stoffet finnes på flere nivåer. Velg det som passer deg.\n')
             dq += ['```{=html}', '<div class="dl-nivaer">']
             for k, t in nv:
-                dq.append(f'<section class="dl-niva"><h2>{t}</h2>' + ''.join(
+                dq.append(f'<section class="dl-niva" data-nv="{k or ""}"><h2>{t}</h2>' + ''.join(
                     f'<a class="dl-kort" href="../../../{x["qmd"].replace(".qmd", ".html")}"><span class="dl-tittel">{escape(x["tittel"])}</span><span class="tema-kilde">{escape(x["kilde"])}</span></a>'
                     for x in dss if x['niva'] == k) + '</section>')
             dq += ['</div>', '```', '']
@@ -297,7 +297,7 @@ if indeks.exists() and nv_f.exists() and '<!-- >>> nivakort' in indeks.read_text
         k = nv['id']
         def n_sider(o): return sum(1 for e in o['temaer'] for x in sider_per_tema[e['id']] if x['niva'] == k)
         valgt = [o for o in omrader if n_sider(o)] if nv.get('omrader', 'auto') == 'auto' else [omr_id[i] for i in nv['omrader'] if i in omr_id]
-        h.append(f'  <section class="niva-panel" id="niva-{k}" data-niva="{k}">')
+        h.append(f'  <section class="niva-panel" id="niva-{k}" data-niva="{k}" data-nv="{k}">')
         h.append(f'    <div class="niva-hode"><h2>{escape(nv["navn"])}</h2><p>{escape(nv.get("tekst", ""))}</p></div>')
         h.append('    <div class="niva-innhold">')
         h.append('      <div class="niva-temaer"><h3 class="niva-del">Temaer</h3>')

@@ -14,9 +14,9 @@ page-layout: full
     <div class="velg-niva">
       <p class="velg-niva-tittel">Velg nivå!</p>
       <div class="niva-knapper">
-        <a class="btn-chalk" href="#niva-forkurs" data-niva="forkurs">Forkurs</a>
-        <a class="btn-chalk" href="#niva-ingenior" data-niva="ingenior">Ingeniør</a>
-        <a class="btn-chalk" href="#niva-fordypning" data-niva="fordypning">Fordypning</a>
+        <a class="btn-chalk" href="#niva-forkurs" data-niva="forkurs" data-nv="forkurs">Forkurs</a>
+        <a class="btn-chalk" href="#niva-ingenior" data-niva="ingenior" data-nv="ingenior">Ingeniør</a>
+        <a class="btn-chalk" href="#niva-fordypning" data-niva="fordypning" data-nv="fordypning">Fordypning</a>
       </div>
     </div>
   </div>
