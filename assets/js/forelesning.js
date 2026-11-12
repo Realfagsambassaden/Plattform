@@ -162,7 +162,7 @@ var NETTSTED_NAVN = (document.querySelector('meta[name="nettsted-navn"]') || {})
     if (start.parentNode) start.remove();
     var scene = el('div', 'foredrag'); scene.tabIndex = 0;
     scene.innerHTML = '<div class="fd-flate"><div class="fd-slide"></div></div><div class="fd-linje"><span class="fd-navn"></span><span class="fd-pos"></span>' +
-      '<span class="fd-knapper"><button type="button" data-h="løsning" hidden>Vis løsning (L)</button><button type="button" data-h="forrige" aria-label="Forrige">←</button><button type="button" data-h="neste" aria-label="Neste">→</button>' +
+      '<span class="fd-knapper"><button type="button" data-h="løsning" hidden>Vis løsning (L)</button><button type="button" data-h="penn" aria-pressed="false" title="Tegn på sliden (P)">Penn</button><button type="button" data-h="tavle" title="Tom tavle (B)">Tavle</button><button type="button" data-h="forrige" aria-label="Forrige">←</button><button type="button" data-h="neste" aria-label="Neste">→</button>' +
       (forelesning ? '<a href="#" data-h="rediger" aria-label="Tilpass innholdet" title="Tilpass innholdet">✎</a>' : '') +
       '<button type="button" data-h="full" aria-label="Fullskjerm">⛶</button><a href="' + R + 'larer/index.html" aria-label="Avslutt">✕</a></span></div>' +
       '<div class="fd-lager" aria-hidden="true"></div><div class="fd-flate fd-maaleflate" aria-hidden="true"><div class="fd-slide fd-maal"></div></div>';
@@ -184,13 +184,17 @@ var NETTSTED_NAVN = (document.querySelector('meta[name="nettsted-navn"]') || {})
       });
     });
     var bilder = Array.prototype.slice.call(lager.querySelectorAll('img')).map(function (im) { return im.complete ? null : new Promise(function (ok) { im.onload = im.onerror = ok; setTimeout(ok, 4000); }); });
-    Promise.all([settMatte([lager])].concat(bilder)).then(function () {
+    Promise.all([settMatte([lager]), last('assets/js/tavlepenn.js')].concat(bilder)).then(function () {
       var slides = pakk(), i = 0, trinn = 0;
+      // Tavlepenn: tegn på slidene med Apple Pencil, finger eller mus (assets/js/tavlepenn.js)
+      var tp = window.Tavlepenn ? window.Tavlepenn(scene, scene.querySelector('.fd-flate:not(.fd-maaleflate)'), 'tavlepenn:' + location.pathname + location.hash.replace(/&s=\d+/, '')) : null;
+      if (tp) scene.querySelector('.fd-linje').insertBefore(tp.verktoy, scene.querySelector('.fd-knapper'));
       var fra = parseInt(param('s'), 10); if (fra > 0 && fra <= slides.length) i = fra - 1;
 
       function tegn() {
         var s = slides[i]; flate.innerHTML = ''; flate.className = 'fd-slide fd-' + (s.type || 'vanlig');
         bygg(flate, s, true);
+        if (tp) tp.slide(i);
         vist();
         scene.querySelector('.fd-pos').textContent = (i + 1) + ' / ' + slides.length;
         history.replaceState(null, '', location.pathname + location.hash.replace(/&s=\d+/, '') + '&s=' + (i + 1));
@@ -218,6 +222,7 @@ var NETTSTED_NAVN = (document.querySelector('meta[name="nettsted-navn"]') || {})
         var b = e.target.closest('button, a[data-h]'); if (!b) return;
         var h = b.getAttribute('data-h');
         if (h === 'neste') frem(); else if (h === 'forrige') tilbake(); else if (h === 'full') full(); else if (h === 'løsning') losning();
+        else if (h === 'penn' && tp) tp.penn(); else if (h === 'tavle' && tp) tp.tavle();
         else if (h === 'rediger') { e.preventDefault(); location.hash = '#id=' + encodeURIComponent(forelesning.id) + '&rediger=1'; location.reload(); }
       });
       // Ny skjermstørrelse (f.eks. fullskjerm): pakk på nytt, og bli stående på samme innhold
