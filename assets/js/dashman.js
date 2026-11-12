@@ -54,7 +54,7 @@
     if (!bilde) { holder.innerHTML = figurImg(navn); bilde = holder.querySelector('img'); bilde.onload = storrelse; return; }
     bilde.src = BILDER + navn + '.webp';
   }
-  function storrelse() { bilde.style.height = 'calc(' + bilde.naturalHeight / 2 + 'px * var(--dm-skala, 1))'; }
+  function storrelse() { bilde.style.height = 'calc(' + Math.round(bilde.naturalHeight / 1.6) + 'px * var(--dm-skala, 1))'; }
   function settHumor(h) {
     humor = h; clearInterval(animTid); clearTimeout(blunkTid); holder.className = 'dm-holder dm-' + h;
     if (h === 'ler') {   // ler: hoho og hoho_x vekselvis, så en mildere latter
