@@ -48,15 +48,14 @@ def main(oppsett, utfil):
     for sl in lister:
         pid = sl["id"]
         try:
-            fra_rss = {v["id"]: v for v in rss(pid)}
-        except Exception as e:  # noqa: BLE001
-            fra_rss = {}
-            feil.append(f"{sl['navn']}: RSS feilet: {e}")
+            fra_rss, rss_feil = {v["id"]: v for v in rss(pid)}, ""
+        except Exception as e:  # noqa: BLE001  (RSS for spillelister svarer ofte 404; da brukes bare yt-dlp)
+            fra_rss, rss_feil = {}, str(e)
         try:
             liste = ytdlp(pid)
             kilde = "yt-dlp"
         except Exception as e:  # noqa: BLE001
-            feil.append(f"{sl['navn']}: yt-dlp feilet, bruker RSS (bare de 15 nyeste): {e}")
+            feil.append(f"{sl['navn']}: yt-dlp feilet ({e}); RSS: {rss_feil or 'ok, bare de 15 nyeste'}")
             liste = list(reversed(list(fra_rss.values())))  # RSS er nyeste først
             kilde = "rss"
         for nr, v in enumerate(liste, 1):

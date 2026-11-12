@@ -7,8 +7,6 @@ on:
   schedule:
     - cron: "17 22 * * *"   # 23:17 norsk vintertid
   workflow_dispatch:
-  push:
-    branches: [verktoy/youtube]   # for testing av selve jobben
 
 permissions:
   contents: write
