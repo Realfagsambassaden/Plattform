@@ -24,6 +24,7 @@ Forkurset ble tidligere skrevet i LaTeX (`kosmoben/TRES0312`). Fra november 2026
 ## 2. Arbeidsflyt
 
 - **Alt som havner på `main`, publiseres automatisk** (3–25 minutter). Derfor går alle endringer via en gren og en pull request mot `main`, også når agenten fletter selv.
+- **`main` er beskyttet i GitHub** (regelsett «Beskytt main», besluttet 12. nov. 2026) i `Plattform` og alle fagrepoene: direkte push til `main`, tvungen push (force push) og sletting av `main` blir avvist. Alt går via en PR, også små rettelser. PR-en krever ikke godkjenning, slik at nattjobben (`natt/…`) fortsatt flettes automatisk. Unntak: `videoer` er ikke beskyttet, fordi ingenting der publiseres direkte (se `videoer/CLAUDE.md`). Nye fagrepoer fra `fag-mal` får ikke regelsettet automatisk: si fra til læreren, så det legges inn.
 - Flett selv bare når læreren har bedt om det. Ellers: lag PR-en og la læreren se over.
 - **Grener som heter `natt/…` flettes automatisk av GitHub** så snart PR-en åpnes (arbeidsflyten `flett-nattjobben.yml` i hvert repo). De er forbeholdt nattjobben, se `rutiner/nattjobb-instruks.md`. Bruk aldri `natt/` for noe som skal ses over av et menneske først.
 - Hent repoer med `add_repo` (eier `Realfagsambassaden`, tilgang `push`). Bruk `gh api repos/...` (REST); GraphQL (`gh pr list/create`) virker ikke fra øktene. Grener kan ikke slettes, og repoer kan ikke opprettes fra øktene.
