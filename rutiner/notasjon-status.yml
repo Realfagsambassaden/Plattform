@@ -1,6 +1,42 @@
 # Hvilke filer som er sjekket mot notasjonsreglene (NOTASJON.md).
 # Oppdateres av verktoy/notasjon_status.py – ikke rediger for hånd.
 filer:
+  flervariabel-kalkulus/kapitler/00-verktoy/01-vektorer-og-vektorproduktet.qmd:
+    blob: 14cf19c13c32b657a6818e5ff8437c6c687dc2d1
+    dato: '2026-11-12'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/00-verktoy/02-kontinuitet.qmd:
+    blob: f1242af616192cbff8658b7fd3637ec12acfe79e
+    dato: '2026-11-12'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/00-verktoy/03-partiellderiverte.qmd:
+    blob: d9e7d22b8c63f00e88267c6160ca95d0f4dbd686
+    dato: '2026-11-12'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/00-verktoy/04-nivakurver-og-gradient.qmd:
+    blob: 738450b9e0e011edcc16bd60666f2b92dfdc6c67
+    dato: '2026-11-12'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/00-verktoy/05-tangenter-og-normaler.qmd:
+    blob: dc7434d49fa8e2ec9304fca4fc845e0bf0017612
+    dato: '2026-11-12'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/00-verktoy/06-linjer-og-plan.qmd:
+    blob: 030e15b477eaa7d55a910cf948370a4af9017434
+    dato: '2026-11-12'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/00-verktoy/07-integrasjon.qmd:
+    blob: bf2315304099d91d981a6cb719ea6871f8ee38c0
+    dato: '2026-11-12'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/00-verktoy/08-polarkoordinater.qmd:
+    blob: 7732521171b0155f82b4b8974f6b5fe8993f2e49
+    dato: '2026-11-12'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/00-verktoy/index.qmd:
+    blob: 18f7f5985a0d5370e7e7667e22b6a44503c3f734
+    dato: '2026-11-12'
+    versjon: 2
   flervariabel-kalkulus/kapitler/01-dobbeltintegraler/01-dobbeltintegraler-over-rektangler.qmd:
     blob: 82b48a9a8542161ba74f5b9bd5b8699b88ef2ebf
     dato: '2026-11-11'
@@ -14,12 +50,12 @@ filer:
     dato: '2026-11-11'
     versjon: 2
   flervariabel-kalkulus/kapitler/01-dobbeltintegraler/04-variabelbytte.qmd:
-    blob: 794f845181d70c400581248c00838d08ac02da5d
-    dato: '2026-11-10'
+    blob: f1c4fbaadad30bc03e84dfef35f580e959f0f729
+    dato: '2026-11-12'
     versjon: 2
   flervariabel-kalkulus/kapitler/01-dobbeltintegraler/05-anvendelser.qmd:
-    blob: 8e779835277c9e84ac0a43cab76bed6c46ac6a99
-    dato: '2026-11-10'
+    blob: c649a28b1f90918683b71cf60c65c6be4d034a2e
+    dato: '2026-11-12'
     versjon: 2
   flervariabel-kalkulus/kapitler/01-dobbeltintegraler/06-numerisk-dobbeltintegral.qmd:
     blob: 378f7c6411a706b63b7945aba1ade9414050cbbd
@@ -117,6 +153,18 @@ filer:
     blob: be79f482d3a0883d93a3fe3dc4b93dff338296f2
     dato: '2026-11-11'
     versjon: 2
+  flervariabel-kalkulus/kapitler/05-integralsetninger/04-divergenssetningen.qmd:
+    blob: 0e2db66a2b5d02835f18566c7c40f5d3a1ba9f58
+    dato: '2026-11-12'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/05-integralsetninger/05-stokes-teorem.qmd:
+    blob: b3ba52a7a13ef165595af7c95b275c9d3ca6a1c2
+    dato: '2026-11-12'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/05-integralsetninger/06-oppgaver.qmd:
+    blob: 49bd843879bd97784263322b0c85e321e04fb409
+    dato: '2026-11-12'
+    versjon: 2
   fysikk-forkurs/kapitler/01-hva-er-fysikk/10-grafer-og-regresjon.qmd:
     blob: 5d6c9c97978b918ac7e3090e28fd1bddf32e4bf9
     dato: '2026-11-11'
@@ -129,9 +177,21 @@ filer:
     blob: 9829c3d8ac92f49bb03caf93a07e9d18bbd43b1e
     dato: '2026-11-11'
     versjon: 2
+  fysikk-forkurs/kapitler/09-termofysikk/04-termodynamikkens-1-lov.qmd:
+    blob: 1ef877ce6a3262acc15a7e20e4c620ab376413c6
+    dato: '2026-11-12'
+    versjon: 2
   fysikk-forkurs/kapitler/09-termofysikk/05-stoffmengde.qmd:
     blob: 6884b28c5772a8b9baf3d1f537c7cc4a30486c40
     dato: '2026-11-11'
+    versjon: 2
+  fysikk-forkurs/kapitler/09-termofysikk/07-prosesstyper-og-pv-diagram.qmd:
+    blob: eebf007050eda84aa6326514d20cf1aa12d03267
+    dato: '2026-11-12'
+    versjon: 2
+  fysikk-forkurs/kapitler/11-elektrisitet/01-begreper.qmd:
+    blob: b5c6bc2c3dabc449bea033503b889bf33999d98c
+    dato: '2026-11-12'
     versjon: 2
   ingeniorfysikk/kapitler/01-introduksjon/01-hva-er-fysikk.qmd:
     blob: 1ce59400433cd0095ab6278927d543ddab469c83
