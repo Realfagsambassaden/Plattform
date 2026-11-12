@@ -52,4 +52,4 @@ if n:
     indeks.write_text(ny, encoding='utf-8')
     print('forside:', len(fag), 'løypekort')
 else:
-    print('forside: fant ikke <!-- >>> lopekort --> i', indeks)
+    print('forside: ingen løypekort i', indeks.name, '(forsiden bruker nivåkort fra tema.py)')

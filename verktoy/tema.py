@@ -101,7 +101,7 @@ for lf in sorted((P / 'loyper').glob('*.yml')):
             'href': f"{f['kortnavn']}/kapitler/{k['dir']}/index.qmd" if k.get('har_index') else None,
             'sider': [f"{f['kortnavn']}/kapitler/{k['dir']}/{s['fil']}" for s in k['sider']]})
     loyper.append({**{k: L.get(k) for k in ('id', 'tittel', 'institusjon', 'emnekode', 'beskrivelse')},
-                   'oversikt': f"{f['kortnavn']}/index.qmd", 'sider': rekke, 'struktur': struktur})
+                   'oversikt': f"{f['kortnavn']}/index.qmd", 'sider': rekke, 'struktur': struktur, 'niva': L.get('niva') or f.get('niva')})
 
 def html(q): return '/' + q.replace('.qmd', '.html')
 
@@ -286,3 +286,48 @@ yml = re.sub(r'    left:\n(?:      .*\n|        .*\n|          .*\n|            
 
 n = sum(len(v) for v in sider_per_tema.values())
 print(f'tema: {n} sider koblet til {sum(1 for v in sider_per_tema.values() if v)} temaer, {len(uten_tema)} uten tema, {len(loyper)} løyper')
+
+# ---- forsiden: «Velg nivå!» – kort for temaområdene og løypene på hvert nivå (oppsett i nivaer.yml)
+# Skrives inn i index.qmd mellom <!-- >>> nivakort --> og <!-- <<< nivakort --> (bare der merkene finnes).
+indeks, nv_f = P / 'index.qmd', P / 'nivaer.yml'
+if indeks.exists() and nv_f.exists() and '<!-- >>> nivakort' in indeks.read_text(encoding='utf-8'):
+    omr_id = {o['id']: o for o in omrader}
+    h = []
+    for nv in yaml.safe_load(nv_f.read_text(encoding='utf-8'))['nivaer']:
+        k = nv['id']
+        def n_sider(o): return sum(1 for e in o['temaer'] for x in sider_per_tema[e['id']] if x['niva'] == k)
+        valgt = [o for o in omrader if n_sider(o)] if nv.get('omrader', 'auto') == 'auto' else [omr_id[i] for i in nv['omrader'] if i in omr_id]
+        h.append(f'  <section class="niva-panel" id="niva-{k}" data-niva="{k}">')
+        h.append(f'    <div class="niva-hode"><h2>{escape(nv["navn"])}</h2><p>{escape(nv.get("tekst", ""))}</p></div>')
+        h.append('    <div class="niva-innhold">')
+        h.append('      <div class="niva-temaer"><h3 class="niva-del">Temaer</h3>')
+        if valgt:
+            h.append('        <div class="tk-rad">')
+            for o in valgt:
+                n = n_sider(o)
+                h.append(f'          <a class="tk{"" if n else " tom"}" href="tema/{o["id"]}/index.html">'
+                         + (f'<img src="assets/img/tegninger/{o["bilde"]}.webp" alt="" loading="lazy">' if o.get('bilde') else '')
+                         + f'<span class="tk-navn">{escape(o["tittel"])}</span>'
+                         + (f'<span class="tk-ant">{n} side{"r" if n != 1 else ""}</span>' if n else '<span class="tk-ant">kommer</span>') + '</a>')
+            h.append('        </div>')
+        else:
+            h.append('        <p class="niva-tom">Kommer snart.</p>')
+        h.append('      </div>')
+        ls = [L for i in nv.get('loyper') or [] for L in loyper if L['id'] == i]
+        h.append('      <div class="niva-loyper"><h3 class="niva-del">Løyper</h3><p class="niva-forkl">Et helt kurs, side for side i fast rekkefølge.</p>')
+        if ls:
+            h.append('        <ul>')
+            for L in ls:
+                kode = f'<span class="nl-kode">{escape(L["emnekode"])}</span>' if L.get('emnekode') else ''
+                h.append(f'          <li><a href="{html(L["oversikt"])[1:]}"><span class="nl-navn">{escape(L["tittel"])}</span>{kode}</a></li>')
+            h.append('        </ul>')
+        else:
+            h.append('        <p class="niva-tom">Kommer snart.</p>')
+        h.append('      </div>')
+        h.append('    </div>')
+        h.append('  </section>')
+    t_ = indeks.read_text(encoding='utf-8')
+    t_ = re.sub(r'(<!-- >>> nivakort[^\n]*-->\n).*?([ \t]*<!-- <<< nivakort -->)',
+                lambda m: m.group(1) + ''.join(x + '\n' for x in h) + m.group(2), t_, count=1, flags=re.S)
+    indeks.write_text(t_, encoding='utf-8')
+    print('forside: nivåkort skrevet')

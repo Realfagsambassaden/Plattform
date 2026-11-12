@@ -11,58 +11,49 @@ page-layout: full
     <p class="eyebrow">Fysikk for forkurs og universitet!</p>
     <h1>Fysikk <span class="g">forklart</span></h1>
     <p class="lead">Korte videoer, tydelige formler, kode du kan kjøre selv og oppgaver med hint når du står fast. Laget av de som kan det best: ekte fysikere med formidlerglede!</p>
-    <a class="skroll-pil" href="#velg-loype" aria-label="Skroll ned til løypene">
-      <svg viewBox="0 0 48 64" aria-hidden="true"><path d="M24 4 C23 20 25 36 24 54" /><path d="M10 40 C16 46 20 50 24 56 C28 50 32 46 38 40" /></svg>
-    </a>
+    <div class="velg-niva">
+      <p class="velg-niva-tittel">Velg nivå!</p>
+      <div class="niva-knapper">
+        <a class="btn-chalk" href="#niva-forkurs" data-niva="forkurs">Forkurs</a>
+        <a class="btn-chalk" href="#niva-ingenior" data-niva="ingenior">Ingeniør</a>
+        <a class="btn-chalk" href="#niva-fordypning" data-niva="fordypning">Fordypning</a>
+      </div>
+    </div>
   </div>
   <div class="hero-scene">
     <img src="assets/img/tegninger/hero-dashman.webp" alt="Dashman får en aha-opplevelse, med F = ma og E = mc² tegnet i kritt rundt seg på en tavle full av formler">
   </div>
   <a class="soster" href="https://matematikkhjelp.no"><span>Søstersiden vår</span><img src="assets/img/mh-logo-linje.png" alt="matematikkhjelp.no"></a>
 </section>
-```
 
-::: {#velg-loype .eyebrow}
-Velg løype
-:::
-
-## Hvor i løypa er du?
-
-```{=html}
-<div class="tracks">
-  <!-- >>> lopekort (lages av verktoy/forside.py fra fag.yml – ikke rediger mellom disse linjene) -->
-  <a class="track live" href="fysikk-forkurs/index.html">
-    <img class="track-bilde" src="assets/img/tegninger/hallo.webp" alt="" loading="lazy">
-    <span class="status">Løype · under arbeid</span>
-    <h3>Forkurs i fysikk</h3>
-    <p>Fysikk fra grunnen av for deg som skal begynne på ingeniør- eller realfag. Bygger på TRES0312 ved NTNU og dekker hele forkurspensumet, med video, regneeksempler og oppgaver med hint.</p>
-  </a>
-  <a class="track live" href="ingeniorfysikk/index.html">
-    <img class="track-bilde" src="assets/img/tegninger/skratt-kast.webp" alt="" loading="lazy">
-    <span class="status">Løype · under arbeid</span>
-    <h3>Ingeniørfysikk</h3>
-    <p>Mekanikk for ingeniørstudenter: kinematikk, Newtons lover, energi, bevegelsesmengde og rotasjon.</p>
-  </a>
-  <!-- <<< lopekort -->
-  <div class="track">
-    <img class="track-bilde" src="assets/img/tegninger/flate-normal.webp" alt="" loading="lazy">
-    <span class="status">Løype · kommer på matematikkhjelp.no</span>
-    <h3>Matematikk forkurs</h3>
-    <p>Matematikken du trenger før ingeniør- og realfagsstudiet, i samme stil.</p>
-  </div>
-  <div class="track">
-    <img class="track-bilde" src="assets/img/tegninger/euler-lagrange.webp" alt="" loading="lazy">
-    <span class="status">Løype · kommer på matematikkhjelp.no</span>
-    <h3>Matematikk for ingeniørfysikk</h3>
-    <p>Derivasjon, integrasjon, vektorer og differensiallikninger, slik de brukes i ingeniørfysikken.</p>
-  </div>
+<div class="nivaer" id="nivaer">
+  <!-- >>> nivakort (lages av verktoy/tema.py fra nivaer.yml – ikke rediger mellom disse linjene) -->
+  <!-- <<< nivakort -->
 </div>
+<script>
+// «Velg nivå!»: viser bare det valgte nivået og hopper ned til det. Uten JavaScript vises alle nivåene under hverandre.
+(function () {
+  var paneler = document.querySelectorAll('.niva-panel');
+  function vis(k, rull) {
+    var p = document.getElementById('niva-' + k); if (!p) return;
+    paneler.forEach(function (x) { x.hidden = x !== p; });
+    document.querySelectorAll('.niva-knapper a').forEach(function (a) { a.classList.toggle('valgt', a.dataset.niva === k); });
+    if (rull) p.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  }
+  document.querySelectorAll('.niva-knapper a').forEach(function (a) {
+    a.addEventListener('click', function (e) { e.preventDefault(); vis(a.dataset.niva, true); history.replaceState(null, '', '#niva-' + a.dataset.niva); });
+  });
+  var m = location.hash.match(/^#niva-(\w+)/); if (m) vis(m[1], false);
+})();
+</script>
+<section class="utforsk-del">
+  <p class="eyebrow">Eller finn din egen vei</p>
 <div class="tracks brede">
   <a class="track live utforsk" href="tema/index.html">
     <img class="track-bilde" src="assets/img/tegninger/kjelke.webp" alt="" loading="lazy">
     <span class="status">Utforsk</span>
     <h3>Alle temaer</h3>
-    <p>Alt stoffet ordnet etter tema: mekanikk, fluider, termofysikk, elektromagnetisme og mer.</p>
+    <p>Alt stoffet ordnet etter tema: mekanikk, fluider, termofysikk, elektrisitet og magnetisme og mer.</p>
   </a>
   <a class="track live egen" href="dekning.html">
     <img class="track-bilde" src="assets/img/tegninger/sau-maling.webp" alt="" loading="lazy">
@@ -71,6 +62,7 @@ Velg løype
     <p>Lim inn emnebeskrivelsen til faget ditt, så finner vi sidene som passer.</p>
   </a>
 </div>
+</section>
 
 <section class="slik">
   <p class="eyebrow">Slik lærer du her</p>
