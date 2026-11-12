@@ -1,0 +1,16 @@
+# YouTube-spillelistene til DrNormann som videoene på nettsidene hentes fra.
+# Jobben «Hent YouTube-videoer» (.github/workflows/youtube.yml) leser lista hver natt og legger
+# alle videoene i youtube-videoer.json på grenen data/youtube. Nattjobben setter så nye videoer
+# inn på sidene der de passer (rutiner/nattjobb-instruks.md).
+# Ny spilleliste: legg til en linje her (id er det som står etter list= i lenken).
+
+spillelister:
+  - id: PLBSPq-MdQqrsyd2U3_LYs69vJdAxNYvmQ
+    navn: Mekanikk
+    fag: [fysikk-forkurs, ingeniorfysikk]
+  - id: PLBSPq-MdQqruVxoeYU6tAZ9t-kDUXXhoE
+    navn: Fluidmekanikk
+    fag: [fysikk-forkurs, ingeniorfysikk]
+  - id: PLBSPq-MdQqruTApi-4rLGSw4hnhtNat4N
+    navn: Elektrisitet og magnetisme
+    fag: [fysikk-forkurs, ingeniorfysikk]

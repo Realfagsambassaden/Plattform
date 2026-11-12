@@ -18,6 +18,22 @@ Ordbruk: Stoffet er ordnet etter **tema** og **undertema** (feltene `tema:` og `
 
 Videoene lages i videochatten, ikke av deg, og ligger i repoet `videoer`. Les `videoer/ferdige.yml` (`videoer:` med `<fag>/<side-id>: <YouTube-lenke>`, f.eks. `fysikk-forkurs/01-02-overslag: https://…`). For hver oppføring: finn siden i fagrepoet `<fag>` som har plassholderen `<!-- video: kommer (videoer/<fag>/<side-id>) -->` (med linja `![Video kommer](../../bilder/video-kommer.png){…}` rett under). Bytt begge linjene ut med `{{< video <lenke> >}}`. Sjekk først at lenken virker med WebFetch på `https://www.youtube.com/oembed?url=<lenke>`. Virker den ikke, la plassholderen stå og si fra i varselet. Samle alle byttene i én PR per fagrepo (gren `natt/videoer-<dato>`) og lever etter punkt 5. Er det ingenting å bytte, gå videre.
 
+## 0d. Nye videoer fra YouTube-spillelistene
+
+Læreren legger nye videoer i spillelistene på YouTube-kanalen DrNormann (listene står i `plattform/youtube.yml`). Du når ikke YouTube herfra, så GitHub henter listene hver kveld (jobben «Hent YouTube-videoer») og legger dem i `youtube-videoer.json` på grenen `data/youtube`. Les den med `gh api 'repos/Realfagsambassaden/Plattform/contents/youtube-videoer.json?ref=data/youtube' -H 'Accept: application/vnd.github.raw'`. Står det noe under `feil` der, ta det med i varselet.
+
+1. Sammenlikn med `plattform/rutiner/youtube-status.yml`. Ta for deg hver video som **mangler** i statusfila, og hver video med `venter:` (det kan ha kommet en passende side siden sist).
+2. Finn sidene der videoen passer, ut fra tittelen (og beskrivelsen) og sidenes `title`, `tema`, `undertema` og overskrifter. Se i alle fagene som står under `fag:` for spillelista i `youtube.yml`. En video kan stå på flere sider, men bare der den faktisk forklarer stoffet på siden. Sjekk med `grep` at videoen ikke står der fra før.
+3. Sett inn `{{< video https://www.youtube.com/watch?v=<id> >}}` med en tom linje før og etter:
+   - Handler videoen om hele siden: øverst, rett etter `:::: {.oppgaver}` (eller rett etter front matter hvis siden ikke har den).
+   - Handler den om én del av siden: rett under den overskriften (`## …`) den hører til.
+   - Har siden en plassholder (`<!-- video: kommer … -->` med bildet under) og videoen dekker det plassholderen er ment for, bytt begge linjene ut med videoen. Er du i tvil, la plassholderen stå og sett videoen under riktig overskrift.
+4. Bruk bare ID-ene fra `youtube-videoer.json`. Finn aldri på en ID. Videominiatyrbildet er det samme som på YouTube (det kommer med den innebygde spilleren), så det trengs ikke noe eget bilde.
+5. Finnes det ingen passende side, skriv `venter: "<hvorfor>"` i statusfila og nevn videoen i varselet (kanskje skal det lages en side). Skriv aldri en ny side bare for å få plass til en video.
+6. Én PR per fagrepo (gren `natt/youtube-<dato>`), levert etter punkt 5. Oppdater så `plattform/rutiner/youtube-status.yml` (`plassert: [<fag>/<kapittel>/<side>, …]`) og lever den i en PR til Plattform (gren `natt/youtube-status-<dato>`). Er det ingenting nytt, gå videre.
+
+`hoppet over:` i statusfila er lærerens valg. Ta ikke opp igjen de videoene.
+
 ## 1. Bestillinger går først
 
 Hent åpne issues i Plattform: `gh api 'repos/Realfagsambassaden/plattform/issues?state=open'`. Er det issues med tittel som begynner med «Bestilling», gjør den eldste som ikke allerede er løst eller har en åpen PR som nevner den (`#nummer` i PR-teksten). Skriv «Closes #nummer» i PR-beskrivelsen. Er det ingen bestillinger, følg planen under.

@@ -1,0 +1,75 @@
+# Hvilke videoer fra YouTube-spillelistene (youtube.yml) som er satt inn på sidene.
+# Oppdateres av nattjobben (rutiner/nattjobb-instruks.md, punkt 0d). Én linje per video-ID.
+# plassert: sidene videoen står på | venter: ingen passende side ennå (sjekkes hver natt) | hoppet over: med grunn
+
+videoer:
+  Zt_dt0fndx0:  # Mekanikk: E0 — Hva er fysikk? (Ingeniørfysikk)
+    plassert: [fysikk-forkurs/01-hva-er-fysikk/01-hva-er-fysikk, ingeniorfysikk/01-introduksjon/01-hva-er-fysikk]
+  f5J60Vaof0M:  # Mekanikk: E1— Hva er mekanikk? (ingeniørfysikk)
+    plassert: [fysikk-forkurs/01-hva-er-fysikk/01-hva-er-fysikk, ingeniorfysikk/01-introduksjon/01-hva-er-fysikk]
+  EwD-_OH2gLo:  # Mekanikk: E2 — Signifikante siffer og avrunding (ingeniørfysikk)
+    plassert: [fysikk-forkurs/01-hva-er-fysikk/05-signifikante-siffer, ingeniorfysikk/01-introduksjon/03-signifikante-sifre]
+  UP4GI5vN_-A:  # Mekanikk: E3 — Standardform og dekadiske prefikser (ingeniørfysikk)
+    plassert: [fysikk-forkurs/01-hva-er-fysikk/08-tall-pa-standardform, ingeniorfysikk/01-introduksjon/03-signifikante-sifre]
+  N2us1vvGqfY:  # Mekanikk: E4 — Enheter i fysikken & SI-systemet (ingeniørfysikk)
+    plassert: [fysikk-forkurs/01-hva-er-fysikk/03-fysiske-storrelser, ingeniorfysikk/01-introduksjon/02-enheter]
+  nQ7h4B4D5ig:  # Mekanikk: E5 — Fart! (ingeniørfysikk)
+    plassert: [fysikk-forkurs/03-kinematikk/02-strekning-s-og-hastighet-v, ingeniorfysikk/02-kinematikk/01-posisjon-fart-akselerasjon]
+  giCcfGv-uTc:  # Mekanikk: E6 — Strekningsgraf og fartsgraf (ingeniørfysikk)
+    plassert: [fysikk-forkurs/03-kinematikk/02-strekning-s-og-hastighet-v, ingeniorfysikk/02-kinematikk/01-posisjon-fart-akselerasjon]
+  Q4S15FxYehk:  # Mekanikk: E7—Akselerasjon i fysikken (ingeniørfysikk)
+    plassert: [fysikk-forkurs/03-kinematikk/03-akselerasjon, ingeniorfysikk/02-kinematikk/01-posisjon-fart-akselerasjon]
+  1rukKt6DYr0:  # Mekanikk: E8—Konstant akselerasjon (ingeniørfysikk)
+    plassert: [fysikk-forkurs/03-kinematikk/04-bevegelseslikningene-for-konstant-akselerasjon, ingeniorfysikk/02-kinematikk/02-konstant-akselerasjon]
+  fVp15sFO1sE:  # Mekanikk: E9 — Sentripetalakselerasjon (Ingeniørfysikk)
+    plassert: [fysikk-forkurs/03-kinematikk/05-sirkelbevegelse, ingeniorfysikk/02-kinematikk/04-sirkelbevegelse]
+  i6viZK9dZxI:  # Mekanikk: E10 — Hva er KRAFT? (Ingeniørfysikk)
+    plassert: [fysikk-forkurs/04-krefter/02-newtons-lover-og-kraft-begrepet, ingeniorfysikk/03-dynamikk/01-newtons-lover]
+  4T2FuMioFfE:  # Mekanikk: E11 — Kraft og akselerasjon (ingeniørfysikk)
+    plassert: [fysikk-forkurs/04-krefter/02-newtons-lover-og-kraft-begrepet, ingeniorfysikk/03-dynamikk/01-newtons-lover]
+  Co4H1ipYS9s:  # Mekanikk: E12 — masse og treghet (Ingeniørfysikk)
+    plassert: [fysikk-forkurs/04-krefter/02-newtons-lover-og-kraft-begrepet, ingeniorfysikk/03-dynamikk/01-newtons-lover]
+  rIv98LcFbPE:  # Mekanikk: E14— Hvordan tegner man egentlig krefter? (ingeniørfysikk)
+    plassert: [fysikk-forkurs/04-krefter/04-krefter-i-planet-dekomponering, ingeniorfysikk/03-dynamikk/01-newtons-lover]
+  kfCsQh_cSlA:  # Mekanikk: E15 — Typer krefter (ingeniørfysikk)
+    plassert: [fysikk-forkurs/04-krefter/03-krefter-i-dagliglivet, ingeniorfysikk/03-dynamikk/01-newtons-lover]
+  yUWWR755VEY:  # Mekanikk: E16 — Krefter og skråplan (Ingeniørfysikk)
+    plassert: [fysikk-forkurs/04-krefter/04-krefter-i-planet-dekomponering, ingeniorfysikk/01-introduksjon/04-vektorer, ingeniorfysikk/03-dynamikk/03-krefter-i-planet]
+  RDi3DD0Cehk:  # Mekanikk: Arbeid i fysikken (ingeniørfysikk)
+    plassert: [fysikk-forkurs/05-energi/01-arbeid, ingeniorfysikk/04-arbeid-og-energi/01-arbeid-og-kinetisk-energi]
+  ZJvMVO8RaZQ:  # Mekanikk: Potensiell energi (Ingeniørfysikk)
+    plassert: [fysikk-forkurs/05-energi/02-energi, ingeniorfysikk/04-arbeid-og-energi/02-potensiell-energi-og-energibevaring]
+  c3yv7fgCnwA:  # Mekanikk: Vektorer i planet (komplett introduksjon)
+    plassert: [fysikk-forkurs/02-matematikk/04-vektorer, ingeniorfysikk/01-introduksjon/04-vektorer]
+  9oVsY0WD7oI:  # Mekanikk: ARBEID i fysikken
+    hoppet over: "eldre video (Normann-Akademiet); «Arbeid i fysikken» (RDi3DD0Cehk) brukes i stedet"
+  m-UQgJPcYc0:  # Mekanikk: Kinetisk energi (Ingeniørfysikk)
+    plassert: [fysikk-forkurs/05-energi/02-energi, ingeniorfysikk/04-arbeid-og-energi/01-arbeid-og-kinetisk-energi]
+  yae_lrRpSNM:  # Fluidmekanikk: E0 — intro
+    plassert: [fysikk-forkurs/08-fluider/01-introduksjon-til-fluidfysikk]
+  wLk8RaTSvn8:  # Fluidmekanikk: E1— hydrostatikk 1
+    plassert: [fysikk-forkurs/08-fluider/02-trykk-i-vaesker]
+  x221Q0IpBBg:  # Fluidmekanikk: E2 — Pascals lov (hydrostatikk 2)
+    plassert: [fysikk-forkurs/08-fluider/03-pascals-lov]
+  MNDUv5L4Um8:  # Fluidmekanikk: E3—Hydraulisk jekk (hydrostatikk 3)
+    plassert: [fysikk-forkurs/08-fluider/03-pascals-lov]
+  RpJu9hDTsGU:  # Fluidmekanikk: E4 — Hydrostatisk trykk (hydrostatikk 4)
+    plassert: [fysikk-forkurs/08-fluider/02-trykk-i-vaesker]
+  euvIlejovCA:  # Fluidmekanikk: E5 — Oppdrift & Arkimedes lov
+    plassert: [fysikk-forkurs/08-fluider/04-oppdrift-og-arkimedes-lov]
+  tZ6qrCHnFaE:  # Fluidmekanikk: E6 — Volumstrøm & kontinuitetslikningen
+    venter: "ingen side om strømning (kontinuitetslikningen, Bernoulli) ennå"
+  iSPaBr34rtE:  # Fluidmekanikk: E7 — Volumstrøm EKSPERIMENT
+    venter: "ingen side om strømning (kontinuitetslikningen, Bernoulli) ennå"
+  lJ-DaEj_jrM:  # Fluidmekanikk: E8 — Bernoulli uten friksjon
+    venter: "ingen side om strømning (kontinuitetslikningen, Bernoulli) ennå"
+  UAEZfgxVHZ8:  # Fluidmekanikk: E9 — Bernoulli med tap
+    venter: "ingen side om strømning (kontinuitetslikningen, Bernoulli) ennå"
+  aBr6tw3pTXg:  # Elektrisitet og magnetisme: E0 — Intro
+    plassert: [ingeniorfysikk/07-elektrisk-ladning-og-felt/index]
+  CENxROW4o8w:  # Elektrisitet og magnetisme: E1 — Vektorfelt
+    plassert: [ingeniorfysikk/07-elektrisk-ladning-og-felt/03-elektrisk-felt]
+  gkg6n1kbn6w:  # Elektrisitet og magnetisme: E2 — Elektrisk felt og kraft
+    plassert: [ingeniorfysikk/07-elektrisk-ladning-og-felt/03-elektrisk-felt]
+  ZxyEAg1aP54:  # Elektrisitet og magnetisme: E4 — Coulombs lov
+    plassert: [fysikk-forkurs/11-elektrisitet/02-elektrisk-kraft-og-ladning, ingeniorfysikk/07-elektrisk-ladning-og-felt/02-coulombs-lov]

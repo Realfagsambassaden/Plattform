@@ -1,0 +1,40 @@
+# Henter alle videoene i spillelistene i youtube.yml (DrNormann på YouTube) og legger lista i
+# youtube-videoer.json på grenen data/youtube. Nattjobben leser den og setter nye videoer inn på sidene.
+# Kjøres hver kveld før nattjobben, og kan startes manuelt fra Actions-fanen.
+name: Hent YouTube-videoer
+
+on:
+  schedule:
+    - cron: "17 22 * * *"   # 23:17 norsk vintertid
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: youtube
+  cancel-in-progress: false
+
+jobs:
+  hent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Python-pakker
+        run: pip install pyyaml yt-dlp
+      - name: Hent spillelistene
+        run: python3 verktoy/youtube.py youtube.yml "$RUNNER_TEMP/youtube-videoer.json"
+      - name: Legg lista på grenen data/youtube
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan data-youtube-ny
+          git rm -rq --cached .
+          cp "$RUNNER_TEMP/youtube-videoer.json" youtube-videoer.json
+          git add youtube-videoer.json
+          git commit -qm "YouTube-videoer $(date -u +%F)"
+          git push -qf origin HEAD:refs/heads/data/youtube

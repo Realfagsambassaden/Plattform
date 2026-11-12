@@ -17,7 +17,7 @@ Instruksene skal ligge her i repoet, ikke bare i en chat eller et prosjektdokume
 | Forsiden: «Velg nivå!» | `nivaer.yml`: hvilke temaområder og løyper som vises på hvert nivå (forkurs, ingeniør, fordypning) |
 | Notasjon | [`NOTASJON.md`](NOTASJON.md) – fasit for all notasjon |
 | Donasjoner | Privat repo `donasjoner`, rutine i [`rutiner/donasjoner.md`](rutiner/donasjoner.md) |
-| Videoer | Repo `Realfagsambassaden/videoer`, instruks i `videoer/CLAUDE.md` og `videoer/LESMEG.md` |
+| Videoer | Repo `Realfagsambassaden/videoer`, instruks i `videoer/CLAUDE.md` og `videoer/LESMEG.md`. YouTube-spillelister: `youtube.yml` |
 | Teknisk oversikt | [`LESMEG.md`](LESMEG.md), for mennesker: [`BIDRA.md`](BIDRA.md) |
 
 Forkurset ble tidligere skrevet i LaTeX (`kosmoben/TRES0312`). Fra november 2026 ligger alt forkursstoff i `fysikk-forkurs`, og LaTeX-kompendiet hentes ikke lenger inn.
@@ -115,6 +115,7 @@ Klassene `.sporsmal` og `.definisjon` settes av `verktoy/fag.py` ut fra tittelen
 
 - Bruk **bare lærerens egne videoer** (YouTube-kanalen DrNormann). Finn aldri på en video-ID. Mangler det en video, sett inn plassholderen `<!-- video: kommer (videoer/<side-id>) -->` med bildet `bilder/video-kommer.png`.
 - Videoer lages i videoarbeidsflyten (`videoer/CLAUDE.md`). Ferdige lenker står i `videoer/ferdige.yml`.
+- **Videoer fra YouTube-spillelistene** (besluttet 12. nov. 2026): Spillelistene i `youtube.yml` hentes hver kveld av GitHub til `youtube-videoer.json` på grenen `data/youtube` (KI-øktene når ikke YouTube selv). Nattjobben setter nye videoer inn på sidene der de passer (`rutiner/nattjobb-instruks.md`, punkt 0d) og fører det i `rutiner/youtube-status.yml`. Ny spilleliste: én linje i `youtube.yml`. Miniatyrbildet er det samme som på YouTube, fordi videoene bygges inn med YouTube-spilleren.
 
 ## 6. Kontroll før levering
 
