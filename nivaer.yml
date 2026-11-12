@@ -1,0 +1,20 @@
+# Nivåene på forsiden («Velg nivå!»). verktoy/tema.py lager temakort og løypelister ut fra denne fila.
+#   omrader: temaområdene (id fra tema.yml) som vises som kort på nivået, i denne rekkefølgen.
+#            «auto» = alle områder som har sider på nivået.
+#   loyper:  løypene (id fra loyper/*.yml) som listes på nivået. Tom liste = ingen ennå.
+nivaer:
+  - id: forkurs
+    navn: Forkurs
+    tekst: "For deg som har lite fysikk eller matematikk fra før, eller skal ta forkurs."
+    omrader: auto
+    loyper: [forkurs-fysikk]
+  - id: ingenior
+    navn: Ingeniør
+    tekst: "Første år på ingeniør- og realfagsstudier."
+    omrader: [mekanikk, fluider, elektromagnetisme, termofysikk]
+    loyper: []
+  - id: fordypning
+    navn: Fordypning
+    tekst: "Videre emner for deg som vil gå dypere."
+    omrader: auto
+    loyper: []

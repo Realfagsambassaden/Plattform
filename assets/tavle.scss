@@ -642,3 +642,50 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .kort > ul > li:has(a):hover::after { transform: translateX(3px); }
 // Lange ord i smale kort deles i stedet for å flyte ut av kortet.
 .kort > ul > li, .steg > ol > li { hyphens: auto; overflow-wrap: break-word; }
+
+// ---------- forsiden: «Velg nivå!» (kortene lages av verktoy/tema.py fra nivaer.yml) ----------
+.velg-niva { margin-top: 1.8rem; }
+.velg-niva-tittel { font-family: "Architects Daughter", cursive; color: $yellow; font-size: 1.5rem; margin: 0 0 .7rem; transform: rotate(-1.5deg); display: inline-block; }
+.niva-knapper { display: flex; flex-wrap: wrap; gap: .7rem; }
+.niva-knapper .btn-chalk { min-width: 9.5rem; justify-content: center; font-size: 1.05rem; padding: .95rem 1.3rem; }
+.niva-knapper .btn-chalk:not(.valgt) { background: transparent; color: $neon !important; }
+.niva-knapper .btn-chalk:not(.valgt):hover { background: rgba($neon, .12); }
+.nivaer { margin: 1rem 0 3.5rem; }
+.niva-panel { scroll-margin-top: 4.5rem; border-top: 1px solid $line; padding-top: 1.8rem; margin-top: 1.8rem; }
+.niva-panel:first-child { margin-top: 0; }
+.niva-hode { display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem 1.2rem; margin-bottom: 1.2rem; }
+.niva-hode h2 { margin: 0; font-size: clamp(1.9rem, 4vw, 2.6rem); border: 0; }
+.niva-hode p { margin: 0; color: $dust; }
+.niva-innhold { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 2rem; align-items: start; }
+.niva-del { margin: 0 0 .8rem; font: 700 13px/1 $headings-font-family; letter-spacing: .14em; text-transform: uppercase; color: $dust; border: 0; }
+.tk-rad { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1rem; }
+.tk { display: flex; flex-direction: column; gap: .35rem; padding: 1rem; border: 1px solid mix($neon, $line, 45%); border-radius: 14px; text-decoration: none; color: $chalk; background: rgba($neon, .04); transition: transform .15s, border-color .15s; }
+.tk:hover { transform: translateY(-3px); border-color: $neon; color: $chalk; }
+.tk img { height: 100px; width: 100%; object-fit: contain; margin-bottom: .3rem; }
+.tk-navn { font-weight: 700; font-size: 1.2rem; line-height: 1.2; }
+.tk-ant { color: $dust; font-size: .9rem; }
+.tk.tom { border-style: dashed; border-color: $line; background: none; }
+.tk.tom img { filter: grayscale(.6); opacity: .6; }
+.niva-loyper { border: 1px solid $line; border-left: 4px solid $yellow; border-radius: 12px; padding: 1.1rem 1.2rem; background: $slate-2; }
+.niva-loyper .niva-del { color: $yellow; }
+.niva-forkl { color: $dust; font-size: .92rem; margin: -.3rem 0 .8rem; }
+.niva-loyper ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+.niva-loyper li::marker { content: none; }
+.niva-loyper li a { display: flex; flex-direction: column; gap: .15rem; padding: .7rem .9rem; border: 1px solid $line; border-radius: 10px; text-decoration: none; color: $chalk; }
+.niva-loyper li a::after { content: "→"; align-self: flex-end; margin-top: -1.4rem; color: $yellow; }
+.niva-loyper li a:hover { border-color: $yellow; }
+.nl-navn { font-weight: 700; }
+.nl-kode { font-size: .8rem; color: $dust; }
+.niva-tom { color: $dust; font-style: italic; margin: 0; }
+@media (max-width: 860px) {
+  .niva-innhold { grid-template-columns: 1fr; }
+  .niva-knapper .btn-chalk { min-width: 0; flex: 1 1 0; padding: .9rem .6rem; }
+}
+.utforsk-del { border-top: 2px dashed $line; margin-top: 3rem; padding-top: 2rem; }
+.utforsk-del .tracks { margin-top: .6rem; }
+@media (max-width: 520px) {
+  .tk-rad { grid-template-columns: 1fr 1fr; gap: .7rem; }
+  .tk { padding: .8rem; }
+  .tk img { height: 70px; }
+  .tk-navn { font-size: 1rem; }
+}

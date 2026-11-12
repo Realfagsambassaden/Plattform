@@ -148,7 +148,7 @@ omrader:
           - { id: idealgass, tittel: "Idealgass" }
 
   - id: elektromagnetisme
-    tittel: "Elektromagnetisme"
+    tittel: "Elektrisitet og magnetisme"
     beskrivelse: "Ladning, felt, strøm, kretser og magnetisme."
     bilde: e-felt
     temaer:
