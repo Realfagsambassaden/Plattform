@@ -324,25 +324,22 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 }
 
 // ---------- Dashman, KI-læringspartneren (assets/js/dashman.js) ----------
-.dm-figur { display: block; width: 100%; height: auto; overflow: visible; }
-.dm-figur path, .dm-figur circle, .dm-figur ellipse { fill: none; stroke: $chalk; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
-.dm-figur .dm-pupill { fill: $chalk; stroke: none; }
-.dm-figur .dm-munn { transition: d .08s; }
+.dm-bilde { display: block; width: auto; max-width: none; margin: 0 auto; }
+.dm-ikon { display: block; width: 34px; height: auto; }
+@if $modus == light { .dm-bilde, .dm-ikon { filter: invert(1) brightness(.35); } }   // lærerens tegninger: svarte streker på lys bakgrunn
 .dm-knapp { position: fixed; left: 1rem; bottom: 1rem; z-index: 1040; display: flex; align-items: center; gap: .5rem; padding: .35rem .9rem .35rem .4rem; border: 2px solid $neon; border-radius: 99px; background: $slate-2; color: $neon; font-weight: 700; cursor: pointer; }
-.dm-knapp .dm-figur { width: 34px; height: 48px; }
-.dm-knapp .dm-figur path, .dm-knapp .dm-figur circle, .dm-knapp .dm-figur ellipse { stroke-width: 7; }
 .dm-knapp:hover { background: rgba($neon, .12); }
 .dm-panel { position: fixed; left: 1rem; bottom: 1rem; z-index: 1050; display: flex; align-items: flex-end; gap: .4rem; width: min(640px, calc(100vw - 2rem)); }
-.dm-scene { flex: 0 0 130px; border-radius: 50%; background: radial-gradient(ellipse at 50% 55%, rgba($slate, .95) 50%, rgba($slate, 0) 72%); }
+.dm-scene { --dm-skala: 1; flex: 0 0 auto; display: flex; align-items: flex-end; justify-content: center; min-width: 140px; min-height: 215px; padding: 0 .3rem; border-radius: 50%; background: radial-gradient(ellipse at 50% 55%, rgba($slate, .95) 50%, rgba($slate, 0) 72%); }
 .dm-holder { filter: drop-shadow(0 0 8px rgba($neon, .25)); }
-.dm-holder.dm-ler .dm-figur { animation: dm-hopp .35s ease-in-out 4; }
-.dm-holder.dm-irritert .dm-figur { animation: dm-rist .12s linear 5; }
-.dm-holder.dm-trist .dm-figur { transform: translateY(4px); }
-.dm-holder.dm-tenker .dm-figur { animation: dm-vugg 1.4s ease-in-out infinite; }
+.dm-holder.dm-ler .dm-bilde { animation: dm-hopp .34s ease-in-out 3; }
+.dm-holder.dm-irritert .dm-bilde { animation: dm-rist .12s linear 4; }
+.dm-holder.dm-glad .dm-bilde { animation: dm-hopp .4s ease-out 1; }
+.dm-holder.dm-tenker .dm-bilde { animation: dm-vugg 1.6s ease-in-out infinite; transform-origin: 50% 100%; }
 @keyframes dm-hopp { 50% { transform: translateY(-7px); } }
 @keyframes dm-rist { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
 @keyframes dm-vugg { 50% { transform: rotate(-3deg); } }
-@media (prefers-reduced-motion: reduce) { .dm-holder .dm-figur { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .dm-holder .dm-bilde { animation: none !important; } }
 .dm-boble { position: relative; flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; max-height: min(72vh, 640px); padding: .8rem .9rem .6rem; border: 2px solid $neon; border-radius: 18px; background: mix($neon, $slate, 9%); color: $chalk; box-shadow: 0 10px 40px rgba(0, 0, 0, .45); }
 .dm-boble::before { content: ""; position: absolute; left: -14px; bottom: 70px; border: 12px solid transparent; border-right-color: $neon; border-left: 0; }
 .dm-topp { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .4rem; }
@@ -370,7 +367,7 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
   .dm-knapp span { display: none; }
   .dm-knapp { padding: .35rem; }
   .dm-panel { left: .5rem; bottom: .5rem; width: calc(100vw - 1rem); flex-direction: column; align-items: flex-start; }
-  .dm-scene { flex: 0 0 auto; width: 74px; margin: 0 0 -.2rem .6rem; order: -1; }
+  .dm-scene { --dm-skala: .5; min-width: 0; min-height: 0; margin: 0 0 -.2rem .6rem; order: -1; }
   .dm-boble { width: 100%; max-height: 70vh; }
   .dm-boble::before { left: 32px; top: -14px; bottom: auto; border: 12px solid transparent; border-bottom-color: $neon; border-top: 0; }
 }

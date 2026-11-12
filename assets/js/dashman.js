@@ -1,9 +1,12 @@
 // Dashman – KI-læringspartneren. Vises nede til venstre for innloggede studenter på alle sider.
 // Samtalen går via KI-tjeneren (/dashman), som henter nivå, mål, notat, kunnskapsprofil og fag selv fra Supabase.
 // Samtalen lagres bare i denne fanen (sessionStorage) og forsvinner når fanen lukkes.
-// Figuren: FIGUR under. Byttes ut med lærerens egen Dashman-tegning: kroppen uten munn, og egne munner/øyne/bryn per humør.
+// Figuren er lærerens egen Dashman fra riggen i repoet Realfagsambassaden/dashman. Bildene i assets/img/dashman/ lages
+// av verktoy/dashman_bilder.py: én positur per humør, fire munnformer til snakking, og blunk for den nøytrale.
 (function () {
   try { if (window.self !== window.top) return; } catch (e) { return; }
+  var skript = document.currentScript && document.currentScript.src || '';
+  var BILDER = skript.replace(/js\/dashman\.js.*$/, 'img/dashman/');
   var URL_ = (document.querySelector('meta[name="supabase-url"]') || {}).content || '';
   var api = ((document.querySelector('meta[name="fysikkhjelp-hint-api"]') || {}).content || '').replace(/\/hint\/?$/, '/dashman');
   if (!URL_ || !api || !window.fhKonto) return;
@@ -11,37 +14,13 @@
   function innlogget() { try { return !!localStorage.getItem(lagringsnavn); } catch (e) { return false; } }
   if (!innlogget()) return;
 
-  // ------------------------------------------------------------ figuren (kritt-strek, viewBox 0 0 160 230)
-  var FIGUR = {
-    kropp: '<circle cx="82" cy="62" r="46"/><path d="M80 108 L80 175"/><path d="M80 175 L66 205 L52 207"/><path d="M80 175 L92 205 L108 207"/>',
-    armer: {
-      vanlig: '<path d="M80 125 L58 142 L50 130"/><path d="M80 125 L104 140 L112 128"/>',
-      ler: '<path d="M80 125 L56 112 L50 98"/><path d="M80 125 L106 112 L112 98"/>',
-      irritert: '<path d="M80 125 L60 138 L70 146"/><path d="M80 125 L100 138 L90 146"/>',
-      trist: '<path d="M80 125 L66 150 L64 160"/><path d="M80 125 L94 150 L96 160"/>',
-      tenker: '<path d="M80 125 L58 142 L50 130"/><path d="M80 125 L100 112 L92 92"/>'
-    },
-    oyne: {
-      vanlig: '<ellipse cx="62" cy="58" rx="13" ry="18"/><ellipse cx="88" cy="58" rx="13" ry="18"/><circle class="dm-pupill" cx="66" cy="56" r="3.6"/><circle class="dm-pupill" cx="90" cy="56" r="3.6"/>',
-      ler: '<path d="M50 60 Q62 48 74 60"/><path d="M76 60 Q88 48 100 60"/>',
-      tenker: '<ellipse cx="62" cy="58" rx="13" ry="18"/><ellipse cx="88" cy="58" rx="13" ry="18"/><circle class="dm-pupill" cx="66" cy="48" r="3.6"/><circle class="dm-pupill" cx="92" cy="48" r="3.6"/>'
-    },
-    bryn: {
-      irritert: '<path d="M48 34 L74 44"/><path d="M78 44 L102 34"/>',
-      trist: '<path d="M50 42 L72 34"/><path d="M80 34 L100 42"/>',
-      glad: '<path d="M50 34 Q62 28 72 34"/><path d="M78 34 Q90 28 100 34"/>'
-    },
-    munn: {
-      noytral: 'M66 88 Q80 98 94 87', glad: 'M62 85 Q80 104 98 84', ler: 'M60 84 Q80 114 100 82 Z',
-      irritert: 'M66 95 Q80 87 94 95', trist: 'M66 97 Q80 85 94 97', tenker: 'M70 92 Q80 90 90 91',
-      apen: 'M68 86 Q80 104 92 86 Q80 92 68 86', halv: 'M68 89 Q80 97 92 89 Q80 91 68 89'
-    }
-  };
-  function figurSvg(humor) {
-    var arm = FIGUR.armer[humor] || FIGUR.armer.vanlig, oy = FIGUR.oyne[humor] || FIGUR.oyne.vanlig, br = FIGUR.bryn[humor] || '';
-    return '<svg class="dm-figur" viewBox="0 0 160 230" aria-hidden="true">' + FIGUR.kropp + arm + oy + br +
-      '<path class="dm-munn" d="' + (FIGUR.munn[humor] || FIGUR.munn.noytral) + '"/></svg>';
-  }
+  // ------------------------------------------------------------ figuren (lærerens Dashman-rigg)
+  var POSITUR = { noytral: 'noytral', glad: 'glad', ler: 'ler', irritert: 'irritert', trist: 'trist', tenker: 'tenker' };
+  var MUNNER = ['snakk_lukket', 'snakk_o', 'snakk_aapen', 'snakk_smil_tenner'];
+  var ALLE = ['noytral', 'noytral_blunk', 'glad', 'ler', 'ler_a', 'ler_b', 'irritert', 'trist', 'tenker'].concat(MUNNER);
+  var lastet = false;
+  function forhandslast() { if (lastet) return; lastet = true; ALLE.forEach(function (n) { new Image().src = BILDER + n + '.webp'; }); }
+  function figurImg(navn) { return '<img class="dm-bilde" alt="" src="' + BILDER + navn + '.webp">'; }
 
   // ------------------------------------------------------------ tilstand
   var LAGER = 'dashman-samtale';
@@ -52,11 +31,11 @@
   // ------------------------------------------------------------ DOM
   var knapp = document.createElement('button');
   knapp.type = 'button'; knapp.className = 'dm-knapp'; knapp.setAttribute('aria-label', 'Snakk med Dashman');
-  knapp.innerHTML = figurSvg('glad') + '<span>Spør Dashman</span>';
+  knapp.innerHTML = '<img class="dm-ikon" alt="" src="' + BILDER + 'ikon.webp"><span>Spør Dashman</span>';
   var panel = document.createElement('section');
   panel.className = 'dm-panel'; panel.hidden = true; panel.setAttribute('aria-label', 'Samtale med Dashman');
   panel.innerHTML =
-    '<div class="dm-scene"><div class="dm-holder">' + figurSvg('noytral') + '</div></div>' +
+    '<div class="dm-scene"><div class="dm-holder"></div></div>' +
     '<div class="dm-boble">' +
       '<div class="dm-topp"><b>Dashman</b><span class="dm-verktoy">' +
         '<button type="button" data-h="husker" title="Hva Dashman husker om deg">Hva husker du?</button>' +
@@ -70,14 +49,34 @@
   document.body.appendChild(knapp); document.body.appendChild(panel);
   var logg = panel.querySelector('.dm-logg'), holder = panel.querySelector('.dm-holder'), felt = panel.querySelector('textarea');
 
-  function settHumor(h) { humor = h; holder.innerHTML = figurSvg(h); holder.className = 'dm-holder dm-' + h; }
-  var munnTid = null;
+  var bilde = null, animTid = null, blunkTid = null;
+  function vis(navn) {
+    if (!bilde) { holder.innerHTML = figurImg(navn); bilde = holder.querySelector('img'); bilde.onload = storrelse; return; }
+    bilde.src = BILDER + navn + '.webp';
+  }
+  function storrelse() { bilde.style.height = 'calc(' + Math.round(bilde.naturalHeight / 1.6) + 'px * var(--dm-skala, 1))'; }
+  function settHumor(h) {
+    humor = h; clearInterval(animTid); clearTimeout(blunkTid); holder.className = 'dm-holder dm-' + h;
+    if (h === 'ler') {   // ler: hoho og hoho_x vekselvis, så en mildere latter
+      var i = 0; vis('ler_a');
+      animTid = setInterval(function () { i++; if (i > 6) { clearInterval(animTid); vis('ler'); } else vis(i % 2 ? 'ler_b' : 'ler_a'); }, 170);
+      return;
+    }
+    vis(POSITUR[h] || 'noytral');
+    if (h === 'noytral') blunk();
+  }
+  function blunk() {
+    blunkTid = setTimeout(function () {
+      if (humor !== 'noytral') return;
+      vis('noytral_blunk'); setTimeout(function () { if (humor === 'noytral') vis('noytral'); blunk(); }, 140);
+    }, 2500 + Math.random() * 3500);
+  }
+  // Snakker: peker mot boblen, og munnen går (tilfeldig munnform, sjelden to like etter hverandre).
   function snakk(paa) {
-    clearInterval(munnTid);
-    var m = holder.querySelector('.dm-munn'); if (!m) return;
-    if (!paa) { m.setAttribute('d', FIGUR.munn[humor] || FIGUR.munn.noytral); return; }
-    var i = 0, rekke = [FIGUR.munn.apen, FIGUR.munn.halv, FIGUR.munn.noytral, FIGUR.munn.apen, FIGUR.munn.halv];
-    munnTid = setInterval(function () { var mm = holder.querySelector('.dm-munn'); if (mm) mm.setAttribute('d', rekke[i++ % rekke.length]); }, 120);
+    clearInterval(animTid); clearTimeout(blunkTid);
+    if (!paa) { settHumor(humor); return; }
+    var forrige = 0;
+    animTid = setInterval(function () { var k; do { k = Math.floor(Math.random() * MUNNER.length); } while (k === forrige && Math.random() < .7); forrige = k; vis(MUNNER[k]); }, 110);
   }
 
   // Enkel Markdown: avsnitt, fet, kursiv, kode, lister. LaTeX tas av MathJax etterpå.
@@ -182,7 +181,7 @@
 
   // ------------------------------------------------------------ hendelser
   knapp.addEventListener('click', function () {
-    panel.hidden = false; knapp.hidden = true; settHumor('glad');
+    forhandslast(); panel.hidden = false; knapp.hidden = true; settHumor('glad');
     if (profil === null) hentProfil().then(function (p) { profil = p; visAlt(); }); else visAlt();
     setTimeout(function () { felt.focus(); }, 50);
   });

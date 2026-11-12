@@ -189,6 +189,6 @@ Innloggede studenter får en Dashman-knapp nede til venstre på alle sider. Dash
 - **Faglæreren styrer:** I fagbyggeren velger faglæreren fase (1 oppstart, 2 øving, 3 arbeidskrav og mappe, 4 selvstendighet, eller av) og kan gi egne instrukser. De går foran instruksen, men ikke foran de faste grensene.
 - **Studenten** velger nivå (og eventuelt mål) første gang i boblen eller på Min side.
 - **Modell:** samme som de andre KI-funksjonene. Vil du ha en sterkere modell for Dashman, sett `MODELL_DASHMAN` under `[vars]` i `hint-tjener/wrangler.toml`.
-- **Figuren** er tegnet i koden (`FIGUR` øverst i `dashman.js`) og skal byttes ut med lærerens egen Dashman: kroppen uten munn, og munner (minst nøytral, åpen og halvåpen for snakking), øyne og bryn for hvert humør som egne SVG-deler.
+- **Figuren** er lærerens egen Dashman fra riggen i [Realfagsambassaden/dashman](https://github.com/Realfagsambassaden/dashman). `verktoy/dashman_bilder.py` lager bildene i `assets/img/dashman/`: snakker = `peker_tavla` (peker mot boblen) med fire munnformer, nøytral = `noytral` (blunker), glad = `armer_opp`, ler = `hoho`/`hoho_x` vekselvis og så `lattermild`, irritert = `mystisk` med utropstegn, trist = `undrende`, tenker = `gruble` med spørsmålstegn. Endres riggen: `python3 verktoy/dashman_bilder.py <dashman-repoet> assets/img/dashman`.
 
 **Oppsett (én gang):** Kjør `supabase/oppsett.sql` på nytt i Supabase → SQL Editor (trygt å kjøre flere ganger). Før det er gjort, vises ikke Dashman-feltene i fagbyggeren og på Min side, og Dashman svarer uten profil.
