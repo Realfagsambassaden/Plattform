@@ -32,6 +32,7 @@
 //   Valgfritt: KV-bindingen HINT_KV for begrensning av antall forespørsler.
 
 import DASHMAN_INSTRUKS from "./dashman-instruks.md";
+import DASHMAN_UNDERVISER from "./dashman-underviser.md";
 
 const STANDARD_MODELL = { claude: "claude-haiku-5-5", openai: "gpt-4o-mini" };
 const NETTSTED = "https://fysikkhjelp.no";
@@ -114,12 +115,12 @@ const SYSTEM_FAG = `Du er en erfaren fysikklærer og hjelper en underviser å le
 Du får emnebeskrivelsen og læringsutbyttet (begge kan mangle), rammen (antall uker og undervisningsform) og en KATALOG over undertemaer som finnes på nettstedet, med id og tittel.
 
 Lag et oppsett:
-- Del faget i 3–8 moduler med korte navn (1–3 ord), i en naturlig faglig rekkefølge.
+- Del faget i 3–8 moduler med korte navn (1–3 ord), i en naturlig faglig rekkefølge (med en plan: én modul per kapittel eller tema i planen, også om det blir flere enn 8).
 - Hver modul har én eller flere uker. Hver uke dekker 1–3 undertemaer fra katalogen.
 - Bruk høyst så mange uker som rammen sier. La gjerne de siste 1–2 ukene være uten undertemaer (repetisjon), med notatet «Repetisjon».
 - Bruk BARE id-er som står i katalogen, skrevet nøyaktig likt. Ta bare med det som passer emnebeskrivelsen og læringsutbyttet. Uten beskrivelse: lag et vanlig oppsett for faget ut fra navnet.
 - Undervisningsformen påvirker ikke innholdet, bare notatene: ved omvendt klasserom kan notatet si hva studentene forbereder.
-- Har underviseren skrevet ØNSKER eller lagt ved en tidligere plan: følg dem så tett som katalogen tillater (rekkefølge, uker, notater).
+- Har underviseren skrevet ØNSKER eller lagt ved en tidligere plan: følg planen nøyaktig. Samme rekkefølge, samme antall uker per tema (står det «uke 47» er det én uke, «uke 43–44» to uker), og ingen temaer lagt til, tatt bort eller delt opp i egne moduler (f.eks. ingen egen gasslov-modul hvis gasslovene står under termofysikk i planen). En uke kan da dekke flere enn 3 undertemaer. Står noe i planen som katalogen ikke har, nevn det i kommentaren i stedet for å erstatte det med noe annet.
 - Får du NÅVÆRENDE OPPSETT: behold det og gjør bare de endringene underviseren ber om.
 - "kommentar": 1–2 setninger til underviseren om valgene, for eksempel hva i læringsutbyttet eller planen katalogen ikke dekker.
 Norsk bokmål.
@@ -182,8 +183,7 @@ async function materiale(request, env, b, h) {
   if (!(await erUnderviser(request, env))) return json({ feil: "Bare godkjente undervisere kan lage undervisningsmateriale med KI." }, 403, h);
   if (!(await innenforGrense(env, `mat:${bruker.id}:${new Date().toISOString().slice(0, 10)}`, 40, 90000)))
     return json({ feil: "Du har laget mye materiale i dag. Prøv igjen i morgen." }, 429, h);
-  const vedlegg = lesVedlegg(b.vedlegg);
-  if (b.vedlegg && !vedlegg) return json({ feil: "Filen må være et bilde (JPEG, PNG, WebP) eller en PDF på under 4 MB." }, 400, h);
+  const vi = vedleggInfo(b), vedlegg = vi.vedlegg;
   const ramme = b.ramme || {};
   const lengde = Math.max(10, Math.min(600, parseInt(ramme.lengde, 10) || 90));
   const form = { forelesninger: "forelesning", omvendt: "omvendt klasserom", ingen: "ingen faste samlinger (materiale for uka)" }[ramme.form] || "forelesning";
@@ -207,13 +207,13 @@ async function materiale(request, env, b, h) {
     `\nLag: ${hva === "begge" ? "plan og slides" : hva === "plan" ? "bare plan (slides kan være tom liste)" : "bare slides (plan kan være tom liste)"}` +
     (b.onske ? `\n\nØNSKER FRA UNDERVISEREN:\n${kort(b.onske, 8000)}` : "") + (vedlegg ? "\n\nUnderviserens gamle opplegg er vedlagt." : "") +
     (b.navarende ? `\n\nNÅVÆRENDE MATERIALE:\n${kort(JSON.stringify(b.navarende), 20000)}` : "") +
-    (stoff.length ? `\n\nLÆRESTOFF FRA NETTSTEDET:\n${stoff.join("\n\n")}` : "");
+    (stoff.length ? `\n\nLÆRESTOFF FRA NETTSTEDET:\n${stoff.join("\n\n")}` : "") + vi.ber;
   const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_MAT.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000, vedlegg));
   if (!r) throw feil("Fikk ikke noe materiale fra KI denne gangen. Prøv igjen.", 502);
   const plan = (Array.isArray(r.plan) ? r.plan : []).slice(0, 25).map((x) => ({ min: Math.max(0, Math.min(300, parseInt(x && x.min, 10) || 0)), tekst: kort(x && x.tekst, 600) })).filter((x) => x.tekst);
   const slides = (Array.isArray(r.slides) ? r.slides : []).slice(0, 40).map((x) => ({ tittel: kort(x && x.tittel, 200), tekst: kort(x && x.tekst, 3000), notat: kort(x && x.notat, 2000), losning: kort(x && x.losning, 3000) })).filter((x) => x.tittel || x.tekst);
   if ((hva !== "slides" && !plan.length) && (hva !== "plan" && !slides.length)) throw feil("Fikk ikke noe brukbart materiale fra KI denne gangen. Prøv igjen.", 502);
-  return json({ tittel: kort(r.tittel, 200), plan, slides, kommentar: kort(r.kommentar, 600) }, 200, h);
+  return json({ tittel: kort(r.tittel, 200), plan, slides, kommentar: kort(r.kommentar, 600), vedlegg: vedleggTekst(vi, r) }, 200, h);
 }
 
 async function kvisslag(request, env, b, h) {
@@ -226,10 +226,9 @@ async function kvisslag(request, env, b, h) {
   const niva = ["lett", "middels", "vanskelig", "blandet"].includes(b.vanskelighet) ? b.vanskelighet : "blandet";
   const ut = (Array.isArray(b.undertemaer) ? b.undertemaer.slice(0, 20) : []).filter((x) => x && typeof x.id === "string")
     .map((x) => ({ id: kort(x.id, 80), tittel: kort(x.tittel, 120) }));
-  const vedlegg = lesVedlegg(b.vedlegg);
-  if (b.vedlegg && !vedlegg) return json({ feil: "Vedlegget må være et bilde (JPEG, PNG, WebP) eller en PDF på under 4 MB." }, 400, h);
+  const vi = vedleggInfo(b), vedlegg = vi.vedlegg;
   const melding = `Tema: ${kort(b.tema, 120)}\nUndertemaer (id | tittel):\n${ut.map((x) => `${x.id} | ${x.tittel}`).join("\n") || "(hele temaet)"}\n` +
-    `Antall spørsmål: ${antall}\nVanskelighet: ${niva}\n\nUnderviserens egne oppgaver:\n${kort(b.grunnlag, 8000) || (vedlegg ? "(se vedlegget)" : "(ingen – lag egne)")}`;
+    `Antall spørsmål: ${antall}\nVanskelighet: ${niva}\n\nUnderviserens egne oppgaver:\n${kort(b.grunnlag, 8000) || (vedlegg ? "(se vedlegget)" : "(ingen – lag egne)")}` + vi.ber;
   const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_KVISS.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000, vedlegg));
   const gyldigeUt = new Set(ut.map((x) => x.id));
   const tall = (v) => (Number.isFinite(+v) ? +v : null);
@@ -247,10 +246,26 @@ async function kvisslag(request, env, b, h) {
       : { ...felles, riktig: kort(x.riktig, 200) };
   }).filter((x) => x.tekst && (x.variabler || x.riktig) && x.feil.length >= 2);
   if (!sp.length) throw feil("Fikk ingen brukbare spørsmål fra KI denne gangen. Prøv igjen.", 502);
-  return json({ sporsmal: sp }, 200, h);
+  return json({ sporsmal: sp, vedlegg: vedleggTekst(vi, r) }, 200, h);
 }
 
 // Vedlegg fra underviseren: bilde eller PDF (som data-URL). Lagres ikke.
+// Vedlegg til KI: leses det ikke (feil type, for stort), lager vi likevel et forslag, men sier tydelig fra om det.
+// Returnerer { vedlegg, merknad, ber }: ber = tekst som legges til meldingen, så KI selv sier hva den fant i vedlegget.
+function vedleggInfo(b) {
+  const navn = kort(b.filnavn, 120) || "vedlegget";
+  const ulest = (Array.isArray(b.ulest) ? b.ulest : []).slice(0, 5).map((x) => kort(x, 200)).filter(Boolean);
+  const vedlegg = lesVedlegg(b.vedlegg);
+  if (b.vedlegg && !vedlegg) ulest.push(`«${navn}» (må være en PDF eller et bilde på under 4 MB)`);
+  const merknad = ulest.length ? `Ikke lest: ${ulest.join("; ")}. Forslaget er laget uten ${ulest.length > 1 ? "disse filene" : "denne filen"}.` : "";
+  const ber = vedlegg ? `\n\nVEDLEGG: «${navn}». Ta med feltet "vedlegg" i JSON-svaret: én eller to korte setninger om hva du fant i vedlegget og brukte, eller at du ikke klarte å lese det (helt eller delvis).` : "";
+  return { vedlegg, merknad, ber };
+}
+function vedleggTekst(v, r) {
+  const sagt = r && typeof r.vedlegg === "string" ? kort(r.vedlegg, 400) : "";
+  return [v.vedlegg ? (sagt ? `Vedlegget: ${sagt}` : "Vedlegget ble sendt med, men KI sa ikke hva den brukte fra det.") : "", v.merknad].filter(Boolean).join(" ");
+}
+
 function lesVedlegg(d) {
   const m = /^data:(image\/(?:jpeg|png|webp)|application\/pdf);base64,([A-Za-z0-9+/=]+)$/.exec(String(d || ""));
   if (!m || m[2].length > 5.5e6) return null;
@@ -277,8 +292,7 @@ async function fagforslag(request, env, b, h) {
     .filter((x) => x && typeof x.id === "string" && /^[a-z0-9-]+\/[a-z0-9-]+\/[a-z0-9-]+$/.test(x.id))
     .map((x) => ({ id: x.id, tittel: kort(x.tittel, 120) }));
   if (!katalog.length) return json({ feil: "Fant ingen temaer å bygge faget av." }, 400, h);
-  const vedlegg = lesVedlegg(b.vedlegg);
-  if (b.vedlegg && !vedlegg) return json({ feil: "Filen må være et bilde (JPEG, PNG, WebP) eller en PDF på under 4 MB." }, 400, h);
+  const vi = vedleggInfo(b), vedlegg = vi.vedlegg;
   const ramme = b.ramme || {};
   const uker = Math.max(1, Math.min(40, parseInt(ramme.uker, 10) || 14));
   const form = { forelesninger: "forelesninger", omvendt: "omvendt klasserom", ingen: "ingen faste samlinger" }[ramme.form] || "forelesninger";
@@ -287,22 +301,34 @@ async function fagforslag(request, env, b, h) {
     `\n\nEmnebeskrivelse:\n${kort(b.emnebeskrivelse, 8000) || "(ingen)"}\n\nLæringsutbytte:\n${kort(b.laringsutbytte, 3000) || "(ingen)"}\n\nKATALOG (id | tittel):\n` +
     katalog.map((x) => `${x.id} | ${x.tittel}`).join("\n") +
     (b.onske ? `\n\nØNSKER FRA UNDERVISEREN:\n${kort(b.onske, 8000)}` : "") + (vedlegg ? "\n\nUnderviserens tidligere plan er vedlagt." : "") +
-    (Array.isArray(b.navarende) && b.navarende.length ? `\n\nNÅVÆRENDE OPPSETT:\n${kort(JSON.stringify(b.navarende), 12000)}` : "");
-  const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_FAG.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000, vedlegg));
-  if (!r || !Array.isArray(r.moduler)) throw feil("Fikk ikke noe forslag fra KI denne gangen. Prøv igjen.", 502);
+    (Array.isArray(b.navarende) && b.navarende.length ? `\n\nNÅVÆRENDE OPPSETT:\n${kort(JSON.stringify(b.navarende), 12000)}` : "") + vi.ber;
+  // Svaret skal være JSON. Kommer det noe annet (prosa, avkuttet JSON), prøver vi én gang til med en tydeligere beskjed.
+  const sys = SYSTEM_FAG.replace("NETTSTED", NETTSTEDNAVN(request));
+  const fenv = { ...env, MODELL: env.MODELL_FAG || env.MODELL };
+  let raa = await spor(fenv, sys, melding, 16000, vedlegg);
+  let r = lesJson(raa);
+  if (!r || !Array.isArray(r.moduler)) {
+    console.log("fagforslag: uleselig svar, prøver igjen:", (raa || "").slice(0, 500));
+    raa = await spor(fenv, sys, melding + "\n\nVIKTIG: Svar KUN med ett gyldig JSON-objekt etter formatet over, uten tekst før eller etter. Hold notatene korte.", 16000, vedlegg);
+    r = lesJson(raa);
+  }
+  if (!r || !Array.isArray(r.moduler)) {
+    console.log("fagforslag: uleselig svar igjen:", (raa || "").slice(0, 500));
+    throw feil("Fikk ikke noe forslag fra KI denne gangen. Prøv igjen, eller lim inn planen som tekst under «Ønsker» i stedet for å laste opp en fil.", 502);
+  }
   // Rydd: bare kjente id-er, høyst så mange uker som rammen sier.
   const gyldig = new Set(katalog.map((x) => x.id));
   let igjen = uker;
-  const moduler = r.moduler.slice(0, 12).map((m) => {
+  const moduler = r.moduler.slice(0, 16).map((m) => {
     const u = (Array.isArray(m && m.uker) ? m.uker : []).slice(0, Math.max(0, igjen)).map((x) => ({
-      undertemaer: (Array.isArray(x && x.undertemaer) ? x.undertemaer : []).filter((id) => gyldig.has(id)).slice(0, 4),
+      undertemaer: (Array.isArray(x && x.undertemaer) ? x.undertemaer : []).filter((id) => gyldig.has(id)).slice(0, 8),
       notat: kort(x && x.notat, 200),
     }));
     igjen -= u.length;
     return { navn: kort(m && m.navn, 60) || "Modul", uker: u };
   }).filter((m) => m.uker.length);
   if (!moduler.length) throw feil("Forslaget fra KI kunne ikke brukes. Prøv igjen, eller bygg selv.", 502);
-  return json({ moduler, kommentar: kort(r.kommentar, 600) }, 200, h);
+  return json({ moduler, kommentar: kort(r.kommentar, 600), vedlegg: vedleggTekst(vi, r) }, 200, h);
 }
 
 function cors(origin) {
@@ -448,6 +474,7 @@ async function dashman(request, env, b, h) {
   while (meldinger.length && meldinger[0].role !== "user") meldinger.shift();
   if (!meldinger.length || meldinger[meldinger.length - 1].role !== "user") return json({ feil: "Skriv noe til Dashman først." }, 400, h);
 
+  if (await erUnderviser(request, env)) return await dashmanUnderviser(request, env, b, h, meldinger);
   let k = {};
   try { k = (await supabaseRpc(env, token, "dashman_kontekst")) || {}; } catch { k = {}; }
   const fag = Array.isArray(k.fag) ? k.fag : [];
@@ -480,6 +507,45 @@ async function dashman(request, env, b, h) {
   const notat = r && typeof r.notat === "string" ? r.notat.trim() : "";
   if (notat && notat !== k.notat) { try { await supabaseRpc(env, token, "sett_dashman_notat", { t: kort(notat, 800) }); } catch {} }
   return json({ svar, humor }, 200, h);
+}
+
+// Dashman for undervisere (dashman-underviser.md): hjelpsom kollega som gir hele svar. Står underviseren i fagbyggeren,
+// får Dashman faget og katalogen, og kan sende tilbake et nytt oppsett ("moduler", "ramme") som fagbyggeren tar i bruk.
+async function dashmanUnderviser(request, env, b, h, meldinger) {
+  const side = b.side || {}, fag = b.fag && typeof b.fag === "object" ? b.fag : null;
+  const katalog = fag && Array.isArray(fag.katalog) ? fag.katalog.slice(0, 400).filter((x) => x && typeof x.id === "string").map((x) => ({ id: x.id, tittel: kort(x.tittel, 120) })) : [];
+  const linjer = [
+    `Siden underviseren står på nå: «${kort(side.tittel, 150)}» (${kort(side.url, 200)})`,
+    ...(side.tekst && !fag ? [`Utdrag av siden:\n${kort(side.tekst, 3000)}`] : []),
+    ...(fag ? [`FAGET i fagbyggeren:\n${kort(JSON.stringify({ navn: fag.navn, ramme: fag.ramme, moduler: fag.moduler }), 20000)}`,
+      `KATALOG (id | tittel):\n${katalog.map((x) => `${x.id} | ${x.tittel}`).join("\n")}`] : ["Underviseren står ikke i fagbyggeren nå, så du kan ikke endre et fag. Vil underviseren endre et fag: be hen åpne faget i fagbyggeren og spørre derfra."]),
+  ];
+  const system = DASHMAN_UNDERVISER.replaceAll("NETTSTED", NETTSTEDNAVN(request)) + "\n\n## Det du vet nå\n\n" + linjer.join("\n");
+  const modell = (fag && env.MODELL_FAG) || env.MODELL_DASHMAN || env.MODELL;
+  const raa = await sporSamtale({ ...env, MODELL: modell }, system, meldinger, fag ? 12000 : 2500);
+  const r = lesJson(raa);
+  const svar = kort(r && typeof r.svar === "string" ? r.svar : raa, 6000).trim();
+  if (!svar) throw feil("Dashman fikk ikke sagt noe denne gangen. Prøv igjen.", 502);
+  const ut = { svar, humor: HUMOR.includes(r && r.humor) ? r.humor : "noytral" };
+  if (fag && r && Array.isArray(r.moduler) && r.moduler.length) {
+    const gyldig = new Set(katalog.map((x) => x.id));
+    ut.moduler = r.moduler.slice(0, 20).map((m) => ({
+      ...(m && typeof m.id === "string" ? { id: kort(m.id, 40) } : {}),
+      navn: kort(m && m.navn, 60) || "Modul",
+      uker: (Array.isArray(m && m.uker) ? m.uker : []).slice(0, 40).map((w) => ({
+        ...(w && typeof w.id === "string" ? { id: kort(w.id, 40) } : {}),
+        undertemaer: (Array.isArray(w && w.undertemaer) ? w.undertemaer : []).filter((id) => gyldig.has(id)).slice(0, 10),
+        notat: kort(w && w.notat, 200),
+      })),
+    }));
+    if (r.ramme && typeof r.ramme === "object") {
+      const rm = {};
+      if (parseInt(r.ramme.uker, 10) > 0) rm.uker = Math.min(52, parseInt(r.ramme.uker, 10));
+      if (parseInt(r.ramme.startuke, 10) > 0) rm.startuke = Math.min(53, parseInt(r.ramme.startuke, 10));
+      if (Object.keys(rm).length) ut.ramme = rm;
+    }
+  }
+  return json(ut, 200, h);
 }
 
 function lesBilde(d) {
@@ -585,9 +651,12 @@ async function hentInnhold(side) {
 
 function lesJson(s) {
   if (!s) return null;
+  s = s.replace(/```(?:json)?/gi, "");
   const a = s.indexOf("{"), z = s.lastIndexOf("}");
   if (a < 0 || z <= a) return null;
-  try { return JSON.parse(s.slice(a, z + 1)); } catch { return null; }
+  const t = s.slice(a, z + 1);
+  try { return JSON.parse(t); } catch {}
+  try { return JSON.parse(t.replace(/,\s*([}\]])/g, "$1")); } catch { return null; }   // komma før } eller ]
 }
 
 // ---------------------------------------------------------------- felles

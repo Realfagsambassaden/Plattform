@@ -208,6 +208,7 @@ omrader:
         undertemaer:
           - { id: strom-spenning, tittel: "Strøm og spenning" }
           - { id: motstand, tittel: "Motstand og Ohms lov" }
+          - { id: serie-parallell, tittel: "Serie- og parallellkobling" }
           - { id: kirchhoff, tittel: "Kirchhoffs lover" }
           - { id: emf, tittel: "Elektromotorisk spenning og indre resistans" }
           - { id: effekt, tittel: "Elektrisk effekt" }

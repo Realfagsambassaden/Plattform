@@ -492,6 +492,7 @@ body { overflow-x: clip; }
 .larer-lagret small { color: $dust; }
 .fd-sideknapper { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .8rem; }
 .fd-sideknapper .btn-chalk { font-size: .85rem; padding: .3rem .8rem; }
+.fd-kapittelknapp.btn-chalk { font-size: .75rem; padding: .2rem .65rem; margin-left: .4rem; vertical-align: middle; }
 
 /* ---------- Nivåfarger: forkurs grønn, ingeniør turkis, fordypning oransje (data-nv="…" på alt som viser et nivå) ---------- */
 [data-nv] { --nv: #{$neon}; --nv-tekst: #{$slate}; }
@@ -557,6 +558,11 @@ body.har-foredrag { overflow: hidden; }
 .tp-verktoy button.valgt { border-color: $neon; color: $neon; }
 .tp-verktoy .tp-farge { width: 1.5rem; height: 1.5rem; padding: 0; border-radius: 50%; background: var(--f); border: 2px solid $slate; }
 .tp-verktoy .tp-farge.valgt { outline: 2px solid $chalk; outline-offset: 1px; }
+.tp-verktoy .tp-egen { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; margin: 0; border-radius: 50%; border: 2px dashed $dust; color: $chalk; font-weight: 700; cursor: pointer; overflow: hidden; }
+.tp-verktoy .tp-egen.har { background: var(--f); border: 2px solid $slate; }
+.tp-verktoy .tp-egen.har span { display: none; }
+.tp-verktoy .tp-egen.valgt { outline: 2px solid $chalk; outline-offset: 1px; }
+.tp-verktoy .tp-egen input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: 0; padding: 0; }
 .fd-knapper .tp-pa { background: $neon; border-color: $neon; color: $slate; }
 .tp-tegner .fd-slide { user-select: none; -webkit-user-select: none; }
 @media (max-width: 700px) { .fd-linje { flex-wrap: wrap; } .tp-verktoy { border-right: 0; } }

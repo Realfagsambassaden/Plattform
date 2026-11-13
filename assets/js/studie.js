@@ -83,6 +83,7 @@ function studieStart() {
   // Undertemasider finnes bare når det er stoff om dem (se verktoy/tema.py). FINNES lages fra loyper.json:
   // adressen til undertemasiden → sidene om undertemaet ({ url, tittel }).
   var FINNES = null;
+  var LOYPER = [];   // løyper med ukeplan (kilde: utvalg i Plattform/loyper), til «Bygg etter løype»
   var temaUrl = function (t, u) {
     var sti = '/tema/' + S[t].omrade + '/' + t + (u ? '/' + u : '') + '.html';
     return u && FINNES && !FINNES[sti] ? null : '..' + sti;
@@ -532,20 +533,77 @@ function studieStart() {
   function kiSpar() { var f = T.fag; if (!f.spar) f.spar = { tekst: '', vedlegg: null, filnavn: '' }; return f.spar; }
   function kiOppsett(endre) {
     var f = T.fag, u = f.u, sp = kiSpar();
-    if (endre && !sp.tekst.trim() && !sp.vedlegg) return varsle('Skriv hva KI skal endre.', true);
+    if (endre && !sp.tekst.trim() && !sp.vedlegg && !(sp.ulest || []).length) return varsle('Skriv hva KI skal endre.', true);
     if (!endre && u.moduler.length && f.bekreftKi !== true) { f.bekreftKi = true; return tegn(); }
     f.bekreftKi = false; f.kiVenter = endre ? 'endre' : 'nytt'; tegn();
     ki('/fagforslag', { navn: u.navn, emnebeskrivelse: u.emnebeskrivelse, laringsutbytte: u.laringsutbytte, ramme: u.ramme, katalog: katalogListe(),
-      onske: sp.tekst, vedlegg: sp.vedlegg, navarende: endre ? u.moduler : null }, 120)
-      .then(function (d) { f.forrige = JSON.parse(JSON.stringify(u.moduler)); u.moduler = medId(d.moduler); f.kiKommentar = d.kommentar || ''; f.steg = 'moduler'; sp.tekst = ''; sp.vedlegg = null; sp.filnavn = ''; return lagreUtkast(); })
+      onske: sp.tekst, vedlegg: sp.vedlegg, filnavn: sp.filnavn, ulest: sp.ulest || [], navarende: endre ? u.moduler : null }, 240)
+      .then(function (d) { f.forrige = JSON.parse(JSON.stringify(u.moduler)); u.moduler = medId(d.moduler); f.kiKommentar = kiTekst(d, d.kommentar); f.steg = 'moduler'; sp.tekst = ''; sp.vedlegg = null; sp.filnavn = ''; sp.ulest = []; return lagreUtkast(); })
       .catch(function (e) { varsle(feilmelding(e), true); })
       .then(function () { f.kiVenter = false; tegn(); });
+  }
+  // «Bygg etter løype»: ukeplanen i løypa (f.eks. TRES0312) blir moduler og uker, nøyaktig i løypas rekkefølge, uten KI.
+  // Ett kapittel = én modul. «36–37» = to uker; undertemaene fordeles jevnt på ukene. Moduler og uker som ligger i
+  // de samme kalenderukene som før, beholder id-ene sine, så materiale og beskjeder blir med.
+  function ukerAv(t) { var m = /(\d+)\s*[–-]\s*(\d+)/.exec(t || ''), a = parseInt(t, 10); return m ? { fra: +m[1], n: Math.max(1, (+m[2] - +m[1] + 52) % 52 + 1) } : { fra: isNaN(a) ? null : a, n: 1 }; }
+  function fraLoype(id) {
+    var f = T.fag, u = f.u, L = LOYPER.find(function (x) { return x.id === id; });
+    if (!L) return;
+    var gamle = [], st = +u.ramme.startuke || 0, n0 = 0;
+    u.moduler.forEach(function (m) { m.uker.forEach(function (w) { n0++; gamle.push({ m: m, w: w, kal: st ? ((st + n0 - 2) % 52) + 1 : null }); }); });
+    var forste = ukerAv(L.uker[0].uke).fra, brukteM = {}, mods = [], uke = 0;
+    L.uker.forEach(function (k) {
+      var ut = k.undertemaer.map(function (x) { return NETTSTED + '/' + x; }).filter(function (x) { var p = x.split('/'); return K[p[1]] && K[p[1]].undertemaer[p[2]]; });
+      var n = ukerAv(k.uke).n, per = Math.ceil(ut.length / n), uker = [];
+      for (var i = 0; i < n; i++) { uke++; uker.push({ undertemaer: ut.slice(i * per, (i + 1) * per), notat: i ? '' : k.tittel, kal: forste ? ((forste + uke - 2) % 52) + 1 : null }); }
+      var treff = gamle.filter(function (g) { return g.kal && uker.some(function (w) { return w.kal === g.kal; }) && !brukteM[g.m.id]; })[0];
+      var m = { navn: k.tittel.slice(0, 60), uker: uker };
+      if (treff) { brukteM[treff.m.id] = 1; m.id = treff.m.id; m.beskjeder = treff.m.beskjeder || [];
+        uker.forEach(function (w) { var g = gamle.find(function (x) { return x.m === treff.m && x.kal === w.kal; }); if (g) w.id = g.w.id; }); }
+      uker.forEach(function (w) { delete w.kal; });
+      mods.push(m);
+    });
+    f.forrige = JSON.parse(JSON.stringify(u.moduler));
+    u.moduler = medId(mods); u.ramme.uker = uke; if (forste) u.ramme.startuke = forste;
+    f.kiKommentar = 'Bygd etter løypa ' + L.tittel + ': ' + mods.length + ' moduler, ' + uke + ' uker' + (forste ? ' fra kalenderuke ' + forste : '') + ', i samme rekkefølge som løypa. Dra modulene eller bruk pilene for å endre rekkefølgen.';
+    f.steg = 'moduler'; f.bekreftLoype = null; planlagreFag(); tegn();
+  }
+  // Dashman (assets/js/dashman.js) får faget som er åpent i fagbyggeren, og kan sende tilbake et nytt oppsett.
+  window.fhDashmanFag = function () {
+    var f = T.fag; if (!f || !f.u || !erUnderviser() || T.eksempel || !document.querySelector('.st-bygg-topp')) return null;
+    return { navn: f.u.navn, ramme: { uker: f.u.ramme.uker, startuke: f.u.ramme.startuke, form: f.u.ramme.form, samlinger: f.u.ramme.samlinger },
+      moduler: f.u.moduler.map(function (m) { return { id: m.id, navn: m.navn, uker: m.uker.map(function (w) { return { id: w.id, undertemaer: w.undertemaer, notat: w.notat || '' }; }) }; }),
+      katalog: katalogListe() };
+  };
+  window.fhDashmanBruk = function (d) {
+    var f = T.fag; if (!f || !f.u || !Array.isArray(d.moduler) || !d.moduler.length) return '';
+    var gml = {}, uk = {};
+    f.u.moduler.forEach(function (m) { gml[m.id] = m; m.uker.forEach(function (w) { uk[w.id] = w; }); });
+    f.forrige = JSON.parse(JSON.stringify(f.u.moduler));
+    f.u.moduler = medId(d.moduler.map(function (m) {
+      var g = m.id && gml[m.id];
+      return { id: g ? m.id : undefined, navn: m.navn, beskjeder: g ? g.beskjeder : [], uker: m.uker.map(function (w) { var gw = w.id && uk[w.id];
+        return Object.assign(gw ? { id: w.id, niva: gw.niva } : {}, { undertemaer: w.undertemaer, notat: w.notat }); }) };
+    }));
+    if (d.ramme) { if (d.ramme.uker) f.u.ramme.uker = d.ramme.uker; if (d.ramme.startuke) f.u.ramme.startuke = d.ramme.startuke; }
+    f.kiKommentar = 'Dashman har endret oppsettet.'; f.steg = 'moduler'; f.fane = 'design';
+    planlagreFag(); tegn();
+    return '(Endringen er lagt inn i fagbyggeren. Trykk «Angre» der hvis du vil ha det gamle oppsettet tilbake.)';
+  };
+  function loypeKnapper() {
+    var f = T.fag;
+    if (!LOYPER.length) return '';
+    return LOYPER.map(function (L) {
+      var a = L.uker[0].uke, b = L.uker[L.uker.length - 1].uke, spor = f.bekreftLoype === L.id;
+      return '<button type="button" class="st-stor' + (spor ? ' fylt' : '') + '" data-h="fraLoype" data-id="' + esc(L.id) + '"><b>' + (spor ? 'Ja, erstatt oppsettet med ' + esc(L.tittel) : 'Bygg etter løypa ' + esc(L.tittel)) + '</b><span>' +
+        (spor ? 'Forrige oppsett kan hentes tilbake med «Angre». Materiale og beskjeder i de samme kalenderukene blir med.' : 'Nøyaktig ukeplanen fra løypa (uke ' + esc(String(a).split(/[–-]/)[0]) + '–' + esc(String(b).split(/[–-]/).pop()) + ', ' + L.uker.length + ' kapitler), uten KI. Du kan endre alt etterpå.') + '</span></button>';
+    }).join('');
   }
   function angreKi() { var f = T.fag; if (!f.forrige) return; f.u.moduler = f.forrige; f.forrige = null; f.kiKommentar = ''; planlagreFag(); tegn(); varsle('Forrige oppsett er hentet tilbake.'); }
   function sparBoks(endre) {
     var f = T.fag, sp = kiSpar(), v = f.kiVenter === (endre ? 'endre' : 'nytt');
     return '<div class="st-kibox"><b>' + (endre ? 'Spør KI om endringer' : 'Ønsker eller en tidligere plan (valgfritt)') + '</b><p class="st-sm" style="margin:.2rem 0">' +
-      (endre ? 'F.eks. «Slå sammen de to første modulene», «Legg energi før bevegelsesmengde» eller «Bruk planen i filen, men med 12 uker». KI får det nåværende oppsettet og endrer bare det du ber om.'
+      (endre ? 'F.eks. «Slå sammen de to første modulene», «Legg energi før bevegelsesmengde» eller «Bruk planen i filen, men med 12 uker». KI får det nåværende oppsettet og endrer bare det du ber om. Du kan også åpne Dashman (nede til høyre) og sparre med ham: han ser faget og kan gjøre endringene rett her.'
         : 'Skriv hva du ønsker, eller lim inn/last opp en plan du har brukt før (tekst, bilde eller PDF), så bygger KI oppsettet ut fra den. Filen sendes bare til KI og lagres ikke.') + '</p>' +
       '<textarea class="st-felt" rows="3" data-spar="tekst" placeholder="' + (endre ? 'Hva skal endres?' : 'F.eks. «Følg planen fra i fjor» eller lim inn planen her …') + '">' + esc(sp.tekst) + '</textarea>' +
       '<div class="st-vedlegg"><label class="st-btn g liten">📎 ' + (sp.filnavn ? esc(sp.filnavn) : 'Last opp plan') + '<input type="file" class="st-spar-fil" accept="image/*,application/pdf,.txt,.md,.tex"></label>' +
@@ -618,7 +676,7 @@ function studieStart() {
         sparBoks(false) +
         '<div class="st-to st-valgkort">' +
         '<button type="button" class="st-stor fylt" data-h="kiOppsett"' + (f.kiVenter ? ' disabled' : '') + '><b>' + (f.kiVenter ? 'KI lager forslaget … (kan ta opptil et minutt)' : 'La KI foreslå oppsett') + '</b><span>Moduler og temaer per uke ut fra beskrivelsen, læringsutbyttet og det du har skrevet eller lastet opp over. Du kan endre alt etterpå.</span></button>' +
-        '<button type="button" class="st-stor" data-h="byggSelv"><b>' + (u.moduler.length ? 'Gå til modulene' : 'Bygg selv') + '</b><span>' + (u.moduler.length ? u.moduler.length + ' moduler i utkastet.' : 'Start med én tom modul og legg til temaer selv.') + '</span></button></div>';
+        '<button type="button" class="st-stor" data-h="byggSelv"><b>' + (u.moduler.length ? 'Gå til modulene' : 'Bygg selv') + '</b><span>' + (u.moduler.length ? u.moduler.length + ' moduler i utkastet.' : 'Start med én tom modul og legg til temaer selv.') + '</span></button>' + loypeKnapper() + '</div>';
     }
     // moduler
     var nr = 0, valg = '<option value="">+ undertema …</option>' + Object.keys(K).map(function (t) {
@@ -641,7 +699,7 @@ function studieStart() {
     o += u.moduler.map(function (m, mi) {
       var fra = nr + 1; nr += m.uker.length;
       var farge = MODFARGE[mi % MODFARGE.length];
-      return '<div class="st-modrad"><section class="st-modul" style="border-color:' + farge + '"><header><span class="st-modnr" style="color:' + farge + '">Modul ' + (mi + 1) + '</span>' +
+      return '<div class="st-modrad" data-mi="' + mi + '"><section class="st-modul" style="border-color:' + farge + '"><header>' + (u.moduler.length > 1 ? '<span class="st-dra" data-dra="' + mi + '" title="Dra modulen opp eller ned" aria-hidden="true">⠿</span>' : '') + '<span class="st-modnr" style="color:' + farge + '">Modul ' + (mi + 1) + '</span>' +
         '<input class="st-modnavn" data-felt="mod" data-m="' + mi + '" value="' + esc(m.navn) + '" aria-label="Navn på modul ' + (mi + 1) + '" maxlength="60">' +
         '<span class="st-sm">' + (m.uker.length ? 'Uke ' + fra + (m.uker.length > 1 ? '–' + nr : '') : 'Ingen uker') + '</span>' +
         '<span class="st-knapper"><button type="button" class="st-ikon" data-h="flyttModul" data-m="' + mi + '" data-r="-1"' + (mi ? '' : ' disabled') + ' aria-label="Flytt modulen opp">↑</button>' +
@@ -759,13 +817,13 @@ function studieStart() {
     v.kiVenter = true; tegn();
     ki('/materiale', { fag: u.navn, ramme: { form: r.form, lengde: +r.lengde || 90, samlinger: antSamlinger(r, el) }, niva: NIVANAVN[r.niva] || '', modul: m.navn, uke: uke, samling: v.s,
       undertemaer: w.undertemaer.map(function (id) { var url = utLenke(id, nivaFor(w, id, r)); return { id: id, tittel: utTema(id) + ': ' + utNavn(id), url: url ? url.replace(/^\.\./, '') : '', niva: NIVANAVN[nivaFor(w, id, r)] || '' }; }),
-      notat: w.notat || '', arbeidskrav: krav, onske: ki0.tekst, vedlegg: ki0.vedlegg, hva: ki0.hva, navarende: endre ? { tittel: v.tittel, plan: v.plan, slides: v.slides } : null }, 150)
+      notat: w.notat || '', arbeidskrav: krav, onske: ki0.tekst, vedlegg: ki0.vedlegg, filnavn: ki0.filnavn, ulest: ki0.ulest || [], hva: ki0.hva, navarende: endre ? { tittel: v.tittel, plan: v.plan, slides: v.slides } : null }, 150)
       .then(function (d) {
         v.forrige = JSON.parse(JSON.stringify({ tittel: v.tittel, plan: v.plan, slides: v.slides }));
         if (d.tittel && (!v.tittel || endre)) v.tittel = d.tittel;
         if (ki0.hva !== 'slides' && Array.isArray(d.plan)) v.plan = d.plan;
         if (ki0.hva !== 'plan' && Array.isArray(d.slides)) v.slides = d.slides;
-        v.kiKommentar = d.kommentar || ''; ki0.tekst = ''; ki0.vedlegg = null; ki0.filnavn = '';
+        v.kiKommentar = kiTekst(d, d.kommentar); ki0.tekst = ''; ki0.vedlegg = null; ki0.filnavn = ''; ki0.ulest = [];
         return lagreMat(true);
       })
       .catch(function (e) { varsle(feilmelding(e), true); })
@@ -833,6 +891,30 @@ function studieStart() {
       });
     tegn(); return true;
   }
+  // Bytter innholdet i sliden, men lar tavlepennens lerret og tavle ligge (de har tegningene).
+  function settSlide(el, html) {
+    Array.prototype.slice.call(el.children).forEach(function (c) { if (!/(^| )tp-/.test(c.className)) c.remove(); });
+    el.insertAdjacentHTML('afterbegin', html);
+  }
+  // Tavlepenn (assets/js/tavlepenn.js): tegn på slidene med Apple Pencil, finger eller mus. Lages på nytt hver gang siden tegnes.
+  function uvPenn() {
+    var v = T.uv, ramme = document.getElementById('uv-ramme'), sl = document.getElementById('uv-slide');
+    if (!v || !ramme || !sl) return;
+    var lag = function () {
+      var linje = ramme.querySelector('.uv-pennlinje');
+      if (!window.Tavlepenn || !ramme.isConnected || !linje) return;
+      T.uvTp = window.Tavlepenn(ramme, sl, 'tavlepenn:uv:' + v.c.id);
+      linje.insertBefore(T.uvTp.verktoy, linje.firstChild);
+      T.uvTp.slide(v.valgt + ':' + v.i);
+      if (v.pennPa) T.uvTp.penn(true);
+    };
+    if (window.Tavlepenn) lag();
+    else if (!T.uvPennLaster) {
+      T.uvPennLaster = true;
+      var s = document.createElement('script'); var rs = document.querySelector('script[src*="site_libs/"]'); s.src = (rs ? rs.getAttribute('src').split('site_libs/')[0] : '../') + 'assets/js/tavlepenn.js';
+      s.onload = function () { if (T.vis === 'undervis') uvPenn(); }; document.body.appendChild(s);
+    }
+  }
   function uvSlides() { var v = T.uv, x = v && v.mat[v.valgt]; return (x && x.slides) || []; }
   // Skalerer ned teksten til sliden får plass (lange slides skal ikke kuttes).
   function passInn(el) {
@@ -847,7 +929,8 @@ function studieStart() {
     var v = T.uv, l = uvSlides(), el = document.getElementById('uv-slide'); if (!el) return;
     var ny = Math.max(0, Math.min(l.length - 1, v.i)); if (ny !== v.forrigeI) { v.visLos = false; v.forrigeI = ny; } v.i = ny;
     var sl = l[v.i];
-    el.innerHTML = projisert(sl, v.visLos); passInn(el);
+    settSlide(el, projisert(sl, v.visLos)); passInn(el);
+    if (T.uvTp) T.uvTp.slide(v.valgt + ':' + v.i);
     if (v.pop && !v.pop.closed) { var pe = v.pop.document.getElementById('uv-slide'); if (pe) { pe.innerHTML = projisert(sl, v.visLos); passInn(pe); } }
     var pt = planTrekk(); document.querySelectorAll('.uv-trekk-innhold').forEach(function (e) { e.innerHTML = pt; });
     if (v.pop && !v.pop.closed) v.pop.document.querySelectorAll('.uv-trekk-innhold').forEach(function (e) { e.innerHTML = pt; });
@@ -902,7 +985,9 @@ function studieStart() {
       (to ? '' : '<button type="button" class="st-btn liten" data-h="uvFull"' + (sl.length ? '' : ' disabled') + '>⛶ Fullskjerm</button>') + '</span></div>' +
       '<div class="uv-kropp' + (v.tid ? '' : ' uten-tid') + (v.plan || notater ? '' : ' uten-side') + '">' +
       '<div class="uv-tidslinje" role="navigation" aria-label="Tidslinje">' + (v.laster ? '<p class="st-ind">Laster …</p>' : v.feil ? '<p class="st-feil">' + esc(v.feil) + '</p>' : tid || '<p class="st-ind">Faget har ingen moduler ennå.</p>') + '</div>' +
-      '<div class="uv-scene" id="uv-scene"><div class="uv-ramme" id="uv-ramme"><div class="uv-slide" id="uv-slide"></div>' + trekkHtml() + '</div>' +
+      '<div class="uv-scene" id="uv-scene"><div class="uv-ramme" id="uv-ramme"><div class="uv-slide" id="uv-slide"></div>' + trekkHtml() +
+        (sl.length ? '<div class="uv-pennlinje"><button type="button" data-h="penn" aria-pressed="false" title="Tegn på sliden (P)">✎ Penn</button><button type="button" data-h="tavle" title="Tom tavle (B)">Tavle</button>' +
+        '<button type="button" class="uv-fsnav" data-h="uvForrige" aria-label="Forrige slide">←</button><button type="button" class="uv-fsnav" data-h="uvNeste" aria-label="Neste slide">→</button><button type="button" class="uv-fsnav" data-h="uvFull" aria-label="Avslutt fullskjerm" title="Avslutt fullskjerm (F)">✕</button></div>' : '') + '</div>' +
       '<div class="uv-kontroll"><button type="button" class="st-btn g liten" data-h="uvForrige" aria-label="Forrige slide">←</button><span id="uv-pos" class="st-sm"></span><button type="button" class="st-btn g liten" data-h="uvNeste" aria-label="Neste slide">→</button></div>' +
       (!sl.length && x && !v.laster ? '<p class="st-sm" style="text-align:center">Lag slides under Utforming → Mitt materiale, eller <a href="index.html#fag-' + encodeURIComponent(c.id) + '@' + encodeURIComponent(x.nokkel) + '" target="_blank" rel="noopener" data-h="ingen">åpne denne samlingen der</a>.</p>' : '') +
       '</div><div class="uv-side">' + taler + (v.plan ? '<div class="uv-plan">' + planHtml + '</div>' : '') + '</div></div></div>';
@@ -922,7 +1007,16 @@ function studieStart() {
   function uvLos() { var v = T.uv, sl = uvSlides()[v.i]; if (!sl || !sl.losning) return; v.visLos = !v.visLos; visSlide(); }
   function uvFull(vindu) {
     var d = (vindu || window).document, s = d.getElementById('uv-ramme'); if (!s) return;
-    if (d.fullscreenElement) d.exitFullscreen(); else if (s.requestFullscreen) s.requestFullscreen().catch(function () { varsle('Nettleseren tillot ikke fullskjerm.', true); });
+    // iPad: ekte fullskjerm gir en advarsel fra Safari når man skriver med Pencil, så der dekker vi bare hele vinduet.
+    if (!vindu && window.Tavlepenn && window.Tavlepenn.ios) {
+      T.uv.fast = !s.classList.contains('uv-fast'); s.classList.toggle('uv-fast', T.uv.fast);
+      document.documentElement.classList.toggle('uv-fast-aktiv', T.uv.fast);
+      setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 30); return;
+    }
+    if (d.fullscreenElement) d.exitFullscreen(); else if (d.webkitFullscreenElement) d.webkitExitFullscreen();
+    else if (s.requestFullscreen) s.requestFullscreen().catch(function () { varsle('Nettleseren tillot ikke fullskjerm.', true); });
+    else if (s.webkitRequestFullscreen) s.webkitRequestFullscreen();
+    else varsle('Denne nettleseren har ikke fullskjerm for slidene. På iPad: Del → Legg til på Hjem-skjerm gir mer plass.', true);
   }
   // To skjermer: slidene i et eget vindu (dras til projektoren, eller plasseres der automatisk i Chrome/Edge), mens dette
   // vinduet viser notater, løsningsforslag, neste slide og klokke. Vinduet styres herfra (samme opphav, ingen ekstra lasting).
@@ -1078,24 +1172,27 @@ function studieStart() {
   function lesVedlegg(fil) {
     if (/^image\//.test(fil.type)) return lesBilde(fil).then(function (url) { return { vedlegg: url }; });
     if (fil.type === 'application/pdf') return new Promise(function (ok, nei) {
-      if (fil.size > 4e6) return nei(new Error('PDF-en er for stor (høyst 4 MB). Del den opp, eller lim inn teksten.'));
+      if (fil.size > 4e6) return ok({ ulest: '«' + fil.name + '» (PDF-en er ' + (fil.size / 1e6).toFixed(1) + ' MB, høyst 4 MB går an)' });
       var r = new FileReader(); r.onload = function () { ok({ vedlegg: r.result }); }; r.onerror = nei; r.readAsDataURL(fil);
     });
     if (/^text\//.test(fil.type) || /\.(txt|md|tex)$/i.test(fil.name)) return fil.text().then(function (t) { return { tekst: t.slice(0, 8000) }; });
-    return Promise.reject(new Error('Last opp et bilde, en PDF eller en tekstfil.'));
+    return Promise.resolve({ ulest: '«' + fil.name + '» (filtypen kan ikke leses; bruk bilde, PDF eller tekst)' });
   }
+  // Filer som ikke kunne leses, sendes med som navn, så KI-svaret sier tydelig fra om dem.
+  function merkUlest(x, r) { if (r.ulest) { x.ulest = (x.ulest || []).concat([r.ulest]); varsle('Kunne ikke lese ' + r.ulest + '. Du kan fortsatt be om forslag; svaret sier fra om hva som ikke ble lest.', true); } }
+  function kiTekst(d, t) { return [d && d.vedlegg ? '📎 ' + d.vedlegg : '', t || ''].filter(Boolean).join(' '); }
   function kiKviss() {
     var f = T.fag, v = f.ov, kk = f.kiKviss;
     if (v.sporsmal.length >= 20) return varsle('Et arbeidskrav kan ha høyst 20 spørsmål.', true);
     if (!v.ut.length) return varsle('Velg først hvilke undertemaer arbeidskravet dekker.', true);
     var temaNavn = [], ut = v.ut.map(function (id) { var p = id.split('/'), kt = K[p[1]] || { tittel: p[1], undertemaer: {} }; if (temaNavn.indexOf(kt.tittel) < 0) temaNavn.push(kt.tittel); return { id: p[1] + '/' + p[2], tittel: kt.tittel + ': ' + (kt.undertemaer[p[2]] || p[2]) }; });
     kk.venter = true; tegn();
-    ki('/kvisslag', { tema: temaNavn.join(', '), undertemaer: ut, antall: Math.min(+kk.antall || 6, 20 - v.sporsmal.length), vanskelighet: kk.vanskelighet, grunnlag: kk.grunnlag, vedlegg: kk.vedlegg }, 120)
+    ki('/kvisslag', { tema: temaNavn.join(', '), undertemaer: ut, antall: Math.min(+kk.antall || 6, 20 - v.sporsmal.length), vanskelighet: kk.vanskelighet, grunnlag: kk.grunnlag, vedlegg: kk.vedlegg, filnavn: kk.filnavn, ulest: kk.ulest || [] }, 120)
       .then(function (d) {
         var l = (d.sporsmal || []).map(function (x) { var y = Object.assign(tomtSp(), x); y.riktig = y.riktig || ''; while (y.feil.length < 3) y.feil.push({ svar: '', uttrykk: '', type: 'begrep' }); return y; });
         if (!l.length) throw new Error('Fikk ingen spørsmål fra KI denne gangen. Prøv igjen.');
         v.sporsmal = v.sporsmal.concat(l); v.kilde = 'egne'; if (v.krav > v.sporsmal.length) v.krav = v.sporsmal.length;
-        varsle(l.length + ' spørsmål lagt til. Sjekk fasiten før du lagrer.');
+        varsle(l.length + ' spørsmål lagt til. Sjekk fasiten før du lagrer.' + (d.vedlegg ? ' ' + d.vedlegg : '')); kk.ulest = [];
       })
       .catch(function (e) { varsle(feilmelding(e), true); })
       .then(function () { kk.venter = false; tegn(); });
@@ -1529,6 +1626,7 @@ function studieStart() {
 
   function ga(v, p) { stoppTale(); if (T.fag && T.fag.lagrer) { clearTimeout(T.fag.tid); lagreUtkast(); } Object.assign(T, { vis: v }, p || {}); if (v !== 'profil') T.kiRad = T.kiRad && T.kiRad.rad ? T.kiRad : null; tegn(); rot.scrollIntoView({ block: 'start' }); }
   function tegn() {
+    if (T.uv && T.uvTp) T.uv.pennPa = T.uvTp.erAktiv();
     // Et synlig varsel skal overleve at siden tegnes på nytt.
     var gml = document.getElementById('st-varsel'), vis = gml && !gml.hidden ? { t: gml.textContent, k: gml.className } : null;
     var rull = document.querySelector('.st-matrull'), rullTopp = rull ? rull.scrollTop : 0, tidR = document.querySelector('.uv-tidslinje'), tidTopp = tidR ? tidR.scrollTop : null;
@@ -1536,7 +1634,8 @@ function studieStart() {
       rot.innerHTML = undervisHtml() + '<p id="st-varsel" class="st-varsel" role="status" hidden></p>';
       if (vis) { var ny0 = document.getElementById('st-varsel'); ny0.textContent = vis.t; ny0.className = vis.k; ny0.hidden = false; }
       var tl = document.querySelector('.uv-tidslinje'); if (tl) { if (tidTopp != null) tl.scrollTop = tidTopp; else { var pa = tl.querySelector('.uv-samling.pa'); if (pa) tl.scrollTop = Math.max(0, pa.offsetTop - 120); } }
-      visSlide(); return;
+      var rm = document.getElementById('uv-ramme'); if (rm && T.uv && T.uv.fast) rm.classList.add('uv-fast');
+      T.uvTp = null; uvPenn(); visSlide(); return;
     }
     var faner = erUnderviser() && !T.eksempel ? [['kurs', 'Fagene mine'], ['hjem', 'Løype'], ['profil', 'Profil']] : [['hjem', 'Løype'], ['profil', 'Profil'], ['kurs', 'Fag']];
     var aktiv = { uke: 'hjem', quiz: 'hjem', resultat: 'hjem', ferdigIdag: 'hjem', pamelding: 'kurs', fag: 'kurs' }[T.vis] || T.vis;
@@ -1669,6 +1768,7 @@ function studieStart() {
       kiOppsett: function () { if (d.v === 'ja') T.fag.bekreftKi = true; kiOppsett(); }, byggSelv: byggSelv, publiser: publiserFag, kuttUker: kuttUker,
       avbrytKi: function () { T.fag.bekreftKi = false; tegn(); },
       kiEndre: function () { kiOppsett(true); }, angreKi: angreKi,
+      fraLoype: function () { var f = T.fag; if (f.u.moduler.length && f.bekreftLoype !== d.id) { f.bekreftLoype = d.id; return tegn(); } fraLoype(d.id); },
       tidslinje: function () { T.fag.tidslinje = !T.fag.tidslinje; tegn(); },
       installer: function () { var a = window.fhApp; if (!a || !a.hendelse) return; a.hendelse.prompt(); a.hendelse.userChoice.then(function (v) { if (v && v.outcome === 'accepted') { a.installert = true; varsle('Appen er installert. Du finner den på hjemskjermen.'); } a.hendelse = null; a.kanInstallere = false; tegn(); }); },
       skjulApp: function () { try { localStorage.setItem('fh-app-skjul', '1'); } catch (e) {} tegn(); },
@@ -1718,11 +1818,34 @@ function studieStart() {
       slettMat: slettMat,
       uvVelg: function () { T.uv.valgt = d.k; T.uv.i = 0; tegn(); if (matchMedia('(max-width: 900px)').matches) { var sc = document.getElementById('uv-scene'); if (sc) sc.scrollIntoView({ block: 'start' }); } },
       uvForrige: function () { T.uv.i--; visSlide(); }, uvNeste: function () { T.uv.i++; visSlide(); },
-      uvUt: function () { ev.preventDefault(); if (document.fullscreenElement) document.exitFullscreen(); location.hash = 'fag-' + T.uv.c.id; location.reload(); },
+      uvUt: function () { ev.preventDefault(); document.documentElement.classList.remove('uv-fast-aktiv'); if (document.fullscreenElement) document.exitFullscreen(); location.hash = 'fag-' + T.uv.c.id; location.reload(); },
+      penn: function () { if (T.uvTp) { T.uvTp.penn(); T.uv.pennPa = T.uvTp.erAktiv(); } }, tavle: function () { if (T.uvTp) { T.uvTp.tavle(); T.uv.pennPa = T.uvTp.erAktiv(); } },
       uvFull: function () { uvFull(); }, uvNotat: function () { T.uv.notat = !T.uv.notat; tegn(); }, uvTo: uvTo, uvLos: uvLos,
       uvTid: function () { T.uv.tid = !T.uv.tid; tegn(); }, uvPlan: function () { T.uv.plan = !T.uv.plan; tegn(); },
       studentvisning: function () { if (T.fag && T.fag.lagrer) { clearTimeout(T.fag.tid); lagreUtkast(); } location.hash = 'eksempel-' + d.id; location.reload(); },
     }[d.h] || function () {})();
+  });
+  // Dra en modul opp eller ned (mus, finger eller penn): hold i ⠿ og slipp over en annen modul.
+  rot.addEventListener('pointerdown', function (ev) {
+    var h = ev.target.closest && ev.target.closest('.st-dra'); if (!h || !T.fag) return;
+    ev.preventDefault();
+    var fra = +h.dataset.dra, rad = h.closest('.st-modrad'), mal = null;
+    rad.classList.add('st-drar');
+    function under(e) { var el = document.elementFromPoint(e.clientX, e.clientY); return el && el.closest && el.closest('.st-modrad[data-mi]'); }
+    function flytt(e) {
+      var r = under(e); if (mal && mal !== r) mal.classList.remove('st-dra-over', 'st-dra-under');
+      mal = r && r !== rad ? r : null;
+      if (mal) { var ned = +mal.dataset.mi > fra; mal.classList.toggle('st-dra-under', ned); mal.classList.toggle('st-dra-over', !ned); }
+      if (e.clientY < 60) window.scrollBy(0, -20); else if (e.clientY > window.innerHeight - 60) window.scrollBy(0, 20);
+    }
+    function slipp() {
+      document.removeEventListener('pointermove', flytt); document.removeEventListener('pointerup', slipp); document.removeEventListener('pointercancel', slipp);
+      rad.classList.remove('st-drar');
+      if (!mal) return;
+      var til = +mal.dataset.mi, l = T.fag.u.moduler, x = l.splice(fra, 1)[0]; l.splice(til, 0, x);
+      planlagreFag(); tegn(); varsle('«' + x.navn + '» er flyttet til plass ' + (til + 1) + '.');
+    }
+    document.addEventListener('pointermove', flytt); document.addEventListener('pointerup', slipp); document.addEventListener('pointercancel', slipp);
   });
   rot.addEventListener('change', function (ev) {
     var el = ev.target;
@@ -1741,7 +1864,7 @@ function studieStart() {
     else if (el.dataset.uv === 'start' && T.uv) { T.uv.start = el.value; try { localStorage.setItem('uv-start-' + T.uv.c.id, el.value); } catch (e) {} tegn(); }
     else if (el.classList.contains('st-mat-fil') && el.files[0] && T.fag && T.fag.matRed) {
       var mf = el.files[0];
-      lesVedlegg(mf).then(function (r) { var x = T.fag.matRed.ki; x.vedlegg = r.vedlegg || null; x.filnavn = r.vedlegg ? mf.name : ''; if (r.tekst) x.tekst = (x.tekst ? x.tekst + '\n\n' : '') + r.tekst; tegn(); if (r.tekst) varsle('Teksten fra filen er lagt inn i feltet.'); })
+      lesVedlegg(mf).then(function (r) { var x = T.fag.matRed.ki; merkUlest(x, r); if (r.ulest) return tegn(); x.vedlegg = r.vedlegg || null; x.filnavn = r.vedlegg ? mf.name : ''; if (r.tekst) x.tekst = (x.tekst ? x.tekst + '\n\n' : '') + r.tekst; tegn(); if (r.tekst) varsle('Teksten fra filen er lagt inn i feltet.'); })
         .catch(function (e) { varsle(feilmelding(e), true); });
     }
     else if (el.dataset.felt && el.dataset.felt.indexOf('ramme.') === 0 && T.fag) { tegn(); }
@@ -1764,12 +1887,12 @@ function studieStart() {
     else if (el.dataset.kk && el.tagName === 'SELECT' && T.fag) { T.fag.kiKviss[el.dataset.kk] = el.value; }
     else if (el.classList.contains('st-spar-fil') && el.files[0]) {
       var pf = el.files[0];
-      lesVedlegg(pf).then(function (r) { var sp = kiSpar(); sp.vedlegg = r.vedlegg || null; sp.filnavn = r.vedlegg ? pf.name : ''; if (r.tekst) sp.tekst = (sp.tekst ? sp.tekst + '\n\n' : '') + r.tekst; tegn(); if (r.tekst) varsle('Teksten fra filen er lagt inn i feltet.'); })
+      lesVedlegg(pf).then(function (r) { var sp = kiSpar(); merkUlest(sp, r); if (r.ulest) return tegn(); sp.vedlegg = r.vedlegg || null; sp.filnavn = r.vedlegg ? pf.name : ''; if (r.tekst) sp.tekst = (sp.tekst ? sp.tekst + '\n\n' : '') + r.tekst; tegn(); if (r.tekst) varsle('Teksten fra filen er lagt inn i feltet.'); })
         .catch(function (e) { varsle(feilmelding(e), true); });
     }
     else if (el.id === 'st-kk-fil' && el.files[0]) {
       var fil = el.files[0];
-      lesVedlegg(fil).then(function (r) { var kk = T.fag.kiKviss; kk.vedlegg = r.vedlegg || null; if (r.tekst) kk.grunnlag = (kk.grunnlag ? kk.grunnlag + '\n\n' : '') + r.tekst; kk.filnavn = r.vedlegg ? fil.name : ''; tegn(); if (r.tekst) varsle('Teksten fra filen er lagt inn i feltet.'); })
+      lesVedlegg(fil).then(function (r) { var kk = T.fag.kiKviss; merkUlest(kk, r); if (r.ulest) return tegn(); kk.vedlegg = r.vedlegg || null; if (r.tekst) kk.grunnlag = (kk.grunnlag ? kk.grunnlag + '\n\n' : '') + r.tekst; kk.filnavn = r.vedlegg ? fil.name : ''; tegn(); if (r.tekst) varsle('Teksten fra filen er lagt inn i feltet.'); })
         .catch(function (e) { varsle(feilmelding(e), true); });
     }
     else if (el.id === 'st-bilde' && el.files[0]) {
@@ -1834,6 +1957,7 @@ function studieStart() {
     fetch('../loyper.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }).then(function (d) {
       if (!d || !d.sider) return;   // uten oversikten lenker vi til alle undertemaer
       var titler = {}; (d.temarekke || []).forEach(function (x) { titler[x.url] = x.tittel; });
+      LOYPER = (d.loyper || []).filter(function (x) { return x.uker && x.uker.length; });
       FINNES = {}; Object.keys(d.sider).forEach(function (k) { var u = d.sider[k].undertemaUrl; if (u) (FINNES[u] = FINNES[u] || []).push({ url: '..' + k, tittel: titler[k] || '', niva: d.sider[k].niva || '' }); });
     }),
     window.fhKonto(),

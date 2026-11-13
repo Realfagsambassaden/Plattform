@@ -103,41 +103,42 @@ for lf in sorted((P / 'loyper').glob('*.yml')):
     loyper.append({**{k: L.get(k) for k in ('id', 'tittel', 'institusjon', 'emnekode', 'beskrivelse')},
                    'oversikt': f"{f['kortnavn']}/index.qmd", 'sider': rekke, 'struktur': struktur, 'niva': L.get('niva') or f.get('niva')})
 
-# ---- løyper som plukker ut sider (kilde: utvalg): et emne som henter det det trenger fra ett eller flere fag.
-#   deler: [{tittel, kapitler: [{fag, kapittel, sider?, tittel?}]}]
-#   «sider» kan utelates (hele kapitlet), være filnavn i kapitlet («01-trykk.qmd» eller bare «01») eller hele stier.
-#   Oversiktssiden lages som loyper/<id>.qmd. «tekst» i løypefila (markdown) vises øverst på den.
-utvalg_sider = {}
+# ---- løyper som plukker sider (kilde: utvalg): et kurs som bruker et utvalg sider, i kursets rekkefølge.
+#   kapitler: [{tittel, uke (valgfri), tekst (valgfri), sider: [<kortnavn>/kapitler/<kap>/<side>.qmd, …]}]
+# Lager oversiktssiden loyper/<id>.qmd: én overskrift per kapittel med lenker til sidene. Forelesningsknappen
+# (assets/js/forelesning-knapp.js) setter en ▶-knapp ved hvert kapittel.
 for lf in sorted((P / 'loyper').glob('*.yml')):
     L = yaml.safe_load(lf.read_text(encoding='utf-8'))
     if L.get('kilde') != 'utvalg': continue
-    rekke, struktur = [], []
-    for d in L.get('deler') or []:
-        del_ = {'tittel': d.get('tittel'), 'kapitler': []}
-        for kk in d.get('kapitler') or []:
-            f = next((x for x in fag_liste if x['kortnavn'] == kk.get('fag')), None)
-            k = f and next((x for x in f['kapitler'] if x['dir'] == kk.get('kapittel')), None)
-            if not k:
-                print(f'  ADVARSEL: løypa {L["id"]} viser til ukjent kapittel {kk.get("fag")}/{kk.get("kapittel")}'); continue
-            base = f"{f['kortnavn']}/kapitler/{k['dir']}"
-            valgt = []
-            for v in (kk.get('sider') or [s['fil'] for s in k['sider']]):
-                v = str(v)
-                if '/' in v:
-                    if (P / v).exists(): valgt.append((v, tittel_av(P / v)))
-                    else: print(f'  ADVARSEL: løypa {L["id"]} viser til ukjent side {v}')
-                    continue
-                s = next((s for s in k['sider'] if s['fil'] == v or s['fil'].startswith(v + '-')), None)
-                if s: valgt.append((f"{base}/{s['fil']}", s['tittel']))
-                else: print(f'  ADVARSEL: løypa {L["id"]} finner ikke {v} i {base}')
-            kt = kk.get('tittel') or k['tittel']
-            rekke += [{'qmd': q_, 'tittel': t_, 'kapittel': kt} for q_, t_ in valgt]
-            del_['kapitler'].append({'tittel': kt, 'href': f"{base}/index.qmd" if k.get('har_index') else None, 'sider': [q_ for q_, _ in valgt]})
-        struktur.append(del_)
-    ov = f"loyper/{L['id']}.qmd"
-    utvalg_sider[ov] = (L, struktur)
+    rekke, kaps, uker_kap, q = [], [], [], ['---', f'title: "{L["tittel"]}"']
+    if L.get('emnekode') or L.get('institusjon'):
+        q.append('subtitle: "' + ' · '.join(x for x in (L.get('institusjon'), L.get('emnekode')) if x) + '"')
+    q += ['toc: false', '---', '', '::: {.intro}', '', L.get('beskrivelse', ''), '', ':::', '']
+    if L.get('tekst'): q += [L['tekst'].strip(), '']
+    for k in L.get('kapitler') or []:
+        finnes = [x for x in k.get('sider') or [] if (P / x).exists()]
+        for x in k.get('sider') or []:
+            if x not in finnes: print(f'  ADVARSEL: løypa {L["id"]} viser til {x}, som ikke finnes')
+        if not finnes: continue
+        q.append(f'### {k["tittel"]}' + (f' <span class="loype-uke">uke {k["uke"]}</span>' if k.get('uke') else ''))
+        q.append('')
+        if k.get('tekst'): q += [k['tekst'].strip(), '']
+        for x in finnes:
+            t = tittel_av(P / x)
+            q.append(f'- [{t}](../{x})')
+            rekke.append({'qmd': x, 'tittel': t, 'kapittel': k['tittel']})
+        q.append('')
+        kaps.append({'tittel': k['tittel'], 'href': None, 'sider': finnes})
+        # Undertemaene kapitlet dekker (tema/undertema), i sidenes rekkefølge. Fagbyggeren i appen bruker dem
+        # til «Bygg etter løype»: én modul per kapittel, med ukene fra løypa.
+        ut = []
+        for x in finnes:
+            side = next((s for s in sider_per_tema.get(side_tema.get(x), []) if s['qmd'] == x), None)
+            if side and side['undertema'] and f"{side_tema[x]}/{side['undertema']}" not in ut: ut.append(f"{side_tema[x]}/{side['undertema']}")
+        uker_kap.append({'tittel': k['tittel'], 'uke': str(k.get('uke') or ''), 'undertemaer': ut})
+    (P / 'loyper' / f'{L["id"]}.qmd').write_text('\n'.join(q), encoding='utf-8')
     loyper.append({**{k: L.get(k) for k in ('id', 'tittel', 'institusjon', 'emnekode', 'beskrivelse')},
-                   'oversikt': ov, 'sider': rekke, 'struktur': struktur, 'niva': L.get('niva')})
+                   'oversikt': f'loyper/{L["id"]}.qmd', 'sider': rekke, 'struktur': [{'tittel': None, 'kapitler': kaps}], 'niva': L.get('niva'), 'uker': uker_kap})
 
 def html(q): return '/' + q.replace('.qmd', '.html')
 
@@ -256,24 +257,6 @@ if HAR_DEKNING: q.append('<a class="loype egen" href="../dekning.html"><span cla
 q += ['</div>', '```', '']
 (LU / 'index.qmd').write_text('\n'.join(q), encoding='utf-8')
 
-# Oversiktssider for løyper som plukker ut sider (kilde: utvalg)
-for x in (P / 'loyper').glob('*.qmd'):
-    if x.name != 'index.qmd' and f'loyper/{x.name}' not in utvalg_sider: x.unlink()
-for ov, (L, struktur) in utvalg_sider.items():
-    meta = ' · '.join(x for x in (L.get('institusjon'), L.get('emnekode'), f'{sum(len(k["sider"]) for d in struktur for k in d["kapitler"])} sider') if x)
-    beskr = (L.get('beskrivelse') or '').replace('"', "'")
-    q = ['---', f'title: "{L["tittel"]}"', f'subtitle: "{beskr}"', 'toc: false', '---', '',
-         f'<p class="loype-meta">Løype · {escape(meta)}</p>', '']
-    if L.get('tekst'): q += [L['tekst'].strip(), '']
-    for d in struktur:
-        if d['tittel']: q += [f'## {d["tittel"]}', '']
-        for k in d['kapitler']:
-            q += [f'### [{k["tittel"]}](/{k["href"].replace(".qmd", ".html")})' if k['href'] else f'### {k["tittel"]}', '']
-            for x in k['sider']:
-                q.append(f'- [{tittel_av(P / x)}](/{x.replace(".qmd", ".html")})')
-            q.append('')
-    (P / ov).write_text('\n'.join(q), encoding='utf-8')
-
 # loyper.json for forrige/neste og temalenke
 side_info = {}
 for sti, eid in side_tema.items():
@@ -298,7 +281,8 @@ for o in omrader:
 (P / 'loyper.json').write_text(json.dumps({
     'temarekke': temarekke, 'nivanavn': NIVA_NAVN,
     'loyper': [{'id': L['id'], 'tittel': L['tittel'], 'url': html(L['oversikt']),
-                'sider': [{'url': html(s['qmd']), 'tittel': s['tittel']} for s in L['sider']]} for L in loyper],
+                'sider': [{'url': html(s['qmd']), 'tittel': s['tittel']} for s in L['sider']],
+                **({'uker': L['uker']} if L.get('uker') else {})} for L in loyper],
     'sider': side_info}, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
 
 # ---- sidemeny (én, etter temaer) og toppmeny

@@ -151,7 +151,7 @@ Faget bestemmer selv nettsted, navn, kortnavn og status (`skjult`/`arbeid`/`klar
 - **Temaer er grunnmuren.** `tema.yml` lister områder (Mekanikk, Fluidmekanikk …), temaer (Kinematikk, Arbeid og energi …) og undertemaer. Alt stoff hører til et tema. (Vi sier ikke «emne», fordi det også betyr et kurs.)
 - **Løyper** er kurs lagt oppå temaene, f.eks. «Forkurs i fysikk» (`loyper/*.yml`). En løype kan
   - følge et helt fag i fagets rekkefølge (`kilde: fag`, `fag: <kortnavn>`), eller
-  - plukke ut sider fra ett eller flere fag (`kilde: utvalg`), slik et emne som IFYA1000 gjør. Da lister `deler:` kapitlene i emnets rekkefølge: `{ fag: ingeniorfysikk, kapittel: 08-fluidmekanikk }` tar hele kapitlet, og `sider: ["01", "03"]` tar bare noen sider (filnavn uten resten av navnet, eller hele stier til sider i andre fag). `tekst:` (markdown) er kursinformasjon øverst på løypesiden, som lages som `loyper/<id>.qmd`.
+  - plukke ut sider fra ett eller flere fag (`kilde: utvalg`), slik emnene TRES0312, IFYA1000 og IFYA1002 gjør. Da lister `kapitler:` kapitlene i emnets rekkefølge, hvert med `tittel`, valgfri `uke` og `tekst`, og `sider:` som hele stier (`ingeniorfysikk/kapitler/08-fluidmekanikk/05-bernoullis-likning.qmd`). `tekst:` øverst i fila er kursinformasjon på løypesiden, som lages som `loyper/<id>.qmd`.
 - Flyttes et tema til et annet område i `tema.yml`, sett `flyttet_fra: [<gammelt område>]` på temaet, så videresendes de gamle adressene.
 - Fag fra malen merker hver side med `tema:` og `undertema:` øverst i fila (de gamle navnene `emne:`/`delemne:` godtas fortsatt).
 - `verktoy/tema.py` lager tema- og områdesidene (`tema/`, med videresending fra de gamle adressene under `/emner/`), løypeoversikten (`loyper/index.qmd`), sidemenyen (etter temaer) og toppmenyen (Temaer ▾ / Løyper ▾), og `loyper.json`.
@@ -196,8 +196,20 @@ Innloggede studenter får en Dashman-knapp nede til venstre på alle sider. Dash
 
 **Oppsett (én gang):** Kjør `supabase/oppsett.sql` på nytt i Supabase → SQL Editor (trygt å kjøre flere ganger). Før det er gjort, vises ikke Dashman-feltene i fagbyggeren og på Min side, og Dashman svarer uten profil.
 
-## 12. Tegne på slidene (tavlepenn)
+## 12. Forelesningsmodus og tavlepenn
+
+Undervisere (og alle som har vært på lærersiden i nettleseren) får knapper som åpner stoffet i forelesningsmodus (`larer/forelesning.html`):
+
+- **Innholdsside:** «▶ Forelesningsmodus» viser siden og resten av kapittelet som slides. «+ Legg til i forelesning» legger siden i forelesningen du holder på med.
+- **Kapittelside:** «▶ Hele kapittelet i forelesningsmodus».
+- **Løypeside** (f.eks. IFYA1000): en ▶-knapp ved hvert kapittel, med sidene løypa har valgt.
+
+Koden står i `assets/js/forelesning-knapp.js`. Vil du ta opp forelesningen, bruker du skjermopptaket på iPaden (Kontrollsenter → Skjermopptak, hold inne for å slå på mikrofonen) eller Cmd+Shift+5 på Mac.
+
+### Tegne på slidene (tavlepenn)
 
 I forelesningsmodusen (`larer/forelesning.html`) kan foreleseren tegne rett på slidene: knappen **Penn** (tast P) slår tegning av og på, **Tavle** (tast B) gir en tom tavle å regne på. Virker med Apple Pencil og finger på iPad (åpne forelesningen i Safari på iPaden og koble den til projektoren), og med mus eller tegnebrett på Mac. Pennen er trykkfølsom; etter at pennen er brukt, tegner ikke fingeren (håndflaten).
+
+Pennen finnes også i **undervisningsmodusen for fag** (Fag og undervisning → 🎓 Undervisningsmodus): knappene «✎ Penn» og «Tavle» ligger nede til høyre på sliden og virker også i fullskjerm, der det i tillegg er ← →. Tegningene huskes per slide i hver samling.
 
 Fem kritt-farger (taster 1–5), tykk/tynn strek, viskelær (E), angre (Z eller Cmd/Ctrl+Z), tøm sliden (Delete), Esc lukker pennen og tavla. Tegningene huskes per slide (og per tavle) mens fanen er åpen, også om siden lastes på nytt. Koden står i `assets/js/tavlepenn.js`.

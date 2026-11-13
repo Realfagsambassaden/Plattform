@@ -1,29 +1,74 @@
-# Løype: IFYA1000 Fysikk (NTNU Ålesund). Plukker ut sidene emnet trenger fra faget Ingeniørfysikk.
-# Rekkefølgen følger emnet. Temasidene er generelle (se AGENTS.md §3); alt om emnet hører hjemme her.
+# Løype: IFYA1000 Fysikk (NTNU Ålesund). Plukker ut sidene emnet trenger fra faget Ingeniørfysikk (kilde: utvalg, se verktoy/tema.py).
+# Temasidene er generelle (AGENTS.md §3). Alt om emnet hører hjemme her. Legg gjerne til «uke:» per kapittel.
 id: ifya1000
-tittel: "IFYA1000 Fysikk"
-emnekode: "IFYA1000"
-institusjon: "NTNU Ålesund"
-kilde: utvalg
+tittel: IFYA1000 Fysikk
+institusjon: NTNU Ålesund
+emnekode: IFYA1000
 niva: ingenior
-beskrivelse: "Mekanikk, fluidmekanikk, svingninger og bølger for ingeniørstudenter."
+kilde: utvalg
+beskrivelse: Mekanikk, fluidmekanikk, svingninger og bølger for ingeniørstudenter.
 tekst: |
   Emnet har to deler: **grunnleggende mekanikk** og **fluidmekanikk, svingninger og bølger**. Mekanikkdelen er den samme som i IFYA1002.
 
   Eksamen er skriftlig og digital (4 timer). Ingen trykte eller håndskrevne hjelpemidler, bare en enkel kalkulator. For å gå opp til eksamen må regneøvingene og laboratorierapporten være godkjent.
-deler:
-  - tittel: "Mekanikk"
-    kapitler:
-      - { fag: ingeniorfysikk, kapittel: 01-introduksjon }
-      - { fag: ingeniorfysikk, kapittel: 02-kinematikk }
-      - { fag: ingeniorfysikk, kapittel: 03-dynamikk }
-      - { fag: ingeniorfysikk, kapittel: 04-arbeid-og-energi }
-      - { fag: ingeniorfysikk, kapittel: 05-bevegelsesmengde }
-      - { fag: ingeniorfysikk, kapittel: 06-rotasjon }
-  - tittel: "Fluidmekanikk"
-    kapitler:
-      - { fag: ingeniorfysikk, kapittel: 08-fluidmekanikk }
-  - tittel: "Svingninger og bølger"
-    kapitler:
-      - { fag: ingeniorfysikk, kapittel: 09-svingninger }
-      - { fag: ingeniorfysikk, kapittel: 10-bolger }
+kapitler:
+- tittel: 'Introduksjon: størrelser, enheter og vektorer'
+  sider:
+  - ingeniorfysikk/kapitler/01-introduksjon/01-hva-er-fysikk.qmd
+  - ingeniorfysikk/kapitler/01-introduksjon/02-enheter.qmd
+  - ingeniorfysikk/kapitler/01-introduksjon/03-signifikante-sifre.qmd
+  - ingeniorfysikk/kapitler/01-introduksjon/04-vektorer.qmd
+- tittel: 'Kinematikk: beskrivelse av bevegelse'
+  sider:
+  - ingeniorfysikk/kapitler/02-kinematikk/01-posisjon-fart-akselerasjon.qmd
+  - ingeniorfysikk/kapitler/02-kinematikk/02-konstant-akselerasjon.qmd
+  - ingeniorfysikk/kapitler/02-kinematikk/03-skratt-kast.qmd
+  - ingeniorfysikk/kapitler/02-kinematikk/04-sirkelbevegelse.qmd
+- tittel: 'Dynamikk: krefter og Newtons lover'
+  sider:
+  - ingeniorfysikk/kapitler/03-dynamikk/01-newtons-lover.qmd
+  - ingeniorfysikk/kapitler/03-dynamikk/02-friksjon-fjaer-trinser.qmd
+  - ingeniorfysikk/kapitler/03-dynamikk/03-krefter-i-planet.qmd
+  - ingeniorfysikk/kapitler/03-dynamikk/04-sirkelbevegelse-og-krefter.qmd
+  - ingeniorfysikk/kapitler/03-dynamikk/05-luftmotstand.qmd
+- tittel: Arbeid og energi
+  sider:
+  - ingeniorfysikk/kapitler/04-arbeid-og-energi/01-arbeid-og-kinetisk-energi.qmd
+  - ingeniorfysikk/kapitler/04-arbeid-og-energi/02-potensiell-energi-og-energibevaring.qmd
+  - ingeniorfysikk/kapitler/04-arbeid-og-energi/03-effekt.qmd
+- tittel: Bevegelsesmengde og kollisjoner
+  sider:
+  - ingeniorfysikk/kapitler/05-bevegelsesmengde/01-bevegelsesmengde-og-kraftstot.qmd
+  - ingeniorfysikk/kapitler/05-bevegelsesmengde/02-bevaring-og-kollisjoner.qmd
+  - ingeniorfysikk/kapitler/05-bevegelsesmengde/03-massesenter.qmd
+- tittel: Rotasjon
+  sider:
+  - ingeniorfysikk/kapitler/06-rotasjon/01-rotasjonskinematikk.qmd
+  - ingeniorfysikk/kapitler/06-rotasjon/02-treghetsmoment.qmd
+  - ingeniorfysikk/kapitler/06-rotasjon/03-kraftmoment-og-rulling.qmd
+  - ingeniorfysikk/kapitler/06-rotasjon/04-statisk-likevekt.qmd
+  - ingeniorfysikk/kapitler/06-rotasjon/05-dreieimpuls.qmd
+- tittel: Fluidmekanikk
+  sider:
+  - ingeniorfysikk/kapitler/08-fluidmekanikk/01-tetthet-og-trykk.qmd
+  - ingeniorfysikk/kapitler/08-fluidmekanikk/02-hydrostatisk-trykk.qmd
+  - ingeniorfysikk/kapitler/08-fluidmekanikk/03-oppdrift.qmd
+  - ingeniorfysikk/kapitler/08-fluidmekanikk/04-volumstrom-og-kontinuitet.qmd
+  - ingeniorfysikk/kapitler/08-fluidmekanikk/05-bernoullis-likning.qmd
+  - ingeniorfysikk/kapitler/08-fluidmekanikk/06-viskositet-og-reynolds-tall.qmd
+  - ingeniorfysikk/kapitler/08-fluidmekanikk/07-tap-i-ror.qmd
+- tittel: Svingninger
+  sider:
+  - ingeniorfysikk/kapitler/09-svingninger/01-harmonisk-svingning.qmd
+  - ingeniorfysikk/kapitler/09-svingninger/02-pendel.qmd
+  - ingeniorfysikk/kapitler/09-svingninger/03-dempede-svingninger.qmd
+  - ingeniorfysikk/kapitler/09-svingninger/04-tvungne-svingninger.qmd
+- tittel: Bølger og lyd
+  sider:
+  - ingeniorfysikk/kapitler/10-bolger/01-bolgebeskrivelse.qmd
+  - ingeniorfysikk/kapitler/10-bolger/02-bolgefunksjonen.qmd
+  - ingeniorfysikk/kapitler/10-bolger/03-energi-og-intensitet.qmd
+  - ingeniorfysikk/kapitler/10-bolger/04-interferens.qmd
+  - ingeniorfysikk/kapitler/10-bolger/05-staende-bolger.qmd
+  - ingeniorfysikk/kapitler/10-bolger/06-lyd.qmd
+  - ingeniorfysikk/kapitler/10-bolger/07-dopplereffekten.qmd
