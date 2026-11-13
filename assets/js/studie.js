@@ -833,6 +833,30 @@ function studieStart() {
       });
     tegn(); return true;
   }
+  // Bytter innholdet i sliden, men lar tavlepennens lerret og tavle ligge (de har tegningene).
+  function settSlide(el, html) {
+    Array.prototype.slice.call(el.children).forEach(function (c) { if (!/(^| )tp-/.test(c.className)) c.remove(); });
+    el.insertAdjacentHTML('afterbegin', html);
+  }
+  // Tavlepenn (assets/js/tavlepenn.js): tegn på slidene med Apple Pencil, finger eller mus. Lages på nytt hver gang siden tegnes.
+  function uvPenn() {
+    var v = T.uv, ramme = document.getElementById('uv-ramme'), sl = document.getElementById('uv-slide');
+    if (!v || !ramme || !sl) return;
+    var lag = function () {
+      var linje = ramme.querySelector('.uv-pennlinje');
+      if (!window.Tavlepenn || !ramme.isConnected || !linje) return;
+      T.uvTp = window.Tavlepenn(ramme, sl, 'tavlepenn:uv:' + v.c.id);
+      linje.insertBefore(T.uvTp.verktoy, linje.firstChild);
+      T.uvTp.slide(v.valgt + ':' + v.i);
+      if (v.pennPa) T.uvTp.penn(true);
+    };
+    if (window.Tavlepenn) lag();
+    else if (!T.uvPennLaster) {
+      T.uvPennLaster = true;
+      var s = document.createElement('script'); var rs = document.querySelector('script[src*="site_libs/"]'); s.src = (rs ? rs.getAttribute('src').split('site_libs/')[0] : '../') + 'assets/js/tavlepenn.js';
+      s.onload = function () { if (T.vis === 'undervis') uvPenn(); }; document.body.appendChild(s);
+    }
+  }
   function uvSlides() { var v = T.uv, x = v && v.mat[v.valgt]; return (x && x.slides) || []; }
   // Skalerer ned teksten til sliden får plass (lange slides skal ikke kuttes).
   function passInn(el) {
@@ -847,7 +871,8 @@ function studieStart() {
     var v = T.uv, l = uvSlides(), el = document.getElementById('uv-slide'); if (!el) return;
     var ny = Math.max(0, Math.min(l.length - 1, v.i)); if (ny !== v.forrigeI) { v.visLos = false; v.forrigeI = ny; } v.i = ny;
     var sl = l[v.i];
-    el.innerHTML = projisert(sl, v.visLos); passInn(el);
+    settSlide(el, projisert(sl, v.visLos)); passInn(el);
+    if (T.uvTp) T.uvTp.slide(v.valgt + ':' + v.i);
     if (v.pop && !v.pop.closed) { var pe = v.pop.document.getElementById('uv-slide'); if (pe) { pe.innerHTML = projisert(sl, v.visLos); passInn(pe); } }
     var pt = planTrekk(); document.querySelectorAll('.uv-trekk-innhold').forEach(function (e) { e.innerHTML = pt; });
     if (v.pop && !v.pop.closed) v.pop.document.querySelectorAll('.uv-trekk-innhold').forEach(function (e) { e.innerHTML = pt; });
@@ -902,7 +927,9 @@ function studieStart() {
       (to ? '' : '<button type="button" class="st-btn liten" data-h="uvFull"' + (sl.length ? '' : ' disabled') + '>⛶ Fullskjerm</button>') + '</span></div>' +
       '<div class="uv-kropp' + (v.tid ? '' : ' uten-tid') + (v.plan || notater ? '' : ' uten-side') + '">' +
       '<div class="uv-tidslinje" role="navigation" aria-label="Tidslinje">' + (v.laster ? '<p class="st-ind">Laster …</p>' : v.feil ? '<p class="st-feil">' + esc(v.feil) + '</p>' : tid || '<p class="st-ind">Faget har ingen moduler ennå.</p>') + '</div>' +
-      '<div class="uv-scene" id="uv-scene"><div class="uv-ramme" id="uv-ramme"><div class="uv-slide" id="uv-slide"></div>' + trekkHtml() + '</div>' +
+      '<div class="uv-scene" id="uv-scene"><div class="uv-ramme" id="uv-ramme"><div class="uv-slide" id="uv-slide"></div>' + trekkHtml() +
+        (sl.length ? '<div class="uv-pennlinje"><button type="button" data-h="penn" aria-pressed="false" title="Tegn på sliden (P)">✎ Penn</button><button type="button" data-h="tavle" title="Tom tavle (B)">Tavle</button>' +
+        '<button type="button" class="uv-fsnav" data-h="uvForrige" aria-label="Forrige slide">←</button><button type="button" class="uv-fsnav" data-h="uvNeste" aria-label="Neste slide">→</button></div>' : '') + '</div>' +
       '<div class="uv-kontroll"><button type="button" class="st-btn g liten" data-h="uvForrige" aria-label="Forrige slide">←</button><span id="uv-pos" class="st-sm"></span><button type="button" class="st-btn g liten" data-h="uvNeste" aria-label="Neste slide">→</button></div>' +
       (!sl.length && x && !v.laster ? '<p class="st-sm" style="text-align:center">Lag slides under Utforming → Mitt materiale, eller <a href="index.html#fag-' + encodeURIComponent(c.id) + '@' + encodeURIComponent(x.nokkel) + '" target="_blank" rel="noopener" data-h="ingen">åpne denne samlingen der</a>.</p>' : '') +
       '</div><div class="uv-side">' + taler + (v.plan ? '<div class="uv-plan">' + planHtml + '</div>' : '') + '</div></div></div>';
@@ -922,7 +949,10 @@ function studieStart() {
   function uvLos() { var v = T.uv, sl = uvSlides()[v.i]; if (!sl || !sl.losning) return; v.visLos = !v.visLos; visSlide(); }
   function uvFull(vindu) {
     var d = (vindu || window).document, s = d.getElementById('uv-ramme'); if (!s) return;
-    if (d.fullscreenElement) d.exitFullscreen(); else if (s.requestFullscreen) s.requestFullscreen().catch(function () { varsle('Nettleseren tillot ikke fullskjerm.', true); });
+    if (d.fullscreenElement) d.exitFullscreen(); else if (d.webkitFullscreenElement) d.webkitExitFullscreen();
+    else if (s.requestFullscreen) s.requestFullscreen().catch(function () { varsle('Nettleseren tillot ikke fullskjerm.', true); });
+    else if (s.webkitRequestFullscreen) s.webkitRequestFullscreen();
+    else varsle('Denne nettleseren har ikke fullskjerm for slidene. På iPad: Del → Legg til på Hjem-skjerm gir mer plass.', true);
   }
   // To skjermer: slidene i et eget vindu (dras til projektoren, eller plasseres der automatisk i Chrome/Edge), mens dette
   // vinduet viser notater, løsningsforslag, neste slide og klokke. Vinduet styres herfra (samme opphav, ingen ekstra lasting).
@@ -1529,6 +1559,7 @@ function studieStart() {
 
   function ga(v, p) { stoppTale(); if (T.fag && T.fag.lagrer) { clearTimeout(T.fag.tid); lagreUtkast(); } Object.assign(T, { vis: v }, p || {}); if (v !== 'profil') T.kiRad = T.kiRad && T.kiRad.rad ? T.kiRad : null; tegn(); rot.scrollIntoView({ block: 'start' }); }
   function tegn() {
+    if (T.uv && T.uvTp) T.uv.pennPa = T.uvTp.erAktiv();
     // Et synlig varsel skal overleve at siden tegnes på nytt.
     var gml = document.getElementById('st-varsel'), vis = gml && !gml.hidden ? { t: gml.textContent, k: gml.className } : null;
     var rull = document.querySelector('.st-matrull'), rullTopp = rull ? rull.scrollTop : 0, tidR = document.querySelector('.uv-tidslinje'), tidTopp = tidR ? tidR.scrollTop : null;
@@ -1536,7 +1567,7 @@ function studieStart() {
       rot.innerHTML = undervisHtml() + '<p id="st-varsel" class="st-varsel" role="status" hidden></p>';
       if (vis) { var ny0 = document.getElementById('st-varsel'); ny0.textContent = vis.t; ny0.className = vis.k; ny0.hidden = false; }
       var tl = document.querySelector('.uv-tidslinje'); if (tl) { if (tidTopp != null) tl.scrollTop = tidTopp; else { var pa = tl.querySelector('.uv-samling.pa'); if (pa) tl.scrollTop = Math.max(0, pa.offsetTop - 120); } }
-      visSlide(); return;
+      T.uvTp = null; uvPenn(); visSlide(); return;
     }
     var faner = erUnderviser() && !T.eksempel ? [['kurs', 'Fagene mine'], ['hjem', 'Løype'], ['profil', 'Profil']] : [['hjem', 'Løype'], ['profil', 'Profil'], ['kurs', 'Fag']];
     var aktiv = { uke: 'hjem', quiz: 'hjem', resultat: 'hjem', ferdigIdag: 'hjem', pamelding: 'kurs', fag: 'kurs' }[T.vis] || T.vis;
@@ -1719,6 +1750,7 @@ function studieStart() {
       uvVelg: function () { T.uv.valgt = d.k; T.uv.i = 0; tegn(); if (matchMedia('(max-width: 900px)').matches) { var sc = document.getElementById('uv-scene'); if (sc) sc.scrollIntoView({ block: 'start' }); } },
       uvForrige: function () { T.uv.i--; visSlide(); }, uvNeste: function () { T.uv.i++; visSlide(); },
       uvUt: function () { ev.preventDefault(); if (document.fullscreenElement) document.exitFullscreen(); location.hash = 'fag-' + T.uv.c.id; location.reload(); },
+      penn: function () { if (T.uvTp) { T.uvTp.penn(); T.uv.pennPa = T.uvTp.erAktiv(); } }, tavle: function () { if (T.uvTp) { T.uvTp.tavle(); T.uv.pennPa = T.uvTp.erAktiv(); } },
       uvFull: function () { uvFull(); }, uvNotat: function () { T.uv.notat = !T.uv.notat; tegn(); }, uvTo: uvTo, uvLos: uvLos,
       uvTid: function () { T.uv.tid = !T.uv.tid; tegn(); }, uvPlan: function () { T.uv.plan = !T.uv.plan; tegn(); },
       studentvisning: function () { if (T.fag && T.fag.lagrer) { clearTimeout(T.fag.tid); lagreUtkast(); } location.hash = 'eksempel-' + d.id; location.reload(); },

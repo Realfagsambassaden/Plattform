@@ -1,4 +1,5 @@
-// Tavlepenn: tegn på slidene i forelesningsmodusen (assets/js/forelesning.js).
+// Tavlepenn: tegn på slidene i forelesningsmodusen (assets/js/forelesning.js) og i undervisningsmodusen for fag (assets/js/studie.js).
+// Siden kan lage en ny Tavlepenn når den tegnes på nytt; den gamle slutter å reagere når flaten er borte fra siden.
 // Apple Pencil og finger på iPad, mus eller tegnebrett på Mac. Trykkfølsom strek med pennen.
 // Tegningene huskes per slide (og per tavle) mens forelesningen pågår, også om siden lastes på nytt (sessionStorage).
 // Koordinatene lagres som andeler av flaten, så tegningene skalerer med skjermen.
@@ -101,6 +102,7 @@ window.Tavlepenn = function (scene, flate, lagringsnokkel) {
     oppdater();
   });
   document.addEventListener('keydown', function (e) {
+    if (!flate.isConnected) return;
     if (e.target.closest && e.target.closest('input, textarea')) return;
     var k = e.key;
     if ((k === 'z' || k === 'Z') && (e.metaKey || e.ctrlKey)) { e.preventDefault(); angre(); return; }
@@ -113,13 +115,15 @@ window.Tavlepenn = function (scene, flate, lagringsnokkel) {
     else if (/^[1-5]$/.test(k) && aktiv) { farge = +k - 1; visk = false; oppdater(); }
     else if (k === 'Escape' && (aktiv || tavleVis)) { tavleVis = false; penn(false); tegnAlt(); }
   });
-  window.addEventListener('resize', function () { setTimeout(storrelse, 60); });
-  document.addEventListener('fullscreenchange', function () { setTimeout(storrelse, 120); });
+  window.addEventListener('resize', function () { if (flate.isConnected) setTimeout(storrelse, 60); });
+  document.addEventListener('fullscreenchange', function () { if (flate.isConnected) setTimeout(storrelse, 120); });
+  document.addEventListener('webkitfullscreenchange', function () { if (flate.isConnected) setTimeout(storrelse, 120); });
   storrelse(); oppdater();
 
   return {
     verktoy: verktoy,
     penn: penn, tavle: visTavle,
+    erAktiv: function () { return aktiv; },
     // Kalles når sliden byttes: viser tegningene som hører til sliden (tavla lukkes)
     slide: function (k) { noekkel = String(k); tavleVis = false; oppdater(); storrelse(); }
   };
