@@ -41,7 +41,7 @@ Tegn: ✓ = dekket, ⚠ = finnes, men tynn eller «under arbeid», P = plasshold
 | **9.6 Atomkjernen** | 12 (ny side) | **NY** |
 | 9.7–9.8 Radioaktivitet, omdanning | 12/03–04 | P |
 | 10.1–10.2 Termisk stråling, drivhuseffekt | 10/02–04 | P |
-| 11.1–11.5, 11.7 Elektrisitet | 11/01–05 | ⚠ (11/01 ✓ 12. nov.; 11/02–05 237–496 ord, «under arbeid») |
+| 11.1–11.5, 11.7 Elektrisitet | 11/01–05 | ⚠ (11/01 ✓ 12. nov., 11/02–03 ✓ 13. nov.; 11/04–05 «under arbeid») |
 | 11.6 EMS, indre resistans | 11/06 | P |
 | 14.1–14.3 Statikk | 06/01–04 | ✓ |
 | 15.1 Bevegelsesgrafer | 13/02 | P |
@@ -57,7 +57,7 @@ Tegn: ✓ = dekket, ⚠ = finnes, men tynn eller «under arbeid», P = plasshold
 1. Arbeidsmetoder, utvidet etter lærerens ønske: Usikkerhet skal stå i samme bolk som signifikante siffer, standardform og regning med enheter, i temaet `maling-og-usikkerhet` i kapitlet `01-hva-er-fysikk`. Flytt plassholderen for måleusikkerhet (`08`) rett etter `05-signifikante-siffer`, skriv den, og legg ny side om usikkerhet i sammensatte størrelser rett etter den. Gi de påfølgende filene nye nummer med gamle adresser i `aliases:`. Utvid `05-signifikante-siffer` med en kobling mellom gjeldende siffer og usikkerhet (behold lærerens tekst). Skriv deretter 10 (grafer og regresjon) og 11 (forsøk og rapport). ✓ 11. nov.
 2. Sammensatte mekanikkoppgaver (✓ 11. nov., 04/07).
 3. Termofysikk: stoffmengde (✓ 11. nov., 09/05), utvide 09/07 (prosesser, var 06), rydde «under arbeid» (09/04 og 09/07, var 06). ✓ 12. nov.
-4. Elektrisitet: utvide 11/01–05, skrive 11/06. Lærerens tekst beholdes og bygges ut. (11/01 ✓ 12. nov.)
+4. Elektrisitet: utvide 11/01–05, skrive 11/06. Lærerens tekst beholdes og bygges ut. (11/01 ✓ 12. nov., 11/02–03 ✓ 13. nov.)
 5. Bølger og stråling: 10/01–04.
 6. Atom og kjerne: 12/01–04 + to nye.
 7. Programmering: 13/01–03 + to til tre nye.
