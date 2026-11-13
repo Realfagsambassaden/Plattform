@@ -193,7 +193,17 @@ Innloggede studenter får en Dashman-knapp nede til venstre på alle sider. Dash
 
 **Oppsett (én gang):** Kjør `supabase/oppsett.sql` på nytt i Supabase → SQL Editor (trygt å kjøre flere ganger). Før det er gjort, vises ikke Dashman-feltene i fagbyggeren og på Min side, og Dashman svarer uten profil.
 
-## 12. Tegne på slidene (tavlepenn)
+## 12. Forelesningsmodus og tavlepenn
+
+Undervisere (og alle som har vært på lærersiden i nettleseren) får knapper som åpner stoffet i forelesningsmodus (`larer/forelesning.html`):
+
+- **Innholdsside:** «▶ Forelesningsmodus» viser siden og resten av kapittelet som slides. «+ Legg til i forelesning» legger siden i forelesningen du holder på med.
+- **Kapittelside:** «▶ Hele kapittelet i forelesningsmodus».
+- **Løypeside** (f.eks. IFYA1000): en ▶-knapp ved hvert kapittel, med sidene løypa har valgt.
+
+Koden står i `assets/js/forelesning-knapp.js`. Vil du ta opp forelesningen, bruker du skjermopptaket på iPaden (Kontrollsenter → Skjermopptak, hold inne for å slå på mikrofonen) eller Cmd+Shift+5 på Mac.
+
+### Tegne på slidene (tavlepenn)
 
 I forelesningsmodusen (`larer/forelesning.html`) kan foreleseren tegne rett på slidene: knappen **Penn** (tast P) slår tegning av og på, **Tavle** (tast B) gir en tom tavle å regne på. Virker med Apple Pencil og finger på iPad (åpne forelesningen i Safari på iPaden og koble den til projektoren), og med mus eller tegnebrett på Mac. Pennen er trykkfølsom; etter at pennen er brukt, tegner ikke fingeren (håndflaten).
 

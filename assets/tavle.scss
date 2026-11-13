@@ -492,6 +492,7 @@ body { overflow-x: clip; }
 .larer-lagret small { color: $dust; }
 .fd-sideknapper { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .8rem; }
 .fd-sideknapper .btn-chalk { font-size: .85rem; padding: .3rem .8rem; }
+.fd-kapittelknapp.btn-chalk { font-size: .75rem; padding: .2rem .65rem; margin-left: .4rem; vertical-align: middle; }
 
 /* ---------- Nivåfarger: forkurs grønn, ingeniør turkis, fordypning oransje (data-nv="…" på alt som viser et nivå) ---------- */
 [data-nv] { --nv: #{$neon}; --nv-tekst: #{$slate}; }
