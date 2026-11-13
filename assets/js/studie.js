@@ -536,7 +536,7 @@ function studieStart() {
     if (!endre && u.moduler.length && f.bekreftKi !== true) { f.bekreftKi = true; return tegn(); }
     f.bekreftKi = false; f.kiVenter = endre ? 'endre' : 'nytt'; tegn();
     ki('/fagforslag', { navn: u.navn, emnebeskrivelse: u.emnebeskrivelse, laringsutbytte: u.laringsutbytte, ramme: u.ramme, katalog: katalogListe(),
-      onske: sp.tekst, vedlegg: sp.vedlegg, navarende: endre ? u.moduler : null }, 120)
+      onske: sp.tekst, vedlegg: sp.vedlegg, navarende: endre ? u.moduler : null }, 240)
       .then(function (d) { f.forrige = JSON.parse(JSON.stringify(u.moduler)); u.moduler = medId(d.moduler); f.kiKommentar = d.kommentar || ''; f.steg = 'moduler'; sp.tekst = ''; sp.vedlegg = null; sp.filnavn = ''; return lagreUtkast(); })
       .catch(function (e) { varsle(feilmelding(e), true); })
       .then(function () { f.kiVenter = false; tegn(); });
