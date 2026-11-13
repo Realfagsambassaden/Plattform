@@ -62,16 +62,16 @@ filer:
     dato: '2026-11-10'
     versjon: 2
   flervariabel-kalkulus/kapitler/01-dobbeltintegraler/07-oppgaver.qmd:
-    blob: 45703c0dfe6f24bf981299902359cbfca9d95b10
-    dato: '2026-11-10'
+    blob: 509b415bc331331d8154b06a7cfcedc454f20788
+    dato: '2026-11-13'
     versjon: 2
   flervariabel-kalkulus/kapitler/01-dobbeltintegraler/index.qmd:
     blob: 15fe8b1bd7181e62288f64e79436248ae552b25c
     dato: '2026-11-10'
     versjon: 2
   flervariabel-kalkulus/kapitler/02-trippelintegraler/01-trippelintegraler.qmd:
-    blob: a7b54de710ac7278bccbc8b1cf416e60ec694397
-    dato: '2026-11-10'
+    blob: ffc529a68a1f6efe40d462baa5d9fac5b2fe797e
+    dato: '2026-11-13'
     versjon: 2
   flervariabel-kalkulus/kapitler/02-trippelintegraler/02-sylinderkoordinater.qmd:
     blob: 1212f436c50f8114b133b9f957227aa33a11d4bf
@@ -165,6 +165,38 @@ filer:
     blob: 49bd843879bd97784263322b0c85e321e04fb409
     dato: '2026-11-12'
     versjon: 2
+  flervariabel-kalkulus/kapitler/05-integralsetninger/index.qmd:
+    blob: 77622889a071f083d91c54913e9342fb57ccef13
+    dato: '2026-11-13'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/06-partielle-differensiallikninger/01-hva-er-en-pde.qmd:
+    blob: af4387d8088249b883d31cbec3f181aaf6691923
+    dato: '2026-11-13'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/06-partielle-differensiallikninger/02-rand-og-initialbetingelser.qmd:
+    blob: 93f4385f83ea7278213714860c9b945867ec2ab8
+    dato: '2026-11-13'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/06-partielle-differensiallikninger/03-separasjon-av-variabler.qmd:
+    blob: 6b44b425ffc1670c9790452d7b7a4a3847c86059
+    dato: '2026-11-13'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/06-partielle-differensiallikninger/04-bevaringslover.qmd:
+    blob: 038304535b67b668cdc9b3aa7e3e4d10a564e68d
+    dato: '2026-11-13'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/06-partielle-differensiallikninger/05-oppgaver.qmd:
+    blob: 7b99b9e19d208fb22fee68a9830e4966ff516403
+    dato: '2026-11-13'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/06-partielle-differensiallikninger/index.qmd:
+    blob: c6c31f478bfaa66f027d5ef014a37a5443b75645
+    dato: '2026-11-13'
+    versjon: 2
+  flervariabel-kalkulus/kapitler/07-endelige-differanser/01-differanser-for-deriverte.qmd:
+    blob: 8794a8b1c70e871aab320eb0ce36e60f3429f49f
+    dato: '2026-11-13'
+    versjon: 2
   fysikk-forkurs/kapitler/01-hva-er-fysikk/10-grafer-og-regresjon.qmd:
     blob: 5d6c9c97978b918ac7e3090e28fd1bddf32e4bf9
     dato: '2026-11-11'
@@ -192,6 +224,14 @@ filer:
   fysikk-forkurs/kapitler/11-elektrisitet/01-begreper.qmd:
     blob: b5c6bc2c3dabc449bea033503b889bf33999d98c
     dato: '2026-11-12'
+    versjon: 2
+  fysikk-forkurs/kapitler/11-elektrisitet/02-elektrisk-kraft-og-ladning.qmd:
+    blob: fbd1b03bb576ca603ca315061f9617c3161e9dc6
+    dato: '2026-11-13'
+    versjon: 2
+  fysikk-forkurs/kapitler/11-elektrisitet/03-kirchoff-s-lover.qmd:
+    blob: 21e076361b4a5f094cd7f162ce00c25d56f50bb1
+    dato: '2026-11-13'
     versjon: 2
   ingeniorfysikk/kapitler/01-introduksjon/01-hva-er-fysikk.qmd:
     blob: 1ce59400433cd0095ab6278927d543ddab469c83
