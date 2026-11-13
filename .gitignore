@@ -8,7 +8,7 @@
 /innhold.json
 /_fag.json
 /tema/
-/loyper/index.qmd
+/loyper/*.qmd
 /loyper.json
 /ingeniorfysikk/
 /fysikk-forkurs/

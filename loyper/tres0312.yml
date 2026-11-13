@@ -1,0 +1,97 @@
+# Løype: TRES0312 Forkurs i fysikk (NTNU), etter kompendiet og framdriftsplanen til faglærer (høsten 2026).
+# Plukker sidene emnet bruker fra faget fysikk-forkurs, i kompendiets rekkefølge (kilde: utvalg, se verktoy/tema.py).
+id: tres0312
+tittel: "TRES0312"
+institusjon: "NTNU"
+emnekode: "TRES0312"
+niva: forkurs
+kilde: utvalg
+beskrivelse: "Fysikk fra grunnen av: enheter og tall, matematiske verktøy, kinematikk, dynamikk, arbeid og energi, statikk, fluider, termofysikk og elektrisitet. Sidene i den rekkefølgen emnet går gjennom dem, uke for uke."
+kapitler:
+  - tittel: "Hva er fysikk?"
+    uke: "34"
+    sider:
+      - fysikk-forkurs/kapitler/01-hva-er-fysikk/01-hva-er-fysikk.qmd
+      - fysikk-forkurs/kapitler/01-hva-er-fysikk/03-fysiske-storrelser.qmd
+      - fysikk-forkurs/kapitler/01-hva-er-fysikk/04-a-regne-med-enheter.qmd
+      - fysikk-forkurs/kapitler/01-hva-er-fysikk/05-signifikante-siffer.qmd
+      - fysikk-forkurs/kapitler/01-hva-er-fysikk/08-tall-pa-standardform.qmd
+      - fysikk-forkurs/kapitler/01-hva-er-fysikk/09-eksempel-pa-beregning.qmd
+      - fysikk-forkurs/kapitler/01-hva-er-fysikk/12-ekstraoppgaver.qmd
+  - tittel: "Matematiske verktøy vi trenger"
+    uke: "35"
+    sider:
+      - fysikk-forkurs/kapitler/02-matematikk/01-likninger-og-algebra.qmd
+      - fysikk-forkurs/kapitler/02-matematikk/02-funksjoner-og-plotting.qmd
+      - fysikk-forkurs/kapitler/02-matematikk/03-trigonometri.qmd
+      - fysikk-forkurs/kapitler/02-matematikk/04-vektorer.qmd
+      - fysikk-forkurs/kapitler/02-matematikk/05-operasjoner-med-vektorer.qmd
+      - fysikk-forkurs/kapitler/02-matematikk/06-matematisk-modellering.qmd
+      - fysikk-forkurs/kapitler/02-matematikk/07-ekstraoppgaver.qmd
+  - tittel: "Kinematikk"
+    uke: "36–37"
+    sider:
+      - fysikk-forkurs/kapitler/03-kinematikk/01-hva-er-kinematikk.qmd
+      - fysikk-forkurs/kapitler/03-kinematikk/02-strekning-s-og-hastighet-v.qmd
+      - fysikk-forkurs/kapitler/03-kinematikk/03-akselerasjon.qmd
+      - fysikk-forkurs/kapitler/03-kinematikk/04-bevegelseslikningene-for-konstant-akselerasjon.qmd
+      - fysikk-forkurs/kapitler/03-kinematikk/06-bevegelse-i-to-dimensjoner.qmd
+      - fysikk-forkurs/kapitler/03-kinematikk/05-sirkelbevegelse.qmd
+      - fysikk-forkurs/kapitler/03-kinematikk/07-ekstraoppgaver.qmd
+  - tittel: "Dynamikk"
+    uke: "38–39"
+    sider:
+      - fysikk-forkurs/kapitler/04-krefter/01-bevegelsesmengde.qmd
+      - fysikk-forkurs/kapitler/04-krefter/02-newtons-lover-og-kraft-begrepet.qmd
+      - fysikk-forkurs/kapitler/04-krefter/03-krefter-i-dagliglivet.qmd
+      - fysikk-forkurs/kapitler/04-krefter/04-krefter-i-planet-dekomponering.qmd
+      - fysikk-forkurs/kapitler/04-krefter/05-sirkelbevegelse-og-krefter.qmd
+      - fysikk-forkurs/kapitler/04-krefter/07-sammensatte-mekanikkoppgaver.qmd
+      - fysikk-forkurs/kapitler/04-krefter/08-ekstraoppgaver.qmd
+  - tittel: "Bevaring av bevegelsesmengde, arbeid og energi"
+    uke: "40–41"
+    sider:
+      - fysikk-forkurs/kapitler/04-krefter/06-bevaring-av-bevegelsesmengde.qmd
+      - fysikk-forkurs/kapitler/05-energi/01-arbeid.qmd
+      - fysikk-forkurs/kapitler/05-energi/02-energi.qmd
+      - fysikk-forkurs/kapitler/05-energi/03-energitap.qmd
+      - fysikk-forkurs/kapitler/05-energi/04-bevaring-av-mekanisk-energi.qmd
+      - fysikk-forkurs/kapitler/05-energi/05-effekt.qmd
+      - fysikk-forkurs/kapitler/05-energi/06-stot.qmd
+      - fysikk-forkurs/kapitler/05-energi/07-ekstraoppgaver.qmd
+  - tittel: "Statikk"
+    uke: "42"
+    sider:
+      - fysikk-forkurs/kapitler/06-statikk/01-kraftlikevekt-f-0.qmd
+      - fysikk-forkurs/kapitler/06-statikk/02-kraftmoment.qmd
+      - fysikk-forkurs/kapitler/06-statikk/03-rotasjonslikevekt-og-fullstendig-likevekt.qmd
+      - fysikk-forkurs/kapitler/06-statikk/04-massesenter.qmd
+      - fysikk-forkurs/kapitler/06-statikk/05-ekstraoppgaver.qmd
+  - tittel: "Fluidfysikk"
+    uke: "43–44"
+    sider:
+      - fysikk-forkurs/kapitler/08-fluider/01-introduksjon-til-fluidfysikk.qmd
+      - fysikk-forkurs/kapitler/08-fluider/02-trykk-i-vaesker.qmd
+      - fysikk-forkurs/kapitler/08-fluider/03-pascals-lov.qmd
+      - fysikk-forkurs/kapitler/08-fluider/04-oppdrift-og-arkimedes-lov.qmd
+      - fysikk-forkurs/kapitler/08-fluider/05-ekstraoppgaver.qmd
+  - tittel: "Termofysikk"
+    uke: "45–46"
+    sider:
+      - fysikk-forkurs/kapitler/09-termofysikk/01-indre-energi-varme-og-temperatur.qmd
+      - fysikk-forkurs/kapitler/09-termofysikk/02-faseoverganger.qmd
+      - fysikk-forkurs/kapitler/09-termofysikk/03-kalorimetri.qmd
+      - fysikk-forkurs/kapitler/09-termofysikk/04-termodynamikkens-1-lov.qmd
+      - fysikk-forkurs/kapitler/09-termofysikk/06-tilstandslikningen-for-idealgass.qmd
+      - fysikk-forkurs/kapitler/09-termofysikk/07-prosesstyper-og-pv-diagram.qmd
+      - fysikk-forkurs/kapitler/09-termofysikk/10-ekstraoppgaver.qmd
+  - tittel: "Elektrisitet"
+    uke: "47"
+    sider:
+      - fysikk-forkurs/kapitler/11-elektrisitet/01-elektrisk-ladning.qmd
+      - fysikk-forkurs/kapitler/11-elektrisitet/02-strom-spenning-og-kretser.qmd
+      - fysikk-forkurs/kapitler/11-elektrisitet/03-resistans-og-ohms-lov.qmd
+      - fysikk-forkurs/kapitler/11-elektrisitet/04-serie-og-parallellkobling.qmd
+      - fysikk-forkurs/kapitler/11-elektrisitet/05-kirchhoffs-lover.qmd
+      - fysikk-forkurs/kapitler/11-elektrisitet/06-elektrisk-effekt-og-energi.qmd
+      - fysikk-forkurs/kapitler/11-elektrisitet/09-ekstraoppgaver.qmd

@@ -103,6 +103,36 @@ for lf in sorted((P / 'loyper').glob('*.yml')):
     loyper.append({**{k: L.get(k) for k in ('id', 'tittel', 'institusjon', 'emnekode', 'beskrivelse')},
                    'oversikt': f"{f['kortnavn']}/index.qmd", 'sider': rekke, 'struktur': struktur, 'niva': L.get('niva') or f.get('niva')})
 
+# ---- løyper som plukker sider (kilde: utvalg): et kurs som bruker et utvalg sider, i kursets rekkefølge.
+#   kapitler: [{tittel, uke (valgfri), tekst (valgfri), sider: [<kortnavn>/kapitler/<kap>/<side>.qmd, …]}]
+# Lager oversiktssiden loyper/<id>.qmd: én overskrift per kapittel med lenker til sidene. Forelesningsknappen
+# (assets/js/forelesning-knapp.js) setter en ▶-knapp ved hvert kapittel.
+for lf in sorted((P / 'loyper').glob('*.yml')):
+    L = yaml.safe_load(lf.read_text(encoding='utf-8'))
+    if L.get('kilde') != 'utvalg': continue
+    rekke, kaps, q = [], [], ['---', f'title: "{L["tittel"]}"']
+    if L.get('emnekode') or L.get('institusjon'):
+        q.append('subtitle: "' + ' · '.join(x for x in (L.get('institusjon'), L.get('emnekode')) if x) + '"')
+    q += ['toc: false', '---', '', '::: {.intro}', '', L.get('beskrivelse', ''), '', ':::', '']
+    if L.get('tekst'): q += [L['tekst'].strip(), '']
+    for k in L.get('kapitler') or []:
+        finnes = [x for x in k.get('sider') or [] if (P / x).exists()]
+        for x in k.get('sider') or []:
+            if x not in finnes: print(f'  ADVARSEL: løypa {L["id"]} viser til {x}, som ikke finnes')
+        if not finnes: continue
+        q.append(f'### {k["tittel"]}' + (f' <span class="loype-uke">uke {k["uke"]}</span>' if k.get('uke') else ''))
+        q.append('')
+        if k.get('tekst'): q += [k['tekst'].strip(), '']
+        for x in finnes:
+            t = tittel_av(P / x)
+            q.append(f'- [{t}](../{x})')
+            rekke.append({'qmd': x, 'tittel': t, 'kapittel': k['tittel']})
+        q.append('')
+        kaps.append({'tittel': k['tittel'], 'href': None, 'sider': finnes})
+    (P / 'loyper' / f'{L["id"]}.qmd').write_text('\n'.join(q), encoding='utf-8')
+    loyper.append({**{k: L.get(k) for k in ('id', 'tittel', 'institusjon', 'emnekode', 'beskrivelse')},
+                   'oversikt': f'loyper/{L["id"]}.qmd', 'sider': rekke, 'struktur': [{'tittel': None, 'kapitler': kaps}], 'niva': L.get('niva')})
+
 def html(q): return '/' + q.replace('.qmd', '.html')
 
 # ---- generer sider
