@@ -32,6 +32,7 @@
 //   Valgfritt: KV-bindingen HINT_KV for begrensning av antall forespørsler.
 
 import DASHMAN_INSTRUKS from "./dashman-instruks.md";
+import DASHMAN_UNDERVISER from "./dashman-underviser.md";
 
 const STANDARD_MODELL = { claude: "claude-haiku-5-5", openai: "gpt-4o-mini" };
 const NETTSTED = "https://fysikkhjelp.no";
@@ -114,12 +115,12 @@ const SYSTEM_FAG = `Du er en erfaren fysikklærer og hjelper en underviser å le
 Du får emnebeskrivelsen og læringsutbyttet (begge kan mangle), rammen (antall uker og undervisningsform) og en KATALOG over undertemaer som finnes på nettstedet, med id og tittel.
 
 Lag et oppsett:
-- Del faget i 3–8 moduler med korte navn (1–3 ord), i en naturlig faglig rekkefølge.
+- Del faget i 3–8 moduler med korte navn (1–3 ord), i en naturlig faglig rekkefølge (med en plan: én modul per kapittel eller tema i planen, også om det blir flere enn 8).
 - Hver modul har én eller flere uker. Hver uke dekker 1–3 undertemaer fra katalogen.
 - Bruk høyst så mange uker som rammen sier. La gjerne de siste 1–2 ukene være uten undertemaer (repetisjon), med notatet «Repetisjon».
 - Bruk BARE id-er som står i katalogen, skrevet nøyaktig likt. Ta bare med det som passer emnebeskrivelsen og læringsutbyttet. Uten beskrivelse: lag et vanlig oppsett for faget ut fra navnet.
 - Undervisningsformen påvirker ikke innholdet, bare notatene: ved omvendt klasserom kan notatet si hva studentene forbereder.
-- Har underviseren skrevet ØNSKER eller lagt ved en tidligere plan: følg dem så tett som katalogen tillater (rekkefølge, uker, notater).
+- Har underviseren skrevet ØNSKER eller lagt ved en tidligere plan: følg planen nøyaktig. Samme rekkefølge, samme antall uker per tema (står det «uke 47» er det én uke, «uke 43–44» to uker), og ingen temaer lagt til, tatt bort eller delt opp i egne moduler (f.eks. ingen egen gasslov-modul hvis gasslovene står under termofysikk i planen). En uke kan da dekke flere enn 3 undertemaer. Står noe i planen som katalogen ikke har, nevn det i kommentaren i stedet for å erstatte det med noe annet.
 - Får du NÅVÆRENDE OPPSETT: behold det og gjør bare de endringene underviseren ber om.
 - "kommentar": 1–2 setninger til underviseren om valgene, for eksempel hva i læringsutbyttet eller planen katalogen ikke dekker.
 Norsk bokmål.
@@ -318,9 +319,9 @@ async function fagforslag(request, env, b, h) {
   // Rydd: bare kjente id-er, høyst så mange uker som rammen sier.
   const gyldig = new Set(katalog.map((x) => x.id));
   let igjen = uker;
-  const moduler = r.moduler.slice(0, 12).map((m) => {
+  const moduler = r.moduler.slice(0, 16).map((m) => {
     const u = (Array.isArray(m && m.uker) ? m.uker : []).slice(0, Math.max(0, igjen)).map((x) => ({
-      undertemaer: (Array.isArray(x && x.undertemaer) ? x.undertemaer : []).filter((id) => gyldig.has(id)).slice(0, 4),
+      undertemaer: (Array.isArray(x && x.undertemaer) ? x.undertemaer : []).filter((id) => gyldig.has(id)).slice(0, 8),
       notat: kort(x && x.notat, 200),
     }));
     igjen -= u.length;
@@ -473,6 +474,7 @@ async function dashman(request, env, b, h) {
   while (meldinger.length && meldinger[0].role !== "user") meldinger.shift();
   if (!meldinger.length || meldinger[meldinger.length - 1].role !== "user") return json({ feil: "Skriv noe til Dashman først." }, 400, h);
 
+  if (await erUnderviser(request, env)) return await dashmanUnderviser(request, env, b, h, meldinger);
   let k = {};
   try { k = (await supabaseRpc(env, token, "dashman_kontekst")) || {}; } catch { k = {}; }
   const fag = Array.isArray(k.fag) ? k.fag : [];
@@ -505,6 +507,45 @@ async function dashman(request, env, b, h) {
   const notat = r && typeof r.notat === "string" ? r.notat.trim() : "";
   if (notat && notat !== k.notat) { try { await supabaseRpc(env, token, "sett_dashman_notat", { t: kort(notat, 800) }); } catch {} }
   return json({ svar, humor }, 200, h);
+}
+
+// Dashman for undervisere (dashman-underviser.md): hjelpsom kollega som gir hele svar. Står underviseren i fagbyggeren,
+// får Dashman faget og katalogen, og kan sende tilbake et nytt oppsett ("moduler", "ramme") som fagbyggeren tar i bruk.
+async function dashmanUnderviser(request, env, b, h, meldinger) {
+  const side = b.side || {}, fag = b.fag && typeof b.fag === "object" ? b.fag : null;
+  const katalog = fag && Array.isArray(fag.katalog) ? fag.katalog.slice(0, 400).filter((x) => x && typeof x.id === "string").map((x) => ({ id: x.id, tittel: kort(x.tittel, 120) })) : [];
+  const linjer = [
+    `Siden underviseren står på nå: «${kort(side.tittel, 150)}» (${kort(side.url, 200)})`,
+    ...(side.tekst && !fag ? [`Utdrag av siden:\n${kort(side.tekst, 3000)}`] : []),
+    ...(fag ? [`FAGET i fagbyggeren:\n${kort(JSON.stringify({ navn: fag.navn, ramme: fag.ramme, moduler: fag.moduler }), 20000)}`,
+      `KATALOG (id | tittel):\n${katalog.map((x) => `${x.id} | ${x.tittel}`).join("\n")}`] : ["Underviseren står ikke i fagbyggeren nå, så du kan ikke endre et fag. Vil underviseren endre et fag: be hen åpne faget i fagbyggeren og spørre derfra."]),
+  ];
+  const system = DASHMAN_UNDERVISER.replaceAll("NETTSTED", NETTSTEDNAVN(request)) + "\n\n## Det du vet nå\n\n" + linjer.join("\n");
+  const modell = (fag && env.MODELL_FAG) || env.MODELL_DASHMAN || env.MODELL;
+  const raa = await sporSamtale({ ...env, MODELL: modell }, system, meldinger, fag ? 12000 : 2500);
+  const r = lesJson(raa);
+  const svar = kort(r && typeof r.svar === "string" ? r.svar : raa, 6000).trim();
+  if (!svar) throw feil("Dashman fikk ikke sagt noe denne gangen. Prøv igjen.", 502);
+  const ut = { svar, humor: HUMOR.includes(r && r.humor) ? r.humor : "noytral" };
+  if (fag && r && Array.isArray(r.moduler) && r.moduler.length) {
+    const gyldig = new Set(katalog.map((x) => x.id));
+    ut.moduler = r.moduler.slice(0, 20).map((m) => ({
+      ...(m && typeof m.id === "string" ? { id: kort(m.id, 40) } : {}),
+      navn: kort(m && m.navn, 60) || "Modul",
+      uker: (Array.isArray(m && m.uker) ? m.uker : []).slice(0, 40).map((w) => ({
+        ...(w && typeof w.id === "string" ? { id: kort(w.id, 40) } : {}),
+        undertemaer: (Array.isArray(w && w.undertemaer) ? w.undertemaer : []).filter((id) => gyldig.has(id)).slice(0, 10),
+        notat: kort(w && w.notat, 200),
+      })),
+    }));
+    if (r.ramme && typeof r.ramme === "object") {
+      const rm = {};
+      if (parseInt(r.ramme.uker, 10) > 0) rm.uker = Math.min(52, parseInt(r.ramme.uker, 10));
+      if (parseInt(r.ramme.startuke, 10) > 0) rm.startuke = Math.min(53, parseInt(r.ramme.startuke, 10));
+      if (Object.keys(rm).length) ut.ramme = rm;
+    }
+  }
+  return json(ut, 200, h);
 }
 
 function lesBilde(d) {
