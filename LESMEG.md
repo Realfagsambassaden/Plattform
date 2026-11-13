@@ -149,7 +149,10 @@ Faget bestemmer selv nettsted, navn, kortnavn og status (`skjult`/`arbeid`/`klar
 ## 9. Temaer og løyper
 
 - **Temaer er grunnmuren.** `tema.yml` lister områder (Mekanikk, Fluidmekanikk …), temaer (Kinematikk, Arbeid og energi …) og undertemaer. Alt stoff hører til et tema. (Vi sier ikke «emne», fordi det også betyr et kurs.)
-- **Løyper** er kurs lagt oppå temaene, f.eks. «Forkurs i fysikk». En løype følger et fag (`loyper/*.yml`).
+- **Løyper** er kurs lagt oppå temaene, f.eks. «Forkurs i fysikk» (`loyper/*.yml`). En løype kan
+  - følge et helt fag i fagets rekkefølge (`kilde: fag`, `fag: <kortnavn>`), eller
+  - plukke ut sider fra ett eller flere fag (`kilde: utvalg`), slik emnene TRES0312, IFYA1000 og IFYA1002 gjør. Da lister `kapitler:` kapitlene i emnets rekkefølge, hvert med `tittel`, valgfri `uke` og `tekst`, og `sider:` som hele stier (`ingeniorfysikk/kapitler/08-fluidmekanikk/05-bernoullis-likning.qmd`). `tekst:` øverst i fila er kursinformasjon på løypesiden, som lages som `loyper/<id>.qmd`.
+- Flyttes et tema til et annet område i `tema.yml`, sett `flyttet_fra: [<gammelt område>]` på temaet, så videresendes de gamle adressene.
 - Fag fra malen merker hver side med `tema:` og `undertema:` øverst i fila (de gamle navnene `emne:`/`delemne:` godtas fortsatt).
 - `verktoy/tema.py` lager tema- og områdesidene (`tema/`, med videresending fra de gamle adressene under `/emner/`), løypeoversikten (`loyper/index.qmd`), sidemenyen (etter temaer) og toppmenyen (Temaer ▾ / Løyper ▾), og `loyper.json`.
 - `assets/js/loype.js` viser temaet og «Forrige / Neste» i løypa øverst på hver innholdsside.

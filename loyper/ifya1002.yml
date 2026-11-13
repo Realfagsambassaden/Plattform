@@ -1,0 +1,92 @@
+# Løype: IFYA1002 Fysikk (NTNU Ålesund). Plukker ut sidene emnet trenger fra faget Ingeniørfysikk (kilde: utvalg, se verktoy/tema.py).
+# Temasidene er generelle (AGENTS.md §3). Alt om emnet hører hjemme her. Legg gjerne til «uke:» per kapittel.
+id: ifya1002
+tittel: IFYA1002 Fysikk
+institusjon: NTNU Ålesund
+emnekode: IFYA1002
+niva: ingenior
+kilde: utvalg
+beskrivelse: Mekanikk, elektrisitet og magnetisme for ingeniørstudenter.
+tekst: |
+  Emnet har to deler: **grunnleggende mekanikk** og **elektrisitet og magnetisme**. Mekanikkdelen er den samme som i IFYA1000.
+
+  Eksamen er skriftlig og digital (4 timer). Ingen trykte eller håndskrevne hjelpemidler, bare en enkel kalkulator. For å gå opp til eksamen må regneøvingene og laboratorierapporten være godkjent.
+kapitler:
+- tittel: 'Introduksjon: størrelser, enheter og vektorer'
+  sider:
+  - ingeniorfysikk/kapitler/01-introduksjon/01-hva-er-fysikk.qmd
+  - ingeniorfysikk/kapitler/01-introduksjon/02-enheter.qmd
+  - ingeniorfysikk/kapitler/01-introduksjon/03-signifikante-sifre.qmd
+  - ingeniorfysikk/kapitler/01-introduksjon/04-vektorer.qmd
+- tittel: 'Kinematikk: beskrivelse av bevegelse'
+  sider:
+  - ingeniorfysikk/kapitler/02-kinematikk/01-posisjon-fart-akselerasjon.qmd
+  - ingeniorfysikk/kapitler/02-kinematikk/02-konstant-akselerasjon.qmd
+  - ingeniorfysikk/kapitler/02-kinematikk/03-skratt-kast.qmd
+  - ingeniorfysikk/kapitler/02-kinematikk/04-sirkelbevegelse.qmd
+- tittel: 'Dynamikk: krefter og Newtons lover'
+  sider:
+  - ingeniorfysikk/kapitler/03-dynamikk/01-newtons-lover.qmd
+  - ingeniorfysikk/kapitler/03-dynamikk/02-friksjon-fjaer-trinser.qmd
+  - ingeniorfysikk/kapitler/03-dynamikk/03-krefter-i-planet.qmd
+  - ingeniorfysikk/kapitler/03-dynamikk/04-sirkelbevegelse-og-krefter.qmd
+  - ingeniorfysikk/kapitler/03-dynamikk/05-luftmotstand.qmd
+- tittel: Arbeid og energi
+  sider:
+  - ingeniorfysikk/kapitler/04-arbeid-og-energi/01-arbeid-og-kinetisk-energi.qmd
+  - ingeniorfysikk/kapitler/04-arbeid-og-energi/02-potensiell-energi-og-energibevaring.qmd
+  - ingeniorfysikk/kapitler/04-arbeid-og-energi/03-effekt.qmd
+- tittel: Bevegelsesmengde og kollisjoner
+  sider:
+  - ingeniorfysikk/kapitler/05-bevegelsesmengde/01-bevegelsesmengde-og-kraftstot.qmd
+  - ingeniorfysikk/kapitler/05-bevegelsesmengde/02-bevaring-og-kollisjoner.qmd
+  - ingeniorfysikk/kapitler/05-bevegelsesmengde/03-massesenter.qmd
+- tittel: Rotasjon
+  sider:
+  - ingeniorfysikk/kapitler/06-rotasjon/01-rotasjonskinematikk.qmd
+  - ingeniorfysikk/kapitler/06-rotasjon/02-treghetsmoment.qmd
+  - ingeniorfysikk/kapitler/06-rotasjon/03-kraftmoment-og-rulling.qmd
+  - ingeniorfysikk/kapitler/06-rotasjon/04-statisk-likevekt.qmd
+  - ingeniorfysikk/kapitler/06-rotasjon/05-dreieimpuls.qmd
+- tittel: Elektrisk ladning og felt
+  sider:
+  - ingeniorfysikk/kapitler/11-elektrisk-ladning-og-felt/01-elektrisk-ladning.qmd
+  - ingeniorfysikk/kapitler/11-elektrisk-ladning-og-felt/02-coulombs-lov.qmd
+  - ingeniorfysikk/kapitler/11-elektrisk-ladning-og-felt/03-elektrisk-felt.qmd
+  - ingeniorfysikk/kapitler/11-elektrisk-ladning-og-felt/04-felt-fra-flere-ladninger.qmd
+  - ingeniorfysikk/kapitler/11-elektrisk-ladning-og-felt/05-ladning-i-homogent-felt.qmd
+- tittel: Elektrisk potensial
+  sider:
+  - ingeniorfysikk/kapitler/12-elektrisk-potensial/01-elektrisk-potensiell-energi.qmd
+  - ingeniorfysikk/kapitler/12-elektrisk-potensial/02-elektrisk-potensial-og-spenning.qmd
+- tittel: Kondensatorer
+  sider:
+  - ingeniorfysikk/kapitler/13-kondensatorer/01-kapasitans.qmd
+  - ingeniorfysikk/kapitler/13-kondensatorer/02-serie-og-parallell.qmd
+  - ingeniorfysikk/kapitler/13-kondensatorer/03-energi-i-kondensator.qmd
+  - ingeniorfysikk/kapitler/13-kondensatorer/04-dielektrikum.qmd
+- tittel: Strøm og kretser
+  sider:
+  - ingeniorfysikk/kapitler/14-strom-og-kretser/01-elektrisk-strom.qmd
+  - ingeniorfysikk/kapitler/14-strom-og-kretser/02-resistans-og-resistivitet.qmd
+  - ingeniorfysikk/kapitler/14-strom-og-kretser/03-emf-og-indre-resistans.qmd
+  - ingeniorfysikk/kapitler/14-strom-og-kretser/04-kirchhoffs-lover.qmd
+  - ingeniorfysikk/kapitler/14-strom-og-kretser/05-elektrisk-effekt.qmd
+  - ingeniorfysikk/kapitler/14-strom-og-kretser/06-rc-kretser.qmd
+- tittel: Magnetiske krefter og felt
+  sider:
+  - ingeniorfysikk/kapitler/15-magnetiske-krefter/01-magnetfelt.qmd
+  - ingeniorfysikk/kapitler/15-magnetiske-krefter/02-kraft-pa-ladning.qmd
+  - ingeniorfysikk/kapitler/15-magnetiske-krefter/03-kraft-pa-leder.qmd
+  - ingeniorfysikk/kapitler/15-magnetiske-krefter/04-dreiemoment-pa-stromsloyfe.qmd
+- tittel: Kilder til magnetfelt
+  sider:
+  - ingeniorfysikk/kapitler/16-kilder-til-magnetfelt/01-biot-savarts-lov.qmd
+  - ingeniorfysikk/kapitler/16-kilder-til-magnetfelt/02-kraft-mellom-ledere.qmd
+  - ingeniorfysikk/kapitler/16-kilder-til-magnetfelt/03-amperes-lov.qmd
+  - ingeniorfysikk/kapitler/16-kilder-til-magnetfelt/04-solenoide.qmd
+- tittel: Elektromagnetisk induksjon
+  sider:
+  - ingeniorfysikk/kapitler/17-induksjon/01-faraday-og-lenz.qmd
+  - ingeniorfysikk/kapitler/17-induksjon/02-bevegelses-emf.qmd
+  - ingeniorfysikk/kapitler/17-induksjon/03-generator-og-motor.qmd

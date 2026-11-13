@@ -106,11 +106,6 @@ omrader:
         undertemaer:
           - { id: gravitasjonsloven, tittel: "Newtons gravitasjonslov" }
           - { id: satellitter, tittel: "Satellitter og planetbaner" }
-      - id: svingninger
-        tittel: "Svingninger"
-        undertemaer:
-          - { id: harmoniske, tittel: "Harmoniske svingninger" }
-          - { id: pendel, tittel: "Fjær og pendel" }
 
   - id: fluider
     tittel: "Fluidmekanikk"
@@ -122,7 +117,43 @@ omrader:
         undertemaer:
           - { id: trykk, tittel: "Trykk og Pascals lov" }
           - { id: oppdrift, tittel: "Oppdrift og Arkimedes' lov" }
-      - { id: stromning, tittel: "Strømning og Bernoulli" }
+      - id: stromning
+        tittel: "Strømning"
+        undertemaer:
+          - { id: kontinuitet, tittel: "Volumstrøm og kontinuitetslikningen" }
+          - { id: bernoulli, tittel: "Bernoullis likning" }
+          - { id: viskositet, tittel: "Viskositet og Reynolds' tall" }
+          - { id: rortap, tittel: "Strømning i rør: tap og Moody-diagrammet" }
+
+  - id: bolger
+    tittel: "Svingninger og bølger"
+    beskrivelse: "Svingninger, bølger, lyd, stråling og lys."
+    temaer:
+      - id: svingninger
+        flyttet_fra: [mekanikk]   # gamle adresser /tema/mekanikk/svingninger… videresendes
+        tittel: "Svingninger"
+        undertemaer:
+          - { id: harmoniske, tittel: "Harmoniske svingninger" }
+          - { id: pendel, tittel: "Fjær og pendel" }
+          - { id: dempet, tittel: "Dempede svingninger" }
+          - { id: tvungen, tittel: "Tvungne svingninger og resonans" }
+      - id: bolger-og-lyd
+        tittel: "Bølger og lyd"
+        undertemaer:
+          - { id: bolger, tittel: "Bølger og bølgeegenskaper" }
+          - { id: bolgefart, tittel: "Bølgefunksjonen og bølgefart" }
+          - { id: bolgeenergi, tittel: "Energi og intensitet" }
+          - { id: interferens, tittel: "Superposisjon og interferens" }
+          - { id: staende, tittel: "Stående bølger" }
+          - { id: lyd, tittel: "Lyd og lydnivå" }
+          - { id: doppler, tittel: "Dopplereffekten" }
+      - id: straling
+        tittel: "Stråling og drivhuseffekt"
+        undertemaer:
+          - { id: em-straling, tittel: "Elektromagnetisk stråling" }
+          - { id: varmestraling, tittel: "Varmestråling" }
+          - { id: drivhuseffekt, tittel: "Drivhuseffekten og klima" }
+      - { id: optikk, tittel: "Optikk" }
 
   - id: termofysikk
     tittel: "Termofysikk"
@@ -159,11 +190,19 @@ omrader:
           - { id: coulomb, tittel: "Coulombs lov" }
           - { id: felt, tittel: "Elektrisk felt" }
           - { id: homogent-felt, tittel: "Ladning i homogent felt" }
+          - { id: gauss, tittel: "Elektrisk fluks og Gauss' lov" }
       - id: elektrisk-potensial
         tittel: "Elektrisk potensial"
         undertemaer:
           - { id: potensiell-energi, tittel: "Elektrisk potensiell energi" }
           - { id: potensial, tittel: "Potensial og spenning" }
+      - id: kondensatorer
+        tittel: "Kondensatorer"
+        undertemaer:
+          - { id: kapasitans, tittel: "Kapasitans" }
+          - { id: kobling, tittel: "Serie- og parallellkobling" }
+          - { id: energi-felt, tittel: "Energi i en kondensator" }
+          - { id: dielektrikum, tittel: "Dielektrikum" }
       - id: kretser
         tittel: "Strøm og kretser"
         undertemaer:
@@ -173,23 +212,29 @@ omrader:
           - { id: kirchhoff, tittel: "Kirchhoffs lover" }
           - { id: emf, tittel: "Elektromotorisk spenning og indre resistans" }
           - { id: effekt, tittel: "Elektrisk effekt" }
-      - { id: magnetisme, tittel: "Magnetisme og induksjon" }
-
-  - id: bolger
-    tittel: "Bølger og optikk"
-    beskrivelse: "Bølger, lyd og lys."
-    temaer:
-      - id: bolger-og-lyd
-        tittel: "Bølger og lyd"
+          - { id: rc, tittel: "RC-kretser" }
+      - id: magnetisme
+        tittel: "Magnetiske krefter og felt"
         undertemaer:
-          - { id: bolger, tittel: "Bølger og bølgeegenskaper" }
-      - id: straling
-        tittel: "Stråling og drivhuseffekt"
+          - { id: magnetfelt, tittel: "Magnetfelt og feltlinjer" }
+          - { id: kraft-ladning, tittel: "Kraft på ladning i bevegelse" }
+          - { id: kraft-leder, tittel: "Kraft på strømførende leder" }
+          - { id: dreiemoment, tittel: "Dreiemoment på strømsløyfe" }
+      - id: kilder-magnetfelt
+        tittel: "Kilder til magnetfelt"
         undertemaer:
-          - { id: em-straling, tittel: "Elektromagnetisk stråling" }
-          - { id: varmestraling, tittel: "Varmestråling" }
-          - { id: drivhuseffekt, tittel: "Drivhuseffekten og klima" }
-      - { id: optikk, tittel: "Optikk" }
+          - { id: biot-savart, tittel: "Biot–Savarts lov" }
+          - { id: ledere, tittel: "Felt fra og kraft mellom ledere" }
+          - { id: ampere, tittel: "Ampères lov" }
+          - { id: solenoide, tittel: "Spole og solenoide" }
+      - id: induksjon
+        tittel: "Elektromagnetisk induksjon"
+        undertemaer:
+          - { id: faraday, tittel: "Faradays og Lenz' lov" }
+          - { id: bevegelses-emf, tittel: "Bevegelsesindusert emf" }
+          - { id: generator, tittel: "Generator og motor" }
+          - { id: induktans, tittel: "Induktans" }
+      - { id: vekselstrom, tittel: "Vekselstrøm" }
 
   - id: moderne
     tittel: "Moderne fysikk"

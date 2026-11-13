@@ -150,6 +150,12 @@ UT.mkdir(exist_ok=True)
 
 def antall(o): return sum(len(sider_per_tema[e['id']]) for e in o['temaer'])
 
+def alias(o, e, under=None):
+    """Gamle adresser for en temaside: /emner/… og, når temaet er flyttet fra et annet område (flyttet_fra i tema.yml), /tema/<gammelt område>/…"""
+    hale = f'{e["id"]}/{under}.html' if under else f'{e["id"]}.html'
+    a = [f'/emner/{x}/{hale}' for x in [o['id'], *(e.get('flyttet_fra') or [])]] + [f'/tema/{x}/{hale}' for x in (e.get('flyttet_fra') or [])]
+    return 'aliases: [' + ', '.join(f'"{x}"' for x in a) + ']'
+
 # tema/index.qmd
 q = ['---', 'title: "Temaer"', 'aliases: ["/emner/index.html"]', f'subtitle: "Alt stoffet på {NETTSTED}, ordnet etter tema. Velg et område og et tema, eller følg en løype."',
      'toc: false', 'page-layout: full', '---', '', '```{=html}', '<div class="omrader">']
@@ -197,7 +203,7 @@ for o in omrader:
     (UT / o['id'] / 'index.qmd').write_text('\n'.join(q), encoding='utf-8')
     for e in o['temaer']:
         ss = sider_per_tema[e['id']]
-        q = ['---', f'title: "{e["tittel"]}"', f'aliases: ["/emner/{o["id"]}/{e["id"]}.html"]', f'subtitle: "{o["tittel"]}"', 'toc: false', '---', '']
+        q = ['---', f'title: "{e["tittel"]}"', alias(o, e), f'subtitle: "{o["tittel"]}"', 'toc: false', '---', '']
         tekst = P / 'tema-tekster' / f'{e["id"]}.md'
         if tekst.exists(): q += [tekst.read_text(encoding='utf-8'), '']
         if ss:
@@ -228,7 +234,7 @@ for o in omrader:
             dss = [x for x in ss if x['undertema'] == d['id']]
             if not dss: continue
             (UT / o['id'] / e['id']).mkdir(exist_ok=True)
-            dq = ['---', f'title: "{d["tittel"]}"', f'aliases: ["/emner/{o["id"]}/{e["id"]}/{d["id"]}.html"]', f'subtitle: "{e["tittel"]} · {o["tittel"]}"', 'toc: false', '---', '',
+            dq = ['---', f'title: "{d["tittel"]}"', alias(o, e, d['id']), f'subtitle: "{e["tittel"]} · {o["tittel"]}"', 'toc: false', '---', '',
                   f'[← Til temaet {e["tittel"]}](../{e["id"]}.qmd){{.dl-tilbake}}', '']
             nv = [(k, t) for k, t in NIVAER if any(x['niva'] == k for x in dss)] + ([(None, 'Annet')] if any(not x['niva'] for x in dss) else [])
             if len(dss) > 1: dq.append('Stoffet finnes på flere nivåer. Velg det som passer deg.\n')
