@@ -171,6 +171,12 @@ html.fh-innebygd .studie .st-faner { display: none; }   /* i fokusvisningens arb
 .studie .st-stor.fylt { background: var(--bs-primary); } .studie .st-stor.fylt b, .studie .st-stor.fylt span { color: var(--bs-body-bg); }
 .studie .st-stor:disabled { opacity: .6; cursor: default; }
 .studie .st-modul { border: 2px solid; border-radius: 14px; background: rgba(127,127,127,.06); overflow: hidden; }
+.studie .st-dra { cursor: grab; touch-action: none; user-select: none; font-size: 1.25rem; line-height: 1; padding: .15rem .3rem; border-radius: 6px; opacity: .65; }
+.studie .st-dra:hover { opacity: 1; background: rgba(127,127,127,.15); }
+.studie .st-drar { opacity: .45; }
+.studie .st-drar .st-dra { cursor: grabbing; }
+.studie .st-dra-over > .st-modul { box-shadow: 0 -5px 0 0 #6ef04a; }
+.studie .st-dra-under > .st-modul { box-shadow: 0 5px 0 0 #6ef04a; }
 .studie .st-modul header { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .8rem; padding: .6rem .9rem; border-bottom: 1px solid var(--bs-border-color); }
 .studie .st-modnr { font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .studie .st-modnavn { flex: 1 1 160px; min-width: 0; background: transparent; border: 1px solid transparent; border-radius: 6px; color: inherit; font: inherit; font-size: 1.15rem; font-weight: 700; padding: .1rem .3rem; }

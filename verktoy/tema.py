@@ -110,7 +110,7 @@ for lf in sorted((P / 'loyper').glob('*.yml')):
 for lf in sorted((P / 'loyper').glob('*.yml')):
     L = yaml.safe_load(lf.read_text(encoding='utf-8'))
     if L.get('kilde') != 'utvalg': continue
-    rekke, kaps, q = [], [], ['---', f'title: "{L["tittel"]}"']
+    rekke, kaps, uker_kap, q = [], [], [], ['---', f'title: "{L["tittel"]}"']
     if L.get('emnekode') or L.get('institusjon'):
         q.append('subtitle: "' + ' · '.join(x for x in (L.get('institusjon'), L.get('emnekode')) if x) + '"')
     q += ['toc: false', '---', '', '::: {.intro}', '', L.get('beskrivelse', ''), '', ':::', '']
@@ -129,9 +129,16 @@ for lf in sorted((P / 'loyper').glob('*.yml')):
             rekke.append({'qmd': x, 'tittel': t, 'kapittel': k['tittel']})
         q.append('')
         kaps.append({'tittel': k['tittel'], 'href': None, 'sider': finnes})
+        # Undertemaene kapitlet dekker (tema/undertema), i sidenes rekkefølge. Fagbyggeren i appen bruker dem
+        # til «Bygg etter løype»: én modul per kapittel, med ukene fra løypa.
+        ut = []
+        for x in finnes:
+            side = next((s for s in sider_per_tema.get(side_tema.get(x), []) if s['qmd'] == x), None)
+            if side and side['undertema'] and f"{side_tema[x]}/{side['undertema']}" not in ut: ut.append(f"{side_tema[x]}/{side['undertema']}")
+        uker_kap.append({'tittel': k['tittel'], 'uke': str(k.get('uke') or ''), 'undertemaer': ut})
     (P / 'loyper' / f'{L["id"]}.qmd').write_text('\n'.join(q), encoding='utf-8')
     loyper.append({**{k: L.get(k) for k in ('id', 'tittel', 'institusjon', 'emnekode', 'beskrivelse')},
-                   'oversikt': f'loyper/{L["id"]}.qmd', 'sider': rekke, 'struktur': [{'tittel': None, 'kapitler': kaps}], 'niva': L.get('niva')})
+                   'oversikt': f'loyper/{L["id"]}.qmd', 'sider': rekke, 'struktur': [{'tittel': None, 'kapitler': kaps}], 'niva': L.get('niva'), 'uker': uker_kap})
 
 def html(q): return '/' + q.replace('.qmd', '.html')
 
@@ -268,7 +275,8 @@ for o in omrader:
 (P / 'loyper.json').write_text(json.dumps({
     'temarekke': temarekke, 'nivanavn': NIVA_NAVN,
     'loyper': [{'id': L['id'], 'tittel': L['tittel'], 'url': html(L['oversikt']),
-                'sider': [{'url': html(s['qmd']), 'tittel': s['tittel']} for s in L['sider']]} for L in loyper],
+                'sider': [{'url': html(s['qmd']), 'tittel': s['tittel']} for s in L['sider']],
+                **({'uker': L['uker']} if L.get('uker') else {})} for L in loyper],
     'sider': side_info}, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
 
 # ---- sidemeny (én, etter temaer) og toppmeny

@@ -177,11 +177,13 @@
     var tenk = document.createElement('div'); tenk.className = 'dm-m dm-fra dm-tenker'; tenk.innerHTML = '<p><span></span><span></span><span></span></p>'; logg.appendChild(tenk); logg.scrollTop = logg.scrollHeight;
     token().then(function (t) {
       if (!t) throw { melding: 'Du må logge inn på nytt for å snakke med Dashman.' };
-      return fetch(api, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t }, body: JSON.stringify({ meldinger: samtale, side: sideInfo() }) });
+      return fetch(api, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t }, body: JSON.stringify({ meldinger: samtale, side: sideInfo(), fag: window.fhDashmanFag ? window.fhDashmanFag() : null }) });
     }).then(function (r) { return r.json().then(function (d) { if (!r.ok) throw { melding: d.feil }; return d; }); })
       .then(function (d) {
         tenk.remove(); settHumor(d.humor || 'noytral');
-        var svar = { rolle: 'dashman', tekst: d.svar }; samtale.push(svar); lagre();
+        // Undervisere i fagbyggeren: Dashman kan sende et nytt oppsett, som fagbyggeren tar i bruk (kan angres der).
+        var endret = d.moduler && window.fhDashmanBruk ? window.fhDashmanBruk(d) : '';
+        var svar = { rolle: 'dashman', tekst: d.svar + (endret ? '\n\n' + endret : '') }; samtale.push(svar); lagre();
         return visMelding(svar, true);
       })
       .catch(function (e) {
