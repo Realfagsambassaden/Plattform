@@ -182,8 +182,7 @@ async function materiale(request, env, b, h) {
   if (!(await erUnderviser(request, env))) return json({ feil: "Bare godkjente undervisere kan lage undervisningsmateriale med KI." }, 403, h);
   if (!(await innenforGrense(env, `mat:${bruker.id}:${new Date().toISOString().slice(0, 10)}`, 40, 90000)))
     return json({ feil: "Du har laget mye materiale i dag. Prøv igjen i morgen." }, 429, h);
-  const vedlegg = lesVedlegg(b.vedlegg);
-  if (b.vedlegg && !vedlegg) return json({ feil: "Filen må være et bilde (JPEG, PNG, WebP) eller en PDF på under 4 MB." }, 400, h);
+  const vi = vedleggInfo(b), vedlegg = vi.vedlegg;
   const ramme = b.ramme || {};
   const lengde = Math.max(10, Math.min(600, parseInt(ramme.lengde, 10) || 90));
   const form = { forelesninger: "forelesning", omvendt: "omvendt klasserom", ingen: "ingen faste samlinger (materiale for uka)" }[ramme.form] || "forelesning";
@@ -207,13 +206,13 @@ async function materiale(request, env, b, h) {
     `\nLag: ${hva === "begge" ? "plan og slides" : hva === "plan" ? "bare plan (slides kan være tom liste)" : "bare slides (plan kan være tom liste)"}` +
     (b.onske ? `\n\nØNSKER FRA UNDERVISEREN:\n${kort(b.onske, 8000)}` : "") + (vedlegg ? "\n\nUnderviserens gamle opplegg er vedlagt." : "") +
     (b.navarende ? `\n\nNÅVÆRENDE MATERIALE:\n${kort(JSON.stringify(b.navarende), 20000)}` : "") +
-    (stoff.length ? `\n\nLÆRESTOFF FRA NETTSTEDET:\n${stoff.join("\n\n")}` : "");
+    (stoff.length ? `\n\nLÆRESTOFF FRA NETTSTEDET:\n${stoff.join("\n\n")}` : "") + vi.ber;
   const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_MAT.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000, vedlegg));
   if (!r) throw feil("Fikk ikke noe materiale fra KI denne gangen. Prøv igjen.", 502);
   const plan = (Array.isArray(r.plan) ? r.plan : []).slice(0, 25).map((x) => ({ min: Math.max(0, Math.min(300, parseInt(x && x.min, 10) || 0)), tekst: kort(x && x.tekst, 600) })).filter((x) => x.tekst);
   const slides = (Array.isArray(r.slides) ? r.slides : []).slice(0, 40).map((x) => ({ tittel: kort(x && x.tittel, 200), tekst: kort(x && x.tekst, 3000), notat: kort(x && x.notat, 2000), losning: kort(x && x.losning, 3000) })).filter((x) => x.tittel || x.tekst);
   if ((hva !== "slides" && !plan.length) && (hva !== "plan" && !slides.length)) throw feil("Fikk ikke noe brukbart materiale fra KI denne gangen. Prøv igjen.", 502);
-  return json({ tittel: kort(r.tittel, 200), plan, slides, kommentar: kort(r.kommentar, 600) }, 200, h);
+  return json({ tittel: kort(r.tittel, 200), plan, slides, kommentar: kort(r.kommentar, 600), vedlegg: vedleggTekst(vi, r) }, 200, h);
 }
 
 async function kvisslag(request, env, b, h) {
@@ -226,10 +225,9 @@ async function kvisslag(request, env, b, h) {
   const niva = ["lett", "middels", "vanskelig", "blandet"].includes(b.vanskelighet) ? b.vanskelighet : "blandet";
   const ut = (Array.isArray(b.undertemaer) ? b.undertemaer.slice(0, 20) : []).filter((x) => x && typeof x.id === "string")
     .map((x) => ({ id: kort(x.id, 80), tittel: kort(x.tittel, 120) }));
-  const vedlegg = lesVedlegg(b.vedlegg);
-  if (b.vedlegg && !vedlegg) return json({ feil: "Vedlegget må være et bilde (JPEG, PNG, WebP) eller en PDF på under 4 MB." }, 400, h);
+  const vi = vedleggInfo(b), vedlegg = vi.vedlegg;
   const melding = `Tema: ${kort(b.tema, 120)}\nUndertemaer (id | tittel):\n${ut.map((x) => `${x.id} | ${x.tittel}`).join("\n") || "(hele temaet)"}\n` +
-    `Antall spørsmål: ${antall}\nVanskelighet: ${niva}\n\nUnderviserens egne oppgaver:\n${kort(b.grunnlag, 8000) || (vedlegg ? "(se vedlegget)" : "(ingen – lag egne)")}`;
+    `Antall spørsmål: ${antall}\nVanskelighet: ${niva}\n\nUnderviserens egne oppgaver:\n${kort(b.grunnlag, 8000) || (vedlegg ? "(se vedlegget)" : "(ingen – lag egne)")}` + vi.ber;
   const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_KVISS.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000, vedlegg));
   const gyldigeUt = new Set(ut.map((x) => x.id));
   const tall = (v) => (Number.isFinite(+v) ? +v : null);
@@ -247,10 +245,26 @@ async function kvisslag(request, env, b, h) {
       : { ...felles, riktig: kort(x.riktig, 200) };
   }).filter((x) => x.tekst && (x.variabler || x.riktig) && x.feil.length >= 2);
   if (!sp.length) throw feil("Fikk ingen brukbare spørsmål fra KI denne gangen. Prøv igjen.", 502);
-  return json({ sporsmal: sp }, 200, h);
+  return json({ sporsmal: sp, vedlegg: vedleggTekst(vi, r) }, 200, h);
 }
 
 // Vedlegg fra underviseren: bilde eller PDF (som data-URL). Lagres ikke.
+// Vedlegg til KI: leses det ikke (feil type, for stort), lager vi likevel et forslag, men sier tydelig fra om det.
+// Returnerer { vedlegg, merknad, ber }: ber = tekst som legges til meldingen, så KI selv sier hva den fant i vedlegget.
+function vedleggInfo(b) {
+  const navn = kort(b.filnavn, 120) || "vedlegget";
+  const ulest = (Array.isArray(b.ulest) ? b.ulest : []).slice(0, 5).map((x) => kort(x, 200)).filter(Boolean);
+  const vedlegg = lesVedlegg(b.vedlegg);
+  if (b.vedlegg && !vedlegg) ulest.push(`«${navn}» (må være en PDF eller et bilde på under 4 MB)`);
+  const merknad = ulest.length ? `Ikke lest: ${ulest.join("; ")}. Forslaget er laget uten ${ulest.length > 1 ? "disse filene" : "denne filen"}.` : "";
+  const ber = vedlegg ? `\n\nVEDLEGG: «${navn}». Ta med feltet "vedlegg" i JSON-svaret: én eller to korte setninger om hva du fant i vedlegget og brukte, eller at du ikke klarte å lese det (helt eller delvis).` : "";
+  return { vedlegg, merknad, ber };
+}
+function vedleggTekst(v, r) {
+  const sagt = r && typeof r.vedlegg === "string" ? kort(r.vedlegg, 400) : "";
+  return [v.vedlegg ? (sagt ? `Vedlegget: ${sagt}` : "Vedlegget ble sendt med, men KI sa ikke hva den brukte fra det.") : "", v.merknad].filter(Boolean).join(" ");
+}
+
 function lesVedlegg(d) {
   const m = /^data:(image\/(?:jpeg|png|webp)|application\/pdf);base64,([A-Za-z0-9+/=]+)$/.exec(String(d || ""));
   if (!m || m[2].length > 5.5e6) return null;
@@ -277,8 +291,7 @@ async function fagforslag(request, env, b, h) {
     .filter((x) => x && typeof x.id === "string" && /^[a-z0-9-]+\/[a-z0-9-]+\/[a-z0-9-]+$/.test(x.id))
     .map((x) => ({ id: x.id, tittel: kort(x.tittel, 120) }));
   if (!katalog.length) return json({ feil: "Fant ingen temaer å bygge faget av." }, 400, h);
-  const vedlegg = lesVedlegg(b.vedlegg);
-  if (b.vedlegg && !vedlegg) return json({ feil: "Filen må være et bilde (JPEG, PNG, WebP) eller en PDF på under 4 MB." }, 400, h);
+  const vi = vedleggInfo(b), vedlegg = vi.vedlegg;
   const ramme = b.ramme || {};
   const uker = Math.max(1, Math.min(40, parseInt(ramme.uker, 10) || 14));
   const form = { forelesninger: "forelesninger", omvendt: "omvendt klasserom", ingen: "ingen faste samlinger" }[ramme.form] || "forelesninger";
@@ -287,7 +300,7 @@ async function fagforslag(request, env, b, h) {
     `\n\nEmnebeskrivelse:\n${kort(b.emnebeskrivelse, 8000) || "(ingen)"}\n\nLæringsutbytte:\n${kort(b.laringsutbytte, 3000) || "(ingen)"}\n\nKATALOG (id | tittel):\n` +
     katalog.map((x) => `${x.id} | ${x.tittel}`).join("\n") +
     (b.onske ? `\n\nØNSKER FRA UNDERVISEREN:\n${kort(b.onske, 8000)}` : "") + (vedlegg ? "\n\nUnderviserens tidligere plan er vedlagt." : "") +
-    (Array.isArray(b.navarende) && b.navarende.length ? `\n\nNÅVÆRENDE OPPSETT:\n${kort(JSON.stringify(b.navarende), 12000)}` : "");
+    (Array.isArray(b.navarende) && b.navarende.length ? `\n\nNÅVÆRENDE OPPSETT:\n${kort(JSON.stringify(b.navarende), 12000)}` : "") + vi.ber;
   // Svaret skal være JSON. Kommer det noe annet (prosa, avkuttet JSON), prøver vi én gang til med en tydeligere beskjed.
   const sys = SYSTEM_FAG.replace("NETTSTED", NETTSTEDNAVN(request));
   const fenv = { ...env, MODELL: env.MODELL_FAG || env.MODELL };
@@ -314,7 +327,7 @@ async function fagforslag(request, env, b, h) {
     return { navn: kort(m && m.navn, 60) || "Modul", uker: u };
   }).filter((m) => m.uker.length);
   if (!moduler.length) throw feil("Forslaget fra KI kunne ikke brukes. Prøv igjen, eller bygg selv.", 502);
-  return json({ moduler, kommentar: kort(r.kommentar, 600) }, 200, h);
+  return json({ moduler, kommentar: kort(r.kommentar, 600), vedlegg: vedleggTekst(vi, r) }, 200, h);
 }
 
 function cors(origin) {

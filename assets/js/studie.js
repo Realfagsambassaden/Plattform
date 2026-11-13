@@ -532,12 +532,12 @@ function studieStart() {
   function kiSpar() { var f = T.fag; if (!f.spar) f.spar = { tekst: '', vedlegg: null, filnavn: '' }; return f.spar; }
   function kiOppsett(endre) {
     var f = T.fag, u = f.u, sp = kiSpar();
-    if (endre && !sp.tekst.trim() && !sp.vedlegg) return varsle('Skriv hva KI skal endre.', true);
+    if (endre && !sp.tekst.trim() && !sp.vedlegg && !(sp.ulest || []).length) return varsle('Skriv hva KI skal endre.', true);
     if (!endre && u.moduler.length && f.bekreftKi !== true) { f.bekreftKi = true; return tegn(); }
     f.bekreftKi = false; f.kiVenter = endre ? 'endre' : 'nytt'; tegn();
     ki('/fagforslag', { navn: u.navn, emnebeskrivelse: u.emnebeskrivelse, laringsutbytte: u.laringsutbytte, ramme: u.ramme, katalog: katalogListe(),
-      onske: sp.tekst, vedlegg: sp.vedlegg, navarende: endre ? u.moduler : null }, 240)
-      .then(function (d) { f.forrige = JSON.parse(JSON.stringify(u.moduler)); u.moduler = medId(d.moduler); f.kiKommentar = d.kommentar || ''; f.steg = 'moduler'; sp.tekst = ''; sp.vedlegg = null; sp.filnavn = ''; return lagreUtkast(); })
+      onske: sp.tekst, vedlegg: sp.vedlegg, filnavn: sp.filnavn, ulest: sp.ulest || [], navarende: endre ? u.moduler : null }, 240)
+      .then(function (d) { f.forrige = JSON.parse(JSON.stringify(u.moduler)); u.moduler = medId(d.moduler); f.kiKommentar = kiTekst(d, d.kommentar); f.steg = 'moduler'; sp.tekst = ''; sp.vedlegg = null; sp.filnavn = ''; sp.ulest = []; return lagreUtkast(); })
       .catch(function (e) { varsle(feilmelding(e), true); })
       .then(function () { f.kiVenter = false; tegn(); });
   }
@@ -759,13 +759,13 @@ function studieStart() {
     v.kiVenter = true; tegn();
     ki('/materiale', { fag: u.navn, ramme: { form: r.form, lengde: +r.lengde || 90, samlinger: antSamlinger(r, el) }, niva: NIVANAVN[r.niva] || '', modul: m.navn, uke: uke, samling: v.s,
       undertemaer: w.undertemaer.map(function (id) { var url = utLenke(id, nivaFor(w, id, r)); return { id: id, tittel: utTema(id) + ': ' + utNavn(id), url: url ? url.replace(/^\.\./, '') : '', niva: NIVANAVN[nivaFor(w, id, r)] || '' }; }),
-      notat: w.notat || '', arbeidskrav: krav, onske: ki0.tekst, vedlegg: ki0.vedlegg, hva: ki0.hva, navarende: endre ? { tittel: v.tittel, plan: v.plan, slides: v.slides } : null }, 150)
+      notat: w.notat || '', arbeidskrav: krav, onske: ki0.tekst, vedlegg: ki0.vedlegg, filnavn: ki0.filnavn, ulest: ki0.ulest || [], hva: ki0.hva, navarende: endre ? { tittel: v.tittel, plan: v.plan, slides: v.slides } : null }, 150)
       .then(function (d) {
         v.forrige = JSON.parse(JSON.stringify({ tittel: v.tittel, plan: v.plan, slides: v.slides }));
         if (d.tittel && (!v.tittel || endre)) v.tittel = d.tittel;
         if (ki0.hva !== 'slides' && Array.isArray(d.plan)) v.plan = d.plan;
         if (ki0.hva !== 'plan' && Array.isArray(d.slides)) v.slides = d.slides;
-        v.kiKommentar = d.kommentar || ''; ki0.tekst = ''; ki0.vedlegg = null; ki0.filnavn = '';
+        v.kiKommentar = kiTekst(d, d.kommentar); ki0.tekst = ''; ki0.vedlegg = null; ki0.filnavn = ''; ki0.ulest = [];
         return lagreMat(true);
       })
       .catch(function (e) { varsle(feilmelding(e), true); })
@@ -1114,24 +1114,27 @@ function studieStart() {
   function lesVedlegg(fil) {
     if (/^image\//.test(fil.type)) return lesBilde(fil).then(function (url) { return { vedlegg: url }; });
     if (fil.type === 'application/pdf') return new Promise(function (ok, nei) {
-      if (fil.size > 4e6) return nei(new Error('PDF-en er for stor (høyst 4 MB). Del den opp, eller lim inn teksten.'));
+      if (fil.size > 4e6) return ok({ ulest: '«' + fil.name + '» (PDF-en er ' + (fil.size / 1e6).toFixed(1) + ' MB, høyst 4 MB går an)' });
       var r = new FileReader(); r.onload = function () { ok({ vedlegg: r.result }); }; r.onerror = nei; r.readAsDataURL(fil);
     });
     if (/^text\//.test(fil.type) || /\.(txt|md|tex)$/i.test(fil.name)) return fil.text().then(function (t) { return { tekst: t.slice(0, 8000) }; });
-    return Promise.reject(new Error('Last opp et bilde, en PDF eller en tekstfil.'));
+    return Promise.resolve({ ulest: '«' + fil.name + '» (filtypen kan ikke leses; bruk bilde, PDF eller tekst)' });
   }
+  // Filer som ikke kunne leses, sendes med som navn, så KI-svaret sier tydelig fra om dem.
+  function merkUlest(x, r) { if (r.ulest) { x.ulest = (x.ulest || []).concat([r.ulest]); varsle('Kunne ikke lese ' + r.ulest + '. Du kan fortsatt be om forslag; svaret sier fra om hva som ikke ble lest.', true); } }
+  function kiTekst(d, t) { return [d && d.vedlegg ? '📎 ' + d.vedlegg : '', t || ''].filter(Boolean).join(' '); }
   function kiKviss() {
     var f = T.fag, v = f.ov, kk = f.kiKviss;
     if (v.sporsmal.length >= 20) return varsle('Et arbeidskrav kan ha høyst 20 spørsmål.', true);
     if (!v.ut.length) return varsle('Velg først hvilke undertemaer arbeidskravet dekker.', true);
     var temaNavn = [], ut = v.ut.map(function (id) { var p = id.split('/'), kt = K[p[1]] || { tittel: p[1], undertemaer: {} }; if (temaNavn.indexOf(kt.tittel) < 0) temaNavn.push(kt.tittel); return { id: p[1] + '/' + p[2], tittel: kt.tittel + ': ' + (kt.undertemaer[p[2]] || p[2]) }; });
     kk.venter = true; tegn();
-    ki('/kvisslag', { tema: temaNavn.join(', '), undertemaer: ut, antall: Math.min(+kk.antall || 6, 20 - v.sporsmal.length), vanskelighet: kk.vanskelighet, grunnlag: kk.grunnlag, vedlegg: kk.vedlegg }, 120)
+    ki('/kvisslag', { tema: temaNavn.join(', '), undertemaer: ut, antall: Math.min(+kk.antall || 6, 20 - v.sporsmal.length), vanskelighet: kk.vanskelighet, grunnlag: kk.grunnlag, vedlegg: kk.vedlegg, filnavn: kk.filnavn, ulest: kk.ulest || [] }, 120)
       .then(function (d) {
         var l = (d.sporsmal || []).map(function (x) { var y = Object.assign(tomtSp(), x); y.riktig = y.riktig || ''; while (y.feil.length < 3) y.feil.push({ svar: '', uttrykk: '', type: 'begrep' }); return y; });
         if (!l.length) throw new Error('Fikk ingen spørsmål fra KI denne gangen. Prøv igjen.');
         v.sporsmal = v.sporsmal.concat(l); v.kilde = 'egne'; if (v.krav > v.sporsmal.length) v.krav = v.sporsmal.length;
-        varsle(l.length + ' spørsmål lagt til. Sjekk fasiten før du lagrer.');
+        varsle(l.length + ' spørsmål lagt til. Sjekk fasiten før du lagrer.' + (d.vedlegg ? ' ' + d.vedlegg : '')); kk.ulest = [];
       })
       .catch(function (e) { varsle(feilmelding(e), true); })
       .then(function () { kk.venter = false; tegn(); });
@@ -1780,7 +1783,7 @@ function studieStart() {
     else if (el.dataset.uv === 'start' && T.uv) { T.uv.start = el.value; try { localStorage.setItem('uv-start-' + T.uv.c.id, el.value); } catch (e) {} tegn(); }
     else if (el.classList.contains('st-mat-fil') && el.files[0] && T.fag && T.fag.matRed) {
       var mf = el.files[0];
-      lesVedlegg(mf).then(function (r) { var x = T.fag.matRed.ki; x.vedlegg = r.vedlegg || null; x.filnavn = r.vedlegg ? mf.name : ''; if (r.tekst) x.tekst = (x.tekst ? x.tekst + '\n\n' : '') + r.tekst; tegn(); if (r.tekst) varsle('Teksten fra filen er lagt inn i feltet.'); })
+      lesVedlegg(mf).then(function (r) { var x = T.fag.matRed.ki; merkUlest(x, r); if (r.ulest) return tegn(); x.vedlegg = r.vedlegg || null; x.filnavn = r.vedlegg ? mf.name : ''; if (r.tekst) x.tekst = (x.tekst ? x.tekst + '\n\n' : '') + r.tekst; tegn(); if (r.tekst) varsle('Teksten fra filen er lagt inn i feltet.'); })
         .catch(function (e) { varsle(feilmelding(e), true); });
     }
     else if (el.dataset.felt && el.dataset.felt.indexOf('ramme.') === 0 && T.fag) { tegn(); }
@@ -1803,12 +1806,12 @@ function studieStart() {
     else if (el.dataset.kk && el.tagName === 'SELECT' && T.fag) { T.fag.kiKviss[el.dataset.kk] = el.value; }
     else if (el.classList.contains('st-spar-fil') && el.files[0]) {
       var pf = el.files[0];
-      lesVedlegg(pf).then(function (r) { var sp = kiSpar(); sp.vedlegg = r.vedlegg || null; sp.filnavn = r.vedlegg ? pf.name : ''; if (r.tekst) sp.tekst = (sp.tekst ? sp.tekst + '\n\n' : '') + r.tekst; tegn(); if (r.tekst) varsle('Teksten fra filen er lagt inn i feltet.'); })
+      lesVedlegg(pf).then(function (r) { var sp = kiSpar(); merkUlest(sp, r); if (r.ulest) return tegn(); sp.vedlegg = r.vedlegg || null; sp.filnavn = r.vedlegg ? pf.name : ''; if (r.tekst) sp.tekst = (sp.tekst ? sp.tekst + '\n\n' : '') + r.tekst; tegn(); if (r.tekst) varsle('Teksten fra filen er lagt inn i feltet.'); })
         .catch(function (e) { varsle(feilmelding(e), true); });
     }
     else if (el.id === 'st-kk-fil' && el.files[0]) {
       var fil = el.files[0];
-      lesVedlegg(fil).then(function (r) { var kk = T.fag.kiKviss; kk.vedlegg = r.vedlegg || null; if (r.tekst) kk.grunnlag = (kk.grunnlag ? kk.grunnlag + '\n\n' : '') + r.tekst; kk.filnavn = r.vedlegg ? fil.name : ''; tegn(); if (r.tekst) varsle('Teksten fra filen er lagt inn i feltet.'); })
+      lesVedlegg(fil).then(function (r) { var kk = T.fag.kiKviss; merkUlest(kk, r); if (r.ulest) return tegn(); kk.vedlegg = r.vedlegg || null; if (r.tekst) kk.grunnlag = (kk.grunnlag ? kk.grunnlag + '\n\n' : '') + r.tekst; kk.filnavn = r.vedlegg ? fil.name : ''; tegn(); if (r.tekst) varsle('Teksten fra filen er lagt inn i feltet.'); })
         .catch(function (e) { varsle(feilmelding(e), true); });
     }
     else if (el.id === 'st-bilde' && el.files[0]) {
