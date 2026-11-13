@@ -281,6 +281,14 @@ html.st-uv-aktiv, html.st-uv-aktiv body { overflow: hidden; }
 .studie .uv-trekk:hover .uv-trekk-innhold, .studie .uv-trekk:focus-within .uv-trekk-innhold { transform: none; }
 .studie .uv-trekk-innhold .uv-planliste li { border-color: #333; font-size: 1rem; grid-template-columns: 5.4rem minmax(0, 1fr); }
 .studie .uv-ramme:fullscreen > .uv-slide { border: 0; border-radius: 0; }
+.studie .uv-slide { position: relative; }
+.studie .uv-pennlinje { position: absolute; right: .6rem; bottom: .6rem; z-index: 5; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .35rem; align-items: center; max-width: calc(100% - 1.2rem); }
+.studie .uv-pennlinje button { background: rgba(20, 23, 28, .85); border: 1px solid #3a4048; color: #eef0f2; border-radius: 8px; padding: .3rem .7rem; font: 600 .9rem system-ui, sans-serif; }
+.studie .uv-pennlinje button.tp-pa { background: #6ef04a; border-color: #6ef04a; color: #111; }
+.studie .uv-pennlinje .tp-verktoy { border-right: 0; padding: .2rem .3rem; background: rgba(20, 23, 28, .85); border-radius: 8px; }
+.studie .uv-pennlinje .uv-fsnav { display: none; }
+.studie .uv-ramme:fullscreen .uv-fsnav, .studie .uv-ramme:-webkit-full-screen .uv-fsnav { display: inline-block; }
+.studie .uv-ramme:-webkit-full-screen { background: #000; }
 .studie .uv-kontroll { display: flex; align-items: center; justify-content: center; gap: 1rem; }
 .studie .uv-taler { display: flex; flex-direction: column; gap: .5rem; margin-bottom: .8rem; } .studie .uv-taler[hidden] { display: none; }
 .studie .uv-boks { border-left: 4px solid var(--bs-warning); background: rgba(127,127,127,.08); border-radius: 0 8px 8px 0; padding: .45rem .7rem; }

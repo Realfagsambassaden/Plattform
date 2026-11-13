@@ -207,4 +207,6 @@ Koden står i `assets/js/forelesning-knapp.js`. Vil du ta opp forelesningen, bru
 
 I forelesningsmodusen (`larer/forelesning.html`) kan foreleseren tegne rett på slidene: knappen **Penn** (tast P) slår tegning av og på, **Tavle** (tast B) gir en tom tavle å regne på. Virker med Apple Pencil og finger på iPad (åpne forelesningen i Safari på iPaden og koble den til projektoren), og med mus eller tegnebrett på Mac. Pennen er trykkfølsom; etter at pennen er brukt, tegner ikke fingeren (håndflaten).
 
+Pennen finnes også i **undervisningsmodusen for fag** (Fag og undervisning → 🎓 Undervisningsmodus): knappene «✎ Penn» og «Tavle» ligger nede til høyre på sliden og virker også i fullskjerm, der det i tillegg er ← →. Tegningene huskes per slide i hver samling.
+
 Fem kritt-farger (taster 1–5), tykk/tynn strek, viskelær (E), angre (Z eller Cmd/Ctrl+Z), tøm sliden (Delete), Esc lukker pennen og tavla. Tegningene huskes per slide (og per tavle) mens fanen er åpen, også om siden lastes på nytt. Koden står i `assets/js/tavlepenn.js`.
