@@ -1,0 +1,29 @@
+# Løype: IFYA1000 Fysikk (NTNU Ålesund). Plukker ut sidene emnet trenger fra faget Ingeniørfysikk.
+# Rekkefølgen følger emnet. Temasidene er generelle (se AGENTS.md §3); alt om emnet hører hjemme her.
+id: ifya1000
+tittel: "IFYA1000 Fysikk"
+emnekode: "IFYA1000"
+institusjon: "NTNU Ålesund"
+kilde: utvalg
+niva: ingenior
+beskrivelse: "Mekanikk, fluidmekanikk, svingninger og bølger for ingeniørstudenter."
+tekst: |
+  Emnet har to deler: **grunnleggende mekanikk** og **fluidmekanikk, svingninger og bølger**. Mekanikkdelen er den samme som i IFYA1002.
+
+  Eksamen er skriftlig og digital (4 timer). Ingen trykte eller håndskrevne hjelpemidler, bare en enkel kalkulator. For å gå opp til eksamen må regneøvingene og laboratorierapporten være godkjent.
+deler:
+  - tittel: "Mekanikk"
+    kapitler:
+      - { fag: ingeniorfysikk, kapittel: 01-introduksjon }
+      - { fag: ingeniorfysikk, kapittel: 02-kinematikk }
+      - { fag: ingeniorfysikk, kapittel: 03-dynamikk }
+      - { fag: ingeniorfysikk, kapittel: 04-arbeid-og-energi }
+      - { fag: ingeniorfysikk, kapittel: 05-bevegelsesmengde }
+      - { fag: ingeniorfysikk, kapittel: 06-rotasjon }
+  - tittel: "Fluidmekanikk"
+    kapitler:
+      - { fag: ingeniorfysikk, kapittel: 08-fluidmekanikk }
+  - tittel: "Svingninger og bølger"
+    kapitler:
+      - { fag: ingeniorfysikk, kapittel: 09-svingninger }
+      - { fag: ingeniorfysikk, kapittel: 10-bolger }

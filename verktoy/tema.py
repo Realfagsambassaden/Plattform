@@ -103,6 +103,42 @@ for lf in sorted((P / 'loyper').glob('*.yml')):
     loyper.append({**{k: L.get(k) for k in ('id', 'tittel', 'institusjon', 'emnekode', 'beskrivelse')},
                    'oversikt': f"{f['kortnavn']}/index.qmd", 'sider': rekke, 'struktur': struktur, 'niva': L.get('niva') or f.get('niva')})
 
+# ---- løyper som plukker ut sider (kilde: utvalg): et emne som henter det det trenger fra ett eller flere fag.
+#   deler: [{tittel, kapitler: [{fag, kapittel, sider?, tittel?}]}]
+#   «sider» kan utelates (hele kapitlet), være filnavn i kapitlet («01-trykk.qmd» eller bare «01») eller hele stier.
+#   Oversiktssiden lages som loyper/<id>.qmd. «tekst» i løypefila (markdown) vises øverst på den.
+utvalg_sider = {}
+for lf in sorted((P / 'loyper').glob('*.yml')):
+    L = yaml.safe_load(lf.read_text(encoding='utf-8'))
+    if L.get('kilde') != 'utvalg': continue
+    rekke, struktur = [], []
+    for d in L.get('deler') or []:
+        del_ = {'tittel': d.get('tittel'), 'kapitler': []}
+        for kk in d.get('kapitler') or []:
+            f = next((x for x in fag_liste if x['kortnavn'] == kk.get('fag')), None)
+            k = f and next((x for x in f['kapitler'] if x['dir'] == kk.get('kapittel')), None)
+            if not k:
+                print(f'  ADVARSEL: løypa {L["id"]} viser til ukjent kapittel {kk.get("fag")}/{kk.get("kapittel")}'); continue
+            base = f"{f['kortnavn']}/kapitler/{k['dir']}"
+            valgt = []
+            for v in (kk.get('sider') or [s['fil'] for s in k['sider']]):
+                v = str(v)
+                if '/' in v:
+                    if (P / v).exists(): valgt.append((v, tittel_av(P / v)))
+                    else: print(f'  ADVARSEL: løypa {L["id"]} viser til ukjent side {v}')
+                    continue
+                s = next((s for s in k['sider'] if s['fil'] == v or s['fil'].startswith(v + '-')), None)
+                if s: valgt.append((f"{base}/{s['fil']}", s['tittel']))
+                else: print(f'  ADVARSEL: løypa {L["id"]} finner ikke {v} i {base}')
+            kt = kk.get('tittel') or k['tittel']
+            rekke += [{'qmd': q_, 'tittel': t_, 'kapittel': kt} for q_, t_ in valgt]
+            del_['kapitler'].append({'tittel': kt, 'href': f"{base}/index.qmd" if k.get('har_index') else None, 'sider': [q_ for q_, _ in valgt]})
+        struktur.append(del_)
+    ov = f"loyper/{L['id']}.qmd"
+    utvalg_sider[ov] = (L, struktur)
+    loyper.append({**{k: L.get(k) for k in ('id', 'tittel', 'institusjon', 'emnekode', 'beskrivelse')},
+                   'oversikt': ov, 'sider': rekke, 'struktur': struktur, 'niva': L.get('niva')})
+
 def html(q): return '/' + q.replace('.qmd', '.html')
 
 # ---- generer sider
@@ -112,6 +148,12 @@ if UT.exists():
 UT.mkdir(exist_ok=True)
 
 def antall(o): return sum(len(sider_per_tema[e['id']]) for e in o['temaer'])
+
+def alias(o, e, under=None):
+    """Gamle adresser for en temaside: /emner/… og, når temaet er flyttet fra et annet område (flyttet_fra i tema.yml), /tema/<gammelt område>/…"""
+    hale = f'{e["id"]}/{under}.html' if under else f'{e["id"]}.html'
+    a = [f'/emner/{x}/{hale}' for x in [o['id'], *(e.get('flyttet_fra') or [])]] + [f'/tema/{x}/{hale}' for x in (e.get('flyttet_fra') or [])]
+    return 'aliases: [' + ', '.join(f'"{x}"' for x in a) + ']'
 
 # tema/index.qmd
 q = ['---', 'title: "Temaer"', 'aliases: ["/emner/index.html"]', f'subtitle: "Alt stoffet på {NETTSTED}, ordnet etter tema. Velg et område og et tema, eller følg en løype."',
@@ -160,7 +202,7 @@ for o in omrader:
     (UT / o['id'] / 'index.qmd').write_text('\n'.join(q), encoding='utf-8')
     for e in o['temaer']:
         ss = sider_per_tema[e['id']]
-        q = ['---', f'title: "{e["tittel"]}"', f'aliases: ["/emner/{o["id"]}/{e["id"]}.html"]', f'subtitle: "{o["tittel"]}"', 'toc: false', '---', '']
+        q = ['---', f'title: "{e["tittel"]}"', alias(o, e), f'subtitle: "{o["tittel"]}"', 'toc: false', '---', '']
         tekst = P / 'tema-tekster' / f'{e["id"]}.md'
         if tekst.exists(): q += [tekst.read_text(encoding='utf-8'), '']
         if ss:
@@ -191,7 +233,7 @@ for o in omrader:
             dss = [x for x in ss if x['undertema'] == d['id']]
             if not dss: continue
             (UT / o['id'] / e['id']).mkdir(exist_ok=True)
-            dq = ['---', f'title: "{d["tittel"]}"', f'aliases: ["/emner/{o["id"]}/{e["id"]}/{d["id"]}.html"]', f'subtitle: "{e["tittel"]} · {o["tittel"]}"', 'toc: false', '---', '',
+            dq = ['---', f'title: "{d["tittel"]}"', alias(o, e, d['id']), f'subtitle: "{e["tittel"]} · {o["tittel"]}"', 'toc: false', '---', '',
                   f'[← Til temaet {e["tittel"]}](../{e["id"]}.qmd){{.dl-tilbake}}', '']
             nv = [(k, t) for k, t in NIVAER if any(x['niva'] == k for x in dss)] + ([(None, 'Annet')] if any(not x['niva'] for x in dss) else [])
             if len(dss) > 1: dq.append('Stoffet finnes på flere nivåer. Velg det som passer deg.\n')
@@ -213,6 +255,24 @@ for L in loyper:
 if HAR_DEKNING: q.append('<a class="loype egen" href="../dekning.html"><span class="status">Lag din egen</span><h3>Har du et annet kurs?</h3><p>Lim inn emnebeskrivelsen, så finner vi sidene som passer og lager en løype for deg.</p></a>')
 q += ['</div>', '```', '']
 (LU / 'index.qmd').write_text('\n'.join(q), encoding='utf-8')
+
+# Oversiktssider for løyper som plukker ut sider (kilde: utvalg)
+for x in (P / 'loyper').glob('*.qmd'):
+    if x.name != 'index.qmd' and f'loyper/{x.name}' not in utvalg_sider: x.unlink()
+for ov, (L, struktur) in utvalg_sider.items():
+    meta = ' · '.join(x for x in (L.get('institusjon'), L.get('emnekode'), f'{sum(len(k["sider"]) for d in struktur for k in d["kapitler"])} sider') if x)
+    beskr = (L.get('beskrivelse') or '').replace('"', "'")
+    q = ['---', f'title: "{L["tittel"]}"', f'subtitle: "{beskr}"', 'toc: false', '---', '',
+         f'<p class="loype-meta">Løype · {escape(meta)}</p>', '']
+    if L.get('tekst'): q += [L['tekst'].strip(), '']
+    for d in struktur:
+        if d['tittel']: q += [f'## {d["tittel"]}', '']
+        for k in d['kapitler']:
+            q += [f'### [{k["tittel"]}](/{k["href"].replace(".qmd", ".html")})' if k['href'] else f'### {k["tittel"]}', '']
+            for x in k['sider']:
+                q.append(f'- [{tittel_av(P / x)}](/{x.replace(".qmd", ".html")})')
+            q.append('')
+    (P / ov).write_text('\n'.join(q), encoding='utf-8')
 
 # loyper.json for forrige/neste og temalenke
 side_info = {}

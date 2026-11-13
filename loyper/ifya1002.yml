@@ -1,0 +1,31 @@
+# Løype: IFYA1002 Fysikk (NTNU Ålesund). Plukker ut sidene emnet trenger fra faget Ingeniørfysikk.
+# Rekkefølgen følger emnet. Temasidene er generelle (se AGENTS.md §3); alt om emnet hører hjemme her.
+id: ifya1002
+tittel: "IFYA1002 Fysikk"
+emnekode: "IFYA1002"
+institusjon: "NTNU Ålesund"
+kilde: utvalg
+niva: ingenior
+beskrivelse: "Mekanikk, elektrisitet og magnetisme for ingeniørstudenter."
+tekst: |
+  Emnet har to deler: **grunnleggende mekanikk** og **elektrisitet og magnetisme**. Mekanikkdelen er den samme som i IFYA1000.
+
+  Eksamen er skriftlig og digital (4 timer). Ingen trykte eller håndskrevne hjelpemidler, bare en enkel kalkulator. For å gå opp til eksamen må regneøvingene og laboratorierapporten være godkjent.
+deler:
+  - tittel: "Mekanikk"
+    kapitler:
+      - { fag: ingeniorfysikk, kapittel: 01-introduksjon }
+      - { fag: ingeniorfysikk, kapittel: 02-kinematikk }
+      - { fag: ingeniorfysikk, kapittel: 03-dynamikk }
+      - { fag: ingeniorfysikk, kapittel: 04-arbeid-og-energi }
+      - { fag: ingeniorfysikk, kapittel: 05-bevegelsesmengde }
+      - { fag: ingeniorfysikk, kapittel: 06-rotasjon }
+  - tittel: "Elektrisitet og magnetisme"
+    kapitler:
+      - { fag: ingeniorfysikk, kapittel: 11-elektrisk-ladning-og-felt, sider: ["01", "02", "03", "04", "05"] }
+      - { fag: ingeniorfysikk, kapittel: 12-elektrisk-potensial }
+      - { fag: ingeniorfysikk, kapittel: 13-kondensatorer }
+      - { fag: ingeniorfysikk, kapittel: 14-strom-og-kretser }
+      - { fag: ingeniorfysikk, kapittel: 15-magnetiske-krefter }
+      - { fag: ingeniorfysikk, kapittel: 16-kilder-til-magnetfelt }
+      - { fag: ingeniorfysikk, kapittel: 17-induksjon, sider: ["01", "02", "03"] }
