@@ -6,7 +6,7 @@ Nattjobben leser og oppdaterer denne filen hver natt. Instruksen står i `rutine
 
 Nivå og dekning per tema vises på `dekning.qmd`.
 
-**Plassholdersider i fysikk-forkurs** (`plassholder: true`): 10-bolger-og-straling/01–04; 11-elektrisitet/06-elektromotorisk-spenning; 12-atom-og-kjernefysikk/01–04; 13-programmering/01–03. Elektrisitet: 11/01–03 er bygd ut (11/02 Elektrisk kraft og ladning og 11/03 Kirchhoffs lover 13. nov.). Neste: 11/04 motstand (har «I TRES» i teksten, som må bort), 11/05 effekt, så 11/06. `figurer/_mal.tex` i fysikk-forkurs laster `circuitikz` (europeiske symboler); bruk `battery1,invert` når kretsen tegnes nedenfra og opp, så den lange streken (pluss) havner øverst.
+**Plassholdersider i fysikk-forkurs** (`plassholder: true`): 10-bolger-og-straling/01–04; 11-elektrisitet/08-elektromotorisk-spenning; 12-atom-og-kjernefysikk/01–04; 13-programmering/01–03. Elektrisitet: hele kapitlet er bygd om 13. nov. etter TRES0312-kompendiet (11/01–07 og 11/09; bare 11/08 EMS er plassholder, og den er ikke med i TRES0312). Løypa `loyper/tres0312.yml` plukker sidene emnet bruker. `figurer/_mal.tex` i fysikk-forkurs laster `circuitikz` (europeiske symboler); bruk `battery1,invert` når kretsen tegnes nedenfra og opp, så den lange streken (pluss) havner øverst.
 
 **Flervariabel kalkulus:** Kapittel 1 ferdig (01/07 blandede oppgaver 13. nov.). 02/01 trippelintegraler i kartesiske koordinater ferdig 13. nov. Neste: 02/02 sylinderkoordinater, 02/03 kulekoordinater, 02/04 treghetsmoment, 02/06 oppgaver.
 
