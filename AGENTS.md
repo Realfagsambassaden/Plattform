@@ -48,6 +48,7 @@ Forkurset ble tidligere skrevet i LaTeX (`kosmoben/TRES0312`). Fra november 2026
   ```
 
 - **Løyper** (kurs, f.eks. et NTNU-emne) plukker sider i en bestemt rekkefølge. Kursinformasjon hører hjemme i løypa, ikke i sidene.
+- **Temaene bygges generelt, emnene blir løyper.** Temaer og undertemaer følger en vanlig universitetslærebok i rekkefølge og omfang, ikke et bestemt emne. Et emne (f.eks. IFYA1000 eller IFYA1002) skal aldri bestemme temastrukturen. Det blir en løype som plukker ut sidene emnet trenger, i emnets rekkefølge. Forelesningsnotater og eksamener fra et emne viser hvilke sider løypa trenger og hvilket nivå som kreves.
 - **Plassholdersider** for stoff som skal skrives, har `plassholder: true` øverst og en boks «Kommer snart» med punkter om hva siden skal inneholde. Fyll dem ut i stedet for å lage nye sider om samme tema.
 - Gamle adresser beholdes med `aliases:` i front matter når en side flyttes.
 
