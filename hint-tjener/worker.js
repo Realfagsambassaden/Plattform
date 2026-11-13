@@ -288,8 +288,20 @@ async function fagforslag(request, env, b, h) {
     katalog.map((x) => `${x.id} | ${x.tittel}`).join("\n") +
     (b.onske ? `\n\nØNSKER FRA UNDERVISEREN:\n${kort(b.onske, 8000)}` : "") + (vedlegg ? "\n\nUnderviserens tidligere plan er vedlagt." : "") +
     (Array.isArray(b.navarende) && b.navarende.length ? `\n\nNÅVÆRENDE OPPSETT:\n${kort(JSON.stringify(b.navarende), 12000)}` : "");
-  const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_FAG.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000, vedlegg));
-  if (!r || !Array.isArray(r.moduler)) throw feil("Fikk ikke noe forslag fra KI denne gangen. Prøv igjen.", 502);
+  // Svaret skal være JSON. Kommer det noe annet (prosa, avkuttet JSON), prøver vi én gang til med en tydeligere beskjed.
+  const sys = SYSTEM_FAG.replace("NETTSTED", NETTSTEDNAVN(request));
+  const fenv = { ...env, MODELL: env.MODELL_FAG || env.MODELL };
+  let raa = await spor(fenv, sys, melding, 16000, vedlegg);
+  let r = lesJson(raa);
+  if (!r || !Array.isArray(r.moduler)) {
+    console.log("fagforslag: uleselig svar, prøver igjen:", (raa || "").slice(0, 500));
+    raa = await spor(fenv, sys, melding + "\n\nVIKTIG: Svar KUN med ett gyldig JSON-objekt etter formatet over, uten tekst før eller etter. Hold notatene korte.", 16000, vedlegg);
+    r = lesJson(raa);
+  }
+  if (!r || !Array.isArray(r.moduler)) {
+    console.log("fagforslag: uleselig svar igjen:", (raa || "").slice(0, 500));
+    throw feil("Fikk ikke noe forslag fra KI denne gangen. Prøv igjen, eller lim inn planen som tekst under «Ønsker» i stedet for å laste opp en fil.", 502);
+  }
   // Rydd: bare kjente id-er, høyst så mange uker som rammen sier.
   const gyldig = new Set(katalog.map((x) => x.id));
   let igjen = uker;
@@ -585,9 +597,12 @@ async function hentInnhold(side) {
 
 function lesJson(s) {
   if (!s) return null;
+  s = s.replace(/```(?:json)?/gi, "");
   const a = s.indexOf("{"), z = s.lastIndexOf("}");
   if (a < 0 || z <= a) return null;
-  try { return JSON.parse(s.slice(a, z + 1)); } catch { return null; }
+  const t = s.slice(a, z + 1);
+  try { return JSON.parse(t); } catch {}
+  try { return JSON.parse(t.replace(/,\s*([}\]])/g, "$1")); } catch { return null; }   // komma før } eller ]
 }
 
 // ---------------------------------------------------------------- felles
