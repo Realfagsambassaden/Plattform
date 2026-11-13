@@ -286,7 +286,16 @@ html.st-uv-aktiv, html.st-uv-aktiv body { overflow: hidden; }
 .studie .uv-pennlinje button { background: rgba(20, 23, 28, .85); border: 1px solid #3a4048; color: #eef0f2; border-radius: 8px; padding: .3rem .7rem; font: 600 .9rem system-ui, sans-serif; }
 .studie .uv-pennlinje button.tp-pa { background: #6ef04a; border-color: #6ef04a; color: #111; }
 .studie .uv-pennlinje .tp-verktoy { border-right: 0; padding: .2rem .3rem; background: rgba(20, 23, 28, .85); border-radius: 8px; }
+.studie .uv-pennlinje .tp-farge { background: var(--f); width: 1.6rem; height: 1.6rem; padding: 0; border-radius: 50%; border: 2px solid #14171c; }
+.studie .uv-pennlinje .tp-farge.valgt, .studie .uv-pennlinje .tp-egen.valgt { outline: 2px solid #eef0f2; outline-offset: 1px; }
+.studie .uv-pennlinje .tp-egen { width: 1.6rem; height: 1.6rem; }
 .studie .uv-pennlinje .uv-fsnav { display: none; }
+.studie .uv-ramme.uv-fast { position: fixed; inset: 0; z-index: 3000; background: #000; }
+.studie .uv-ramme.uv-fast > .uv-slide { border: 0; border-radius: 0; }
+.studie .uv-ramme.uv-fast .uv-trekk { display: block; }
+.studie .uv-ramme.uv-fast .uv-fsnav { display: inline-block; }
+html.uv-fast-aktiv, html.uv-fast-aktiv body { overflow: hidden; }
+html.uv-fast-aktiv .dm-knapp { display: none !important; }
 .studie .uv-ramme:fullscreen .uv-fsnav, .studie .uv-ramme:-webkit-full-screen .uv-fsnav { display: inline-block; }
 .studie .uv-ramme:-webkit-full-screen { background: #000; }
 .studie .uv-kontroll { display: flex; align-items: center; justify-content: center; gap: 1rem; }

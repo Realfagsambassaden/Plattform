@@ -929,7 +929,7 @@ function studieStart() {
       '<div class="uv-tidslinje" role="navigation" aria-label="Tidslinje">' + (v.laster ? '<p class="st-ind">Laster …</p>' : v.feil ? '<p class="st-feil">' + esc(v.feil) + '</p>' : tid || '<p class="st-ind">Faget har ingen moduler ennå.</p>') + '</div>' +
       '<div class="uv-scene" id="uv-scene"><div class="uv-ramme" id="uv-ramme"><div class="uv-slide" id="uv-slide"></div>' + trekkHtml() +
         (sl.length ? '<div class="uv-pennlinje"><button type="button" data-h="penn" aria-pressed="false" title="Tegn på sliden (P)">✎ Penn</button><button type="button" data-h="tavle" title="Tom tavle (B)">Tavle</button>' +
-        '<button type="button" class="uv-fsnav" data-h="uvForrige" aria-label="Forrige slide">←</button><button type="button" class="uv-fsnav" data-h="uvNeste" aria-label="Neste slide">→</button></div>' : '') + '</div>' +
+        '<button type="button" class="uv-fsnav" data-h="uvForrige" aria-label="Forrige slide">←</button><button type="button" class="uv-fsnav" data-h="uvNeste" aria-label="Neste slide">→</button><button type="button" class="uv-fsnav" data-h="uvFull" aria-label="Avslutt fullskjerm" title="Avslutt fullskjerm (F)">✕</button></div>' : '') + '</div>' +
       '<div class="uv-kontroll"><button type="button" class="st-btn g liten" data-h="uvForrige" aria-label="Forrige slide">←</button><span id="uv-pos" class="st-sm"></span><button type="button" class="st-btn g liten" data-h="uvNeste" aria-label="Neste slide">→</button></div>' +
       (!sl.length && x && !v.laster ? '<p class="st-sm" style="text-align:center">Lag slides under Utforming → Mitt materiale, eller <a href="index.html#fag-' + encodeURIComponent(c.id) + '@' + encodeURIComponent(x.nokkel) + '" target="_blank" rel="noopener" data-h="ingen">åpne denne samlingen der</a>.</p>' : '') +
       '</div><div class="uv-side">' + taler + (v.plan ? '<div class="uv-plan">' + planHtml + '</div>' : '') + '</div></div></div>';
@@ -949,6 +949,12 @@ function studieStart() {
   function uvLos() { var v = T.uv, sl = uvSlides()[v.i]; if (!sl || !sl.losning) return; v.visLos = !v.visLos; visSlide(); }
   function uvFull(vindu) {
     var d = (vindu || window).document, s = d.getElementById('uv-ramme'); if (!s) return;
+    // iPad: ekte fullskjerm gir en advarsel fra Safari når man skriver med Pencil, så der dekker vi bare hele vinduet.
+    if (!vindu && window.Tavlepenn && window.Tavlepenn.ios) {
+      T.uv.fast = !s.classList.contains('uv-fast'); s.classList.toggle('uv-fast', T.uv.fast);
+      document.documentElement.classList.toggle('uv-fast-aktiv', T.uv.fast);
+      setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 30); return;
+    }
     if (d.fullscreenElement) d.exitFullscreen(); else if (d.webkitFullscreenElement) d.webkitExitFullscreen();
     else if (s.requestFullscreen) s.requestFullscreen().catch(function () { varsle('Nettleseren tillot ikke fullskjerm.', true); });
     else if (s.webkitRequestFullscreen) s.webkitRequestFullscreen();
@@ -1567,6 +1573,7 @@ function studieStart() {
       rot.innerHTML = undervisHtml() + '<p id="st-varsel" class="st-varsel" role="status" hidden></p>';
       if (vis) { var ny0 = document.getElementById('st-varsel'); ny0.textContent = vis.t; ny0.className = vis.k; ny0.hidden = false; }
       var tl = document.querySelector('.uv-tidslinje'); if (tl) { if (tidTopp != null) tl.scrollTop = tidTopp; else { var pa = tl.querySelector('.uv-samling.pa'); if (pa) tl.scrollTop = Math.max(0, pa.offsetTop - 120); } }
+      var rm = document.getElementById('uv-ramme'); if (rm && T.uv && T.uv.fast) rm.classList.add('uv-fast');
       T.uvTp = null; uvPenn(); visSlide(); return;
     }
     var faner = erUnderviser() && !T.eksempel ? [['kurs', 'Fagene mine'], ['hjem', 'Løype'], ['profil', 'Profil']] : [['hjem', 'Løype'], ['profil', 'Profil'], ['kurs', 'Fag']];
@@ -1749,7 +1756,7 @@ function studieStart() {
       slettMat: slettMat,
       uvVelg: function () { T.uv.valgt = d.k; T.uv.i = 0; tegn(); if (matchMedia('(max-width: 900px)').matches) { var sc = document.getElementById('uv-scene'); if (sc) sc.scrollIntoView({ block: 'start' }); } },
       uvForrige: function () { T.uv.i--; visSlide(); }, uvNeste: function () { T.uv.i++; visSlide(); },
-      uvUt: function () { ev.preventDefault(); if (document.fullscreenElement) document.exitFullscreen(); location.hash = 'fag-' + T.uv.c.id; location.reload(); },
+      uvUt: function () { ev.preventDefault(); document.documentElement.classList.remove('uv-fast-aktiv'); if (document.fullscreenElement) document.exitFullscreen(); location.hash = 'fag-' + T.uv.c.id; location.reload(); },
       penn: function () { if (T.uvTp) { T.uvTp.penn(); T.uv.pennPa = T.uvTp.erAktiv(); } }, tavle: function () { if (T.uvTp) { T.uvTp.tavle(); T.uv.pennPa = T.uvTp.erAktiv(); } },
       uvFull: function () { uvFull(); }, uvNotat: function () { T.uv.notat = !T.uv.notat; tegn(); }, uvTo: uvTo, uvLos: uvLos,
       uvTid: function () { T.uv.tid = !T.uv.tid; tegn(); }, uvPlan: function () { T.uv.plan = !T.uv.plan; tegn(); },
