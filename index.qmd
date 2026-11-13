@@ -88,27 +88,51 @@ page-layout: full
     <article class="profilkort">
       <div class="profil-bilder">
         <img class="profil-foto" src="assets/img/ben-portrett.webp" alt="Portrett av Ben David Normann">
-        <img class="profil-ikon" src="assets/img/drnormann-ikon.png" alt="Dr. Normann">
+        <button type="button" class="profil-ikonknapp" aria-expanded="false" aria-controls="fag-ben" title="Se fagene til Dr. Normann"><img class="profil-ikon" src="assets/img/drnormann-ikon.png" alt="Dr. Normann: vis fagene"></button>
       </div>
       <div>
         <h3>Dr. Normann</h3>
         <p class="profil-rolle">Ph.d. i matematisk kosmologi</p>
         <p>Jeg heter Ben, har doktorgrad i matematisk kosmologi og har formidlet og undervist realfag i ti år. I 2018 vant jeg den nasjonale finalen i Forsker Grand Prix.</p>
         <p>Her legger jeg ut forklaringene jeg selv skulle ønske jeg hadde: én idé om gangen, tegnet ut på tavla, med regning du kan følge linje for linje.</p>
+        <div class="profil-fag" id="fag-ben" hidden>
+          <p class="eyebrow">Fag med Dr. Normann</p>
+          <ul>
+            <li><a href="fysikk-forkurs/index.html">Forkurs i fysikk</a></li>
+            <li><a href="loyper/tres0312.html">TRES0312 (NTNU)</a>: løype, og fag i studieappen med påmelding fra faglæreren</li>
+            <li><a href="ingeniorfysikk/index.html">Ingeniørfysikk</a></li>
+            <li><a href="https://matematikkhjelp.no/matte-forkurs/index.html">Forkurs i matematikk</a> (matematikkhjelp.no)</li>
+            <li><a href="https://matematikkhjelp.no/flervariabel-kalkulus/index.html">Flervariabel kalkulus</a> (matematikkhjelp.no)</li>
+          </ul>
+        </div>
       </div>
     </article>
     <article class="profilkort">
       <div class="profil-bilder">
         <img class="profil-foto" src="assets/img/andrea-portrett.webp" alt="Portrett av Andrea">
-        <img class="profil-ikon" src="assets/img/andrea-ikon.png" alt="Andrea">
+        <button type="button" class="profil-ikonknapp" aria-expanded="false" aria-controls="fag-andrea" title="Se fagene til Andrea"><img class="profil-ikon" src="assets/img/andrea-ikon.png" alt="Andrea: vis fagene"></button>
       </div>
       <div>
         <h3>Andrea</h3>
         <p class="profil-rolle">Dobbel mastergrad</p>
         <p>Andrea har i en årrekke vært ansiktet utad og selve drivkraften i NTNU Fysikkstudio, som lager fysikkvideoer av høy kvalitet.</p>
+        <div class="profil-fag" id="fag-andrea" hidden>
+          <p class="eyebrow">Fag med Andrea</p>
+          <p>Andreas fag kommer snart.</p>
+        </div>
       </div>
     </article>
   </div>
+  <script>
+  // Klikk på figuren til en profil for å se fagene hen tilbyr.
+  document.querySelectorAll('.profil-ikonknapp').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var l = document.getElementById(b.getAttribute('aria-controls')), apen = l.hidden;
+      l.hidden = !apen; b.setAttribute('aria-expanded', apen);
+      if (apen) l.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    });
+  });
+  </script>
 </section>
 
 ```

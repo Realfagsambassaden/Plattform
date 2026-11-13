@@ -171,6 +171,16 @@ html.fh-innebygd .studie .st-faner { display: none; }   /* i fokusvisningens arb
 .studie .st-stor.fylt { background: var(--bs-primary); } .studie .st-stor.fylt b, .studie .st-stor.fylt span { color: var(--bs-body-bg); }
 .studie .st-stor:disabled { opacity: .6; cursor: default; }
 .studie .st-modul { border: 2px solid; border-radius: 14px; background: rgba(127,127,127,.06); overflow: hidden; }
+.st-qr { position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,.72); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.st-qr-boks { background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); border-radius: 18px; padding: 1.2rem 1.5rem; text-align: center; width: min(92vw, 560px); max-height: 96vh; overflow: auto; }
+.st-qr-boks h2 { margin: .6rem 0 .4rem; }
+.st-qr-kode { background: #fff; border-radius: 12px; padding: .4rem; margin: 0 auto; width: min(72vh, 82vw, 460px); }
+.st-qr-kode svg { display: block; width: 100%; height: auto; }
+.st-qr-tekst { font-size: 1.15rem; margin: .7rem 0 .2rem; }
+.st-qr-tekst .st-kode { font-size: 1.5rem; }
+.st-qr-lenke { word-break: break-all; opacity: .75; }
+.studie .st-ukefase { display: block; margin-top: .3rem; width: 100%; max-width: 74px; font-size: .72rem; padding: .1rem; border: 2px solid; border-radius: 6px; background: transparent; color: inherit; }
+.studie .st-faseliste { margin: .4rem 0 .6rem; padding-left: 1.1rem; }
 .studie .st-dra { cursor: grab; touch-action: none; user-select: none; font-size: 1.25rem; line-height: 1; padding: .15rem .3rem; border-radius: 6px; opacity: .65; }
 .studie .st-dra:hover { opacity: 1; background: rgba(127,127,127,.15); }
 .studie .st-drar { opacity: .45; }
