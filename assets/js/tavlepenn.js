@@ -19,11 +19,13 @@ window.Tavlepenn = function (scene, flate, lagringsnokkel) {
 
   var verktoy = document.createElement('div'); verktoy.className = 'tp-verktoy'; verktoy.hidden = true;
   verktoy.innerHTML = FARGER.map(function (f, i) { return '<button type="button" class="tp-farge" data-tp="farge" data-i="' + i + '" style="--f:' + f[1] + '" aria-label="' + f[0] + ' (' + (i + 1) + ')" title="' + f[0] + ' (' + (i + 1) + ')"></button>'; }).join('') +
+    '<label class="tp-egen" title="Velg en annen farge"><input type="color" data-tp="egen" aria-label="Velg en annen farge"><span>+</span></label>' +
     '<button type="button" data-tp="tykk" title="Tykkelse">●</button>' +
     '<button type="button" data-tp="visk" title="Viskelær (E)">Visk</button>' +
     '<button type="button" data-tp="angre" title="Angre (Z)">↶</button>' +
     '<button type="button" data-tp="tom" title="Tøm sliden (Delete)">Tøm</button>';
 
+  var egen = null; try { egen = localStorage.getItem('tavlepenn-egenfarge'); } catch (e) {}
   var aktiv = false, farge = 0, visk = false, tykk = 1, tavleVis = false, noekkel = '0';
   var tegninger = {}; try { tegninger = JSON.parse(sessionStorage.getItem(lagringsnokkel) || '{}'); } catch (e) {}
   var lagreTid = null;
@@ -42,7 +44,7 @@ window.Tavlepenn = function (scene, flate, lagringsnokkel) {
     var p = s.p; if (!p.length) return;
     ctx.save(); ctx.scale(dpr, dpr);
     ctx.globalCompositeOperation = s.v ? 'destination-out' : 'source-over';
-    ctx.strokeStyle = s.v ? '#000' : FARGER[s.f][1]; ctx.fillStyle = ctx.strokeStyle; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = s.v ? '#000' : (s.c || (FARGER[s.f] || FARGER[0])[1]); ctx.fillStyle = ctx.strokeStyle; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     if (p.length === 1) { ctx.beginPath(); ctx.arc(p[0][0] * B, p[0][1] * H, bredde(s, p[0][2]) / 2, 0, 7); ctx.fill(); ctx.restore(); return; }
     for (var i = Math.max(1, fra || 1); i < p.length; i++) {   // korte biter med trykkets tykkelse; myk kurve gjennom midtpunktene
       var a = p[i - 1], b = p[i], c = p[i - 2] || a;
@@ -65,7 +67,7 @@ window.Tavlepenn = function (scene, flate, lagringsnokkel) {
     if (e.pointerType === 'touch' && pennBrukt) return;
     if (e.button === 2) return;
     e.preventDefault(); try { lerret.setPointerCapture(e.pointerId); } catch (x) {}
-    naa = { f: farge, t: tykk, v: visk || e.button === 5 || (e.buttons & 32) ? 1 : 0, p: [punkt(e)], id: e.pointerId };
+    naa = { f: Math.max(farge, 0), c: farge < 0 ? egen : undefined, t: tykk, v: visk || e.button === 5 || (e.buttons & 32) ? 1 : 0, p: [punkt(e)], id: e.pointerId };
     streker().push(naa); strek(naa);
   });
   lerret.addEventListener('pointermove', function (e) {
@@ -86,6 +88,8 @@ window.Tavlepenn = function (scene, flate, lagringsnokkel) {
     var pk = scene.querySelector('[data-h="penn"]'); if (pk) { pk.classList.toggle('tp-pa', aktiv); pk.setAttribute('aria-pressed', aktiv); }
     var tk = scene.querySelector('[data-h="tavle"]'); if (tk) tk.classList.toggle('tp-pa', tavleVis);
     verktoy.querySelectorAll('.tp-farge').forEach(function (b, i) { b.classList.toggle('valgt', !visk && i === farge); });
+    var eg = verktoy.querySelector('.tp-egen'); eg.classList.toggle('valgt', !visk && farge < 0); eg.classList.toggle('har', !!egen);
+    if (egen) { eg.style.setProperty('--f', egen); eg.querySelector('input').value = egen; }
     verktoy.querySelector('[data-tp="visk"]').classList.toggle('valgt', visk);
     verktoy.querySelector('[data-tp="tykk"]').textContent = tykk === 2 ? '⬤' : '●';
     tavle.hidden = !tavleVis; flate.classList.toggle('tp-tavlemodus', tavleVis);
@@ -94,7 +98,13 @@ window.Tavlepenn = function (scene, flate, lagringsnokkel) {
   function angre() { var s = streker(); s.pop(); tegnAlt(); lagre(); }
   function tom() { var k = (tavleVis ? 'tavle:' : '') + noekkel; tegninger[k] = []; tegnAlt(); lagre(); }
   function visTavle(paa) { tavleVis = paa == null ? !tavleVis : paa; if (tavleVis) aktiv = true; oppdater(); tegnAlt(); }
+  verktoy.addEventListener('input', function (e) {
+    if (e.target.getAttribute('data-tp') !== 'egen') return;
+    egen = e.target.value; farge = -1; visk = false; try { localStorage.setItem('tavlepenn-egenfarge', egen); } catch (x) {}
+    oppdater();
+  });
   verktoy.addEventListener('click', function (e) {
+    if (e.target.closest('.tp-egen') && egen && farge >= 0) { farge = -1; visk = false; oppdater(); }
     var b = e.target.closest('button'); if (!b) return; var h = b.getAttribute('data-tp');
     if (h === 'farge') { farge = +b.getAttribute('data-i'); visk = false; }
     else if (h === 'visk') visk = !visk; else if (h === 'tykk') tykk = tykk === 2 ? 1 : 2;
@@ -128,3 +138,7 @@ window.Tavlepenn = function (scene, flate, lagringsnokkel) {
     slide: function (k) { noekkel = String(k); tavleVis = false; oppdater(); storrelse(); }
   };
 };
+
+// iPad/iPhone: Safari viser en advarsel («Det ser ut som du skriver i fullskjermmodus») når man skriver med Pencil i ekte
+// fullskjerm. Der bruker vi i stedet en «fast» visning som dekker hele vinduet.
+window.Tavlepenn.ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
