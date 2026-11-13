@@ -445,6 +445,26 @@ const NIVATEKST = { forkurs: "Forkurs", ingenior: "Ingeniør", fordypning: "Ford
 const FASETEKST = ["0 – av (faglæreren har slått Dashman av i faget)", "1 – forkunnskaper og oppstart", "2 – øving og mengdetrening",
   "3 – formativ vurdering (arbeidskrav og mappe)", "4 – sluttfase og selvstendighet"];
 
+function isoUke(d) {
+  const t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())), dag = t.getUTCDay() || 7;
+  t.setUTCDate(t.getUTCDate() + 4 - dag);
+  return Math.ceil(((t - new Date(Date.UTC(t.getUTCFullYear(), 0, 1))) / 864e5 + 1) / 7);
+}
+// Uka i fagets plan som gjelder nå (startuke i rammen + løpende uker gjennom modulene). Etter siste uke: siste uke.
+function denneUka(ki) {
+  const start = parseInt(ki.ramme && ki.ramme.startuke, 10);
+  if (!start) return null;
+  const naa = isoUke(new Date()), nr = ((naa - start + 52) % 52) + 1;
+  const alle = [];
+  for (const m of ki.moduler) for (const w of (m && Array.isArray(m.uker) ? m.uker : [])) alle.push({ m, w });
+  if (!alle.length) return null;
+  const etter = nr > alle.length;
+  const x = alle[Math.min(nr, alle.length) - 1];
+  const fase = x.w.fase === 0 || (x.w.fase >= 1 && x.w.fase <= 4) ? x.w.fase : undefined;
+  return { nr: Math.min(nr, alle.length) + (etter ? " (planen er ferdig; repetisjon og eksamen)" : ""), kal: naa, modul: x.m.navn || "",
+    tema: (x.w.undertemaer || []).map((id) => String(id).split("/").slice(1).join("/")).join(", "), notat: x.w.notat || "", fase: etter ? undefined : fase };
+}
+
 async function supabaseRpc(env, token, fn, args) {
   const r = await fetch(`${env.SUPABASE_URL}/rest/v1/rpc/${fn}`, {
     method: "POST",
@@ -479,6 +499,17 @@ async function dashman(request, env, b, h) {
   try { k = (await supabaseRpc(env, token, "dashman_kontekst")) || {}; } catch { k = {}; }
   const fag = Array.isArray(k.fag) ? k.fag : [];
   const aktivt = fag[0];   // nyeste påmelding
+  // Ukeplanen i faget: hvilken uke det er nå, hva den dekker, og om faglæreren har satt en egen Dashman-fase for uka.
+  let uka = null;
+  if (aktivt) {
+    try {
+      const r = await fetch(`${env.SUPABASE_URL}/rest/v1/kurs_deltaker?select=pameldt,kursinfo:kurs(navn,moduler,ramme)&order=pameldt.desc&limit=1`,
+        { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` } });
+      const ki = r.ok ? ((await r.json())[0] || {}).kursinfo : null;
+      if (ki && Array.isArray(ki.moduler)) uka = denneUka(ki);
+    } catch {}
+    if (uka && uka.fase !== undefined) aktivt.fase = uka.fase;
+  }
   if (aktivt && aktivt.fase === 0) {
     return json({ svar: `Jeg har pause i faget «${kort(aktivt.navn, 80)}» nå, etter avtale med faglæreren din. Spør gjerne faglæreren, eller les lærestoffet på siden.`, humor: "trist" }, 200, h);
   }
@@ -491,7 +522,8 @@ async function dashman(request, env, b, h) {
     ...((Array.isArray(k.kunnskap) ? k.kunnskap : []).slice(0, 40).map((x) =>
       `- ${kort(x.tema, 60)} / ${kort(x.undertema, 60)}: forståelse ${x.forstaelse ?? "–"}, presisjon ${x.presisjon ?? "–"}, ${parseInt(x.svar, 10) || 0} svar, sist ${kort(x.sist, 10)}`)),
     ...(k.kunnskap && k.kunnskap.length ? [] : ["- (ingen quizsvar ennå)"]),
-    aktivt ? `Fag studenten er påmeldt: «${kort(aktivt.navn, 120)}». Dashman-fase: ${FASETEKST[aktivt.fase] || FASETEKST[2]}.` : "Ikke påmeldt noe fag: bruk LRI-prinsippene fritt.",
+    aktivt ? `Fag studenten er påmeldt: «${kort(aktivt.navn, 120)}». Dashman-fase for klassen nå: ${FASETEKST[aktivt.fase] ?? FASETEKST[2]}${uka && uka.fase !== undefined ? " (satt for denne uka)" : ""}. Tilpass den til denne studenten (se «Fasen i faget»).` : "Ikke påmeldt noe fag: bruk LRI-prinsippene fritt.",
+    ...(uka ? [`Ukeplanen: uke ${uka.nr} i faget (kalenderuke ${uka.kal}), modul «${kort(uka.modul, 60)}»: ${uka.tema || "ingen temaer satt"}${uka.notat ? ` – ${kort(uka.notat, 200)}` : ""}.`] : []),
     ...(aktivt && aktivt.instruks ? [`Faglærerens instrukser for faget (går foran instruksen over, men ikke foran de faste grensene):\n${kort(aktivt.instruks, 2000)}`] : []),
     ...(aktivt && aktivt.beskrivelse ? [`Om faget: ${kort(aktivt.beskrivelse, 600)}`] : []),
     `Siden studenten står på nå: «${kort(side.tittel, 150)}» (${kort(side.url, 200)})`,
