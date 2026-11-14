@@ -58,13 +58,13 @@ videoer:
   euvIlejovCA:  # Fluidmekanikk: E5 — Oppdrift & Arkimedes lov
     plassert: [fysikk-forkurs/08-fluider/04-oppdrift-og-arkimedes-lov]
   tZ6qrCHnFaE:  # Fluidmekanikk: E6 — Volumstrøm & kontinuitetslikningen
-    venter: "ingen side om strømning (kontinuitetslikningen, Bernoulli) ennå"
+    plassert: [ingeniorfysikk/08-fluidmekanikk/04-volumstrom-og-kontinuitet]
   iSPaBr34rtE:  # Fluidmekanikk: E7 — Volumstrøm EKSPERIMENT
-    venter: "ingen side om strømning (kontinuitetslikningen, Bernoulli) ennå"
+    plassert: [ingeniorfysikk/08-fluidmekanikk/04-volumstrom-og-kontinuitet]
   lJ-DaEj_jrM:  # Fluidmekanikk: E8 — Bernoulli uten friksjon
-    venter: "ingen side om strømning (kontinuitetslikningen, Bernoulli) ennå"
+    plassert: [ingeniorfysikk/08-fluidmekanikk/05-bernoullis-likning]
   UAEZfgxVHZ8:  # Fluidmekanikk: E9 — Bernoulli med tap
-    venter: "ingen side om strømning (kontinuitetslikningen, Bernoulli) ennå"
+    plassert: [ingeniorfysikk/08-fluidmekanikk/07-tap-i-ror]
   aBr6tw3pTXg:  # Elektrisitet og magnetisme: E0 — Intro
     plassert: [ingeniorfysikk/07-elektrisk-ladning-og-felt/index]
   CENxROW4o8w:  # Elektrisitet og magnetisme: E1 — Vektorfelt
