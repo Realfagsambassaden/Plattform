@@ -1,6 +1,6 @@
 ---
-title: "Dekker vi faget ditt?"
-subtitle: "Lim inn adressen til fagets emnebeskrivelse, så får du et kart over hvor godt fysikkhjelp.no dekker pensumet."
+title: "Dekker vi emnet ditt?"
+subtitle: "Lim inn adressen til emnets emnebeskrivelse, så får du et kart over hvor godt fysikkhjelp.no dekker pensumet."
 toc: false
 page-layout: full
 ---

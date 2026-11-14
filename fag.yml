@@ -1,4 +1,5 @@
-# Fagene som hentes inn på nettstedene. Ett fag = ett repo laget fra malen Realfagsambassaden/fag-mal.
+# Lærebøkene som hentes inn på nettstedene («fag» i koden). Én lærebok = ett repo laget fra malen Realfagsambassaden/fag-mal.
+# Begrepene lærebok, løype, kurs og emne: se AGENTS.md §0.
 # Faget bestemmer selv nettsted, navn og status i sin egen fag.yml.
 # Hvert publisert fag får automatisk et løypekort på forsiden (verktoy/forside.py).
 # «niva:» er standardnivået for sidene i faget: forkurs | ingenior | fordypning (en side kan overstyre med «niva:» øverst).

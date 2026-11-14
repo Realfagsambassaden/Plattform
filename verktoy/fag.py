@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Henter inn fag laget fra malen Realfagsambassaden/fag-mal og kobler dem inn i nettstedet.
+"""Henter inn lærebøker («fag» i koden) laget fra malen Realfagsambassaden/fag-mal og kobler dem inn i nettstedet.
 Bruk: python3 fag.py <prosjektmappe> <nettsted>   (f.eks. fysikkhjelp)
 - leser fag.yml i plattformen (liste over repoer, eller «sti:» til en mappe i plattformen)
 - henter hvert repo til kilder/<navn> (git clone), med mindre mappen finnes fra før (lokal forhåndsvisning)
@@ -59,7 +59,7 @@ for post in liste:
         t = f.read_text(encoding='utf-8'); u = skjul_eksempellosninger(t)
         if u != t: f.write_text(u, encoding='utf-8')
     arbeid = meta.get('status') == 'arbeid'
-    banner = '::: {.callout-warning title="Under arbeid"}\nDette faget skrives fortsatt. Innholdet kan endre seg.\n:::\n\n' if arbeid else ''
+    banner = '::: {.callout-warning title="Under arbeid"}\nDenne læreboka skrives fortsatt. Innholdet kan endre seg.\n:::\n\n' if arbeid else ''
     kapitler = []
     for kap in sorted(p for p in (ut / 'kapitler').iterdir() if p.is_dir()):
         sider = sorted(f for f in kap.glob('*.qmd') if f.name != 'index.qmd')
@@ -97,7 +97,7 @@ for post in liste:
         r = subprocess.run([sys.executable, str(Path(__file__).resolve().parent / 'pdf' / 'lag_pdf.py'), str(mappe), str(pdf)], capture_output=True, text=True)
         print(r.stdout[-600:]); 
         if r.returncode == 0 and pdf.exists():
-            q.append(f'```{{=html}}\n<p class="pdf-lenke"><a class="btn-chalk sekundar" href="{kort}.pdf" download>⤓ Last ned som PDF</a> <span>Hele faget som kompendium, oppdatert {__import__("datetime").date.today().strftime("%d.%m.%Y")}.</span></p>\n```\n')
+            q.append(f'```{{=html}}\n<p class="pdf-lenke"><a class="btn-chalk sekundar" href="{kort}.pdf" download>⤓ Last ned som PDF</a> <span>Hele læreboka som kompendium, oppdatert {__import__("datetime").date.today().strftime("%d.%m.%Y")}.</span></p>\n```\n')
         else:
             print('PDF feilet for', kort, r.stderr[-800:])
     # Kapitlene som avrundede bokser, som i forkurset (tegning: i kapitlets index.qmd velger bildet)

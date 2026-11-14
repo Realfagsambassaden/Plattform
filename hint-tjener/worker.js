@@ -2,13 +2,13 @@
 //   POST /hint     – ETT hint til en oppgave (åpent for alle)
 //   POST /vurder   – studieappen: vurderer studentens forklaring (tekst og/eller bilde) til et quizspørsmål. Krever innlogging.
 //   POST /rad      – studieappen: personlig råd om eksamensforberedelse ut fra kunnskapsprofilen. Krever innlogging.
-//   POST /fagforslag – fagbyggeren: forslag til moduler og uker ut fra emnebeskrivelse og læringsutbytte. Bare for undervisere.
-//   POST /kvisslag – fagbyggeren: flervalgsspørsmål til et arbeidskrav, eventuelt ut fra underviserens egne oppgaver
+//   POST /fagforslag – kursbyggeren: forslag til moduler og uker ut fra emnebeskrivelse og læringsutbytte. Bare for undervisere.
+//   POST /kvisslag – kursbyggeren: flervalgsspørsmål til et arbeidskrav, eventuelt ut fra underviserens egne oppgaver
 //                    (tekst, bilde eller PDF). Bare for undervisere. Ingenting lagres i tjenesten.
-//   POST /materiale – fagbyggeren («Mitt materiale»): plan for dagen og slides til én samling, ut fra undertemaene og
+//   POST /materiale – kursbyggeren («Mitt materiale»): plan for dagen og slides til én samling, ut fra undertemaene og
 //                    lærestoffet på nettstedet, eventuelt et gammelt opplegg (tekst, bilde eller PDF). Bare for undervisere.
 //   POST /dashman  – Dashman, KI-læringspartneren: samtale med en innlogget student, bygd på LRI (instruksen står i
-//                    dashman-instruks.md). Får studentens nivå, mål, notat, kunnskapsprofil og fag (fase og faglærerens
+//                    dashman-instruks.md). Får studentens nivå, mål, notat, kunnskapsprofil og kurs (fase og faglærerens
 //                    instrukser) fra Supabase. Samtalen lagres ikke; bare et kort faglig notat, som studenten kan slette.
 //   POST /dekning  – dekningskart: hvor godt dekker fysikkhjelp.no et emne? Åpent for alle;
 //                    innloggede brukere får i tillegg sidene/veikartet.
@@ -75,7 +75,7 @@ Gjør slik:
 
 Svar KUN med gyldig JSON, uten forklaring rundt, på formen:
 {"emnekode":"…","emnenavn":"…","temaer":[{"tema":"…","dekning":"god|delvis|ingen","sider":[1,2],"kommentar":"én kort setning på norsk"}],"oppsummering":"2–3 setninger på norsk om hva siden dekker godt og hva studenten må finne andre steder"}
-Er teksten ikke en emnebeskrivelse for et fag, svar {"feil":"kort forklaring på norsk"}.`;
+Er teksten ikke en emnebeskrivelse for et emne, svar {"feil":"kort forklaring på norsk"}.`;
 
 const SYSTEM_VURDER = `Du er en tålmodig fysikklærer på NETTSTED, laget av Dr. Normann. En student har svart på et flervalgsspørsmål og vist hvordan hen tenkte, som tekst eller som bilde av en håndskrevet besvarelse.
 Du får spørsmålet, riktig svar, en kort forklaring, alternativet studenten valgte og studentens forklaring.
@@ -111,14 +111,14 @@ Norsk bokmål, desimalpunktum.
 Svar KUN med gyldig JSON:
 {"forstaelse":{"undertemaer":[],"tiltak":[],"formel":""},"presisjon":{"undertemaer":[],"tiltak":[],"formel":""},"hurtighet":{"undertemaer":[],"tiltak":[],"formel":""},"bra":""}`;
 
-const SYSTEM_FAG = `Du er en erfaren fysikklærer og hjelper en underviser å legge opp et fag på NETTSTED.
+const SYSTEM_FAG = `Du er en erfaren fysikklærer og hjelper en underviser å legge opp et kurs på NETTSTED.
 Du får emnebeskrivelsen og læringsutbyttet (begge kan mangle), rammen (antall uker og undervisningsform) og en KATALOG over undertemaer som finnes på nettstedet, med id og tittel.
 
 Lag et oppsett:
-- Del faget i 3–8 moduler med korte navn (1–3 ord), i en naturlig faglig rekkefølge (med en plan: én modul per kapittel eller tema i planen, også om det blir flere enn 8).
+- Del kurset i 3–8 moduler med korte navn (1–3 ord), i en naturlig faglig rekkefølge (med en plan: én modul per kapittel eller tema i planen, også om det blir flere enn 8).
 - Hver modul har én eller flere uker. Hver uke dekker 1–3 undertemaer fra katalogen.
 - Bruk høyst så mange uker som rammen sier. La gjerne de siste 1–2 ukene være uten undertemaer (repetisjon), med notatet «Repetisjon».
-- Bruk BARE id-er som står i katalogen, skrevet nøyaktig likt. Ta bare med det som passer emnebeskrivelsen og læringsutbyttet. Uten beskrivelse: lag et vanlig oppsett for faget ut fra navnet.
+- Bruk BARE id-er som står i katalogen, skrevet nøyaktig likt. Ta bare med det som passer emnebeskrivelsen og læringsutbyttet. Uten beskrivelse: lag et vanlig oppsett for kurset ut fra navnet.
 - Undervisningsformen påvirker ikke innholdet, bare notatene: ved omvendt klasserom kan notatet si hva studentene forbereder.
 - Har underviseren skrevet ØNSKER eller lagt ved en tidligere plan: følg planen nøyaktig. Samme rekkefølge, samme antall uker per tema (står det «uke 47» er det én uke, «uke 43–44» to uker), og ingen temaer lagt til, tatt bort eller delt opp i egne moduler (f.eks. ingen egen gasslov-modul hvis gasslovene står under termofysikk i planen). En uke kan da dekke flere enn 3 undertemaer. Står noe i planen som katalogen ikke har, nevn det i kommentaren i stedet for å erstatte det med noe annet.
 - Får du NÅVÆRENDE OPPSETT: behold det og gjør bare de endringene underviseren ber om.
@@ -155,8 +155,8 @@ Regn ut svarene nøye; et galt fasitsvar er det verste som kan skje. Norsk bokm�
 Alle spørsmål har også "undertema" og "vanskelighet".
 Svar KUN med gyldig JSON: {"sporsmal":[{"tekst":"…","variabler":[{"navn":"m","min":1,"maks":5,"steg":0.5}],"svar":"…","enhet":"…","siffer":3,"feil":[{"uttrykk":"…","type":"regnefeil"}],"forklaring":"…","undertema":"","vanskelighet":"middels"}, {"tekst":"…","riktig":"…","feil":[{"svar":"…","type":"begrep"}],"forklaring":"…","undertema":"","vanskelighet":"lett"}]}`;
 
-const SYSTEM_MAT = `Du er en erfaren realfagslærer og lager undervisningsmateriale til ÉN samling i et fag på NETTSTED.
-Du får faget, undervisningsformen og lengden på samlingen, uka og modulen, undertemaene (med lærestoffet fra nettstedet når det finnes),
+const SYSTEM_MAT = `Du er en erfaren realfagslærer og lager undervisningsmateriale til ÉN samling i et kurs på NETTSTED.
+Du får kurset, undervisningsformen og lengden på samlingen, uka og modulen, undertemaene (med lærestoffet fra nettstedet når det finnes),
 eventuelt nivå, ukenotat, arbeidskrav og underviserens ønsker eller gamle opplegg (tekst, bilde eller PDF).
 
 Lag:
@@ -200,7 +200,7 @@ async function materiale(request, env, b, h) {
     } catch { /* uten lærestoffet går det også */ }
   }
   const krav = (Array.isArray(b.arbeidskrav) ? b.arbeidskrav.slice(0, 5) : []).map((x) => `${kort(x && x.tittel, 120)}${x && x.frist ? ` (frist ${kort(x.frist, 10)})` : ""}`);
-  const melding = `Fag: ${kort(b.fag, 120)}\nForm: ${form}, ${lengde} min (samling ${parseInt(b.samling, 10) || 1} av ${parseInt(ramme.samlinger, 10) || 1} denne uka)` +
+  const melding = `Kurs: ${kort(b.fag, 120)}\nForm: ${form}, ${lengde} min (samling ${parseInt(b.samling, 10) || 1} av ${parseInt(ramme.samlinger, 10) || 1} denne uka)` +
     (b.niva ? `\nNivå: ${kort(b.niva, 20)}` : "") + `\nUke ${parseInt(b.uke, 10) || 1}, modul: ${kort(b.modul, 60)}` +
     `\nUndertemaer:\n${ut.map((x) => `- ${x.tittel}${x.niva ? ` (nivå ${x.niva})` : ""}`).join("\n") || "(ingen – repetisjon eller fritt)"}` +
     (b.notat ? `\nUkenotat: ${kort(b.notat, 300)}` : "") + (krav.length ? `\nArbeidskrav: ${krav.join("; ")}` : "") +
@@ -291,12 +291,12 @@ async function fagforslag(request, env, b, h) {
   const katalog = (Array.isArray(b.katalog) ? b.katalog.slice(0, 400) : [])
     .filter((x) => x && typeof x.id === "string" && /^[a-z0-9-]+\/[a-z0-9-]+\/[a-z0-9-]+$/.test(x.id))
     .map((x) => ({ id: x.id, tittel: kort(x.tittel, 120) }));
-  if (!katalog.length) return json({ feil: "Fant ingen temaer å bygge faget av." }, 400, h);
+  if (!katalog.length) return json({ feil: "Fant ingen temaer å bygge kurset av." }, 400, h);
   const vi = vedleggInfo(b), vedlegg = vi.vedlegg;
   const ramme = b.ramme || {};
   const uker = Math.max(1, Math.min(40, parseInt(ramme.uker, 10) || 14));
   const form = { forelesninger: "forelesninger", omvendt: "omvendt klasserom", ingen: "ingen faste samlinger" }[ramme.form] || "forelesninger";
-  const melding = `Fagets navn: ${kort(b.navn, 120)}\nRamme: ${uker} uker, ${form}` + (ramme.samlinger ? `, ${parseInt(ramme.samlinger, 10) || 0} samlinger à ${parseInt(ramme.lengde, 10) || 90} min per uke` : "") +
+  const melding = `Kursets navn: ${kort(b.navn, 120)}\nRamme: ${uker} uker, ${form}` + (ramme.samlinger ? `, ${parseInt(ramme.samlinger, 10) || 0} samlinger à ${parseInt(ramme.lengde, 10) || 90} min per uke` : "") +
     ({ forkurs: "\nNivå: forkurs", ingenior: "\nNivå: ingeniør", fordypning: "\nNivå: fordypning" }[ramme.niva] || "") +
     `\n\nEmnebeskrivelse:\n${kort(b.emnebeskrivelse, 8000) || "(ingen)"}\n\nLæringsutbytte:\n${kort(b.laringsutbytte, 3000) || "(ingen)"}\n\nKATALOG (id | tittel):\n` +
     katalog.map((x) => `${x.id} | ${x.tittel}`).join("\n") +
@@ -442,7 +442,7 @@ async function rad(request, env, b, h) {
 // ---------------------------------------------------------------- Dashman
 const HUMOR = ["noytral", "glad", "ler", "irritert", "trist", "tenker"];
 const NIVATEKST = { forkurs: "Forkurs", ingenior: "Ingeniør", fordypning: "Fordypning" };
-const FASETEKST = ["0 – av (faglæreren har slått Dashman av i faget)", "1 – forkunnskaper og oppstart", "2 – øving og mengdetrening",
+const FASETEKST = ["0 – av (faglæreren har slått Dashman av i kurset)", "1 – forkunnskaper og oppstart", "2 – øving og mengdetrening",
   "3 – formativ vurdering (arbeidskrav og mappe)", "4 – sluttfase og selvstendighet"];
 
 function isoUke(d) {
@@ -450,7 +450,7 @@ function isoUke(d) {
   t.setUTCDate(t.getUTCDate() + 4 - dag);
   return Math.ceil(((t - new Date(Date.UTC(t.getUTCFullYear(), 0, 1))) / 864e5 + 1) / 7);
 }
-// Uka i fagets plan som gjelder nå (startuke i rammen + løpende uker gjennom modulene). Etter siste uke: siste uke.
+// Uka i kursets plan som gjelder nå (startuke i rammen + løpende uker gjennom modulene). Etter siste uke: siste uke.
 function denneUka(ki) {
   const start = parseInt(ki.ramme && ki.ramme.startuke, 10);
   if (!start) return null;
@@ -499,7 +499,7 @@ async function dashman(request, env, b, h) {
   try { k = (await supabaseRpc(env, token, "dashman_kontekst")) || {}; } catch { k = {}; }
   const fag = Array.isArray(k.fag) ? k.fag : [];
   const aktivt = fag[0];   // nyeste påmelding
-  // Ukeplanen i faget: hvilken uke det er nå, hva den dekker, og om faglæreren har satt en egen Dashman-fase for uka.
+  // Ukeplanen i kurset: hvilken uke det er nå, hva den dekker, og om faglæreren har satt en egen Dashman-fase for uka.
   let uka = null;
   if (aktivt) {
     try {
@@ -511,7 +511,7 @@ async function dashman(request, env, b, h) {
     if (uka && uka.fase !== undefined) aktivt.fase = uka.fase;
   }
   if (aktivt && aktivt.fase === 0) {
-    return json({ svar: `Jeg har pause i faget «${kort(aktivt.navn, 80)}» nå, etter avtale med faglæreren din. Spør gjerne faglæreren, eller les lærestoffet på siden.`, humor: "trist" }, 200, h);
+    return json({ svar: `Jeg har pause i kurset «${kort(aktivt.navn, 80)}» nå, etter avtale med faglæreren din. Spør gjerne faglæreren, eller les lærestoffet på siden.`, humor: "trist" }, 200, h);
   }
   const side = b.side || {};
   const linjer = [
@@ -522,10 +522,10 @@ async function dashman(request, env, b, h) {
     ...((Array.isArray(k.kunnskap) ? k.kunnskap : []).slice(0, 40).map((x) =>
       `- ${kort(x.tema, 60)} / ${kort(x.undertema, 60)}: forståelse ${x.forstaelse ?? "–"}, presisjon ${x.presisjon ?? "–"}, ${parseInt(x.svar, 10) || 0} svar, sist ${kort(x.sist, 10)}`)),
     ...(k.kunnskap && k.kunnskap.length ? [] : ["- (ingen quizsvar ennå)"]),
-    aktivt ? `Fag studenten er påmeldt: «${kort(aktivt.navn, 120)}». Dashman-fase for klassen nå: ${FASETEKST[aktivt.fase] ?? FASETEKST[2]}${uka && uka.fase !== undefined ? " (satt for denne uka)" : ""}. Tilpass den til denne studenten (se «Fasen i faget»).` : "Ikke påmeldt noe fag: bruk LRI-prinsippene fritt.",
-    ...(uka ? [`Ukeplanen: uke ${uka.nr} i faget (kalenderuke ${uka.kal}), modul «${kort(uka.modul, 60)}»: ${uka.tema || "ingen temaer satt"}${uka.notat ? ` – ${kort(uka.notat, 200)}` : ""}.`] : []),
-    ...(aktivt && aktivt.instruks ? [`Faglærerens instrukser for faget (går foran instruksen over, men ikke foran de faste grensene):\n${kort(aktivt.instruks, 2000)}`] : []),
-    ...(aktivt && aktivt.beskrivelse ? [`Om faget: ${kort(aktivt.beskrivelse, 600)}`] : []),
+    aktivt ? `Kurs studenten er påmeldt: «${kort(aktivt.navn, 120)}». Dashman-fase for klassen nå: ${FASETEKST[aktivt.fase] ?? FASETEKST[2]}${uka && uka.fase !== undefined ? " (satt for denne uka)" : ""}. Tilpass den til denne studenten (se «Fasen i kurset»).` : "Ikke påmeldt noe kurs: bruk LRI-prinsippene fritt.",
+    ...(uka ? [`Ukeplanen: uke ${uka.nr} i kurset (kalenderuke ${uka.kal}), modul «${kort(uka.modul, 60)}»: ${uka.tema || "ingen temaer satt"}${uka.notat ? ` – ${kort(uka.notat, 200)}` : ""}.`] : []),
+    ...(aktivt && aktivt.instruks ? [`Faglærerens instrukser for kurset (går foran instruksen over, men ikke foran de faste grensene):\n${kort(aktivt.instruks, 2000)}`] : []),
+    ...(aktivt && aktivt.beskrivelse ? [`Om kurset: ${kort(aktivt.beskrivelse, 600)}`] : []),
     `Siden studenten står på nå: «${kort(side.tittel, 150)}» (${kort(side.url, 200)})`,
     ...(side.tekst ? [`Utdrag av siden:\n${kort(side.tekst, 3000)}`] : []),
   ];
@@ -541,16 +541,16 @@ async function dashman(request, env, b, h) {
   return json({ svar, humor }, 200, h);
 }
 
-// Dashman for undervisere (dashman-underviser.md): hjelpsom kollega som gir hele svar. Står underviseren i fagbyggeren,
-// får Dashman faget og katalogen, og kan sende tilbake et nytt oppsett ("moduler", "ramme") som fagbyggeren tar i bruk.
+// Dashman for undervisere (dashman-underviser.md): hjelpsom kollega som gir hele svar. Står underviseren i kursbyggeren,
+// får Dashman kurset og katalogen, og kan sende tilbake et nytt oppsett ("moduler", "ramme") som kursbyggeren tar i bruk.
 async function dashmanUnderviser(request, env, b, h, meldinger) {
   const side = b.side || {}, fag = b.fag && typeof b.fag === "object" ? b.fag : null;
   const katalog = fag && Array.isArray(fag.katalog) ? fag.katalog.slice(0, 400).filter((x) => x && typeof x.id === "string").map((x) => ({ id: x.id, tittel: kort(x.tittel, 120) })) : [];
   const linjer = [
     `Siden underviseren står på nå: «${kort(side.tittel, 150)}» (${kort(side.url, 200)})`,
     ...(side.tekst && !fag ? [`Utdrag av siden:\n${kort(side.tekst, 3000)}`] : []),
-    ...(fag ? [`FAGET i fagbyggeren:\n${kort(JSON.stringify({ navn: fag.navn, ramme: fag.ramme, moduler: fag.moduler }), 20000)}`,
-      `KATALOG (id | tittel):\n${katalog.map((x) => `${x.id} | ${x.tittel}`).join("\n")}`] : ["Underviseren står ikke i fagbyggeren nå, så du kan ikke endre et fag. Vil underviseren endre et fag: be hen åpne faget i fagbyggeren og spørre derfra."]),
+    ...(fag ? [`KURSET i kursbyggeren:\n${kort(JSON.stringify({ navn: fag.navn, ramme: fag.ramme, moduler: fag.moduler }), 20000)}`,
+      `KATALOG (id | tittel):\n${katalog.map((x) => `${x.id} | ${x.tittel}`).join("\n")}`] : ["Underviseren står ikke i kursbyggeren nå, så du kan ikke endre et kurs. Vil underviseren endre et kurs: be hen åpne kurset i kursbyggeren og spørre derfra."]),
   ];
   const system = DASHMAN_UNDERVISER.replaceAll("NETTSTED", NETTSTEDNAVN(request)) + "\n\n## Det du vet nå\n\n" + linjer.join("\n");
   const modell = (fag && env.MODELL_FAG) || env.MODELL_DASHMAN || env.MODELL;
@@ -629,7 +629,7 @@ async function dekning(request, env, b, h) {
       .map((s) => ({ url: s.url, tittel: s.tittel, kapittel: s.kapittel })),
   }));
   if (!temaer.length) throw feil("Fant ingen faglige temaer i emnebeskrivelsen.", 422);
-  // Uten innlogging: svar på om faget dekkes, men ikke hvilke sider (veikartet) – det er for registrerte brukere.
+  // Uten innlogging: svar på om emnet dekkes, men ikke hvilke sider (veikartet) – det er for registrerte brukere.
   if (!bruker) temaer.forEach((t) => { t.antallSider = t.sider.length; t.sider = []; });
   return json({ emnekode: kort(r.emnekode, 30), emnenavn: kort(r.emnenavn, 150), kilde, temaer, oppsummering: kort(r.oppsummering, 800), innlogget: !!bruker }, 200, h);
 }

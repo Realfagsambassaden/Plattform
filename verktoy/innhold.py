@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Lager innhold.json: en oversikt over alt stoffet på nettsiden (sider, overskrifter, definisjoner, oppgaver).
-Brukes av dekningssjekken («Dekker vi faget ditt?»), som sammenligner en emnebeskrivelse med denne oversikten.
+Brukes av dekningssjekken («Dekker vi emnet ditt?»), som sammenligner en emnebeskrivelse med denne oversikten.
 Bruk: python3 innhold.py <quarto-prosjektmappe>"""
 import json, re, sys
 from pathlib import Path

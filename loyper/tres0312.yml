@@ -1,5 +1,5 @@
 # Løype: TRES0312 Forkurs i fysikk (NTNU), etter kompendiet og framdriftsplanen til faglærer (høsten 2026).
-# Plukker sidene emnet bruker fra faget fysikk-forkurs, i kompendiets rekkefølge (kilde: utvalg, se verktoy/tema.py).
+# Plukker sidene emnet bruker fra læreboka fysikk-forkurs, i kompendiets rekkefølge (kilde: utvalg, se verktoy/tema.py).
 id: tres0312
 tittel: "TRES0312"
 institusjon: "NTNU"

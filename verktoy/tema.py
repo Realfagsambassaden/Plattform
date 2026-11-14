@@ -129,7 +129,7 @@ for lf in sorted((P / 'loyper').glob('*.yml')):
             rekke.append({'qmd': x, 'tittel': t, 'kapittel': k['tittel']})
         q.append('')
         kaps.append({'tittel': k['tittel'], 'href': None, 'sider': finnes})
-        # Undertemaene kapitlet dekker (tema/undertema), i sidenes rekkefølge. Fagbyggeren i appen bruker dem
+        # Undertemaene kapitlet dekker (tema/undertema), i sidenes rekkefølge. Kursbyggeren i appen bruker dem
         # til «Bygg etter løype»: én modul per kapittel, med ukene fra løypa.
         ut = []
         for x in finnes:

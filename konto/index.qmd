@@ -14,7 +14,7 @@ toc: false
       <button type="button" role="tab" data-fane="inn" aria-selected="true">Logg inn</button>
       <button type="button" role="tab" data-fane="ny" aria-selected="false">Registrer deg</button>
     </div>
-    <p class="konto-ingress" data-for="ny">Det er gratis å registrere seg. Som registrert bruker kan du blant annet sjekke hvor godt fysikkhjelp.no dekker et fag.</p>
+    <p class="konto-ingress" data-for="ny">Det er gratis å registrere seg. Som registrert bruker kan du blant annet sjekke hvor godt fysikkhjelp.no dekker et emne.</p>
     <form class="konto-skjema">
       <label data-for="ny">Navn <input type="text" name="navn" autocomplete="name" maxlength="80" placeholder="Fornavn og etternavn"></label>
       <label><span class="epost-tekst">E-post</span> <input type="email" name="epost" autocomplete="email" required></label>
@@ -61,7 +61,7 @@ toc: false
 
     <div class="profil-studentdel">
     <h2 class="profil-del">Studentdel</h2>
-    <p class="profil-studentinfo konto-boks" hidden><b>Du ser nå studentdelen.</b> Dette er det studentene ser. Du kan bruke det til å prøve appen selv; det påvirker ikke fagene dine.</p>
+    <p class="profil-studentinfo konto-boks" hidden><b>Du ser nå studentdelen.</b> Dette er det studentene ser. Du kan bruke det til å prøve appen selv; det påvirker ikke kursene dine.</p>
     <div class="profil-kort">
       <a class="track live" href="../studie/index.html">
         <span class="status">Ny · test</span>
@@ -69,14 +69,14 @@ toc: false
         <p>Velg temaer, få en løype uke for uke, ta quizer tilpasset nivået ditt og se kunnskapsprofilen din.</p>
       </a>
       <a class="track live" href="../studie/index.html#fag">
-        <span class="status">Fag og øvinger</span>
-        <h3>Fagene dine</h3>
-        <p>Meld deg på et fag med koden fra faglæreren, og se hvilke obligatoriske øvinger som er godkjent.</p>
+        <span class="status">Kurs og øvinger</span>
+        <h3>Kursene dine</h3>
+        <p>Meld deg på et kurs med koden fra faglæreren, og se hvilke obligatoriske øvinger som er godkjent.</p>
       </a>
       <a class="track live" href="../dekning.html">
         <span class="status">Klar</span>
-        <h3>Dekker vi faget ditt?</h3>
-        <p>Lim inn fagets emnebeskrivelse, og få et kart over hva fysikkhjelp.no dekker.</p>
+        <h3>Dekker vi emnet ditt?</h3>
+        <p>Lim inn emnets emnebeskrivelse, og få et kart over hva fysikkhjelp.no dekker.</p>
       </a>
       <div class="track"><span class="status">Kommer</span><h3>Estimert karakter</h3><p>Et anslag på hvor du ligger an før eksamen.</p></div>
       <div class="track"><span class="status">Kommer</span><h3>Veiledning</h3><p>Bestill veiledning med Dr. Normann.</p></div>
@@ -88,8 +88,8 @@ toc: false
       <div class="profil-fagliste"></div>
       <div class="profil-kort">
         <a class="track live" href="../studie/index.html#fag">
-          <span class="status">Fag</span>
-          <h3>Lag og design fag</h3>
+          <span class="status">Kurs</span>
+          <h3>Lag og design kurs</h3>
           <p>Velg temaer i rekkefølge, lag obligatoriske øvinger, og følg studentene og statistikken.</p>
         </a>
         <a class="track live" href="../larer/index.html">
@@ -99,13 +99,13 @@ toc: false
         </a>
         <a class="track live" href="../dekning.html">
           <span class="status">Klar</span>
-          <h3>Dekker nettstedet faget?</h3>
-          <p>Lim inn fagets emnebeskrivelse, og få et kart over hva fysikkhjelp.no dekker.</p>
+          <h3>Dekker nettstedet emnet?</h3>
+          <p>Lim inn emnets emnebeskrivelse, og få et kart over hva fysikkhjelp.no dekker.</p>
         </a>
         <a class="track live" href="../studie/index.html#eksempel">
           <span class="status">Studentvisning</span>
           <h3>Se appen som student</h3>
-          <p>Prøv studieappen som en fiktiv student med ferdige svar. Hvert fag har også en knapp for å se akkurat det faget som student.</p>
+          <p>Prøv studieappen som en fiktiv student med ferdige svar. Hvert kurs har også en knapp for å se akkurat det kurset som student.</p>
         </a>
       </div>
     </div>
