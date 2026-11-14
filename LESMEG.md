@@ -190,6 +190,12 @@ Innloggede studenter får en Dashman-knapp nede til venstre på alle sider. Dash
 
 - **Humør:** KI-en velger ett av `noytral`, `glad`, `ler`, `irritert`, `trist`, `tenker` for hvert svar, etter reglene i instruksen. Ler med studenten (aldri av), irritert bare på fysikken eller sin egen dårlige forklaring, trist bare av medfølelse og alltid med noe oppmuntrende etterpå.
 - **Faglæreren styrer:** I fagbyggeren velger faglæreren fase (1 oppstart, 2 øving, 3 arbeidskrav og mappe, 4 selvstendighet, eller av) og kan gi egne instrukser. De går foran instruksen, men ikke foran de faste grensene.
+
+### Delta på undervisning og «Fra salen»
+
+- Underviseren trykker «🙋 Salen» i undervisningsmodus og «▶ Åpne for innspill» (`kurs.undervises_til`, 2 timer). Da ser påmeldte studenter knappen «Delta på undervisning» i appen (sjekkes hvert halve minutt), og kan sende spørsmål, ønsker og raske signaler (gå saktere, et eksempel til, forstår ikke, henger med). Tabellen `kurs_innspill`: studenten ser og kan trekke tilbake sine egne, underviseren leser dem uten navn med `kurs_innspill_liste` og merker dem «tatt opp». Høyst 30 per student i timen.
+- Panelet viser også ukas innsikt (`kurs_innsikt`): for spørsmålene i den valgte samlingens undertemaer, andel riktige, antall studenter, begrepsfeil og vanligste feilsvar (`studie_svar.valgt`), bare der minst 3 studenter har svart, siste 28 dager.
+- «🤖 Hva bør jeg ta tak i?» sender innspill og innsikt (uten navn) til `/salen` i KI-tjeneren, som lager en prioritert liste med misforståelser og konkrete grep for timen.
 - **Studenten** velger nivå (og eventuelt mål) første gang i boblen eller på Min side.
 - **Modell:** samme som de andre KI-funksjonene. Vil du ha en sterkere modell for Dashman, sett `MODELL_DASHMAN` under `[vars]` i `hint-tjener/wrangler.toml`.
 - **Figuren** er lærerens egen Dashman fra riggen i [Realfagsambassaden/dashman](https://github.com/Realfagsambassaden/dashman). `verktoy/dashman_bilder.py` lager bildene i `assets/img/dashman/`: snakker = `peker_tavla` (peker mot boblen) med fire munnformer, nøytral = `noytral` (blunker), glad = `armer_opp`, ler = `hoho`/`hoho_x` vekselvis og så `lattermild`, irritert = `mystisk` med utropstegn, trist = `undrende`, tenker = `gruble` med spørsmålstegn. Endres riggen: `python3 verktoy/dashman_bilder.py <dashman-repoet> assets/img/dashman`.
