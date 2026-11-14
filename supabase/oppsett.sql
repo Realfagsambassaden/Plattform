@@ -700,3 +700,78 @@ $$
 $$;
 revoke execute on function public.dashman_kontekst() from public, anon;
 grant execute on function public.dashman_kontekst() to authenticated;
+
+-- ============================================================================================================
+-- Delta på undervisning: mens underviseren har åpnet for innspill (kurs.undervises_til), ser påmeldte studenter
+-- knappen «Delta på undervisning» og kan sende spørsmål, ønsker og tempo-signaler. Underviseren ser dem uten navn.
+-- Ukas innsikt: samletall per spørsmål for ukas undertemaer (bare spørsmål med minst 3 studenter), med det vanligste
+-- feilsvaret, så underviseren ser hva klassen strever med.
+-- ============================================================================================================
+alter table public.kurs add column if not exists undervises_til timestamptz;
+alter table public.studie_svar add column if not exists valgt text check (valgt is null or char_length(valgt) <= 300);
+
+create table if not exists public.kurs_innspill (
+  id       bigint generated always as identity primary key,
+  kurs     uuid not null references public.kurs (id) on delete cascade,
+  student  uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  type     text not null default 'sporsmal' check (type in ('sporsmal', 'onske', 'saktere', 'eksempel', 'forstar', 'forstar_ikke')),
+  tekst    text not null default '' check (char_length(tekst) <= 500),
+  besvart  boolean not null default false,
+  laget    timestamptz not null default now()
+);
+create index if not exists kurs_innspill_kurs on public.kurs_innspill (kurs, laget);
+
+-- Studenten kan sende innspill bare når hen er påmeldt, undervisningen er åpen, og høyst 30 i timen.
+create or replace function public.kan_sende_innspill(k uuid) returns boolean
+  language sql stable security definer set search_path = public as
+$$
+  select public.er_deltaker(k)
+     and exists (select 1 from kurs where id = k and undervises_til > now())
+     and (select count(*) from kurs_innspill where kurs = k and student = auth.uid() and laget > now() - interval '1 hour') < 30
+$$;
+alter table public.kurs_innspill enable row level security;
+drop policy if exists "kurs_innspill: lese egne"  on public.kurs_innspill;
+drop policy if exists "kurs_innspill: sende"      on public.kurs_innspill;
+drop policy if exists "kurs_innspill: slette egne" on public.kurs_innspill;
+create policy "kurs_innspill: lese egne"   on public.kurs_innspill for select to authenticated using (student = auth.uid());
+create policy "kurs_innspill: sende"       on public.kurs_innspill for insert to authenticated with check (student = auth.uid() and public.kan_sende_innspill(kurs));
+create policy "kurs_innspill: slette egne" on public.kurs_innspill for delete to authenticated using (student = auth.uid());
+grant select, insert, delete on public.kurs_innspill to authenticated;
+revoke all on public.kurs_innspill from anon;
+create or replace function public.kurs_innspill_tid() returns trigger language plpgsql as $$ begin new.laget := now(); new.besvart := false; return new; end $$;
+drop trigger if exists kurs_innspill_tid on public.kurs_innspill;
+create trigger kurs_innspill_tid before insert on public.kurs_innspill for each row execute function public.kurs_innspill_tid();
+
+-- Underviseren leser innspillene i kurset sitt uten navn, og kan merke dem som besvart.
+create or replace function public.kurs_innspill_liste(k uuid, siden timestamptz)
+  returns table (id bigint, type text, tekst text, besvart boolean, laget timestamptz)
+  language sql stable security definer set search_path = public as
+$$ select i.id, i.type, i.tekst, i.besvart, i.laget from kurs_innspill i
+    where i.kurs = k and public.er_kurseier(k) and i.laget >= siden order by i.laget $$;
+create or replace function public.kurs_innspill_besvart(i bigint, b boolean) returns boolean
+  language sql security definer set search_path = public as
+$$ update kurs_innspill set besvart = b where id = i and public.er_kurseier(kurs) returning true $$;
+revoke execute on function public.kan_sende_innspill(uuid), public.kurs_innspill_liste(uuid, timestamptz), public.kurs_innspill_besvart(bigint, boolean) from public, anon;
+grant execute on function public.kan_sende_innspill(uuid), public.kurs_innspill_liste(uuid, timestamptz), public.kurs_innspill_besvart(bigint, boolean) to authenticated;
+
+-- Ukas innsikt: deler = undertemaer som «nettsted/tema/undertema». Bare samletall, og bare for spørsmål der minst
+-- 3 studenter har svart. KI-tilbakemeldingene på begrepsfeil tas med (uten navn) så KI kan finne misforståelser.
+create or replace function public.kurs_innsikt(k uuid, deler text[], siden timestamptz)
+  returns table (sporsmal text, nettsted text, tema text, undertema text, studenter int, svar int, riktige int, regnefeil int, begrep int,
+                 feilsvar jsonb, tilbakemeldinger jsonb)
+  language sql stable security definer set search_path = public as
+$$
+  with deltakere as (select d.student from kurs_deltaker d join kurs c on c.id = d.kurs where d.kurs = k and c.eier = auth.uid()),
+  x as (select a.* from studie_svar a join deltakere d on d.student = a.eier
+         where a.opprettet >= siden and (a.nettsted || '/' || a.tema || '/' || a.undertema) = any (deler))
+  select x.sporsmal, min(x.nettsted), min(x.tema), min(x.undertema), count(distinct x.eier)::int, count(*)::int,
+         count(*) filter (where x.type = 'riktig')::int, count(*) filter (where x.type = 'regnefeil')::int, count(*) filter (where x.type = 'begrep')::int,
+         coalesce((select jsonb_agg(jsonb_build_object('svar', f.valgt, 'antall', f.n) order by f.n desc)
+                     from (select y.valgt, count(*) n from x y where y.sporsmal = x.sporsmal and y.type <> 'riktig' and y.valgt is not null
+                            group by y.valgt order by count(*) desc limit 3) f), '[]'::jsonb),
+         coalesce((select jsonb_agg(t.tb) from (select y.ki ->> 'tilbakemelding' tb from x y
+                     where y.sporsmal = x.sporsmal and y.ki ->> 'vurdering' = 'begrep' and y.ki ->> 'tilbakemelding' is not null limit 6) t), '[]'::jsonb)
+    from x group by x.sporsmal having count(distinct x.eier) >= 3
+$$;
+revoke execute on function public.kurs_innsikt(uuid, text[], timestamptz) from public, anon;
+grant execute on function public.kurs_innsikt(uuid, text[], timestamptz) to authenticated;

@@ -291,8 +291,11 @@ function studieStart() {
     q.svart = i;
     var s = { id: x.id, nettsted: NETTSTED, tema: x.tema, undertema: x.undertema, v: x.vanskelighet, type: a.type, tid: tid, forv: x.forventet_tid_s, rep: x.rep, ki: null, dato: new Date().toISOString() };
     T.svar.push(s); q.res.push(a.type); if (!x.rep) q.hovedRes.push(a.type); q.sist = s;
-    s.lagret = k.from('studie_svar').insert({ nettsted: NETTSTED, sporsmal: x.id, tema: x.tema, undertema: x.undertema, vanskelighet: x.vanskelighet, type: a.type,
-      tid_s: Math.round(tid * 10) / 10, forventet_s: x.forventet_tid_s, repetisjon: x.rep }).select('id').single()
+    var rad = { nettsted: NETTSTED, sporsmal: x.id, tema: x.tema, undertema: x.undertema, vanskelighet: x.vanskelighet, type: a.type,
+      tid_s: Math.round(tid * 10) / 10, forventet_s: x.forventet_tid_s, repetisjon: x.rep, valgt: a.type === 'riktig' ? null : String(a.svar || '').slice(0, 300) };
+    // Feilsvaret (valgt) brukes i ukas innsikt for underviseren. Mangler kolonnen (SQL ikke kjørt), lagres svaret uten.
+    var settInn = function (r0) { return k.from('studie_svar').insert(r0).select('id').single(); };
+    s.lagret = settInn(rad).then(function (r) { if (r.error && /valgt/.test(r.error.message || '')) { delete rad.valgt; return settInn(rad); } return r; })
       .then(function (r) { s.dbid = sjekk(r).id; return s.dbid; })
       .catch(function (e) { varsle('Svaret ble ikke lagret: ' + feilmelding(e), true); });
     if (!x.rep) {
@@ -1023,17 +1026,18 @@ function studieStart() {
     return '<div class="uv' + (to ? ' to-skjermer' : '') + '"><div class="uv-topp"><a class="uv-ut" href="index.html#fag-' + encodeURIComponent(c.id) + '" title="Avslutt undervisningsmodus" data-h="uvUt">✕</a><b>' + esc(c.navn) + '</b>' +
       '<span class="uv-her">' + (x ? 'Uke ' + x.uke + ' · ' + samlingNavn(r, el, x.s) + (mt && mt.tittel ? ': ' + esc(mt.tittel) : '') : '') + '</span>' +
       '<span class="uv-knapper"><button type="button" class="st-btn g liten' + (v.tid ? ' pa2' : '') + '" data-h="uvTid">☰ Tidslinje</button><button type="button" class="st-btn g liten' + (v.plan ? ' pa2' : '') + '" data-h="uvPlan">📋 Plan</button>' +
+        '<button type="button" class="st-btn g liten' + (v.salen ? ' pa2' : '') + '" data-h="salen" title="Spørsmål fra studentene og hva klassen strever med">🙋 Salen' + (erLive(c) ? ' 🟢' : '') + '</button>' +
       (to ? '' : '<button type="button" class="st-btn g liten' + (v.notat ? ' pa2' : '') + '" data-h="uvNotat" title="Notater og løsningsforslag (N)">🗒 Notater</button>') +
       '<button type="button" class="st-btn g liten' + (to ? ' pa2' : '') + '" data-h="uvTo" title="Slides på den andre skjermen, notater og løsningsforslag her">🖥 ' + (to ? 'Lukk andre skjerm' : 'To skjermer') + '</button>' +
       (to ? '' : '<button type="button" class="st-btn liten" data-h="uvFull"' + (sl.length ? '' : ' disabled') + '>⛶ Fullskjerm</button>') + '</span></div>' +
-      '<div class="uv-kropp' + (v.tid ? '' : ' uten-tid') + (v.plan || notater ? '' : ' uten-side') + '">' +
+      '<div class="uv-kropp' + (v.tid ? '' : ' uten-tid') + (v.plan || notater || v.salen ? '' : ' uten-side') + '">' +
       '<div class="uv-tidslinje" role="navigation" aria-label="Tidslinje">' + (v.laster ? '<p class="st-ind">Laster …</p>' : v.feil ? '<p class="st-feil">' + esc(v.feil) + '</p>' : tid || '<p class="st-ind">Faget har ingen moduler ennå.</p>') + '</div>' +
       '<div class="uv-scene" id="uv-scene"><div class="uv-ramme" id="uv-ramme"><div class="uv-slide" id="uv-slide"></div>' + trekkHtml() +
         (sl.length ? '<div class="uv-pennlinje"><button type="button" data-h="penn" aria-pressed="false" title="Tegn på sliden (P)">✎ Penn</button><button type="button" data-h="tavle" title="Tom tavle (B)">Tavle</button>' +
         '<button type="button" class="uv-fsnav" data-h="uvForrige" aria-label="Forrige slide">←</button><button type="button" class="uv-fsnav" data-h="uvNeste" aria-label="Neste slide">→</button><button type="button" class="uv-fsnav" data-h="uvFull" aria-label="Avslutt fullskjerm" title="Avslutt fullskjerm (F)">✕</button></div>' : '') + '</div>' +
       '<div class="uv-kontroll"><button type="button" class="st-btn g liten" data-h="uvForrige" aria-label="Forrige slide">←</button><span id="uv-pos" class="st-sm"></span><button type="button" class="st-btn g liten" data-h="uvNeste" aria-label="Neste slide">→</button></div>' +
       (!sl.length && x && !v.laster ? '<p class="st-sm" style="text-align:center">Lag slides under Utforming → Mitt materiale, eller <a href="index.html#fag-' + encodeURIComponent(c.id) + '@' + encodeURIComponent(x.nokkel) + '" target="_blank" rel="noopener" data-h="ingen">åpne denne samlingen der</a>.</p>' : '') +
-      '</div><div class="uv-side">' + taler + (v.plan ? '<div class="uv-plan">' + planHtml + '</div>' : '') + '</div></div></div>';
+      '</div><div class="uv-side">' + (v.salen ? '<div class="uv-salen" id="uv-salen">' + salenHtml() + '</div>' : '') + taler + (v.plan ? '<div class="uv-plan">' + planHtml + '</div>' : '') + '</div></div></div>';
   }
   function uvTast(ev) {
     var t = (ev.target && ev.target.tagName) || '';
@@ -1532,6 +1536,22 @@ function studieStart() {
       if (!erUnderviser() && !T.eksempel) o += '<p class="st-sm">Underviser? Be administratoren om en underviserkode, og legg den inn på <a href="../konto/index.html">Min side</a>.</p>';
       return o;
     },
+    // Delta på undervisning: studenten sender spørsmål, ønsker og tempo-signaler mens underviseren har åpnet for det.
+    delta: function () {
+      var d = T.deltar.find(function (x) { return x.kurs === T.deltaId; }), c = d && d.kursinfo;
+      if (!c) return '<p class="st-ind">Fant ikke kurset.</p>';
+      var apen = erLive(c), dt = T.delta || {}, mine = (dt.mine || []).slice().reverse();
+      var raske = [['saktere', '🐢 Gå litt saktere'], ['eksempel', '💡 Vis et eksempel til'], ['forstar_ikke', '😕 Jeg forstår ikke dette'], ['forstar', '👍 Jeg henger med']];
+      var o = '<p><a href="#" data-h="ga" data-v="kurs">← Kursene dine</a></p><h2 class="st-h1">🙋 ' + esc(c.navn) + '</h2>';
+      if (!apen) return o + '<div class="st-kort"><p>Undervisningen er ikke åpen for innspill nå. Knappen «Delta på undervisning» dukker opp når underviseren åpner for det.</p></div>' + deltaMineHtml(mine);
+      o += '<p class="st-sm">Underviseren ser innspillene dine uten navn, og bruker dem til å vite hva hen bør ta opp. Åpent til kl. ' + klokke(c.undervises_til) + '.</p>';
+      o += '<div class="st-kort"><b>Raske signaler</b><div class="st-delta-raske">' + raske.map(function (x) { return '<button type="button" class="st-btn g" data-h="deltaSend" data-type="' + x[0] + '"' + (dt.sendt && dt.sendt[x[0]] && Date.now() - dt.sendt[x[0]] < 120000 ? ' disabled title="Sendt nettopp"' : '') + '>' + x[1] + '</button>'; }).join('') + '</div></div>';
+      o += '<div class="st-kort"><label for="st-delta-tekst"><b>Spørsmål eller ønske til underviseren</b></label>' +
+        '<div class="st-piller" role="radiogroup" aria-label="Type">' + [['sporsmal', 'Spørsmål'], ['onske', 'Ønske']].map(function (x) { return '<label class="st-valg st-pille"><input type="radio" name="st-delta-type" value="' + x[0] + '"' + ((dt.type || 'sporsmal') === x[0] ? ' checked' : '') + '> ' + x[1] + '</label>'; }).join('') + '</div>' +
+        '<textarea id="st-delta-tekst" class="st-felt" rows="3" maxlength="500" placeholder="F.eks. «Hvorfor er strømmen lik overalt i en seriekobling?» eller «Kan du regne et eksempel med to batterier?»"></textarea>' +
+        '<p><button type="button" class="st-btn" data-h="deltaSend" data-type="tekst"' + (dt.sender ? ' disabled' : '') + '>Send</button></p></div>';
+      return o + deltaMineHtml(mine);
+    },
     pamelding: function () {
       var c = T.kurs;
       return '<button type="button" class="st-tilbake" data-h="ga" data-v="kurs">← Fag</button><h2 class="st-h1">Meld deg på ' + esc(c.navn) + '</h2>' +
@@ -1635,6 +1655,107 @@ function studieStart() {
   }
   document.addEventListener('fh-app', function () { if (T.svar) tegn(); });
   // Beskjeder fra underviseren og fagets tidslinje for studenten.
+  // ---------------------------------------------------------------- delta på undervisning (student) og «Fra salen» (underviser)
+  var INNSPILL = { sporsmal: 'Spørsmål', onske: 'Ønske', saktere: '🐢 Gå saktere', eksempel: '💡 Et eksempel til', forstar: '👍 Henger med', forstar_ikke: '😕 Forstår ikke' };
+  function erLive(c) { return !!(c && c.undervises_til && new Date(c.undervises_til) > new Date()); }
+  function klokke(t) { return new Date(t).toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit' }); }
+  function idag() { var d = new Date(); d.setHours(0, 0, 0, 0); return d.toISOString(); }
+  function deltaBanner() {
+    if (T.eksempel || !T.deltar) return '';
+    return T.deltar.filter(function (d) { return erLive(d.kursinfo); }).map(function (d) {
+      return '<div class="st-delta-banner"><span><b>' + esc(d.kursinfo.navn) + '</b> undervises nå.</span><button type="button" class="st-btn" data-h="delta" data-id="' + d.kurs + '">🙋 Delta på undervisning</button></div>';
+    }).join('');
+  }
+  function deltaMineHtml(mine) {
+    if (!mine.length) return '';
+    return '<div class="st-kort"><b>Det du har sendt i dag</b><ul class="st-delta-mine">' + mine.map(function (x) {
+      return '<li><span class="st-sm">' + klokke(x.laget) + '</span> ' + (x.tekst ? '<b>' + INNSPILL[x.type] + ':</b> ' + esc(x.tekst) : INNSPILL[x.type]) +
+        ' <button type="button" class="st-lenkeknapp st-sm" data-h="deltaSlett" data-id="' + x.id + '" title="Trekk tilbake">Trekk tilbake</button></li>';
+    }).join('') + '</ul></div>';
+  }
+  function deltaApne(id) {
+    T.deltaId = id; T.delta = { mine: [], sendt: (T.delta && T.delta.sendt) || {} }; ga('delta');
+    k.from('kurs_innspill').select('*').eq('kurs', id).gte('laget', idag()).order('laget').then(sjekk)
+      .then(function (l) { T.delta.mine = l || []; if (T.vis === 'delta') tegn(); }, function () {});
+  }
+  function deltaSend(type) {
+    var dt = T.delta, tekst = '';
+    if (type === 'tekst') {
+      var f = document.getElementById('st-delta-tekst'); tekst = (f && f.value || '').trim();
+      var valgt = document.querySelector('input[name=st-delta-type]:checked'); type = valgt ? valgt.value : 'sporsmal'; dt.type = type;
+      if (!tekst) return varsle('Skriv spørsmålet eller ønsket først.', true);
+    }
+    dt.sender = true;
+    k.from('kurs_innspill').insert({ kurs: T.deltaId, type: type, tekst: tekst }).select('*').single().then(sjekk)
+      .then(function (r) { dt.sender = false; dt.mine.push(r); if (!tekst) dt.sendt[type] = Date.now(); tegn(); varsle(tekst ? 'Sendt. Takk!' : 'Signalet er sendt.'); },
+        function (e) { dt.sender = false; tegn(); varsle(/row-level|policy/i.test(feilmelding(e)) ? 'Undervisningen er ikke åpen for innspill nå (eller du har sendt veldig mange). ' : 'Fikk ikke sendt: ' + feilmelding(e), true); });
+  }
+  // Hent «undervises nå» for kursene studenten er med i, hvert halve minutt mens appen er åpen.
+  function sjekkLive() {
+    if (!k || !T.deltar || !T.deltar.length || T.eksempel || document.hidden || T.vis === 'undervis') return;
+    var ids = T.deltar.map(function (d) { return d.kurs; });
+    k.from('kurs').select('id, undervises_til').in('id', ids).then(sjekk).then(function (l) {
+      var endret = false;
+      (l || []).forEach(function (x) { var d = T.deltar.find(function (y) { return y.kurs === x.id; }); if (d && d.kursinfo && erLive(d.kursinfo) !== erLive(x)) endret = true; if (d && d.kursinfo) d.kursinfo.undervises_til = x.undervises_til; });
+      var skriver = document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+      if (endret && !skriver && T.vis !== 'quiz') tegn();
+    }, function () {});
+  }
+  setInterval(sjekkLive, 30000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) sjekkLive(); });
+
+  // Underviseren: panelet «Fra salen» i undervisningsmodus.
+  function salenUker() {
+    var v = T.uv, l = samlingListe(v.u), x = l.find(function (y) { return y.nokkel === v.valgt; });
+    return x ? x.w.undertemaer : [];
+  }
+  function salenHent() {
+    var v = T.uv; if (!v || !v.salen) return;
+    var sa = v.sa = v.sa || {};
+    k.rpc('kurs_innspill_liste', { k: v.c.id, siden: idag() }).then(sjekk)
+      .then(function (l) { sa.innspill = l || []; sa.feil = ''; salenTegn(); }, function (e) { sa.feil = feilmelding(e); salenTegn(); });
+    var deler = salenUker();
+    if (deler.join() !== sa.deler || !sa.innsikt || Date.now() - (sa.innsiktTid || 0) > 120000) {
+      sa.deler = deler.join(); sa.innsiktTid = Date.now();
+      k.rpc('kurs_innsikt', { k: v.c.id, deler: deler, siden: new Date(Date.now() - 28 * 864e5).toISOString() }).then(sjekk)
+        .then(function (l) { sa.innsikt = (l || []).map(function (r) { var q = Q.find(function (y) { return y.id === r.sporsmal; }); return Object.assign({ q: q, andel: r.svar ? r.riktige / r.svar : 1 }, r); }).sort(function (a, b) { return a.andel - b.andel; }); salenTegn(); }, function () { sa.innsikt = []; salenTegn(); });
+    }
+  }
+  function salenHtml() {
+    var v = T.uv, c = v.c, sa = v.sa || {}, live = erLive(c), l = sa.innspill || [], ti = Date.now() - 10 * 60000;
+    var sig = {}; l.forEach(function (x) { if (!x.tekst && new Date(x.laget) > ti) sig[x.type] = (sig[x.type] || 0) + 1; });
+    var tekster = l.filter(function (x) { return x.tekst; }).slice().reverse();
+    var o = '<div class="uv-salenhode"><b>🙋 Fra salen</b>' + (live ? '<span class="st-sm">🟢 Åpen til kl. ' + klokke(c.undervises_til) + '</span><button type="button" class="st-btn g liten" data-h="salenLive" data-pa="0">Stopp</button>'
+      : '<button type="button" class="st-btn liten" data-h="salenLive" data-pa="1" title="Studentene i kurset får knappen «Delta på undervisning» i appen (i 2 timer)">▶ Åpne for innspill</button>') + '</div>';
+    if (sa.feil) o += '<p class="st-feil st-sm">' + esc(sa.feil) + (/function|does not exist|schema cache/i.test(sa.feil) ? ' (SQL-en for «Delta på undervisning» er ikke kjørt i Supabase ennå.)' : '') + '</p>';
+    o += '<div class="uv-signaler" title="Siste 10 minutter">' + ['saktere', 'eksempel', 'forstar_ikke', 'forstar'].map(function (t) { return '<span class="uv-signal' + (sig[t] ? ' har' : '') + '">' + INNSPILL[t] + ' <b>' + (sig[t] || 0) + '</b></span>'; }).join('') + '</div>';
+    o += '<div class="uv-innspill">' + (tekster.length ? tekster.slice(0, 40).map(function (x) {
+      return '<div class="uv-inn' + (x.besvart ? ' besvart' : '') + '"><span class="st-sm">' + klokke(x.laget) + ' · ' + INNSPILL[x.type] + '</span><div>' + esc(x.tekst) + '</div><button type="button" class="st-lenkeknapp st-sm" data-h="salenBesvart" data-id="' + x.id + '">' + (x.besvart ? '↺ Ikke besvart' : '✓ Tatt opp') + '</button></div>';
+    }).join('') : '<p class="st-sm">' + (live ? 'Ingen spørsmål ennå. Vis gjerne QR-koden, så studentene kommer inn.' : 'Åpne for innspill, så kan studentene sende spørsmål og ønsker.') + '</p>') + '</div>';
+    o += '<p><button type="button" class="st-btn liten" data-h="salenKi"' + (sa.kiLaster ? ' disabled' : '') + '>' + (sa.kiLaster ? 'KI tenker …' : '🤖 Hva bør jeg ta tak i?') + '</button></p>';
+    if (sa.ki) o += '<div class="uv-salenki">' + (sa.ki.oppsummering ? '<p>' + txLinje(sa.ki.oppsummering) + '</p>' : '') + '<ol>' + sa.ki.punkter.map(function (p) {
+      return '<li><b>' + txLinje(p.tittel) + '</b>' + (p.antall ? ' <span class="st-sm">(' + p.antall + ')</span>' : '') + '<div class="st-sm">' + txLinje(p.hvorfor) + '</div>' + (p.grep ? '<div class="uv-grep">→ ' + txLinje(p.grep) + '</div>' : '') + '</li>';
+    }).join('') + '</ol></div>';
+    var ins = (sa.innsikt || []).slice(0, 6);
+    o += '<div class="uv-innsikt"><b class="st-sm">Ukas temaer: hva er vanskelig?</b>' + (sa.innsikt == null ? '<p class="st-sm">Laster …</p>' : ins.length ? ins.map(function (r) {
+      var f = (r.feilsvar || [])[0];
+      return '<div class="uv-ins"><div class="uv-insbar"><span style="width:' + Math.round(r.andel * 100) + '%"></span></div><span class="st-sm">' + Math.round(r.andel * 100) + ' % riktig · ' + r.studenter + ' studenter' + (r.begrep ? ' · ' + r.begrep + ' begrepsfeil' : '') + '</span>' +
+        '<div>' + (r.q ? txLinje(r.q.tekst) : esc(r.sporsmal)) + '</div>' + (f && f.svar ? '<div class="st-sm">Vanligste feilsvar: <b>' + txLinje(String(f.svar)) + '</b> (' + f.antall + ')' + (r.q ? ' · riktig: ' + txLinje(r.q.riktig) : '') + '</div>' : '') + '</div>';
+    }).join('') : '<p class="st-sm">Ingen spørsmål i ukas temaer har svar fra minst 3 studenter ennå.</p>') + '</div>';
+    if (!(v.pop && !v.pop.closed)) o += '<p class="st-sm">Tips: med «🖥 To skjermer» ser bare du dette panelet.</p>';
+    return o;
+  }
+  function salenTegn() { var e = document.getElementById('uv-salen'); if (e && T.uv && T.uv.salen) e.innerHTML = salenHtml(); }
+  function salenKi() {
+    var v = T.uv, sa = v.sa || {}; sa.kiLaster = true; salenTegn();
+    var tm = salenUker().map(function (id) { return utNavnKort(id); }).join(', ');
+    ki('/salen', { kurs: v.c.navn, temaer: tm, innspill: (sa.innspill || []).map(function (x) { return { type: x.type, tekst: x.tekst, besvart: x.besvart }; }),
+      innsikt: (sa.innsikt || []).slice(0, 15).map(function (r) { return { tekst: r.q ? r.q.tekst : r.sporsmal, riktig: r.q ? r.q.riktig : '', svar: r.svar, riktige: r.riktige, studenter: r.studenter, begrep: r.begrep, feilsvar: r.feilsvar, tilbakemeldinger: r.tilbakemeldinger }; }) }, 120)
+      .then(function (d) { sa.ki = { oppsummering: d.oppsummering || '', punkter: d.punkter || [] }; }, function (e) { varsle(feilmelding(e), true); })
+      .then(function () { sa.kiLaster = false; salenTegn(); });
+  }
+  setInterval(function () { if (T.vis === 'undervis' && T.uv && T.uv.salen && !document.hidden) salenHent(); }, 15000);
+
   function studentFagTillegg(d) {
     var c = d.kursinfo || {}, mods = c.moduler || [], o = '';
     var besk = []; mods.forEach(function (m) { alleBeskjeder(m).forEach(function (b) { besk.push({ m: m, b: b }); }); });
@@ -1682,9 +1803,9 @@ function studieStart() {
       T.uvTp = null; uvPenn(); visSlide(); return;
     }
     var faner = erUnderviser() && !T.eksempel ? [['kurs', 'Fagene mine'], ['hjem', 'Løype'], ['profil', 'Profil']] : [['hjem', 'Løype'], ['profil', 'Profil'], ['kurs', 'Fag']];
-    var aktiv = { uke: 'hjem', quiz: 'hjem', resultat: 'hjem', ferdigIdag: 'hjem', pamelding: 'kurs', fag: 'kurs' }[T.vis] || T.vis;
+    var aktiv = { uke: 'hjem', quiz: 'hjem', resultat: 'hjem', ferdigIdag: 'hjem', pamelding: 'kurs', fag: 'kurs', delta: 'kurs' }[T.vis] || T.vis;
     rot.innerHTML = (T.eksempel ? '<div class="st-eksempel"><b>Studentvisning.</b> Du ser ' + (T.eksempelFag ? '«' + esc(T.eksempelFag.navn) + '»' : 'appen') + ' som en fiktiv student. Ingenting lagres. <a href="#" data-h="avsluttEksempel">Tilbake til undervisning</a></div>' : '') + '<nav class="st-faner" role="tablist">' + faner.map(function (f) { return '<button type="button" role="tab" aria-selected="' + (aktiv === f[0]) + '" data-h="ga" data-v="' + f[0] + '">' + f[1] + '</button>'; }).join('') + '</nav>' +
-      '<div class="st-innhold">' + SKJ[T.vis]() + '</div><p id="st-varsel" class="st-varsel" role="status" hidden></p>';
+      '<div class="st-innhold">' + (T.vis === 'delta' ? '' : deltaBanner()) + SKJ[T.vis]() + '</div><p id="st-varsel" class="st-varsel" role="status" hidden></p>';
     if (vis) { var ny = document.getElementById('st-varsel'); ny.textContent = vis.t; ny.className = vis.k; ny.hidden = false; }
     rot.classList.toggle('st-bred', !!document.getElementById('st-lerret'));
     var rull2 = document.querySelector('.st-matrull'); if (rull2 && rullTopp) rull2.scrollTop = rullTopp;
@@ -1866,6 +1987,17 @@ function studieStart() {
       uvUt: function () { ev.preventDefault(); document.documentElement.classList.remove('uv-fast-aktiv'); if (document.fullscreenElement) document.exitFullscreen(); location.hash = 'fag-' + T.uv.c.id; location.reload(); },
       penn: function () { if (T.uvTp) { T.uvTp.penn(); T.uv.pennPa = T.uvTp.erAktiv(); } }, tavle: function () { if (T.uvTp) { T.uvTp.tavle(); T.uv.pennPa = T.uvTp.erAktiv(); } },
       uvFull: function () { uvFull(); }, uvNotat: function () { T.uv.notat = !T.uv.notat; tegn(); }, uvTo: uvTo, uvLos: uvLos,
+      salen: function () { var v = T.uv; v.salen = !v.salen; tegn(); if (v.salen) salenHent(); },
+      salenLive: function () {
+        var v = T.uv, pa = d.pa === '1', til = pa ? new Date(Date.now() + 2 * 3600e3).toISOString() : new Date().toISOString();
+        k.from('kurs').update({ undervises_til: til }).eq('id', v.c.id).then(sjekk).then(function () { v.c.undervises_til = til; tegn(); varsle(pa ? 'Studentene i kurset ser nå «Delta på undervisning» (i 2 timer, eller til du stopper).' : 'Stengt for innspill.'); },
+          function (e) { varsle(/undervises_til/.test(feilmelding(e)) ? 'SQL-en for «Delta på undervisning» er ikke kjørt i Supabase ennå.' : feilmelding(e), true); });
+      },
+      salenBesvart: function () { var sa = T.uv.sa || {}, x = (sa.innspill || []).find(function (y) { return String(y.id) === String(d.id); }); if (!x) return; x.besvart = !x.besvart; salenTegn(); k.rpc('kurs_innspill_besvart', { i: x.id, b: x.besvart }).then(sjekk).catch(function (e) { varsle(feilmelding(e), true); }); },
+      salenKi: salenKi,
+      delta: function () { deltaApne(d.id); },
+      deltaSend: function () { deltaSend(d.type); },
+      deltaSlett: function () { k.from('kurs_innspill').delete().eq('id', d.id).then(sjekk).then(function () { T.delta.mine = T.delta.mine.filter(function (x) { return String(x.id) !== String(d.id); }); tegn(); }, function (e) { varsle(feilmelding(e), true); }); },
       uvTid: function () { T.uv.tid = !T.uv.tid; tegn(); }, uvPlan: function () { T.uv.plan = !T.uv.plan; tegn(); },
       studentvisning: function () { if (T.fag && T.fag.lagrer) { clearTimeout(T.fag.tid); lagreUtkast(); } location.hash = 'eksempel-' + d.id; location.reload(); },
     }[d.h] || function () {})();
