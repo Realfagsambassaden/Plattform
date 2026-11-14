@@ -34,13 +34,13 @@ Tegn: ✓ = dekket, ⚠ = finnes, men tynn eller «under arbeid», P = plasshold
 | 8.1 Stoffmengde | 09/05 | ✓ (11. nov.) |
 | 8.2–8.3 Prosesser, arbeid ved ekspansjon | 09/07 (var 06) | ✓ (12. nov.) |
 | 8.4 Varmetransport | 09/09 (var 08) | ✓ |
-| 9.1–9.2 Bølger, lysbølger | 10/01 | P |
+| 9.1–9.2 Bølger, lysbølger | 10/01–02 | ✓ (14. nov.) |
 | 9.3 Atomet | 12/01 | P |
 | **9.4 Kvanter og fotoner** | 12 (ny side) | **NY** |
 | 9.5 Bohrs atommodell | 12/02 | P |
 | **9.6 Atomkjernen** | 12 (ny side) | **NY** |
 | 9.7–9.8 Radioaktivitet, omdanning | 12/03–04 | P |
-| 10.1–10.2 Termisk stråling, drivhuseffekt | 10/02–04 | P |
+| 10.1–10.2 Termisk stråling, drivhuseffekt | 10/03–04 | ✓ (14. nov.) |
 | 11.1–11.5, 11.7 Elektrisitet | 11/01–07, 11/09 | ✓ 13. nov. (bygd om etter TRES0312-kompendiet kap. 9: ladning, strøm og spenning, Ohms lov, serie og parallell, Kirchhoff, effekt, Coulomb, ekstraoppgaver) |
 | 11.6 EMS, indre resistans | 11/08 | P (ikke i TRES0312) |
 | 14.1–14.3 Statikk | 06/01–04 | ✓ |
@@ -58,7 +58,7 @@ Tegn: ✓ = dekket, ⚠ = finnes, men tynn eller «under arbeid», P = plasshold
 2. Sammensatte mekanikkoppgaver (✓ 11. nov., 04/07).
 3. Termofysikk: stoffmengde (✓ 11. nov., 09/05), utvide 09/07 (prosesser, var 06), rydde «under arbeid» (09/04 og 09/07, var 06). ✓ 12. nov.
 4. Elektrisitet: ✓ 13. nov., bortsett fra 11/08 EMS (plassholder, ikke i TRES0312).
-5. Bølger og stråling: 10/01–04.
+5. Bølger og stråling: 10/01–04. ✓ 14. nov.
 6. Atom og kjerne: 12/01–04 + to nye.
 7. Programmering: 13/01–03 + to til tre nye.
 
