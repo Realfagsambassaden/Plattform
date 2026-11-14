@@ -1,5 +1,5 @@
 var NETTSTED_NAVN = (document.querySelector('meta[name="nettsted-navn"]') || {}).content || 'fysikkhjelp.no';
-// «Dekker vi faget ditt?» – sender emnebeskrivelsen til KI-tjeneren og tegner dekningskartet.
+// «Dekker vi emnet ditt?» – sender emnebeskrivelsen til KI-tjeneren og tegner dekningskartet.
 (function vent(n) {
   if (!window.fhKonto && (n || 0) < 100) return setTimeout(function () { vent((n || 0) + 1); }, 50);   // konto.js lastes etter denne
   start();
@@ -19,7 +19,7 @@ function start() {
   }
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
 
-  // Innlogging er valgfri: uten bruker får du svar på om faget dekkes, med bruker også veikartet.
+  // Innlogging er valgfri: uten bruker får du svar på om emnet dekkes, med bruker også veikartet.
   if (window.fhKonto && window.fhKonto.sattOpp) window.fhKonto().then(function (k) { klient = k; }).catch(function () {});
   function hentToken() {
     if (!klient) return Promise.resolve(null);
@@ -71,9 +71,9 @@ function start() {
     if (d.oppsummering) h += '<p class="kart-oppsummering">' + esc(d.oppsummering) + '</p>';
     if (d.innlogget) h += veikart(d.temaer);
     else h += '<div class="veikart-laas"><div><p class="eyebrow">Ditt veikart</p><h3>Vil du vite nøyaktig hva du skal lese?</h3>' +
-      '<p>Med en gratis bruker får du et veikart for faget: hvilke sider og oppgaver på ' + NETTSTED_NAVN + ' som hører til hvert tema, i riktig rekkefølge. Etter hvert kommer også tester og personlig tilpasning.</p>' +
+      '<p>Med en gratis bruker får du et veikart for emnet: hvilke sider og oppgaver på ' + NETTSTED_NAVN + ' som hører til hvert tema, i riktig rekkefølge. Etter hvert kommer også tester og personlig tilpasning.</p>' +
       '<a class="btn-chalk" href="konto/index.html?neste=dekning">Registrer deg gratis</a> <a class="btn-chalk ghost" href="konto/index.html?neste=dekning">Logg inn</a></div></div>';
-    h += '<h3 class="kart-overskrift">Temaene i faget</h3>';
+    h += '<h3 class="kart-overskrift">Temaene i emnet</h3>';
     h += '<div class="kart">';
     var rekke = { god: 0, delvis: 1, ingen: 2 };
     d.temaer.slice().sort(function (a, b) { return rekke[a.dekning] - rekke[b.dekning]; }).forEach(function (t) {
@@ -95,7 +95,7 @@ function start() {
 
   // Veikart: temaene i den rekkefølgen emnebeskrivelsen har dem, med sidene som skal leses.
   function veikart(temaer) {
-    var h = '<section class="veikart"><p class="eyebrow">Ditt veikart</p><h3>Slik kan du bruke ' + NETTSTED_NAVN + ' i dette faget</h3><ol>';
+    var h = '<section class="veikart"><p class="eyebrow">Ditt veikart</p><h3>Slik kan du bruke ' + NETTSTED_NAVN + ' i dette emnet</h3><ol>';
     temaer.forEach(function (t) {
       h += '<li class="' + t.dekning + '"><strong>' + esc(t.tema) + '</strong>';
       if (t.sider.length) h += ' – les ' + t.sider.map(function (s) { return '<a href="' + esc(s.url.replace(/^\//, '')) + '">' + esc(s.tittel) + '</a>'; }).join(', ');

@@ -1,4 +1,4 @@
-# Løype: IFYA1002 Fysikk (NTNU Ålesund). Plukker ut sidene emnet trenger fra faget Ingeniørfysikk (kilde: utvalg, se verktoy/tema.py).
+# Løype: IFYA1002 Fysikk (NTNU Ålesund). Plukker ut sidene emnet trenger fra læreboka Ingeniørfysikk (kilde: utvalg, se verktoy/tema.py).
 # Temasidene er generelle (AGENTS.md §3). Alt om emnet hører hjemme her. Legg gjerne til «uke:» per kapittel.
 id: ifya1002
 tittel: IFYA1002 Fysikk
