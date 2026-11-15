@@ -16,21 +16,21 @@ Ordbruk: Stoffet er ordnet etter **tema** og **undertema** (feltene `tema:` og `
 
 ## 0c. Bytt inn ferdige videoer
 
-Videoene lages i videochatten, ikke av deg, og ligger i repoet `videoer`. Les `videoer/ferdige.yml` (`videoer:` med `<fag>/<side-id>: <YouTube-lenke>`, f.eks. `fysikk-forkurs/01-02-overslag: https://…`). For hver oppføring: finn siden i fagrepoet `<fag>` som har plassholderen `<!-- video: kommer (videoer/<fag>/<side-id>) -->` (med linja `![Video kommer](../../bilder/video-kommer.png){…}` rett under). Bytt begge linjene ut med `{{< video <lenke> >}}`. Sjekk først at lenken virker med WebFetch på `https://www.youtube.com/oembed?url=<lenke>`. Virker den ikke, la plassholderen stå og si fra i varselet. Samle alle byttene i én PR per fagrepo (gren `natt/videoer-<dato>`) og lever etter punkt 5. Er det ingenting å bytte, gå videre.
+Videoene lages i videochatten, ikke av deg, og ligger i repoet `videoer`. Les `videoer/ferdige.yml` (`videoer:` med `<lærebok-repo>/<side-id>: <YouTube-lenke>`, f.eks. `fysikk-forkurs/01-02-overslag: https://…`). For hver oppføring: finn siden i fagrepoet `<fag>` som har plassholderen `<!-- video: kommer (videoer/<fag>/<side-id>) -->` (med linja `![Video kommer](../../bilder/video-kommer.png){…}` rett under). Bytt begge linjene ut med `{{< video <lenke> >}}`. Sjekk først at lenken virker med WebFetch på `https://www.youtube.com/oembed?url=<lenke>`. Virker den ikke, la plassholderen stå og si fra i varselet. Samle alle byttene i én PR per fagrepo (gren `natt/videoer-<dato>`) og lever etter punkt 5. Er det ingenting å bytte, gå videre.
 
 ## 0d. Nye videoer fra YouTube-spillelistene
 
 Læreren legger nye videoer i spillelistene på YouTube-kanalen DrNormann (listene står i `plattform/youtube.yml`). Du når ikke YouTube herfra, så GitHub henter listene hver kveld (jobben «Hent YouTube-videoer») og legger dem i `youtube-videoer.json` på grenen `data/youtube`. Les den med `gh api 'repos/Realfagsambassaden/Plattform/contents/youtube-videoer.json?ref=data/youtube' -H 'Accept: application/vnd.github.raw'`. Står det noe under `feil` der, ta det med i varselet.
 
 1. Sammenlikn med `plattform/rutiner/youtube-status.yml`. Ta for deg hver video som **mangler** i statusfila, og hver video med `venter:` (det kan ha kommet en passende side siden sist).
-2. Finn sidene der videoen passer, ut fra tittelen (og beskrivelsen) og sidenes `title`, `tema`, `undertema` og overskrifter. Se i alle fagene som står under `fag:` for spillelista i `youtube.yml`. En video kan stå på flere sider, men bare der den faktisk forklarer stoffet på siden. Sjekk med `grep` at videoen ikke står der fra før.
+2. Finn sidene der videoen passer, ut fra tittelen (og beskrivelsen) og sidenes `title`, `tema`, `undertema` og overskrifter. Se i alle lærebøkene som står under `fag:` for spillelista i `youtube.yml`. En video kan stå på flere sider, men bare der den faktisk forklarer stoffet på siden. Sjekk med `grep` at videoen ikke står der fra før.
 3. Sett inn `{{< video https://www.youtube.com/watch?v=<id> >}}` med en tom linje før og etter:
    - Handler videoen om hele siden: øverst, rett etter `:::: {.oppgaver}` (eller rett etter front matter hvis siden ikke har den).
    - Handler den om én del av siden: rett under den overskriften (`## …`) den hører til.
    - Har siden en plassholder (`<!-- video: kommer … -->` med bildet under) og videoen dekker det plassholderen er ment for, bytt begge linjene ut med videoen. Er du i tvil, la plassholderen stå og sett videoen under riktig overskrift.
 4. Bruk bare ID-ene fra `youtube-videoer.json`. Finn aldri på en ID. Videominiatyrbildet er det samme som på YouTube (det kommer med den innebygde spilleren), så det trengs ikke noe eget bilde.
 5. Finnes det ingen passende side, skriv `venter: "<hvorfor>"` i statusfila og nevn videoen i varselet (kanskje skal det lages en side). Skriv aldri en ny side bare for å få plass til en video.
-6. Én PR per fagrepo (gren `natt/youtube-<dato>`), levert etter punkt 5. Oppdater så `plattform/rutiner/youtube-status.yml` (`plassert: [<fag>/<kapittel>/<side>, …]`) og lever den i en PR til Plattform (gren `natt/youtube-status-<dato>`). Er det ingenting nytt, gå videre.
+6. Én PR per lærebokrepo (gren `natt/youtube-<dato>`), levert etter punkt 5. Oppdater så `plattform/rutiner/youtube-status.yml` (`plassert: [<lærebok-repo>/<kapittel>/<side>, …]`) og lever den i en PR til Plattform (gren `natt/youtube-status-<dato>`). Er det ingenting nytt, gå videre.
 
 `hoppet over:` i statusfila er lærerens valg. Ta ikke opp igjen de videoene.
 
@@ -42,7 +42,7 @@ Hent åpne issues i Plattform: `gh api 'repos/Realfagsambassaden/plattform/issue
 
 Lag eller bygg ut **inntil 5 sider per natt** i repoet `fysikk-forkurs`, med én PR per side og videoplassholder på nye sider (se punkt 3). Kvalitet går foran antall: Er kvaliteten i tvil, heller færre sider. Hver side skal gjennom hele kontrollen i punkt 5 før PR-en åpnes, også når du lager mange.
 
-Læreren har gitt innholdsfortegnelsen til *Rom Stoff Tid forkurs*, og fysikk-forkurs skal dekke samme temaer. Kartet og skriverekkefølgen står i `plattform/rutiner/forkurs-kart.md`. Faget beholder sin egen rekkefølge: vektorer tidlig som verktøy, og bokas kapitler 12–13 bakt inn i bevegelse og kraft. Bare temaene hentes fra boka. Skriv eget stoff, og nevn aldri boka på sidene. Nivået er forkurs: for elever uten mye fysikk eller matematikk fra før, uten kalkulus der det kan unngås, og med mange regneeksempler. Lærerens eget stoff slettes aldri, men kan finpusses (figurer, bokser).
+Læreren har gitt innholdsfortegnelsen til *Rom Stoff Tid forkurs*, og fysikk-forkurs skal dekke samme temaer. Kartet og skriverekkefølgen står i `plattform/rutiner/forkurs-kart.md`. Læreboka beholder sin egen rekkefølge: vektorer tidlig som verktøy, og bokas kapitler 12–13 bakt inn i bevegelse og kraft. Bare temaene hentes fra boka. Skriv eget stoff, og nevn aldri boka på sidene. Nivået er forkurs: for elever uten mye fysikk eller matematikk fra før, uten kalkulus der det kan unngås, og med mange regneeksempler. Lærerens eget stoff slettes aldri, men kan finpusses (figurer, bokser).
 
 Slik finner du neste side:
 
@@ -71,7 +71,7 @@ Mattesidene beholder filnavn, `tema:`, `undertema:` og videoplassholderen som st
 Du lager **ikke** videoer, manus eller animasjoner. Det gjøres i videochatten, i repoet `videoer`. Hver ny side får plassholderen rett under front matter, før første tekst:
 
 ```
-<!-- video: kommer (videoer/<fag>/<NN>-<sidefil-uten-.qmd>) -->
+<!-- video: kommer (videoer/<lærebok-repo>/<NN>-<sidefil-uten-.qmd>) -->
 ![Video kommer](../../bilder/video-kommer.png){fig-alt="Video kommer"}
 ```
 
@@ -107,7 +107,7 @@ Gå gjennom fagstoff som ikke er sjekket mot gjeldende versjon av NOTASJON.md, o
 
 ## 6. Varsel
 
-Avslutt med en kort melding til brukeren med SendUserMessage: hva som ble publisert (fag, tema, undertema og side) med PR-lenker og lenke til siden på fysikkhjelp.no/fysikk-forkurs/ eller matematikkhjelp.no/matte-forkurs/, hvilke videoer som ble byttet inn, hvilke nye sider som venter på video (som `videoer/<fag>/<side-id>`, så de kan tas i videochatten), notasjonsgjennomgangen (antall filer sjekket, endrede svar, hvor mange som står igjen, videoer som må lages på nytt), eventuelle faglige feil du så, eventuelle PR-er som står åpne og hvorfor, og hva som står for tur i morgen.
+Avslutt med en kort melding til brukeren med SendUserMessage: hva som ble publisert (lærebok, tema, undertema og side) med PR-lenker og lenke til siden på fysikkhjelp.no/fysikk-forkurs/ eller matematikkhjelp.no/matte-forkurs/, hvilke videoer som ble byttet inn, hvilke nye sider som venter på video (som `videoer/<fag>/<side-id>`, så de kan tas i videochatten), notasjonsgjennomgangen (antall filer sjekket, endrede svar, hvor mange som står igjen, videoer som må lages på nytt), eventuelle faglige feil du så, eventuelle PR-er som står åpne og hvorfor, og hva som står for tur i morgen.
 
 ## 7. Status og logg
 

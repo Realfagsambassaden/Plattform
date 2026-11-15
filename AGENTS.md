@@ -4,6 +4,19 @@ Dette er den felles instruksen for **alle** KI-agenter som jobber med nettsteden
 
 Instruksene skal ligge her i repoet, ikke bare i en chat eller et prosjektdokument, slik at alle agenter ser de samme reglene. Endrer læreren en regel i en samtale, skal den skrives inn her (eller i fila det lenkes til) i samme økt.
 
+## 0. Begreper: lærebok, løype, kurs og emne
+
+Fire ord som lett blandes sammen (besluttet av læreren 14. nov. 2026). Bruk dem slik i all tekst, i instruksene og på nettstedet:
+
+| Ord | Hva det er | I koden |
+|---|---|---|
+| **Lærebok** | En samling innholdssider i eget repo, f.eks. «Forkurs i fysikk» (`fysikk-forkurs`) og «Ingeniørfysikk» (`ingeniorfysikk`). Generell, ikke knyttet til et emne eller semester. Lages fra malen `fag-mal`. | Heter fortsatt `fag`: `fag.yml`, `verktoy/fag.py`, `_fag.json`, `kortnavn`, «fagrepo» |
+| **Løype** | En lesevei gjennom sidene for ett emne: hvilke sider, i hvilken rekkefølge, gjerne uke for uke. Offentlig og lik for alle. | `loyper/<id>.yml` |
+| **Kurs** | Undervisernes eget opplegg for ett semester i studieappen: studenter, moduler og uker, forelesninger med slides, arbeidskrav, Dashman-fase. Kan bygges etter en løype. Verktøyet heter **kursbyggeren**. | Tabellen `kurs`; i `assets/js/studie.js` fortsatt `T.fag` og adresser som `#fag-<id>` |
+| **Emne** | Undervisningsinstitusjonens emne, f.eks. IFYA1000 ved NTNU. Det en løype og et kurs er laget for. | `emnekode` i løypefila |
+
+Ordet **fag** brukes bare i vanlig betydning («fagstoff», «faglig», «faglærer», «en student som ikke kan faget fra før»), ikke som navn på noe av det over. Kode, filnavn og adresser som heter `fag` beholdes, så ingenting går i stykker.
+
 ## 1. Nettsteder og repoer
 
 | Hva | Hvor |
@@ -12,8 +25,8 @@ Instruksene skal ligge her i repoet, ikke bare i en chat eller et prosjektdokume
 | matematikkhjelp.no | `Plattform/matematikkhjelp/` (eget `tema.yml`, `fag.yml`, forside) |
 | Temakartet | `tema.yml` (fysikk) og `matematikkhjelp/tema.yml`: område → tema → undertema |
 | Tematekster | `tema-tekster/<tema-id>.md` (og `matematikkhjelp/tema-tekster/`) |
-| Fag (lærestoff) | Egne repoer, listet i `fag.yml`: `fysikk-forkurs` (Forkurs i fysikk, forkursnivå), `ingeniorfysikk` (ingeniørnivå). Nye fag lages fra `Realfagsambassaden/fag-mal`. |
-| Løyper (kurs) | `loyper/*.yml` |
+| Lærebøker (lærestoff) | Egne repoer («fagrepoer»), listet i `fag.yml`: `fysikk-forkurs` (Forkurs i fysikk, forkursnivå), `ingeniorfysikk` (ingeniørnivå). Nye lærebøker lages fra `Realfagsambassaden/fag-mal`. |
+| Løyper (en lesevei per emne) | `loyper/*.yml` |
 | Forsiden: «Velg nivå!» | `nivaer.yml`: hvilke temaområder og løyper som vises på hvert nivå (forkurs, ingeniør, fordypning) |
 | Notasjon | [`NOTASJON.md`](NOTASJON.md) – fasit for all notasjon |
 | Donasjoner | Privat repo `donasjoner`, rutine i [`rutiner/donasjoner.md`](rutiner/donasjoner.md) |
@@ -25,7 +38,7 @@ Forkurset ble tidligere skrevet i LaTeX (`kosmoben/TRES0312`). Fra november 2026
 ## 2. Arbeidsflyt
 
 - **Alt som havner på `main`, publiseres automatisk** (3–25 minutter). Derfor går alle endringer via en gren og en pull request mot `main`, også når agenten fletter selv.
-- **`main` er beskyttet i GitHub** (regelsett «Beskytt main», besluttet 12. nov. 2026) i `Plattform` og alle fagrepoene: direkte push til `main`, tvungen push (force push) og sletting av `main` blir avvist. Alt går via en PR, også små rettelser. PR-en krever ikke godkjenning, slik at nattjobben (`natt/…`) fortsatt flettes automatisk. Unntak: `videoer` er ikke beskyttet, fordi ingenting der publiseres direkte (se `videoer/CLAUDE.md`). Nye fagrepoer fra `fag-mal` får ikke regelsettet automatisk: si fra til læreren, så det legges inn.
+- **`main` er beskyttet i GitHub** (regelsett «Beskytt main», besluttet 12. nov. 2026) i `Plattform` og alle lærebokrepoene: direkte push til `main`, tvungen push (force push) og sletting av `main` blir avvist. Alt går via en PR, også små rettelser. PR-en krever ikke godkjenning, slik at nattjobben (`natt/…`) fortsatt flettes automatisk. Unntak: `videoer` er ikke beskyttet, fordi ingenting der publiseres direkte (se `videoer/CLAUDE.md`). Nye fagrepoer fra `fag-mal` får ikke regelsettet automatisk: si fra til læreren, så det legges inn.
 - Flett selv bare når læreren har bedt om det. Ellers: lag PR-en og la læreren se over.
 - **Grener som heter `natt/…` flettes automatisk av GitHub** så snart PR-en åpnes (arbeidsflyten `flett-nattjobben.yml` i hvert repo). De er forbeholdt nattjobben, se `rutiner/nattjobb-instruks.md`. Bruk aldri `natt/` for noe som skal ses over av et menneske først.
 - Hent repoer med `add_repo` (eier `Realfagsambassaden`, tilgang `push`). Bruk `gh api repos/...` (REST); GraphQL (`gh pr list/create`) virker ikke fra øktene. Grener kan ikke slettes, og repoer kan ikke opprettes fra øktene.
@@ -36,7 +49,7 @@ Forkurset ble tidligere skrevet i LaTeX (`kosmoben/TRES0312`). Fra november 2026
 
 - Alt stoff er ordnet etter **tema** og **undertema** (i `tema.yml`), ikke etter kurs. Undertemaet `oppgaver` (blandede oppgaver) finnes i alle temaer.
 - **Si «tema», ikke «emne».** «Emne» betyr også et kurs (emnekode, emnebeskrivelse), så ordet brukes bare om kurs. De gamle feltnavnene `emne:` og `delemne:` godtas fortsatt av byggeverktøyet, men nye sider skal bruke `tema:` og `undertema:`.
-- Hver side har nivå **Forkurs**, **Ingeniør** eller **Fordypning** (`forkurs`, `ingenior`, `fordypning`). Nivået arves fra faget (`niva:` i `fag.yml` her i Plattform) og kan overstyres med `niva:` øverst på siden.
+- Hver side har nivå **Forkurs**, **Ingeniør** eller **Fordypning** (`forkurs`, `ingenior`, `fordypning`). Nivået arves fra læreboka (`niva:` i `fag.yml` her i Plattform) og kan overstyres med `niva:` øverst på siden.
 - Hver side starter slik:
 
   ```yaml
@@ -57,12 +70,12 @@ Forkurset ble tidligere skrevet i LaTeX (`kosmoben/TRES0312`). Fra november 2026
 
 ### Kursnøytral tekst (viktig)
 
-Samme side kan brukes i flere fag og løyper. Derfor skal teksten på en innholdsside **aldri** vise til et bestemt fag, kurs eller kompendium.
+Samme side kan brukes i flere lærebøker, løyper og kurs. Derfor skal teksten på en innholdsside **aldri** vise til en bestemt lærebok, løype, kurs, emne eller kompendium.
 
 - **Ikke skriv:** «I dette faget ser vi kun på …», «i dette kurset», «i pensum», «i kompendiet», «TRES0312», «NTNU», «på eksamen», «i forrige kapittel», «som i eksempel 3.2», «se kapittel 4».
 - **Skriv heller med nivå:** «På forkursnivå ser vi kun på …», «På ingeniørnivå bruker vi …». Nivåene er en struktur som finnes på nettsiden.
 - Vis til andre temaer med navn («Vi har sett under *vektorer* at …»), eventuelt med lenke til undertemasiden (`/tema/<område>/<tema>/<undertema>.html`), ikke med kapittel- eller eksempelnummer.
-- Kapittelforsider (`index.qmd` i et fag) og løypefiler kan nevne faget eller kurset.
+- Kapittelforsider (`index.qmd` i en lærebok) og løypefiler kan nevne læreboka eller emnet.
 
 ### Pedagogikk og språk
 
@@ -84,7 +97,7 @@ Boksene (`callout-note` for definisjoner, `.graa`, `.eksempel` med `.losning`, `
   - `::: {.steg}` rundt en nummerert liste: stegene vises som kort med piler imellom (for oppskrifter og strategier).
   - `::: {.kort}` rundt en punktliste: punktene vises som kort i et rutenett. Start hvert punkt med et **uthevet** stikkord, som blir overskrift. Gjør stikkordet til en lenke (`- **[Tittel](side.qmd)** tekst`), så blir hele kortet klikkbart. Kort som viser til sider (f.eks. på kapittelforsider) skal alltid være lenker. Lenkekort får automatisk en pil (→), så de skilles fra kort som bare er informasjon.
   Begge blir vanlige lister i PDF-en.
-- **Ingen kapittelnummer på nettsidene.** Samme side kan ligge i løyper der andre kapitler mangler, så nettsidene viser aldri «kapittel 3» eller «3.2». Ikke skriv nummer i titler eller tekst. PDF-kompendiet for et fag eller en løype nummereres automatisk.
+- **Ingen kapittelnummer på nettsidene.** Samme side kan ligge i løyper der andre kapitler mangler, så nettsidene viser aldri «kapittel 3» eller «3.2». Ikke skriv nummer i titler eller tekst. PDF-kompendiet for en lærebok eller en løype nummereres automatisk.
 - **Lys og mørk modus.** Nettsidene har en bryter for lys og mørk modus, så figurer må fungere i begge:
   - TikZ-figurer tegnes svart på gjennomsiktig bakgrunn og settes inn med `{.tikz-fig}`. De snus automatisk i mørk modus. Bruk farger fra `_mal.tex`, ikke hvit fyll som bakgrunn.
   - Skannede figurer (`{.kompendium-bilde}`) skal **aldri ha hvit bakgrunn**. Strektegninger gjøres gjennomsiktige med `python3 verktoy/hvit_til_alfa.py bilde.png` og snus i mørk modus. Fargerike figurer (f.eks. SI-enhetene) gjøres gjennomsiktige med `verktoy/fjern_bakgrunn.py` og merkes `{.kompendium-bilde .farge}`, slik at de ikke snus. Fotografier merkes `{.kompendium-bilde .foto}`.
