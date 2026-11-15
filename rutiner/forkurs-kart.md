@@ -4,7 +4,7 @@ Kilde: innholdsfortegnelsen fra læreren. Vi skriver eget stoff som dekker samme
 
 **Lærerens ønske om rekkefølge:** Vektorer tidlig som verktøy. Boka sine kapitler 12–13 (Bevegelse II, Kraft og bevegelse II) bakes inn i kapitlene om bevegelse og kraft (1–2), i stedet for å komme tilbake senere. Matematikken dekkes også i forkurs matematikk (`matte-forkurs`, se punkt 2b i nattjobben), med vektorer og trigonometri først.
 
-**Status for rekkefølgen:** Faget er allerede bygd slik: `02-matematikk` har vektorer før `03-kinematikk`, og kinematikk og krefter har to dimensjoner og sirkelbevegelse i samme kapittel. Det trengs derfor ingen stor omstrukturering, bare de nye sidene under.
+**Status for rekkefølgen:** Læreboka er allerede bygd slik: `02-matematikk` har vektorer før `03-kinematikk`, og kinematikk og krefter har to dimensjoner og sirkelbevegelse i samme kapittel. Det trengs derfor ingen stor omstrukturering, bare de nye sidene under.
 
 Tegn: ✓ = dekket, ⚠ = finnes, men tynn eller «under arbeid», P = plassholder, **NY** = side som mangler helt.
 
