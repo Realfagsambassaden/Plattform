@@ -104,7 +104,7 @@ function fokusStart() {
       html += '<button type="button" class="' + kl + '" data-h="ga" data-i="' + i + '"' + (x.type === 'ut' ? ' data-ut="' + esc(x.id) + '"' : ' data-krav="' + esc(x.o.id) + '" style="border-color:' + (godkjent(x.o) ? 'var(--bs-primary)' : kravFarge(x.o)) + '"') + '>' +
         (x.type === 'krav' ? '<span class="fk-flagg">' + (godkjent(x.o) ? '✓' : '🚩') + '</span><span><b>Arbeidskrav: ' + esc(x.tittel) + '</b><br><span class="fk-frist">' + (x.o.frist ? 'frist ' + dato(x.o.frist) : 'ingen frist') + (godkjent(x.o) ? ' · godkjent' : '') + '</span></span>' : esc(x.tittel) + (x.url ? '' : ' <span class="fk-sm">(kommer)</span>')) + '</button>';
     });
-    rot.querySelector('.fk-rull').innerHTML = html ? '<div class="fk-rullinn"><div class="fk-stolper" aria-hidden="true"></div><div class="fk-liste">' + html + '</div></div>' : '<p class="fk-tom">Faget har ingen moduler ennå.</p>';
+    rot.querySelector('.fk-rull').innerHTML = html ? '<div class="fk-rullinn"><div class="fk-stolper" aria-hidden="true"></div><div class="fk-liste">' + html + '</div></div>' : '<p class="fk-tom">Kurset har ingen moduler ennå.</p>';
     stolper();
     var aktiv = rot.querySelector('.fk-punkt.her'); if (aktiv) aktiv.scrollIntoView({ block: 'nearest' });
   }
@@ -215,10 +215,10 @@ function fokusStart() {
           return { navn: K[t].tittel, uker: [{ undertemaer: Object.keys(K[t].undertemaer).map(function (u) { return x + '/' + u; }) }] }; }) } }, { data: [] }];
       });
     }
-    if (!kursId) throw new Error('Velg et fag under «Fag» i studieappen og trykk «Fokusvisning».');
+    if (!kursId) throw new Error('Velg et kurs under «Kurs» i studieappen og trykk «Fokusvisning».');
     return Promise.all([k.from('kurs').select('id, navn, moduler, ramme, elementer').eq('id', kursId).maybeSingle(), k.from('ovelser').select('*').eq('kurs', kursId), hentQuizer()]);
   }).then(function (r) {
-    kurs = r[0] && r[0].data; if (!kurs) throw new Error('Fant ikke faget. Er du påmeldt?');
+    kurs = r[0] && r[0].data; if (!kurs) throw new Error('Fant ikke kurset. Er du påmeldt?');
     if (kilde !== 'fag') rot.querySelector('[data-h=kravkort]').hidden = true, rot.querySelector('.fk-krav').hidden = true;
     krav = ((r[1] && r[1].data) || []).filter(function () { return (kurs.elementer || {}).arbeidskrav !== false; });
     rot.querySelector('.fk-fag').textContent = kurs.navn;

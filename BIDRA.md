@@ -12,13 +12,13 @@ Realfagsambassaden har tre nettsider, og alle bygges fra dette repoet (**Plattfo
 | **matematikkhjelp.no** | `matematikkhjelp/` | Matematikknettsiden. Samme verktøy og utseende som fysikkhjelp.no, men med eget temakart (`matematikkhjelp/tema.yml`) og egne tematekster (`matematikkhjelp/tema-tekster/`). |
 | **realfagsambassaden.no** | `ambassaden/` | Samlesiden: enkle HTML-sider (`public/`) og en liten tjeneste som tar imot donasjoner (`worker.js`). |
 
-Organisasjonen har også repoer for fag (`fag-mal`, `ingeniorfysikk`) og et privat repo for innsendt materiale (`donasjoner`). Disse og forkurset (TRES0312) tas hånd om av kjerneteamet.
+Organisasjonen har også repoer for lærebøker (`fag-mal`, `ingeniorfysikk`) og et privat repo for innsendt materiale (`donasjoner`). Disse og forkurset (TRES0312) tas hånd om av kjerneteamet.
 
 En mer teknisk beskrivelse av mappene og byggingen står i [LESMEG.md](LESMEG.md).
 
 ## 2. Hva vi ønsker bidrag til: temaer
 
-Alt stoff på fysikkhjelp.no er bygget opp rundt **temaer**, for eksempel «Kinematikk», «Arbeid og energi» og «Trykk og oppdrift». Temaene er grunnmuren. **Løypene** (kursene på nettstedet) legges oppå temaene og lages av kjerneteamet. Som bidragsyter jobber du med temaene, ikke med løyper eller fag.
+Alt stoff på fysikkhjelp.no er bygget opp rundt **temaer**, for eksempel «Kinematikk», «Arbeid og energi» og «Trykk og oppdrift». Temaene er grunnmuren. **Løypene** (en lesevei gjennom sidene for et emne, f.eks. IFYA1000) legges oppå temaene og lages av kjerneteamet. Som bidragsyter jobber du med temaene, ikke med løyper eller fag.
 
 **Slik bidrar du til et tema:**
 
@@ -77,7 +77,7 @@ Når GitHub er koblet til, kan Claude lese repoet, gjøre endringer og åpne pul
 - **Ingen hemmeligheter i repoet.** API-nøkler og passord ligger som «secrets» i GitHub og Cloudflare, aldri i filene. Ser du en nøkkel i en fil, si fra med en gang.
 - **Ingen personopplysninger.** Navn, e-postadresser og innsendt materiale fra brukere hører ikke hjemme i dette repoet. Repoet er offentlig.
 - **Notasjon.** Følg [NOTASJON.md](NOTASJON.md): naturkonstanter i rett skrift (f.eks. $\mathrm{g}$), $\mathrm{g} = 9.81\ \mathrm{m/s^2}$ om ikke annet er oppgitt, punktum som desimaltegn, SI-enheter med dekadiske prefikser, og regler for gjeldende siffer.
-- **Skriv kursnøytralt.** Samme side kan brukes i flere fag og løyper. Skriv aldri «i dette faget», «i kurset», «i pensum» eller «i forrige kapittel». Vis heller til nivå: «På forkursnivå …», «På ingeniørnivå …». Se [AGENTS.md](AGENTS.md).
+- **Skriv kursnøytralt.** Samme side kan brukes i flere lærebøker, løyper og kurs. Skriv aldri «i dette faget», «i kurset», «i pensum» eller «i forrige kapittel». Vis heller til nivå: «På forkursnivå …», «På ingeniørnivå …». Se [AGENTS.md](AGENTS.md).
 - **Kildehenvisning og rettigheter.** Bruk bare bilder, tekst og videoer som vi har lov til å bruke, og oppgi kilden.
 
 ## 7. Vanlige oppgaver
@@ -90,7 +90,7 @@ Når GitHub er koblet til, kan Claude lese repoet, gjøre endringer og åpne pul
 | Rette en skrivefeil på realfagsambassaden.no | `ambassaden/public/` |
 | Dele forelesningsnotater eller annet materiale | [realfagsambassaden.no/doner.html](https://realfagsambassaden.no/doner.html) |
 
-Løyper (`loyper/`), fag (`fag.yml` og fagrepoene), utseende og tekniske deler som hint-tjeneren tas hånd om av kjerneteamet. Ser du noe som bør endres der, opprett en *issue*.
+Løyper (`loyper/`), lærebøker (`fag.yml` og lærebokrepoene), utseende og tekniske deler som hint-tjeneren tas hånd om av kjerneteamet. Ser du noe som bør endres der, opprett en *issue*.
 
 ## 8. Spørsmål
 
