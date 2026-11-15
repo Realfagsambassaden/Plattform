@@ -19,7 +19,7 @@ function studieStart() {
   var NIV = ['lett', 'middels', 'vanskelig'], VEKT = { lett: 1, middels: 1.5, vanskelig: 2 };
   var OKT = 6, REP = 2, PER_DAG = 2;
   var S = {}, K = {}, Q = [], k = null, bruker = null;
-  var T = { vis: 'hjem', inn: null, svar: [], ukevurd: {}, deltar: [], mine: [], q: null };
+  var T = { vis: 'idag', meny: false, skann: null, inn: null, svar: [], ukevurd: {}, deltar: [], mine: [], q: null };
 
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var pst = function (v) { return v == null ? '–' : Math.round(v * 100) + ' %'; };
@@ -1412,7 +1412,127 @@ function studieStart() {
     return '<div class="st-skala">' + [1, 2, 3, 4, 5].map(function (n) { return '<button type="button" class="' + (v === n ? 'pa' : '') + '" data-h="vurd" data-t="' + t + '" data-n="' + n + '">' + n + '</button>'; }).join('') +
       '</div><div class="st-rad st-sm"><span>Lett</span><span>Vanskelig</span></div>';
   }
+  // ---------------------------------------------------------------- app-skallet for studenter
+  // Studentene møter «I dag» (dagens quiz og ukens arbeidskrav), «Skann» (ta bilde av en løsning og få KI-tilbakemelding)
+  // og Dashman i en fast bunnlinje. Alt annet (løype, lærestoff, profil, fag, innstillinger) ligger i menyen.
+  var DMBILDER = '../assets/img/dashman/';
+  var KRITT_D = 'M70 14 C 200 2, 420 6, 548 18 C 596 26, 598 92, 594 160 C 590 236, 570 284, 470 288 C 340 296, 180 294, 92 284 C 60 280, 44 262, 40 236 L 2 252 L 30 204 C 18 150, 14 80, 24 46 C 32 22, 48 16, 70 14 Z';
+  var KRITT_UTEN = 'M60 12 C 200 2, 420 6, 548 18 C 596 26, 598 92, 594 160 C 590 236, 570 284, 470 288 C 340 296, 180 294, 92 284 C 40 278, 20 250, 16 200 C 10 140, 8 70, 24 40 C 32 22, 44 14, 60 12 Z';
+  function krittboble(inni, hale) {
+    return '<div class="st-kritt' + (hale ? ' hale' : '') + '"><svg viewBox="0 0 600 300" preserveAspectRatio="none" aria-hidden="true"><path d="' + (hale ? KRITT_D : KRITT_UTEN) + '"/></svg><div class="st-kritt-inni">' + inni + '</div></div>';
+  }
+  var IKON = {
+    kamera: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>', hjem: '<path d="M4 11l8-6 8 6v8h-5v-5h-6v5H4z"/>',
+    prat: '<path d="M5 6h14v9H10l-4 3v-3H5z"/>', meny: '<path d="M4 7h16M4 12h16M4 17h16"/>', pil: '<path d="M9 6l6 6-6 6"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>',
+    bok: '<path d="M5 5h6a2 2 0 012 2v12a2 2 0 00-2-2H5zM19 5h-6a2 2 0 00-2 2v12a2 2 0 012-2h6z"/>', rute: '<path d="M5 19c3-6 11-2 14-12"/><circle cx="5" cy="19" r="1.6"/><circle cx="19" cy="7" r="1.6"/>',
+    graf: '<path d="M5 19V5M5 19h14M8 15l3-4 3 2 4-6"/>', kurs: '<path d="M3 9l9-4 9 4-9 4zM7 11v5c3 2 7 2 10 0v-5"/>',
+    bruker: '<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-5 7-5s6 1 7 5"/>', tannhjul: '<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>',
+    klokke: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>'
+  };
+  function ikon(n, st) { return '<svg class="st-ikon" width="' + (st || 22) + '" height="' + (st || 22) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IKON[n] + '</svg>'; }
+  function appModus() { return !erUnderviser() || T.eksempel; }
+  // Ukens tema i løypa: det første som ikke er vurdert ennå (én uke per tema, i valgt rekkefølge).
+  function ukensTema() { var v = valgt(); return v.filter(function (t) { return !T.ukevurd[t]; })[0] || v[v.length - 1]; }
+  function apneKrav() {
+    return mineOvelser().filter(function (o) { return !godkjent(o) && (!o.frist || Date.parse(o.frist) > Date.now()); })
+      .sort(function (a, b) { return (Date.parse(a.frist) || Infinity) - (Date.parse(b.frist) || Infinity); });
+  }
+  function besteForsok(o) { return (T.quizer || []).filter(function (q) { return q.ovelse === o.id; }).reduce(function (m, q) { return Math.max(m, q.riktige || 0); }, 0); }
+  function fristTekst(f) { if (!f) return ''; return new Date(f).toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'short' }); }
+  function appTittel() { return { skann: 'Skann svaret ditt', hjem: 'Løypa mi', uke: 'Løypa mi', profil: 'Kunnskapsprofil', kurs: 'Kursene mine', fag: 'Kursene mine', pamelding: 'Kursene mine', innstillinger: 'Innstillinger', resultat: 'Resultat' }[T.vis] || ''; }
+  function menyHtml() {
+    var rad = function (ik, t, u, v, href) {
+      var inni = '<span class="st-mikon">' + ikon(ik) + '</span><span class="st-mtekst">' + t + (u ? '<span class="st-sm">' + u + '</span>' : '') + '</span>' + ikon('pil', 18);
+      return href ? '<a class="st-mrad" href="' + href + '">' + inni + '</a>' : '<button type="button" class="st-mrad" data-h="ga" data-v="' + v + '">' + inni + '</button>';
+    };
+    return '<div class="st-meny-bak" data-h="lukkMeny"></div><nav class="st-meny" aria-label="Meny"><div class="st-rad"><span class="st-hand" style="font-size:1.5rem">Meny</span>' +
+      '<button type="button" class="st-ikonknapp" data-h="lukkMeny" aria-label="Lukk menyen">' + ikon('x') + '</button></div>' +
+      rad('rute', 'Løypa mi', 'Ukene og temaene dine', 'hjem') +
+      rad('bok', 'Les og øv', 'Lærestoff, videoer og oppgaver', '', '../index.html') +
+      rad('graf', 'Kunnskapsprofil', 'Forståelse, presisjon og hurtighet', 'profil') +
+      rad('kurs', 'Kursene mine', 'Bli med i et kurs og se arbeidskravene', 'kurs') +
+      rad('bruker', 'Min side', '', '', '../konto/index.html') +
+      rad('tannhjul', 'Innstillinger', 'Temaer, quiz og påminnelser', 'innstillinger') + '</nav>';
+  }
+  function bunnlinje() {
+    var f = function (v, ik, t) { return '<button type="button" class="st-fane' + (T.vis === v ? ' pa' : '') + '" data-h="ga" data-v="' + v + '"' + (T.vis === v ? ' aria-current="page"' : '') + '>' + ikon(ik, 24) + '<span>' + t + '</span></button>'; };
+    return '<nav class="st-bunn" aria-label="Hovedvalg"><div class="st-bunn-inni">' + f('idag', 'hjem', 'I dag') +
+      '<button type="button" class="st-skannknapp' + (T.vis === 'skann' ? ' pa' : '') + '" data-h="ga" data-v="skann" aria-label="Skann svar">' + ikon('kamera', 28) + '<span>Skann</span></button>' +
+      '<button type="button" class="st-fane" data-h="dashman">' + ikon('prat', 24) + '<span>Dashman</span></button></div></nav>';
+  }
+  function apneDashman(forslag) {
+    if (window.Dashman && window.Dashman.apne) return window.Dashman.apne(forslag);
+    varsle('Dashman er ikke tilgjengelig akkurat nå. Prøv å laste siden på nytt.', true);
+  }
+  function skannSend() {
+    var sk = T.skann; if (!sk || !sk.bilde) return varsle('Ta bilde av løsningen først.', true);
+    var oppg = (document.getElementById('st-skann-oppg') || {}).value || '';
+    sk.oppgave = oppg.trim(); sk.venter = true; sk.svar = null; tegn();
+    ki('/vurder', { sporsmal: { tekst: sk.oppgave || 'Oppgaven står på bildet. Les oppgaven og studentens løsning derfra.', riktig: '(ikke oppgitt: vurder selv om fysikken og regningen i løsningen er riktig)', forklaring: '' }, valgt: '', forklaring: sk.oppgave ? 'Oppgaven: ' + sk.oppgave : '', bilde: sk.bilde })
+      .then(function (d) { sk.svar = d; }, function (e) { sk.svar = { feil: feilmelding(e) }; })
+      .then(function () { sk.venter = false; tegn(); });
+  }
+
   var SKJ = {
+    idag: function () {
+      var fornavn = (T.navn || '').split(/\s+/)[0], v = valgt(), t = ukensTema(), o = '';
+      var dato = new Date().toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long' });
+      o += '<div class="st-hilsen"><span class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</span><span class="st-sm">' + esc(dato.charAt(0).toUpperCase() + dato.slice(1)) + '</span></div>' + appKort();
+      if (!v.length) o += '<div class="st-dkort g"><span class="st-merke">Kom i gang</span><b class="st-dtittel">Velg hva du skal studere</b><span class="st-sm">Velg temaer, så får du en løype med én uke per tema og en liten quiz hver dag.</span><div><button type="button" class="st-btn" data-h="ga" data-v="innstillinger">Velg temaer</button></div></div>';
+      else {
+        var dag = T.inn.modus === 'dag', ferdig = dag && iDag(t) >= PER_DAG;
+        o += '<div class="st-dkort g"><span class="st-merke">' + (dag ? 'Dagens quiz' : 'Ukens quiz') + '</span><b class="st-dtittel">' + esc(tittel(t)) + '</b>' +
+          '<span class="st-sm">' + (ferdig ? 'Dagens spørsmål er tatt. Bra!' : (dag ? PER_DAG : OKT) + ' spørsmål · nivå: ' + NIV[niva(t)]) + '</span>' +
+          '<div>' + (ferdig ? '<button type="button" class="st-btn g" data-h="quizFlere" data-t="' + t + '">Ta flere likevel</button>' : '<button type="button" class="st-btn" data-h="quiz" data-t="' + t + '">Start quizen</button>') + '</div></div>';
+      }
+      apneKrav().slice(0, 2).forEach(function (x) {
+        var beste = besteForsok(x), and = Math.min(1, beste / (x.krav || 1));
+        o += '<div class="st-dkort o"><div class="st-rad"><span class="st-merke">Arbeidskrav</span>' + (x.frist ? '<span class="st-sm st-frist">' + ikon('klokke', 16) + ' ' + esc(fristTekst(x.frist)) + '</span>' : '') + '</div>' +
+          '<b class="st-dtittel">' + esc(x.tittel) + '</b>' +
+          '<div class="st-rad" style="align-items:center"><div class="st-bar" style="flex:1"><i class="h" style="width:' + Math.round(and * 100) + '%"></i></div><span class="st-sm">' + (beste ? 'beste: ' + beste + ' av ' + x.krav + ' riktige' : 'krav: ' + x.krav + ' av ' + x.antall + ' riktige') + '</span></div>' +
+          '<div><button type="button" class="st-btn o" data-h="ovelse" data-id="' + x.id + '">' + (beste ? 'Prøv igjen' : 'Start') + '</button></div></div>';
+      });
+      o += '<button type="button" class="st-dmrad" data-h="dashman"><img src="' + DMBILDER + 'noytral.webp" alt="" class="st-dmfigur">' +
+        krittboble('Står du fast på noe? Spør meg, så finner vi ut av det sammen.', true) + '</button>';
+      if (t && S[t]) {
+        var u = Object.keys(S[t].undertemaer).filter(function (x) { return temaUrl(t, x); })[0];
+        if (u) o += '<a class="st-lesrad" href="' + temaUrl(t, u) + '">' + ikon('bok', 18) + '<span>Les om ukens tema: <b>' + esc(S[t].undertemaer[u]) + '</b></span>' + ikon('pil', 18) + '</a>';
+      }
+      return o;
+    },
+    skann: function () {
+      var sk = T.skann || (T.skann = {}), o = '', krav = apneKrav();
+      if (sk.svar && !sk.svar.feil) {
+        var kt = { riktig: 'Riktig fysikk!', regnefeil: 'Riktig tanke, men se over regningen', begrep: 'Her bør du se på fysikken igjen', uklar: 'Jeg fikk ikke lest løsningen' }[sk.svar.vurdering] || 'Tilbakemelding';
+        var fig = { riktig: 'glad', regnefeil: 'tenker', begrep: 'tenker', uklar: 'noytral' }[sk.svar.vurdering] || 'noytral';
+        return '<div class="st-skann-svar"><img src="' + sk.bilde + '" alt="Bildet du tok" class="st-skann-mini">' +
+          '<div class="st-dmrad stor"><img src="' + DMBILDER + fig + '.webp" alt="" class="st-dmfigur">' + krittboble('<span class="st-hand st-kt">' + kt + '</span><div class="st-avsnitt">' + tx(sk.svar.tilbakemelding) + '</div>', true) + '</div>' +
+          '<p class="st-sm">Tilbakemeldingen er laget av KI og kan ta feil. Bildet er ikke lagret.</p>' +
+          '<div class="st-knapperad"><button type="button" class="st-btn" data-h="skannNy">' + ikon('kamera', 18) + ' Skann en ny</button>' +
+          '<button type="button" class="st-btn g" data-h="skannDashman">' + ikon('prat', 18) + ' Spør Dashman om dette</button></div></div>';
+      }
+      if (sk.svar && sk.svar.feil) o += '<p class="st-feil">' + esc(sk.svar.feil) + '</p>';
+      o += '<p class="st-sm">Løs oppgaven på papir, ta bilde av løsningen, og få tilbakemelding på om du har forstått fysikken. Bildet lagres ikke.</p>';
+      if (!sk.bilde) o += '<label class="st-kamera">' + ikon('kamera', 40) + '<span>Ta bilde av løsningen</span><input type="file" accept="image/*" capture="environment" id="st-skann-bilde"></label>';
+      else o += '<div class="st-skann-klar"><img src="' + sk.bilde + '" alt="Bildet du tok" class="st-skann-forhand">' +
+        '<label class="st-sm" for="st-skann-oppg">Hvilken oppgave er det? (valgfritt, men gir bedre tilbakemelding)</label>' +
+        '<textarea id="st-skann-oppg" rows="2" placeholder="F.eks. «Oppgave 3: to vogner kolliderer og henger sammen»">' + esc(sk.oppgave || '') + '</textarea>' +
+        '<div class="st-knapperad"><button type="button" class="st-btn" data-h="skannSend"' + (sk.venter ? ' disabled' : '') + '>' + (sk.venter ? 'Dashman ser på det …' : 'Få tilbakemelding') + '</button>' +
+        '<label class="st-btn g">' + ikon('kamera', 18) + ' Ta nytt bilde<input type="file" accept="image/*" capture="environment" id="st-skann-bilde"></label></div></div>';
+      if (krav.length) o += '<h3>Arbeidskrav</h3><p class="st-sm">Arbeidskrav gjør du som en quiz. Der det trengs, tar du bilde av utregningen underveis.</p>' + krav.map(function (x) {
+        return '<button type="button" class="st-kort" data-h="ovelse" data-id="' + x.id + '"><div class="st-rad"><b>' + esc(x.tittel) + '</b><span class="st-sm">' + (x.frist ? esc(fristTekst(x.frist)) + ' ' : '') + '→</span></div></button>';
+      }).join('');
+      return o;
+    },
+    innstillinger: function () {
+      return '<h2>Temaer du studerer</h2><p class="st-sm">Rekkefølgen her blir rekkefølgen i løypa, med én uke per tema.</p>' + temavalg() +
+        '<h2>Quiz</h2>' +
+        '<label class="st-valg"><input type="radio" name="st-modus" value="alle"' + (T.inn.modus === 'alle' ? ' checked' : '') + '> Alle spørsmålene på én gang</label>' +
+        '<label class="st-valg"><input type="radio" name="st-modus" value="dag"' + (T.inn.modus === 'dag' ? ' checked' : '') + '> Noen spørsmål hver dag (' + PER_DAG + ' per tema)</label>' +
+        '<label class="st-valg"><input type="checkbox" data-inn="repetisjon"' + (T.inn.repetisjon ? ' checked' : '') + '> Repetisjonsspørsmål</label>' +
+        '<label class="st-valg"><input type="checkbox" data-inn="varsler"' + (T.inn.varsler ? ' checked' : '') + '> Påminnelser</label>' +
+        '<p class="st-sm">Påminnelser sendes når studieappen kommer som app på mobilen. Valget ditt blir husket til da.</p>';
+    },
     hjem: function () {
       var v = valgt(), alle = skar(T.svar.filter(function (s) { return s.nettsted === NETTSTED && v.indexOf(s.tema) >= 0; }));
       var fornavn = (T.navn || '').split(/\s+/)[0];
@@ -1425,13 +1545,8 @@ function studieStart() {
       var mo = mineOvelser();
       if (mo.length) o += '<h2>Obligatoriske øvinger</h2><button type="button" class="st-kort" data-h="ga" data-v="kurs"><div class="st-rad"><b>' + mo.filter(godkjent).length + ' av ' + mo.length + ' godkjent</b><span class="st-sm">Se øvingene →</span></div></button>';
       if (alle) o += '<h2>Kunnskapsprofil</h2>' + stolper(alle) + '<p><button type="button" class="st-btn g" data-h="ga" data-v="profil">Se hele profilen</button></p>';
-      o += '<h2>Temaer du studerer</h2><p class="st-sm">Rekkefølgen her blir rekkefølgen i løypa.</p>' + temavalg();
-      o += '<h2>Innstillinger for quiz</h2>' +
-        '<label class="st-valg"><input type="radio" name="st-modus" value="alle"' + (T.inn.modus === 'alle' ? ' checked' : '') + '> Alle spørsmålene på én gang</label>' +
-        '<label class="st-valg"><input type="radio" name="st-modus" value="dag"' + (T.inn.modus === 'dag' ? ' checked' : '') + '> Noen spørsmål hver dag (' + PER_DAG + ' per tema)</label>' +
-        '<label class="st-valg"><input type="checkbox" data-inn="repetisjon"' + (T.inn.repetisjon ? ' checked' : '') + '> Repetisjonsspørsmål</label>' +
-        '<label class="st-valg"><input type="checkbox" data-inn="varsler"' + (T.inn.varsler ? ' checked' : '') + '> Påminnelser</label>' +
-        '<p class="st-sm">Påminnelser sendes når studieappen kommer som app på mobilen. Valget ditt blir husket til da.</p>';
+      o += appModus() ? '<p><button type="button" class="st-btn g" data-h="ga" data-v="innstillinger">Endre temaer og quiz</button></p>'
+        : '<h2>Temaer du studerer</h2><p class="st-sm">Rekkefølgen her blir rekkefølgen i løypa.</p>' + temavalg();
       return o;
     },
     uke: function () {
@@ -1802,6 +1917,19 @@ function studieStart() {
       var rm = document.getElementById('uv-ramme'); if (rm && T.uv && T.uv.fast) rm.classList.add('uv-fast');
       T.uvTp = null; uvPenn(); visSlide(); return;
     }
+    document.body.classList.toggle('st-app-modus', appModus());
+    if (appModus()) {
+      var tt = appTittel(), fokus = T.vis === 'quiz';
+      rot.innerHTML = (T.eksempel ? '<div class="st-eksempel"><b>Studentvisning.</b> Du ser ' + (T.eksempelFag ? '«' + esc(T.eksempelFag.navn) + '»' : 'appen') + ' som en fiktiv student. Ingenting lagres. <a href="#" data-h="avsluttEksempel">Tilbake til undervisning</a></div>' : '') +
+        '<div class="st-topp"><span class="st-topptittel">' + esc(tt) + '</span><button type="button" class="st-ikonknapp" data-h="meny" aria-label="Meny" aria-expanded="' + !!T.meny + '">' + ikon('meny') + '</button></div>' +
+        '<div class="st-innhold">' + (T.vis === 'delta' ? '' : deltaBanner()) + SKJ[T.vis]() + '</div>' + (fokus ? '' : bunnlinje()) + (T.meny ? menyHtml() : '') +
+        '<p id="st-varsel" class="st-varsel" role="status" hidden></p>';
+      if (vis) { var ny1 = document.getElementById('st-varsel'); ny1.textContent = vis.t; ny1.className = vis.k; ny1.hidden = false; }
+      rot.classList.toggle('st-bred', !!document.getElementById('st-lerret'));
+      var rull3 = document.querySelector('.st-matrull'); if (rull3 && rullTopp) rull3.scrollTop = rullTopp;
+      tegnKravStolper();
+      return;
+    }
     var faner = erUnderviser() && !T.eksempel ? [['kurs', 'Kursene mine'], ['hjem', 'Løype'], ['profil', 'Profil']] : [['hjem', 'Løype'], ['profil', 'Profil'], ['kurs', 'Kurs']];
     var aktiv = { uke: 'hjem', quiz: 'hjem', resultat: 'hjem', ferdigIdag: 'hjem', pamelding: 'kurs', fag: 'kurs', delta: 'kurs' }[T.vis] || T.vis;
     rot.innerHTML = (T.eksempel ? '<div class="st-eksempel"><b>Studentvisning.</b> Du ser ' + (T.eksempelFag ? '«' + esc(T.eksempelFag.navn) + '»' : 'appen') + ' som en fiktiv student. Ingenting lagres. <a href="#" data-h="avsluttEksempel">Tilbake til undervisning</a></div>' : '') + '<nav class="st-faner" role="tablist">' + faner.map(function (f) { return '<button type="button" role="tab" aria-selected="' + (aktiv === f[0]) + '" data-h="ga" data-v="' + f[0] + '">' + f[1] + '</button>'; }).join('') + '</nav>' +
@@ -1915,7 +2043,14 @@ function studieStart() {
     var b = ev.target.closest('[data-h]'); if (!b || b.disabled) return;
     var d = b.dataset;
     ({
-      ga: function () { ga(d.v); },
+      ga: function () { ga(d.v, { meny: false }); },
+      meny: function () { T.meny = true; tegn(); var f = document.querySelector('.st-meny .st-mrad'); if (f) f.focus(); },
+      lukkMeny: function () { T.meny = false; tegn(); },
+      dashman: function () { apneDashman(); },
+      ovelse: function () { startOvelse(d.id); },
+      skannSend: skannSend,
+      skannNy: function () { T.skann = {}; tegn(); },
+      skannDashman: function () { var sk = T.skann || {}; apneDashman('Jeg skannet løsningen min' + (sk.oppgave ? ' på denne oppgaven: ' + sk.oppgave : '') + '. Tilbakemeldingen var: «' + ((sk.svar && sk.svar.tilbakemelding) || '') + '». Kan du hjelpe meg videre?'); },
       uke: function () { ga('uke', { t: d.t }); },
       quiz: function () { startQuiz(d.t); },
       quizFlere: function () { startQuiz(d.t, true); },
@@ -2073,6 +2208,10 @@ function studieStart() {
       lesVedlegg(fil).then(function (r) { var kk = T.fag.kiKviss; merkUlest(kk, r); if (r.ulest) return tegn(); kk.vedlegg = r.vedlegg || null; if (r.tekst) kk.grunnlag = (kk.grunnlag ? kk.grunnlag + '\n\n' : '') + r.tekst; kk.filnavn = r.vedlegg ? fil.name : ''; tegn(); if (r.tekst) varsle('Teksten fra filen er lagt inn i feltet.'); })
         .catch(function (e) { varsle(feilmelding(e), true); });
     }
+    else if (el.id === 'st-skann-bilde' && el.files[0]) {
+      var oppg = (document.getElementById('st-skann-oppg') || {}).value;
+      lesBilde(el.files[0]).then(function (url) { T.skann = { bilde: url, oppgave: oppg || (T.skann && T.skann.oppgave) || '' }; tegn(); }).catch(function (e) { varsle(e.message, true); });
+    }
     else if (el.id === 'st-bilde' && el.files[0]) {
       var tekst = (document.getElementById('st-forklaring') || {}).value || '';
       lesBilde(el.files[0]).then(function (url) { T.q.bilde = url; T.q.tekst = tekst; tegn(); }).catch(function (e) { varsle(e.message, true); });
@@ -2175,6 +2314,8 @@ function studieStart() {
       var m = /^#fag-([^@]+)(?:@(.+))?$/.exec(location.hash);
       if (m && !T.eksempel && T.mine.some(function (c) { return c.id === m[1]; })) { T.vis = 'kurs'; apneKurs(m[1]); if (m[2]) T.fag.apneMat = decodeURIComponent(m[2]); }
       else if (location.hash === '#fag' || (erUnderviser() && !T.eksempel && !location.hash)) { T.vis = 'kurs'; tegn(); }
+      else if (/^#(hjem|skann|profil|innstillinger)$/.test(location.hash)) { T.vis = location.hash.slice(1); tegn(); }
+      else if (location.hash === '#dashman') { tegn(); setTimeout(function () { apneDashman(); }, 400); }
       else tegn();
       if (T.ny && !T.eksempel) lagreInn();
       if (T.lenkekode && !T.eksempel) {
