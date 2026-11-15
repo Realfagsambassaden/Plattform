@@ -177,6 +177,46 @@ Har underviseren lagt ved et opplegg: følg det så tett som mulig. Får du NÅV
 
 Svar KUN med gyldig JSON: {"tittel":"…","plan":[{"min":10,"tekst":"…"}],"slides":[{"tittel":"…","tekst":"- …","notat":"…","losning":""}],"kommentar":"…"}`;
 
+// «Fra salen»: KI går gjennom innspillene studentene har sendt i undervisningen (uten navn) og ukas innsikt
+// (samletall per spørsmål, vanligste feilsvar), og lager en prioritert liste over hva underviseren bør ta tak i.
+const SYSTEM_SALEN = `Du hjelper en underviser på NETTSTED midt i en forelesning. Du får innspill studentene har sendt nå (spørsmål, ønsker og signaler som «gå saktere», «forstår ikke», «vis et eksempel»), og ukas innsikt: hvordan klassen har svart på øvingsspørsmålene i ukas temaer (andel riktige, vanligste feilsvar og KI-tilbakemeldinger på begrepsfeil).
+
+Lag en kort, prioritert liste over hva underviseren bør ta tak i nå:
+- Slå sammen innspill som handler om det samme, og tell dem.
+- Prioriter etter hvor mange det gjelder, hvor grunnleggende det er for resten av temaet, og om det er en misforståelse (begrepsfeil) heller enn en regnefeil.
+- Finn misforståelsene bak feilsvarene: si hva studentene sannsynligvis tenker, ikke bare at de svarer feil.
+- Knytt til det viktigste i faget der det passer (f.eks. Newtons 2. lov, bevaringslover, definisjonen av strøm og spenning).
+- Gi for hvert punkt et konkret grep for timen (et spørsmål til salen, en demonstrasjon, et eksempel, en tegning), som tar 2–10 minutter.
+- Høyst 6 punkter. Ta med tempo-signalene i oppsummeringen. Skriv på norsk (bokmål), kort og konkret, punktum som desimaltegn. Matematikk i LaTeX med $…$.
+- Er det lite å gå på, si det, og foreslå ett godt kontrollspørsmål til salen.
+
+Svar KUN med gyldig JSON:
+{"oppsummering":"1–2 setninger, med tempo","punkter":[{"tittel":"kort","antall":3,"hvorfor":"hva studentene strever med og sannsynlig misforståelse","grep":"konkret forslag for timen","kilde":"innspill|innsikt|begge"}]}`;
+async function salen(request, env, b, h) {
+  const bruker = await innloggetBruker(request, env);
+  if (!bruker) return json({ feil: "Du må være logget inn." }, 401, h);
+  if (!(await erUnderviser(request, env))) return json({ feil: "Bare undervisere kan bruke dette." }, 403, h);
+  if (!(await innenforGrense(env, `salen:${bruker.id}:${new Date().toISOString().slice(0, 10)}`, 60, 90000)))
+    return json({ feil: "Du har brukt dette mye i dag. Prøv igjen i morgen." }, 429, h);
+  const typer = { sporsmal: "Spørsmål", onske: "Ønske", saktere: "Signal: gå saktere", eksempel: "Signal: vis et eksempel", forstar: "Signal: henger med", forstar_ikke: "Signal: forstår ikke" };
+  const inn = (Array.isArray(b.innspill) ? b.innspill : []).slice(-150).map((x) => `- ${typer[x && x.type] || "Innspill"}${x && x.tekst ? `: ${kort(x.tekst, 500)}` : ""}${x && x.besvart ? " (allerede tatt opp)" : ""}`);
+  const ins = (Array.isArray(b.innsikt) ? b.innsikt : []).slice(0, 25).map((x) => [
+    `- «${kort(x.tekst, 300)}» (riktig: ${kort(x.riktig, 120)}) – ${parseInt(x.riktige, 10) || 0} av ${parseInt(x.svar, 10) || 0} svar riktige, ${parseInt(x.studenter, 10) || 0} studenter, ${parseInt(x.begrep, 10) || 0} begrepsfeil`,
+    ...(Array.isArray(x.feilsvar) ? x.feilsvar.slice(0, 3).map((f) => `  vanlig feilsvar: «${kort(f && f.svar, 120)}» (${parseInt(f && f.antall, 10) || 0})`) : []),
+    ...(Array.isArray(x.tilbakemeldinger) ? x.tilbakemeldinger.slice(0, 3).map((t) => `  KI om en begrepsfeil: ${kort(t, 300)}`) : []),
+  ].join("\n"));
+  if (!inn.length && !ins.length) return json({ oppsummering: "Ingen innspill eller svar å gå gjennom ennå.", punkter: [] }, 200, h);
+  const melding = [`KURS: ${kort(b.kurs, 120)}`, `UKAS TEMAER: ${kort(b.temaer, 600) || "ukjent"}`,
+    `INNSPILL FRA SALEN (${inn.length}):\n${inn.join("\n") || "ingen"}`, `UKAS INNSIKT (spørsmål med svar fra minst 3 studenter):\n${ins.join("\n") || "ingen data ennå"}`].join("\n\n");
+  const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_SALEN.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 4000));
+  if (!r) throw feil("Fikk ikke noe svar fra KI denne gangen. Prøv igjen.", 502);
+  return json({
+    oppsummering: kort(r.oppsummering, 600),
+    punkter: (Array.isArray(r.punkter) ? r.punkter : []).slice(0, 6).map((x) => ({ tittel: kort(x && x.tittel, 120), antall: parseInt(x && x.antall, 10) || 0,
+      hvorfor: kort(x && x.hvorfor, 600), grep: kort(x && x.grep, 600), kilde: ["innspill", "innsikt", "begge"].includes(x && x.kilde) ? x.kilde : "" })).filter((x) => x.tittel),
+  }, 200, h);
+}
+
 async function materiale(request, env, b, h) {
   const bruker = await innloggetBruker(request, env);
   if (!bruker) return json({ feil: "Du må være logget inn." }, 401, h);
@@ -363,6 +403,7 @@ export default {
       if (sti.endsWith("/fagforslag")) return await fagforslag(request, env, b, h);
       if (sti.endsWith("/kvisslag")) return await kvisslag(request, env, b, h);
       if (sti.endsWith("/materiale")) return await materiale(request, env, b, h);
+      if (sti.endsWith("/salen")) return await salen(request, env, b, h);
       if (sti.endsWith("/dashman")) return await dashman(request, env, b, h);
       return await hint(request, env, b, h);
     } catch (e) {

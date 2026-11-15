@@ -271,6 +271,26 @@ html.st-uv-aktiv, html.st-uv-aktiv body { overflow: hidden; }
 .studie .uv-kropp.uten-tid .uv-tidslinje, .studie .uv-kropp.uten-side .uv-side { display: none; }
 .studie .uv-tidslinje, .studie .uv-side { overflow-y: auto; padding: .6rem .8rem; min-height: 0; }
 .studie .uv-tidslinje { border-right: 1px solid var(--bs-border-color); } .studie .uv-side { border-left: 1px solid var(--bs-border-color); }
+/* Delta på undervisning (student) og «Fra salen» (underviser) */
+.studie .st-lenkeknapp { background: none; border: 0; padding: 0; color: var(--bs-link-color, #6ef04a); text-decoration: underline; cursor: pointer; }
+.studie .st-delta-banner { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; justify-content: space-between; margin: 0 0 1rem; padding: .7rem 1rem; border: 2px solid #6ef04a; border-radius: 12px; background: rgba(110,240,74,.08); }
+.studie .st-delta-raske { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: .5rem; margin-top: .5rem; }
+.studie .st-delta-raske .st-btn { padding: .8rem; font-size: 1rem; }
+.studie .st-delta-mine { margin: .4rem 0 0; padding-left: 1.1rem; }
+.studie .uv-salen { margin-bottom: .8rem; padding-bottom: .6rem; border-bottom: 1px solid var(--bs-border-color); }
+.studie .uv-salenhode { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; justify-content: space-between; margin-bottom: .4rem; }
+.studie .uv-signaler { display: flex; flex-wrap: wrap; gap: .3rem; margin: .3rem 0 .5rem; }
+.studie .uv-signal { font-size: .78rem; padding: .1rem .45rem; border-radius: 10px; border: 1px solid var(--bs-border-color); opacity: .6; }
+.studie .uv-signal.har { opacity: 1; border-color: #f19c2c; }
+.studie .uv-innspill { max-height: 34vh; overflow-y: auto; }
+.studie .uv-inn { padding: .35rem 0; border-bottom: 1px dashed var(--bs-border-color); }
+.studie .uv-inn.besvart { opacity: .5; }
+.studie .uv-salenki { margin: .4rem 0; padding: .5rem .7rem; border: 1px solid #56d7b8; border-radius: 10px; }
+.studie .uv-salenki ol { margin: .3rem 0 0; padding-left: 1.2rem; } .studie .uv-salenki li { margin-bottom: .45rem; }
+.studie .uv-grep { color: #6ef04a; font-size: .9rem; }
+.studie .uv-ins { padding: .35rem 0; border-bottom: 1px dashed var(--bs-border-color); }
+.studie .uv-insbar { height: 6px; border-radius: 3px; background: rgba(241,156,44,.35); overflow: hidden; margin-bottom: .15rem; }
+.studie .uv-insbar span { display: block; height: 100%; background: #6ef04a; }
 .studie .uv-mod { font-weight: 700; margin: .9rem 0 .2rem; } .studie .uv-mod:first-child { margin-top: .2rem; }
 .studie .uv-uke { margin: .5rem 0 .2rem; } .studie .uv-uke.naa { border-left: 3px solid var(--bs-warning); padding-left: .4rem; }
 .studie .uv-naa { font-size: .75rem; font-weight: 700; color: var(--bs-warning); }

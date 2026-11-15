@@ -82,28 +82,28 @@ filer:
     dato: '2026-11-14'
     versjon: 2
   flervariabel-kalkulus/kapitler/02-trippelintegraler/04-treghetsmoment.qmd:
-    blob: 58a777ebd648b09462a454611768f3d16a043a80
-    dato: '2026-11-10'
+    blob: 89896667391c269007e8f3d19ff665d1a15f0d9b
+    dato: '2026-11-15'
     versjon: 2
   flervariabel-kalkulus/kapitler/02-trippelintegraler/05-numerisk-trippelintegral.qmd:
     blob: 880357b432bc1cc0a74dae278d2481efa55d1b3e
     dato: '2026-11-10'
     versjon: 2
   flervariabel-kalkulus/kapitler/02-trippelintegraler/06-oppgaver.qmd:
-    blob: 6f9a659ccfa950fc9efdeac6a98d5c01eb9fce19
-    dato: '2026-11-10'
+    blob: 9368de1f923f0007a787da2bb7626f3b6f859574
+    dato: '2026-11-15'
     versjon: 2
   flervariabel-kalkulus/kapitler/02-trippelintegraler/index.qmd:
     blob: 2b78b9ac926e368177996adb7bf7f66e995df76e
     dato: '2026-11-10'
     versjon: 2
   flervariabel-kalkulus/kapitler/03-kurver-og-flater/01-linjeintegraler.qmd:
-    blob: 58c2698c3d1832fc18324daf1cd434a4b1c693cc
-    dato: '2026-11-10'
+    blob: 86c917a37caec163589065bf8c271ab28a83b53d
+    dato: '2026-11-15'
     versjon: 2
   flervariabel-kalkulus/kapitler/03-kurver-og-flater/02-parametriske-flater.qmd:
-    blob: 7bd8b38f108b1eb72fe5a4b1f7483b99b6304858
-    dato: '2026-11-11'
+    blob: 437d8769fada20fdc2bbe5c420be71c0b0aaeb5e
+    dato: '2026-11-15'
     versjon: 2
   flervariabel-kalkulus/kapitler/03-kurver-og-flater/03-flateintegraler.qmd:
     blob: b47b1fc1a1d0efdfe3067cb054dcd7a66ec0f342
@@ -277,6 +277,22 @@ filer:
     blob: 2452fec33401f0008e21ffa0f984d694ecb393a3
     dato: '2026-11-14'
     versjon: 2
+  fysikk-forkurs/kapitler/01-hva-er-fysikk/06-maleusikkerhet.qmd:
+    blob: 5a66e9f0ef6e00130091b3ae92f239e3ebb6e64b
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/01-hva-er-fysikk/07-usikkerhet-i-sammensatte-storrelser.qmd:
+    blob: 6499aeb5f65b17c65dcacb6e71a0f64a7a9e29a6
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/01-hva-er-fysikk/08-tall-pa-standardform.qmd:
+    blob: 8a9efbd1424418c24c675a96eaa41f677e948cb5
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/01-hva-er-fysikk/09-eksempel-pa-beregning.qmd:
+    blob: ae1dca489985ccbec38da8e69f519a42154a1c3b
+    dato: '2026-11-15'
+    versjon: 2
   fysikk-forkurs/kapitler/01-hva-er-fysikk/10-grafer-og-regresjon.qmd:
     blob: 5d6c9c97978b918ac7e3090e28fd1bddf32e4bf9
     dato: '2026-11-11'
@@ -284,6 +300,78 @@ filer:
   fysikk-forkurs/kapitler/01-hva-er-fysikk/11-forsok-og-rapport.qmd:
     blob: b0da08c10fa190a402ac7859da9a781db82b529e
     dato: '2026-11-11'
+    versjon: 2
+  fysikk-forkurs/kapitler/01-hva-er-fysikk/12-ekstraoppgaver.qmd:
+    blob: 1d9ec63992a982080c2df1bc10b52053a1671f5c
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/01-hva-er-fysikk/index.qmd:
+    blob: 9ebcc1420693ebffa8d9d3a76793a3752e245af9
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/02-matematikk/01-likninger-og-algebra.qmd:
+    blob: ff0b5e5052c8f8935cd639bc5e7623d4fec10605
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/02-matematikk/02-funksjoner-og-plotting.qmd:
+    blob: 5eea036a1659497f1990e3b9df8c10590b5a958f
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/02-matematikk/03-trigonometri.qmd:
+    blob: ea55cdaf5fc99f8b60837a2f794ddc6023d43359
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/02-matematikk/04-vektorer.qmd:
+    blob: 221cfb96065be0204d07ef9e3410a089d353a03d
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/02-matematikk/05-operasjoner-med-vektorer.qmd:
+    blob: 76b361030b73be3576feda14f2a0b5da4fcf19ce
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/02-matematikk/06-matematisk-modellering.qmd:
+    blob: d39921700a97413bc104f1ac81be53b52e3b528d
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/02-matematikk/07-ekstraoppgaver.qmd:
+    blob: 076f0a2a5b9a33673e94f07faaa76e69353a88b0
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/02-matematikk/index.qmd:
+    blob: 8b19eaba24358e605672a4b5de2189138d9b4c7c
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/03-kinematikk/01-hva-er-kinematikk.qmd:
+    blob: fb4827635d2d4e88666dc641438977f91d59a776
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/03-kinematikk/02-strekning-s-og-hastighet-v.qmd:
+    blob: c65601309a4d58846cf81e20eee4dcebacb4c719
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/03-kinematikk/03-akselerasjon.qmd:
+    blob: a541942d1b314a0a431f8fb9586976cb450ab339
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/03-kinematikk/04-bevegelseslikningene-for-konstant-akselerasjon.qmd:
+    blob: afd7c3850db95416bffc37d8f91a9711454961ab
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/03-kinematikk/05-sirkelbevegelse.qmd:
+    blob: aa6be5e93a4ee07e0403370bb45314a62dd0cdfe
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/03-kinematikk/06-bevegelse-i-to-dimensjoner.qmd:
+    blob: c49ffad228e8264b06cbf944eee90d1d750407bc
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/03-kinematikk/07-ekstraoppgaver.qmd:
+    blob: 1d25e672ff23c8917d65e6dcb4204a346d99cd67
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/03-kinematikk/index.qmd:
+    blob: 38370fdd8f1795fe0ca4b2c66d59af7913d79fa3
+    dato: '2026-11-15'
     versjon: 2
   fysikk-forkurs/kapitler/04-krefter/07-sammensatte-mekanikkoppgaver.qmd:
     blob: 9829c3d8ac92f49bb03caf93a07e9d18bbd43b1e
@@ -328,6 +416,18 @@ filer:
   fysikk-forkurs/kapitler/11-elektrisitet/03-kirchoff-s-lover.qmd:
     blob: 21e076361b4a5f094cd7f162ce00c25d56f50bb1
     dato: '2026-11-13'
+    versjon: 2
+  fysikk-forkurs/kapitler/13-programmering/04-skratt-kast-med-luftmotstand.qmd:
+    blob: 4629df4a534b1d33dcf232d912249c87d7bb9060
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/13-programmering/05-svingninger-numerisk.qmd:
+    blob: aa9aa73458eb5ec29ed79e9634b7cb2ffbe0198f
+    dato: '2026-11-15'
+    versjon: 2
+  fysikk-forkurs/kapitler/13-programmering/06-arbeid-og-numerisk-integrasjon.qmd:
+    blob: b79c282d5b9cec2214bd3f857a71664c99464f95
+    dato: '2026-11-15'
     versjon: 2
   ingeniorfysikk/kapitler/01-introduksjon/01-hva-er-fysikk.qmd:
     blob: 1ce59400433cd0095ab6278927d543ddab469c83
