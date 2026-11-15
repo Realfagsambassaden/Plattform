@@ -1439,7 +1439,7 @@ function studieStart() {
   }
   function besteForsok(o) { return (T.quizer || []).filter(function (q) { return q.ovelse === o.id; }).reduce(function (m, q) { return Math.max(m, q.riktige || 0); }, 0); }
   function fristTekst(f) { if (!f) return ''; return new Date(f).toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'short' }); }
-  function appTittel() { return { skann: 'Skann svaret ditt', hjem: 'Løypa mi', uke: 'Løypa mi', profil: 'Kunnskapsprofil', kurs: 'Fagene mine', fag: 'Fagene mine', pamelding: 'Fagene mine', innstillinger: 'Innstillinger', resultat: 'Resultat' }[T.vis] || ''; }
+  function appTittel() { return { skann: 'Skann svaret ditt', hjem: 'Løypa mi', uke: 'Løypa mi', profil: 'Kunnskapsprofil', kurs: 'Kursene mine', fag: 'Kursene mine', pamelding: 'Kursene mine', innstillinger: 'Innstillinger', resultat: 'Resultat' }[T.vis] || ''; }
   function menyHtml() {
     var rad = function (ik, t, u, v, href) {
       var inni = '<span class="st-mikon">' + ikon(ik) + '</span><span class="st-mtekst">' + t + (u ? '<span class="st-sm">' + u + '</span>' : '') + '</span>' + ikon('pil', 18);
@@ -1450,7 +1450,7 @@ function studieStart() {
       rad('rute', 'Løypa mi', 'Ukene og temaene dine', 'hjem') +
       rad('bok', 'Les og øv', 'Lærestoff, videoer og oppgaver', '', '../index.html') +
       rad('graf', 'Kunnskapsprofil', 'Forståelse, presisjon og hurtighet', 'profil') +
-      rad('kurs', 'Fagene mine', 'Bli med i et fag og se arbeidskravene', 'kurs') +
+      rad('kurs', 'Kursene mine', 'Bli med i et kurs og se arbeidskravene', 'kurs') +
       rad('bruker', 'Min side', '', '', '../konto/index.html') +
       rad('tannhjul', 'Innstillinger', 'Temaer, quiz og påminnelser', 'innstillinger') + '</nav>';
   }
