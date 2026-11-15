@@ -42,11 +42,8 @@ website:
           - href: loyper/index.qmd
             text: "Alle løyper"
     right:
-      - href: https://realfagsambassaden.no/doner.html
-        text: "<span class='doner-knapp'>Donér materiale</span>"
-        aria-label: "Donér undervisningsmateriale til Realfagsambassaden"
       - href: dekning.qmd
-        text: Dekker vi faget ditt?
+        text: Dekker vi emnet ditt?
       - href: konto/index.qmd
         text: Logg inn
       - href: https://realfagsambassaden.no

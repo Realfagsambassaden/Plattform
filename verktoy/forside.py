@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Lager løypekortene på forsiden automatisk, ett kort per publisert fag.
+"""Lager løypekortene på forsiden automatisk, ett kort per publisert lærebok.
 Bruk: python3 forside.py <prosjektmappe>   (kjøres av bygg.sh etter fag.py)
 
-- leser _fag.json (fra fag.py): fagene som faktisk publiseres (status arbeid eller klar)
+- leser _fag.json (fra fag.py): lærebøkene som faktisk publiseres (status arbeid eller klar)
 - leser fag.yml i plattformen for valgfrie felt per fag:
       tegning: hallo            # bilde fra assets/img/tegninger/ (uten .webp)
       kort: "Tekst på kortet"   # ellers brukes beskrivelsen fra fagets egen fag.yml

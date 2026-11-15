@@ -1,5 +1,5 @@
-# Fagene som hentes inn på matematikkhjelp.no. Ett fag = ett repo laget fra malen Realfagsambassaden/fag-mal,
-# med «nettsted: matematikkhjelp» i fagets egen fag.yml.
+# Lærebøkene som hentes inn på matematikkhjelp.no («fag» i koden). Én lærebok = ett repo laget fra malen Realfagsambassaden/fag-mal,
+# med «nettsted: matematikkhjelp» i lærebokas egen fag.yml.
 # Hvert publisert fag får automatisk et løypekort på forsiden (se ../fag.yml for «tegning:» og «kort:»).
 fag:
   - repo: Realfagsambassaden/matte-forkurs

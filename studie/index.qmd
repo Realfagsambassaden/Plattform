@@ -55,7 +55,7 @@ toc: false
 .studie .st-formel { display: block; text-align: center; margin: .45rem 0; font-size: 1.08em; }
 .studie .st-alt { display: block; width: 100%; text-align: left; background: rgba(127,127,127,.06); border: 2px solid var(--bs-border-color); border-radius: 10px; color: inherit; padding: .6rem .8rem; margin: .45rem 0; }
 .studie .st-alt:hover:not(:disabled) { border-color: var(--bs-primary); }
-.studie .st-alt.ok { border-color: var(--bs-success, #6ef04a); }
+.studie .st-alt.ok { border-color: var(--bs-success, #8fcf86); }
 .studie .st-alt.nei { border-color: var(--bs-danger); }
 .studie .st-mrk { display: inline-block; font-size: .75rem; font-weight: 700; border-radius: 20px; padding: .05rem .55rem; border: 1px solid currentColor; }
 .studie .st-mrk.lett { color: var(--bs-info); } .studie .st-mrk.middels { color: var(--bs-warning); } .studie .st-mrk.vanskelig { color: var(--bs-danger); }
@@ -101,8 +101,8 @@ toc: false
 .studie input#st-fagnavn { width: 100%; background: transparent; color: inherit; border: 1px solid var(--bs-border-color); border-radius: 8px; padding: .45rem .6rem; font: inherit; }
 .studie .st-eksempel { background: rgba(241,156,44,.15); border: 1px solid var(--bs-warning); border-radius: 10px; padding: .55rem .85rem; margin-bottom: .8rem; }
 .studie details.st-kort > summary { margin: 0; }
-/* fagbyggeren */
-.studie .st-pabegynt { color: #eee462; font-weight: 400; font-size: .85em; }
+/* kursbyggeren */
+.studie .st-pabegynt { color: #e6d98a; font-weight: 400; font-size: .85em; }
 .studie .st-bygg-topp { margin: .2rem 0 .8rem; }
 .studie .st-to { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; margin: .6rem 0; }
 @media (max-width: 600px) { .studie .st-to { grid-template-columns: 1fr; } }
@@ -158,7 +158,7 @@ html.fh-innebygd .studie .st-faner { display: none; }   /* i fokusvisningens arb
 .studie .st-tl-flaggikon { font-size: 1.4rem; }
 .studie .st-tl-frist { color: #ff8a8f; font-weight: 700; margin-top: .2rem; }
 @media (max-width: 900px) { .studie .st-modrad { grid-template-columns: 1fr; } .studie .st-sidenotat { position: static; } .studie .st-tl-uke { grid-template-columns: 1fr; gap: .2rem; } }
-.studie .st-pakrevd { font-size: .75rem; font-weight: 700; color: #eee462; border: 1px solid #eee462; border-radius: 999px; padding: .05rem .5rem; vertical-align: middle; }
+.studie .st-pakrevd { font-size: .75rem; font-weight: 700; color: #e6d98a; border: 1px solid #e6d98a; border-radius: 999px; padding: .05rem .5rem; vertical-align: middle; }
 .studie .st-feltsett legend { font-weight: 700; font-size: 1rem; padding: 0 .4rem; width: auto; float: none; margin: 0; }
 .studie .st-piller { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .6rem; }
 .studie .st-pille { border: 1px solid var(--bs-border-color); border-radius: 20px; padding: .25rem .8rem; }
@@ -171,6 +171,22 @@ html.fh-innebygd .studie .st-faner { display: none; }   /* i fokusvisningens arb
 .studie .st-stor.fylt { background: var(--bs-primary); } .studie .st-stor.fylt b, .studie .st-stor.fylt span { color: var(--bs-body-bg); }
 .studie .st-stor:disabled { opacity: .6; cursor: default; }
 .studie .st-modul { border: 2px solid; border-radius: 14px; background: rgba(127,127,127,.06); overflow: hidden; }
+.st-qr { position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,.72); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.st-qr-boks { background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); border-radius: 18px; padding: 1.2rem 1.5rem; text-align: center; width: min(92vw, 560px); max-height: 96vh; overflow: auto; }
+.st-qr-boks h2 { margin: .6rem 0 .4rem; }
+.st-qr-kode { background: #fff; border-radius: 12px; padding: .4rem; margin: 0 auto; width: min(72vh, 82vw, 460px); }
+.st-qr-kode svg { display: block; width: 100%; height: auto; }
+.st-qr-tekst { font-size: 1.15rem; margin: .7rem 0 .2rem; }
+.st-qr-tekst .st-kode { font-size: 1.5rem; }
+.st-qr-lenke { word-break: break-all; opacity: .75; }
+.studie .st-ukefase { display: block; margin-top: .3rem; width: 100%; max-width: 74px; font-size: .72rem; padding: .1rem; border: 2px solid; border-radius: 6px; background: transparent; color: inherit; }
+.studie .st-faseliste { margin: .4rem 0 .6rem; padding-left: 1.1rem; }
+.studie .st-dra { cursor: grab; touch-action: none; user-select: none; font-size: 1.25rem; line-height: 1; padding: .15rem .3rem; border-radius: 6px; opacity: .65; }
+.studie .st-dra:hover { opacity: 1; background: rgba(127,127,127,.15); }
+.studie .st-drar { opacity: .45; }
+.studie .st-drar .st-dra { cursor: grabbing; }
+.studie .st-dra-over > .st-modul { box-shadow: 0 -5px 0 0 #8fcf86; }
+.studie .st-dra-under > .st-modul { box-shadow: 0 5px 0 0 #8fcf86; }
 .studie .st-modul header { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .8rem; padding: .6rem .9rem; border-bottom: 1px solid var(--bs-border-color); }
 .studie .st-modnr { font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .studie .st-modnavn { flex: 1 1 160px; min-width: 0; background: transparent; border: 1px solid transparent; border-radius: 6px; color: inherit; font: inherit; font-size: 1.15rem; font-weight: 700; padding: .1rem .3rem; }
@@ -255,6 +271,26 @@ html.st-uv-aktiv, html.st-uv-aktiv body { overflow: hidden; }
 .studie .uv-kropp.uten-tid .uv-tidslinje, .studie .uv-kropp.uten-side .uv-side { display: none; }
 .studie .uv-tidslinje, .studie .uv-side { overflow-y: auto; padding: .6rem .8rem; min-height: 0; }
 .studie .uv-tidslinje { border-right: 1px solid var(--bs-border-color); } .studie .uv-side { border-left: 1px solid var(--bs-border-color); }
+/* Delta på undervisning (student) og «Fra salen» (underviser) */
+.studie .st-lenkeknapp { background: none; border: 0; padding: 0; color: var(--bs-link-color, #8fcf86); text-decoration: underline; cursor: pointer; }
+.studie .st-delta-banner { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; justify-content: space-between; margin: 0 0 1rem; padding: .7rem 1rem; border: 2px solid #8fcf86; border-radius: 12px; background: rgba(110,240,74,.08); }
+.studie .st-delta-raske { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: .5rem; margin-top: .5rem; }
+.studie .st-delta-raske .st-btn { padding: .8rem; font-size: 1rem; }
+.studie .st-delta-mine { margin: .4rem 0 0; padding-left: 1.1rem; }
+.studie .uv-salen { margin-bottom: .8rem; padding-bottom: .6rem; border-bottom: 1px solid var(--bs-border-color); }
+.studie .uv-salenhode { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; justify-content: space-between; margin-bottom: .4rem; }
+.studie .uv-signaler { display: flex; flex-wrap: wrap; gap: .3rem; margin: .3rem 0 .5rem; }
+.studie .uv-signal { font-size: .78rem; padding: .1rem .45rem; border-radius: 10px; border: 1px solid var(--bs-border-color); opacity: .6; }
+.studie .uv-signal.har { opacity: 1; border-color: #e39d63; }
+.studie .uv-innspill { max-height: 34vh; overflow-y: auto; }
+.studie .uv-inn { padding: .35rem 0; border-bottom: 1px dashed var(--bs-border-color); }
+.studie .uv-inn.besvart { opacity: .5; }
+.studie .uv-salenki { margin: .4rem 0; padding: .5rem .7rem; border: 1px solid #7fc3b4; border-radius: 10px; }
+.studie .uv-salenki ol { margin: .3rem 0 0; padding-left: 1.2rem; } .studie .uv-salenki li { margin-bottom: .45rem; }
+.studie .uv-grep { color: #8fcf86; font-size: .9rem; }
+.studie .uv-ins { padding: .35rem 0; border-bottom: 1px dashed var(--bs-border-color); }
+.studie .uv-insbar { height: 6px; border-radius: 3px; background: rgba(241,156,44,.35); overflow: hidden; margin-bottom: .15rem; }
+.studie .uv-insbar span { display: block; height: 100%; background: #8fcf86; }
 .studie .uv-mod { font-weight: 700; margin: .9rem 0 .2rem; } .studie .uv-mod:first-child { margin-top: .2rem; }
 .studie .uv-uke { margin: .5rem 0 .2rem; } .studie .uv-uke.naa { border-left: 3px solid var(--bs-warning); padding-left: .4rem; }
 .studie .uv-naa { font-size: .75rem; font-weight: 700; color: var(--bs-warning); }
@@ -281,6 +317,23 @@ html.st-uv-aktiv, html.st-uv-aktiv body { overflow: hidden; }
 .studie .uv-trekk:hover .uv-trekk-innhold, .studie .uv-trekk:focus-within .uv-trekk-innhold { transform: none; }
 .studie .uv-trekk-innhold .uv-planliste li { border-color: #333; font-size: 1rem; grid-template-columns: 5.4rem minmax(0, 1fr); }
 .studie .uv-ramme:fullscreen > .uv-slide { border: 0; border-radius: 0; }
+.studie .uv-slide { position: relative; }
+.studie .uv-pennlinje { position: absolute; right: .6rem; bottom: .6rem; z-index: 5; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .35rem; align-items: center; max-width: calc(100% - 1.2rem); }
+.studie .uv-pennlinje button { background: rgba(20, 23, 28, .85); border: 1px solid #3a4048; color: #eef0f2; border-radius: 8px; padding: .3rem .7rem; font: 600 .9rem system-ui, sans-serif; }
+.studie .uv-pennlinje button.tp-pa { background: #8fcf86; border-color: #8fcf86; color: #111; }
+.studie .uv-pennlinje .tp-verktoy { border-right: 0; padding: .2rem .3rem; background: rgba(20, 23, 28, .85); border-radius: 8px; }
+.studie .uv-pennlinje .tp-farge { background: var(--f); width: 1.6rem; height: 1.6rem; padding: 0; border-radius: 50%; border: 2px solid #14171c; }
+.studie .uv-pennlinje .tp-farge.valgt, .studie .uv-pennlinje .tp-egen.valgt { outline: 2px solid #eef0f2; outline-offset: 1px; }
+.studie .uv-pennlinje .tp-egen { width: 1.6rem; height: 1.6rem; }
+.studie .uv-pennlinje .uv-fsnav { display: none; }
+.studie .uv-ramme.uv-fast { position: fixed; inset: 0; z-index: 3000; background: #000; }
+.studie .uv-ramme.uv-fast > .uv-slide { border: 0; border-radius: 0; }
+.studie .uv-ramme.uv-fast .uv-trekk { display: block; }
+.studie .uv-ramme.uv-fast .uv-fsnav { display: inline-block; }
+html.uv-fast-aktiv, html.uv-fast-aktiv body { overflow: hidden; }
+html.uv-fast-aktiv .dm-knapp { display: none !important; }
+.studie .uv-ramme:fullscreen .uv-fsnav, .studie .uv-ramme:-webkit-full-screen .uv-fsnav { display: inline-block; }
+.studie .uv-ramme:-webkit-full-screen { background: #000; }
 .studie .uv-kontroll { display: flex; align-items: center; justify-content: center; gap: 1rem; }
 .studie .uv-taler { display: flex; flex-direction: column; gap: .5rem; margin-bottom: .8rem; } .studie .uv-taler[hidden] { display: none; }
 .studie .uv-boks { border-left: 4px solid var(--bs-warning); background: rgba(127,127,127,.08); border-radius: 0 8px 8px 0; padding: .45rem .7rem; }
@@ -297,6 +350,59 @@ html.st-uv-aktiv, html.st-uv-aktiv body { overflow: hidden; }
   .studie .uv-tidslinje { max-height: 45vh; border-right: 0; border-bottom: 1px solid var(--bs-border-color); }
   .studie .uv-side { border-left: 0; }
 }
+/* ---------- app-skallet for studenter: I dag, Skann og Dashman i bunnlinja, resten i menyen ---------- */
+body.st-app-modus #title-block-header { display: none; }
+body.st-app-modus .dm-knapp { display: none !important; }
+body.st-app-modus .dm-panel { bottom: calc(92px + env(safe-area-inset-bottom)); }
+@media (display-mode: standalone) { body.st-app-modus #quarto-header, body.st-app-modus .nav-footer, body.st-app-modus footer.footer { display: none !important; } }
+body.st-app-modus .studie { max-width: 560px; margin: 0 auto; padding-bottom: calc(110px + env(safe-area-inset-bottom)); }
+.studie .st-topp { display: flex; align-items: center; justify-content: space-between; gap: .6rem; min-height: 48px; margin: .2rem 0 .6rem; }
+.studie .st-topptittel { font-weight: 800; font-size: 1.15rem; }
+.studie .st-ikonknapp { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 12px; border: 1px solid var(--bs-border-color); background: var(--bs-body-bg); color: var(--bs-body-color); cursor: pointer; }
+.studie .st-ikonknapp:hover { border-color: var(--bs-primary); color: var(--bs-primary); }
+.studie .st-hilsen { display: flex; flex-direction: column; margin: -.4rem 0 .9rem; }
+.studie .st-hilsen .st-hand { font-size: 2rem; line-height: 1.1; color: var(--bs-body-color); }
+.studie .st-dkort { --k: var(--bs-primary); display: flex; flex-direction: column; gap: .45rem; border: 1.5px solid var(--k); border-radius: 18px; padding: .9rem 1rem; margin: 0 0 .9rem; background: color-mix(in srgb, var(--bs-body-bg) 90%, white); }
+.studie .st-dkort.o { --k: var(--bs-warning); }
+.studie .st-dkort .st-rad { margin: 0; }
+.studie .st-merke { font-weight: 700; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--k); }
+.studie .st-dtittel { font-size: 1.35rem; line-height: 1.15; }
+.studie .st-frist { display: inline-flex; align-items: center; gap: .25rem; color: var(--k); }
+.studie .st-dkort .st-btn { min-height: 44px; padding: .5rem 1.2rem; border-radius: 12px; }
+.studie .st-btn.o { background: var(--bs-warning); border-color: var(--bs-warning); }
+.studie .st-dmrad { display: flex; align-items: flex-end; gap: .3rem; width: 100%; padding: 0; margin: .4rem 0 .8rem; border: 0; background: none; color: inherit; text-align: left; cursor: pointer; font: inherit; }
+.studie .st-dmfigur { height: 112px; width: auto; flex: 0 0 auto; }
+.studie .st-dmrad .st-kritt { flex: 1; margin-bottom: 1.1rem; }
+.studie .st-dmrad.stor { align-items: flex-start; cursor: default; }
+.studie .st-dmrad.stor .st-dmfigur { margin-top: 1.5rem; }
+.studie .st-kritt { position: relative; isolation: isolate; padding: 1rem 1.1rem 1rem 1.9rem; }
+.studie .st-kritt svg { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; overflow: visible; }
+.studie .st-kritt path { fill: color-mix(in srgb, var(--bs-body-bg) 90%, white); stroke: var(--bs-primary); stroke-width: 2.2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.studie .st-kritt:not(.hale) { padding-left: 1.1rem; }
+.studie .st-kt { display: block; font-size: 1.3rem; color: var(--bs-primary); margin-bottom: .2rem; }
+.studie .st-lesrad { display: flex; align-items: center; gap: .6rem; padding: .7rem 0; border-top: 1px dashed var(--bs-border-color); color: var(--bs-secondary-color); text-decoration: none; }
+.studie .st-lesrad span { flex: 1; } .studie .st-lesrad b { color: var(--bs-body-color); }
+.studie .st-kamera { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .6rem; min-height: 220px; margin: .8rem 0 1.2rem; border: 2px dashed var(--bs-primary); border-radius: 22px; color: var(--bs-primary); font-weight: 800; font-size: 1.15rem; cursor: pointer; }
+.studie .st-kamera input, .studie label.st-btn input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.studie label.st-btn { position: relative; cursor: pointer; }
+.studie .st-skann-forhand { display: block; max-width: 100%; max-height: 46vh; margin: .6rem auto .8rem; border-radius: 12px; transform: rotate(-1deg); }
+.studie .st-skann-klar textarea { width: 100%; border-radius: 10px; border: 1px solid var(--bs-border-color); background: var(--bs-body-bg); color: var(--bs-body-color); padding: .55rem .7rem; font: inherit; margin: .3rem 0 .6rem; }
+.studie .st-skann-mini { width: 64px; height: 80px; object-fit: cover; border-radius: 6px; transform: rotate(-3deg); }
+.studie .st-knapperad { display: flex; flex-wrap: wrap; gap: .5rem; margin: .6rem 0; }
+.studie .st-knapperad .st-btn { min-height: 44px; border-radius: 12px; }
+.studie .st-bunn { position: fixed; left: 0; right: 0; bottom: 0; z-index: 1030; background: color-mix(in srgb, var(--bs-body-bg) 94%, black); border-top: 1px solid var(--bs-border-color); padding-bottom: env(safe-area-inset-bottom); }
+.studie .st-bunn-inni { max-width: 560px; margin: 0 auto; display: flex; align-items: flex-end; padding: .35rem 1.2rem .5rem; }
+.studie .st-fane { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 54px; justify-content: center; background: none; border: 0; color: var(--bs-secondary-color); font-weight: 700; font-size: .78rem; cursor: pointer; }
+.studie .st-fane.pa { color: var(--bs-primary); }
+.studie .st-skannknapp { flex: 0 0 auto; width: 74px; height: 74px; margin: 0 1.2rem; transform: translateY(-16px); border-radius: 50%; border: 3px solid var(--bs-body-bg); background: var(--bs-primary); color: var(--bs-body-bg); box-shadow: 0 0 0 1.5px var(--bs-primary), 0 8px 22px rgba(0,0,0,.4); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; font-weight: 800; font-size: .72rem; cursor: pointer; }
+.studie .st-meny-bak { position: fixed; inset: 0; z-index: 1040; background: rgba(0,0,0,.5); }
+.studie .st-meny { position: fixed; top: 0; right: 0; bottom: 0; z-index: 1041; width: min(330px, 88vw); overflow-y: auto; padding: 1rem 1.2rem calc(1rem + env(safe-area-inset-bottom)); background: color-mix(in srgb, var(--bs-body-bg) 92%, white); border-left: 1px solid var(--bs-border-color); box-shadow: -10px 0 40px rgba(0,0,0,.4); }
+.studie .st-meny .st-rad { margin-bottom: .6rem; }
+.studie .st-mrad { display: flex; align-items: center; gap: .9rem; width: 100%; min-height: 56px; padding: .4rem 0; border: 0; border-bottom: 1px solid var(--bs-border-color); background: none; color: var(--bs-body-color); text-decoration: none; text-align: left; font: inherit; font-size: 1.05rem; cursor: pointer; }
+.studie .st-mikon { color: var(--bs-primary); display: inline-flex; }
+.studie .st-mtekst { flex: 1; display: flex; flex-direction: column; }
+.studie .st-mtekst .st-sm { font-size: .8rem; }
+.studie .st-ikon { flex: 0 0 auto; }
 </style>
 <script src="../assets/js/xlsx-lite.js"></script>
 <script src="../assets/js/studie.js"></script>

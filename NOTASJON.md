@@ -73,7 +73,7 @@ Gjelder svar i oppgaver, løsninger og eksempler, og tall i teksten ellers.
 | Startfart | *v*_0 |
 | Strekning, posisjon | *s*, *x* |
 
-Bruk samme symbol for samme størrelse på tvers av sider og fag.
+Bruk samme symbol for samme størrelse på tvers av sider og lærebøker.
 
 ## 6. Sjekk av innhold
 

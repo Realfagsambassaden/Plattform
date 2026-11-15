@@ -7,12 +7,12 @@ nivaer:
     navn: Forkurs
     tekst: "For deg som har lite fysikk eller matematikk fra før, eller skal ta forkurs."
     omrader: auto
-    loyper: [forkurs-fysikk]
+    loyper: [forkurs-fysikk, tres0312]
   - id: ingenior
     navn: Ingeniør
     tekst: "Første år på ingeniør- og realfagsstudier."
-    omrader: [mekanikk, fluider, elektromagnetisme, termofysikk]
-    loyper: []
+    omrader: [mekanikk, fluider, bolger, elektromagnetisme, termofysikk]
+    loyper: [ifya1000, ifya1002]
   - id: fordypning
     navn: Fordypning
     tekst: "Videre emner for deg som vil gå dypere."

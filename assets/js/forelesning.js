@@ -208,7 +208,9 @@ var NETTSTED_NAVN = (document.querySelector('meta[name="nettsted-navn"]') || {})
       function frem() { var s = slides[i]; if (trinn < (s.trinn || 0)) { trinn++; vist(); } else if (i < slides.length - 1) { i++; trinn = 0; tegn(); } }
       function tilbake() { if (trinn > 0) { trinn--; vist(); } else if (i > 0) { i--; trinn = slides[i].trinn || 0; tegn(); } }
       function losning() { var s = slides[i]; if (!s.trinn) return; trinn = trinn < s.trinn ? s.trinn : 0; vist(); }
-      function full() { if (document.fullscreenElement) document.exitFullscreen(); else if (scene.requestFullscreen) scene.requestFullscreen(); }
+      // iPad: forelesningen dekker allerede hele vinduet, og ekte fullskjerm gir en advarsel fra Safari når man skriver med Pencil.
+      if (window.Tavlepenn && window.Tavlepenn.ios) { var fk = scene.querySelector('[data-h="full"]'); if (fk) fk.hidden = true; }
+      function full() { if (window.Tavlepenn && window.Tavlepenn.ios) return; if (document.fullscreenElement) document.exitFullscreen(); else if (scene.requestFullscreen) scene.requestFullscreen(); }
       document.addEventListener('keydown', function (e) {
         if (e.target.closest && e.target.closest('input, textarea')) return;
         var k = e.key;

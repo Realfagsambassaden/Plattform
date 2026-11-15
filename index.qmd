@@ -5,9 +5,8 @@ page-layout: full
 ---
 
 ```{=html}
-<section class="hero">
+<section class="hero sentrert">
   <div class="hero-tekst">
-    <img class="hero-logo" src="assets/img/fh-logo-stor.png" alt="fysikkhjelp.no">
     <p class="eyebrow">Fysikk for forkurs og universitet!</p>
     <h1>Fysikk <span class="g">forklart</span></h1>
     <p class="lead">Korte videoer, tydelige formler, kode du kan kjøre selv og oppgaver med hint når du står fast. Laget av de som kan det best: ekte fysikere med formidlerglede!</p>
@@ -20,6 +19,7 @@ page-layout: full
       </div>
     </div>
   </div>
+  <img class="hero-dashman-v" src="assets/img/dashman/glad.webp" alt="">
   <div class="hero-scene">
     <img src="assets/img/tegninger/hero-dashman.webp" alt="Dashman får en aha-opplevelse, med F = ma og E = mc² tegnet i kritt rundt seg på en tavle full av formler">
   </div>
@@ -59,7 +59,7 @@ page-layout: full
     <img class="track-bilde" src="assets/img/tegninger/sau-maling.webp" alt="" loading="lazy">
     <span class="status">Din løype</span>
     <h3>Lag din egen løype</h3>
-    <p>Lim inn emnebeskrivelsen til faget ditt, så finner vi sidene som passer.</p>
+    <p>Lim inn emnebeskrivelsen til emnet ditt, så finner vi sidene som passer.</p>
   </a>
 </div>
 </section>
@@ -77,8 +77,8 @@ page-layout: full
 <a class="dekning-banner" href="dekning.html">
   <img src="assets/img/tegninger/sau-maling.webp" alt="Dashman måler en sau med linjal" loading="lazy">
   <span class="banner-tekst"><span class="eyebrow">Nytt</span>
-  <strong>Dekker vi faget ditt?</strong>
-  <span>Lim inn fagets emnebeskrivelse, og få et kart over hva du finner her. →</span></span>
+  <strong>Dekker vi emnet ditt?</strong>
+  <span>Lim inn emnets emnebeskrivelse, og få et kart over hva du finner her. →</span></span>
 </a>
 
 <section class="profiler">
@@ -88,27 +88,51 @@ page-layout: full
     <article class="profilkort">
       <div class="profil-bilder">
         <img class="profil-foto" src="assets/img/ben-portrett.webp" alt="Portrett av Ben David Normann">
-        <img class="profil-ikon" src="assets/img/drnormann-ikon.png" alt="Dr. Normann">
+        <button type="button" class="profil-ikonknapp" aria-expanded="false" aria-controls="fag-ben" title="Se kursene og løypene til Dr. Normann"><img class="profil-ikon" src="assets/img/drnormann-ikon.png" alt="Dr. Normann: vis kursene"></button>
       </div>
       <div>
         <h3>Dr. Normann</h3>
         <p class="profil-rolle">Ph.d. i matematisk kosmologi</p>
         <p>Jeg heter Ben, har doktorgrad i matematisk kosmologi og har formidlet og undervist realfag i ti år. I 2018 vant jeg den nasjonale finalen i Forsker Grand Prix.</p>
         <p>Her legger jeg ut forklaringene jeg selv skulle ønske jeg hadde: én idé om gangen, tegnet ut på tavla, med regning du kan følge linje for linje.</p>
+        <div class="profil-fag" id="fag-ben" hidden>
+          <p class="eyebrow">Kurs og løyper med Dr. Normann</p>
+          <ul>
+            <li><a href="fysikk-forkurs/index.html">Forkurs i fysikk</a></li>
+            <li><a href="loyper/tres0312.html">TRES0312 (NTNU)</a>: løype, og kurs i studieappen med påmelding fra faglæreren</li>
+            <li><a href="ingeniorfysikk/index.html">Ingeniørfysikk</a></li>
+            <li><a href="https://matematikkhjelp.no/matte-forkurs/index.html">Forkurs i matematikk</a> (matematikkhjelp.no)</li>
+            <li><a href="https://matematikkhjelp.no/flervariabel-kalkulus/index.html">Flervariabel kalkulus</a> (matematikkhjelp.no)</li>
+          </ul>
+        </div>
       </div>
     </article>
     <article class="profilkort">
       <div class="profil-bilder">
         <img class="profil-foto" src="assets/img/andrea-portrett.webp" alt="Portrett av Andrea">
-        <img class="profil-ikon" src="assets/img/andrea-ikon.png" alt="Andrea">
+        <button type="button" class="profil-ikonknapp" aria-expanded="false" aria-controls="fag-andrea" title="Se kursene og løypene til Andrea"><img class="profil-ikon" src="assets/img/andrea-ikon.png" alt="Andrea: vis kursene"></button>
       </div>
       <div>
         <h3>Andrea</h3>
         <p class="profil-rolle">Dobbel mastergrad</p>
         <p>Andrea har i en årrekke vært ansiktet utad og selve drivkraften i NTNU Fysikkstudio, som lager fysikkvideoer av høy kvalitet.</p>
+        <div class="profil-fag" id="fag-andrea" hidden>
+          <p class="eyebrow">Kurs og løyper med Andrea</p>
+          <p>Andreas kurs kommer snart.</p>
+        </div>
       </div>
     </article>
   </div>
+  <script>
+  // Klikk på figuren til en profil for å se kursene og løypene hen tilbyr.
+  document.querySelectorAll('.profil-ikonknapp').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var l = document.getElementById(b.getAttribute('aria-controls')), apen = l.hidden;
+      l.hidden = !apen; b.setAttribute('aria-expanded', apen);
+      if (apen) l.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    });
+  });
+  </script>
 </section>
 
 ```

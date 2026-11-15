@@ -2,13 +2,13 @@
 //   POST /hint     – ETT hint til en oppgave (åpent for alle)
 //   POST /vurder   – studieappen: vurderer studentens forklaring (tekst og/eller bilde) til et quizspørsmål. Krever innlogging.
 //   POST /rad      – studieappen: personlig råd om eksamensforberedelse ut fra kunnskapsprofilen. Krever innlogging.
-//   POST /fagforslag – fagbyggeren: forslag til moduler og uker ut fra emnebeskrivelse og læringsutbytte. Bare for undervisere.
-//   POST /kvisslag – fagbyggeren: flervalgsspørsmål til et arbeidskrav, eventuelt ut fra underviserens egne oppgaver
+//   POST /fagforslag – kursbyggeren: forslag til moduler og uker ut fra emnebeskrivelse og læringsutbytte. Bare for undervisere.
+//   POST /kvisslag – kursbyggeren: flervalgsspørsmål til et arbeidskrav, eventuelt ut fra underviserens egne oppgaver
 //                    (tekst, bilde eller PDF). Bare for undervisere. Ingenting lagres i tjenesten.
-//   POST /materiale – fagbyggeren («Mitt materiale»): plan for dagen og slides til én samling, ut fra undertemaene og
+//   POST /materiale – kursbyggeren («Mitt materiale»): plan for dagen og slides til én samling, ut fra undertemaene og
 //                    lærestoffet på nettstedet, eventuelt et gammelt opplegg (tekst, bilde eller PDF). Bare for undervisere.
 //   POST /dashman  – Dashman, KI-læringspartneren: samtale med en innlogget student, bygd på LRI (instruksen står i
-//                    dashman-instruks.md). Får studentens nivå, mål, notat, kunnskapsprofil og fag (fase og faglærerens
+//                    dashman-instruks.md). Får studentens nivå, mål, notat, kunnskapsprofil og kurs (fase og faglærerens
 //                    instrukser) fra Supabase. Samtalen lagres ikke; bare et kort faglig notat, som studenten kan slette.
 //   POST /dekning  – dekningskart: hvor godt dekker fysikkhjelp.no et emne? Åpent for alle;
 //                    innloggede brukere får i tillegg sidene/veikartet.
@@ -32,6 +32,7 @@
 //   Valgfritt: KV-bindingen HINT_KV for begrensning av antall forespørsler.
 
 import DASHMAN_INSTRUKS from "./dashman-instruks.md";
+import DASHMAN_UNDERVISER from "./dashman-underviser.md";
 
 const STANDARD_MODELL = { claude: "claude-haiku-5-5", openai: "gpt-4o-mini" };
 const NETTSTED = "https://fysikkhjelp.no";
@@ -74,7 +75,7 @@ Gjør slik:
 
 Svar KUN med gyldig JSON, uten forklaring rundt, på formen:
 {"emnekode":"…","emnenavn":"…","temaer":[{"tema":"…","dekning":"god|delvis|ingen","sider":[1,2],"kommentar":"én kort setning på norsk"}],"oppsummering":"2–3 setninger på norsk om hva siden dekker godt og hva studenten må finne andre steder"}
-Er teksten ikke en emnebeskrivelse for et fag, svar {"feil":"kort forklaring på norsk"}.`;
+Er teksten ikke en emnebeskrivelse for et emne, svar {"feil":"kort forklaring på norsk"}.`;
 
 const SYSTEM_VURDER = `Du er en tålmodig fysikklærer på NETTSTED, laget av Dr. Normann. En student har svart på et flervalgsspørsmål og vist hvordan hen tenkte, som tekst eller som bilde av en håndskrevet besvarelse.
 Du får spørsmålet, riktig svar, en kort forklaring, alternativet studenten valgte og studentens forklaring.
@@ -110,16 +111,16 @@ Norsk bokmål, desimalpunktum.
 Svar KUN med gyldig JSON:
 {"forstaelse":{"undertemaer":[],"tiltak":[],"formel":""},"presisjon":{"undertemaer":[],"tiltak":[],"formel":""},"hurtighet":{"undertemaer":[],"tiltak":[],"formel":""},"bra":""}`;
 
-const SYSTEM_FAG = `Du er en erfaren fysikklærer og hjelper en underviser å legge opp et fag på NETTSTED.
+const SYSTEM_FAG = `Du er en erfaren fysikklærer og hjelper en underviser å legge opp et kurs på NETTSTED.
 Du får emnebeskrivelsen og læringsutbyttet (begge kan mangle), rammen (antall uker og undervisningsform) og en KATALOG over undertemaer som finnes på nettstedet, med id og tittel.
 
 Lag et oppsett:
-- Del faget i 3–8 moduler med korte navn (1–3 ord), i en naturlig faglig rekkefølge.
+- Del kurset i 3–8 moduler med korte navn (1–3 ord), i en naturlig faglig rekkefølge (med en plan: én modul per kapittel eller tema i planen, også om det blir flere enn 8).
 - Hver modul har én eller flere uker. Hver uke dekker 1–3 undertemaer fra katalogen.
 - Bruk høyst så mange uker som rammen sier. La gjerne de siste 1–2 ukene være uten undertemaer (repetisjon), med notatet «Repetisjon».
-- Bruk BARE id-er som står i katalogen, skrevet nøyaktig likt. Ta bare med det som passer emnebeskrivelsen og læringsutbyttet. Uten beskrivelse: lag et vanlig oppsett for faget ut fra navnet.
+- Bruk BARE id-er som står i katalogen, skrevet nøyaktig likt. Ta bare med det som passer emnebeskrivelsen og læringsutbyttet. Uten beskrivelse: lag et vanlig oppsett for kurset ut fra navnet.
 - Undervisningsformen påvirker ikke innholdet, bare notatene: ved omvendt klasserom kan notatet si hva studentene forbereder.
-- Har underviseren skrevet ØNSKER eller lagt ved en tidligere plan: følg dem så tett som katalogen tillater (rekkefølge, uker, notater).
+- Har underviseren skrevet ØNSKER eller lagt ved en tidligere plan: følg planen nøyaktig. Samme rekkefølge, samme antall uker per tema (står det «uke 47» er det én uke, «uke 43–44» to uker), og ingen temaer lagt til, tatt bort eller delt opp i egne moduler (f.eks. ingen egen gasslov-modul hvis gasslovene står under termofysikk i planen). En uke kan da dekke flere enn 3 undertemaer. Står noe i planen som katalogen ikke har, nevn det i kommentaren i stedet for å erstatte det med noe annet.
 - Får du NÅVÆRENDE OPPSETT: behold det og gjør bare de endringene underviseren ber om.
 - "kommentar": 1–2 setninger til underviseren om valgene, for eksempel hva i læringsutbyttet eller planen katalogen ikke dekker.
 Norsk bokmål.
@@ -154,8 +155,8 @@ Regn ut svarene nøye; et galt fasitsvar er det verste som kan skje. Norsk bokm�
 Alle spørsmål har også "undertema" og "vanskelighet".
 Svar KUN med gyldig JSON: {"sporsmal":[{"tekst":"…","variabler":[{"navn":"m","min":1,"maks":5,"steg":0.5}],"svar":"…","enhet":"…","siffer":3,"feil":[{"uttrykk":"…","type":"regnefeil"}],"forklaring":"…","undertema":"","vanskelighet":"middels"}, {"tekst":"…","riktig":"…","feil":[{"svar":"…","type":"begrep"}],"forklaring":"…","undertema":"","vanskelighet":"lett"}]}`;
 
-const SYSTEM_MAT = `Du er en erfaren realfagslærer og lager undervisningsmateriale til ÉN samling i et fag på NETTSTED.
-Du får faget, undervisningsformen og lengden på samlingen, uka og modulen, undertemaene (med lærestoffet fra nettstedet når det finnes),
+const SYSTEM_MAT = `Du er en erfaren realfagslærer og lager undervisningsmateriale til ÉN samling i et kurs på NETTSTED.
+Du får kurset, undervisningsformen og lengden på samlingen, uka og modulen, undertemaene (med lærestoffet fra nettstedet når det finnes),
 eventuelt nivå, ukenotat, arbeidskrav og underviserens ønsker eller gamle opplegg (tekst, bilde eller PDF).
 
 Lag:
@@ -176,14 +177,53 @@ Har underviseren lagt ved et opplegg: følg det så tett som mulig. Får du NÅV
 
 Svar KUN med gyldig JSON: {"tittel":"…","plan":[{"min":10,"tekst":"…"}],"slides":[{"tittel":"…","tekst":"- …","notat":"…","losning":""}],"kommentar":"…"}`;
 
+// «Fra salen»: KI går gjennom innspillene studentene har sendt i undervisningen (uten navn) og ukas innsikt
+// (samletall per spørsmål, vanligste feilsvar), og lager en prioritert liste over hva underviseren bør ta tak i.
+const SYSTEM_SALEN = `Du hjelper en underviser på NETTSTED midt i en forelesning. Du får innspill studentene har sendt nå (spørsmål, ønsker og signaler som «gå saktere», «forstår ikke», «vis et eksempel»), og ukas innsikt: hvordan klassen har svart på øvingsspørsmålene i ukas temaer (andel riktige, vanligste feilsvar og KI-tilbakemeldinger på begrepsfeil).
+
+Lag en kort, prioritert liste over hva underviseren bør ta tak i nå:
+- Slå sammen innspill som handler om det samme, og tell dem.
+- Prioriter etter hvor mange det gjelder, hvor grunnleggende det er for resten av temaet, og om det er en misforståelse (begrepsfeil) heller enn en regnefeil.
+- Finn misforståelsene bak feilsvarene: si hva studentene sannsynligvis tenker, ikke bare at de svarer feil.
+- Knytt til det viktigste i faget der det passer (f.eks. Newtons 2. lov, bevaringslover, definisjonen av strøm og spenning).
+- Gi for hvert punkt et konkret grep for timen (et spørsmål til salen, en demonstrasjon, et eksempel, en tegning), som tar 2–10 minutter.
+- Høyst 6 punkter. Ta med tempo-signalene i oppsummeringen. Skriv på norsk (bokmål), kort og konkret, punktum som desimaltegn. Matematikk i LaTeX med $…$.
+- Er det lite å gå på, si det, og foreslå ett godt kontrollspørsmål til salen.
+
+Svar KUN med gyldig JSON:
+{"oppsummering":"1–2 setninger, med tempo","punkter":[{"tittel":"kort","antall":3,"hvorfor":"hva studentene strever med og sannsynlig misforståelse","grep":"konkret forslag for timen","kilde":"innspill|innsikt|begge"}]}`;
+async function salen(request, env, b, h) {
+  const bruker = await innloggetBruker(request, env);
+  if (!bruker) return json({ feil: "Du må være logget inn." }, 401, h);
+  if (!(await erUnderviser(request, env))) return json({ feil: "Bare undervisere kan bruke dette." }, 403, h);
+  if (!(await innenforGrense(env, `salen:${bruker.id}:${new Date().toISOString().slice(0, 10)}`, 60, 90000)))
+    return json({ feil: "Du har brukt dette mye i dag. Prøv igjen i morgen." }, 429, h);
+  const typer = { sporsmal: "Spørsmål", onske: "Ønske", saktere: "Signal: gå saktere", eksempel: "Signal: vis et eksempel", forstar: "Signal: henger med", forstar_ikke: "Signal: forstår ikke" };
+  const inn = (Array.isArray(b.innspill) ? b.innspill : []).slice(-150).map((x) => `- ${typer[x && x.type] || "Innspill"}${x && x.tekst ? `: ${kort(x.tekst, 500)}` : ""}${x && x.besvart ? " (allerede tatt opp)" : ""}`);
+  const ins = (Array.isArray(b.innsikt) ? b.innsikt : []).slice(0, 25).map((x) => [
+    `- «${kort(x.tekst, 300)}» (riktig: ${kort(x.riktig, 120)}) – ${parseInt(x.riktige, 10) || 0} av ${parseInt(x.svar, 10) || 0} svar riktige, ${parseInt(x.studenter, 10) || 0} studenter, ${parseInt(x.begrep, 10) || 0} begrepsfeil`,
+    ...(Array.isArray(x.feilsvar) ? x.feilsvar.slice(0, 3).map((f) => `  vanlig feilsvar: «${kort(f && f.svar, 120)}» (${parseInt(f && f.antall, 10) || 0})`) : []),
+    ...(Array.isArray(x.tilbakemeldinger) ? x.tilbakemeldinger.slice(0, 3).map((t) => `  KI om en begrepsfeil: ${kort(t, 300)}`) : []),
+  ].join("\n"));
+  if (!inn.length && !ins.length) return json({ oppsummering: "Ingen innspill eller svar å gå gjennom ennå.", punkter: [] }, 200, h);
+  const melding = [`KURS: ${kort(b.kurs, 120)}`, `UKAS TEMAER: ${kort(b.temaer, 600) || "ukjent"}`,
+    `INNSPILL FRA SALEN (${inn.length}):\n${inn.join("\n") || "ingen"}`, `UKAS INNSIKT (spørsmål med svar fra minst 3 studenter):\n${ins.join("\n") || "ingen data ennå"}`].join("\n\n");
+  const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_SALEN.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 4000));
+  if (!r) throw feil("Fikk ikke noe svar fra KI denne gangen. Prøv igjen.", 502);
+  return json({
+    oppsummering: kort(r.oppsummering, 600),
+    punkter: (Array.isArray(r.punkter) ? r.punkter : []).slice(0, 6).map((x) => ({ tittel: kort(x && x.tittel, 120), antall: parseInt(x && x.antall, 10) || 0,
+      hvorfor: kort(x && x.hvorfor, 600), grep: kort(x && x.grep, 600), kilde: ["innspill", "innsikt", "begge"].includes(x && x.kilde) ? x.kilde : "" })).filter((x) => x.tittel),
+  }, 200, h);
+}
+
 async function materiale(request, env, b, h) {
   const bruker = await innloggetBruker(request, env);
   if (!bruker) return json({ feil: "Du må være logget inn." }, 401, h);
   if (!(await erUnderviser(request, env))) return json({ feil: "Bare godkjente undervisere kan lage undervisningsmateriale med KI." }, 403, h);
   if (!(await innenforGrense(env, `mat:${bruker.id}:${new Date().toISOString().slice(0, 10)}`, 40, 90000)))
     return json({ feil: "Du har laget mye materiale i dag. Prøv igjen i morgen." }, 429, h);
-  const vedlegg = lesVedlegg(b.vedlegg);
-  if (b.vedlegg && !vedlegg) return json({ feil: "Filen må være et bilde (JPEG, PNG, WebP) eller en PDF på under 4 MB." }, 400, h);
+  const vi = vedleggInfo(b), vedlegg = vi.vedlegg;
   const ramme = b.ramme || {};
   const lengde = Math.max(10, Math.min(600, parseInt(ramme.lengde, 10) || 90));
   const form = { forelesninger: "forelesning", omvendt: "omvendt klasserom", ingen: "ingen faste samlinger (materiale for uka)" }[ramme.form] || "forelesning";
@@ -200,20 +240,20 @@ async function materiale(request, env, b, h) {
     } catch { /* uten lærestoffet går det også */ }
   }
   const krav = (Array.isArray(b.arbeidskrav) ? b.arbeidskrav.slice(0, 5) : []).map((x) => `${kort(x && x.tittel, 120)}${x && x.frist ? ` (frist ${kort(x.frist, 10)})` : ""}`);
-  const melding = `Fag: ${kort(b.fag, 120)}\nForm: ${form}, ${lengde} min (samling ${parseInt(b.samling, 10) || 1} av ${parseInt(ramme.samlinger, 10) || 1} denne uka)` +
+  const melding = `Kurs: ${kort(b.fag, 120)}\nForm: ${form}, ${lengde} min (samling ${parseInt(b.samling, 10) || 1} av ${parseInt(ramme.samlinger, 10) || 1} denne uka)` +
     (b.niva ? `\nNivå: ${kort(b.niva, 20)}` : "") + `\nUke ${parseInt(b.uke, 10) || 1}, modul: ${kort(b.modul, 60)}` +
     `\nUndertemaer:\n${ut.map((x) => `- ${x.tittel}${x.niva ? ` (nivå ${x.niva})` : ""}`).join("\n") || "(ingen – repetisjon eller fritt)"}` +
     (b.notat ? `\nUkenotat: ${kort(b.notat, 300)}` : "") + (krav.length ? `\nArbeidskrav: ${krav.join("; ")}` : "") +
     `\nLag: ${hva === "begge" ? "plan og slides" : hva === "plan" ? "bare plan (slides kan være tom liste)" : "bare slides (plan kan være tom liste)"}` +
     (b.onske ? `\n\nØNSKER FRA UNDERVISEREN:\n${kort(b.onske, 8000)}` : "") + (vedlegg ? "\n\nUnderviserens gamle opplegg er vedlagt." : "") +
     (b.navarende ? `\n\nNÅVÆRENDE MATERIALE:\n${kort(JSON.stringify(b.navarende), 20000)}` : "") +
-    (stoff.length ? `\n\nLÆRESTOFF FRA NETTSTEDET:\n${stoff.join("\n\n")}` : "");
+    (stoff.length ? `\n\nLÆRESTOFF FRA NETTSTEDET:\n${stoff.join("\n\n")}` : "") + vi.ber;
   const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_MAT.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000, vedlegg));
   if (!r) throw feil("Fikk ikke noe materiale fra KI denne gangen. Prøv igjen.", 502);
   const plan = (Array.isArray(r.plan) ? r.plan : []).slice(0, 25).map((x) => ({ min: Math.max(0, Math.min(300, parseInt(x && x.min, 10) || 0)), tekst: kort(x && x.tekst, 600) })).filter((x) => x.tekst);
   const slides = (Array.isArray(r.slides) ? r.slides : []).slice(0, 40).map((x) => ({ tittel: kort(x && x.tittel, 200), tekst: kort(x && x.tekst, 3000), notat: kort(x && x.notat, 2000), losning: kort(x && x.losning, 3000) })).filter((x) => x.tittel || x.tekst);
   if ((hva !== "slides" && !plan.length) && (hva !== "plan" && !slides.length)) throw feil("Fikk ikke noe brukbart materiale fra KI denne gangen. Prøv igjen.", 502);
-  return json({ tittel: kort(r.tittel, 200), plan, slides, kommentar: kort(r.kommentar, 600) }, 200, h);
+  return json({ tittel: kort(r.tittel, 200), plan, slides, kommentar: kort(r.kommentar, 600), vedlegg: vedleggTekst(vi, r) }, 200, h);
 }
 
 async function kvisslag(request, env, b, h) {
@@ -226,10 +266,9 @@ async function kvisslag(request, env, b, h) {
   const niva = ["lett", "middels", "vanskelig", "blandet"].includes(b.vanskelighet) ? b.vanskelighet : "blandet";
   const ut = (Array.isArray(b.undertemaer) ? b.undertemaer.slice(0, 20) : []).filter((x) => x && typeof x.id === "string")
     .map((x) => ({ id: kort(x.id, 80), tittel: kort(x.tittel, 120) }));
-  const vedlegg = lesVedlegg(b.vedlegg);
-  if (b.vedlegg && !vedlegg) return json({ feil: "Vedlegget må være et bilde (JPEG, PNG, WebP) eller en PDF på under 4 MB." }, 400, h);
+  const vi = vedleggInfo(b), vedlegg = vi.vedlegg;
   const melding = `Tema: ${kort(b.tema, 120)}\nUndertemaer (id | tittel):\n${ut.map((x) => `${x.id} | ${x.tittel}`).join("\n") || "(hele temaet)"}\n` +
-    `Antall spørsmål: ${antall}\nVanskelighet: ${niva}\n\nUnderviserens egne oppgaver:\n${kort(b.grunnlag, 8000) || (vedlegg ? "(se vedlegget)" : "(ingen – lag egne)")}`;
+    `Antall spørsmål: ${antall}\nVanskelighet: ${niva}\n\nUnderviserens egne oppgaver:\n${kort(b.grunnlag, 8000) || (vedlegg ? "(se vedlegget)" : "(ingen – lag egne)")}` + vi.ber;
   const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_KVISS.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000, vedlegg));
   const gyldigeUt = new Set(ut.map((x) => x.id));
   const tall = (v) => (Number.isFinite(+v) ? +v : null);
@@ -247,10 +286,26 @@ async function kvisslag(request, env, b, h) {
       : { ...felles, riktig: kort(x.riktig, 200) };
   }).filter((x) => x.tekst && (x.variabler || x.riktig) && x.feil.length >= 2);
   if (!sp.length) throw feil("Fikk ingen brukbare spørsmål fra KI denne gangen. Prøv igjen.", 502);
-  return json({ sporsmal: sp }, 200, h);
+  return json({ sporsmal: sp, vedlegg: vedleggTekst(vi, r) }, 200, h);
 }
 
 // Vedlegg fra underviseren: bilde eller PDF (som data-URL). Lagres ikke.
+// Vedlegg til KI: leses det ikke (feil type, for stort), lager vi likevel et forslag, men sier tydelig fra om det.
+// Returnerer { vedlegg, merknad, ber }: ber = tekst som legges til meldingen, så KI selv sier hva den fant i vedlegget.
+function vedleggInfo(b) {
+  const navn = kort(b.filnavn, 120) || "vedlegget";
+  const ulest = (Array.isArray(b.ulest) ? b.ulest : []).slice(0, 5).map((x) => kort(x, 200)).filter(Boolean);
+  const vedlegg = lesVedlegg(b.vedlegg);
+  if (b.vedlegg && !vedlegg) ulest.push(`«${navn}» (må være en PDF eller et bilde på under 4 MB)`);
+  const merknad = ulest.length ? `Ikke lest: ${ulest.join("; ")}. Forslaget er laget uten ${ulest.length > 1 ? "disse filene" : "denne filen"}.` : "";
+  const ber = vedlegg ? `\n\nVEDLEGG: «${navn}». Ta med feltet "vedlegg" i JSON-svaret: én eller to korte setninger om hva du fant i vedlegget og brukte, eller at du ikke klarte å lese det (helt eller delvis).` : "";
+  return { vedlegg, merknad, ber };
+}
+function vedleggTekst(v, r) {
+  const sagt = r && typeof r.vedlegg === "string" ? kort(r.vedlegg, 400) : "";
+  return [v.vedlegg ? (sagt ? `Vedlegget: ${sagt}` : "Vedlegget ble sendt med, men KI sa ikke hva den brukte fra det.") : "", v.merknad].filter(Boolean).join(" ");
+}
+
 function lesVedlegg(d) {
   const m = /^data:(image\/(?:jpeg|png|webp)|application\/pdf);base64,([A-Za-z0-9+/=]+)$/.exec(String(d || ""));
   if (!m || m[2].length > 5.5e6) return null;
@@ -276,33 +331,44 @@ async function fagforslag(request, env, b, h) {
   const katalog = (Array.isArray(b.katalog) ? b.katalog.slice(0, 400) : [])
     .filter((x) => x && typeof x.id === "string" && /^[a-z0-9-]+\/[a-z0-9-]+\/[a-z0-9-]+$/.test(x.id))
     .map((x) => ({ id: x.id, tittel: kort(x.tittel, 120) }));
-  if (!katalog.length) return json({ feil: "Fant ingen temaer å bygge faget av." }, 400, h);
-  const vedlegg = lesVedlegg(b.vedlegg);
-  if (b.vedlegg && !vedlegg) return json({ feil: "Filen må være et bilde (JPEG, PNG, WebP) eller en PDF på under 4 MB." }, 400, h);
+  if (!katalog.length) return json({ feil: "Fant ingen temaer å bygge kurset av." }, 400, h);
+  const vi = vedleggInfo(b), vedlegg = vi.vedlegg;
   const ramme = b.ramme || {};
   const uker = Math.max(1, Math.min(40, parseInt(ramme.uker, 10) || 14));
   const form = { forelesninger: "forelesninger", omvendt: "omvendt klasserom", ingen: "ingen faste samlinger" }[ramme.form] || "forelesninger";
-  const melding = `Fagets navn: ${kort(b.navn, 120)}\nRamme: ${uker} uker, ${form}` + (ramme.samlinger ? `, ${parseInt(ramme.samlinger, 10) || 0} samlinger à ${parseInt(ramme.lengde, 10) || 90} min per uke` : "") +
+  const melding = `Kursets navn: ${kort(b.navn, 120)}\nRamme: ${uker} uker, ${form}` + (ramme.samlinger ? `, ${parseInt(ramme.samlinger, 10) || 0} samlinger à ${parseInt(ramme.lengde, 10) || 90} min per uke` : "") +
     ({ forkurs: "\nNivå: forkurs", ingenior: "\nNivå: ingeniør", fordypning: "\nNivå: fordypning" }[ramme.niva] || "") +
     `\n\nEmnebeskrivelse:\n${kort(b.emnebeskrivelse, 8000) || "(ingen)"}\n\nLæringsutbytte:\n${kort(b.laringsutbytte, 3000) || "(ingen)"}\n\nKATALOG (id | tittel):\n` +
     katalog.map((x) => `${x.id} | ${x.tittel}`).join("\n") +
     (b.onske ? `\n\nØNSKER FRA UNDERVISEREN:\n${kort(b.onske, 8000)}` : "") + (vedlegg ? "\n\nUnderviserens tidligere plan er vedlagt." : "") +
-    (Array.isArray(b.navarende) && b.navarende.length ? `\n\nNÅVÆRENDE OPPSETT:\n${kort(JSON.stringify(b.navarende), 12000)}` : "");
-  const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_FAG.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000, vedlegg));
-  if (!r || !Array.isArray(r.moduler)) throw feil("Fikk ikke noe forslag fra KI denne gangen. Prøv igjen.", 502);
+    (Array.isArray(b.navarende) && b.navarende.length ? `\n\nNÅVÆRENDE OPPSETT:\n${kort(JSON.stringify(b.navarende), 12000)}` : "") + vi.ber;
+  // Svaret skal være JSON. Kommer det noe annet (prosa, avkuttet JSON), prøver vi én gang til med en tydeligere beskjed.
+  const sys = SYSTEM_FAG.replace("NETTSTED", NETTSTEDNAVN(request));
+  const fenv = { ...env, MODELL: env.MODELL_FAG || env.MODELL };
+  let raa = await spor(fenv, sys, melding, 16000, vedlegg);
+  let r = lesJson(raa);
+  if (!r || !Array.isArray(r.moduler)) {
+    console.log("fagforslag: uleselig svar, prøver igjen:", (raa || "").slice(0, 500));
+    raa = await spor(fenv, sys, melding + "\n\nVIKTIG: Svar KUN med ett gyldig JSON-objekt etter formatet over, uten tekst før eller etter. Hold notatene korte.", 16000, vedlegg);
+    r = lesJson(raa);
+  }
+  if (!r || !Array.isArray(r.moduler)) {
+    console.log("fagforslag: uleselig svar igjen:", (raa || "").slice(0, 500));
+    throw feil("Fikk ikke noe forslag fra KI denne gangen. Prøv igjen, eller lim inn planen som tekst under «Ønsker» i stedet for å laste opp en fil.", 502);
+  }
   // Rydd: bare kjente id-er, høyst så mange uker som rammen sier.
   const gyldig = new Set(katalog.map((x) => x.id));
   let igjen = uker;
-  const moduler = r.moduler.slice(0, 12).map((m) => {
+  const moduler = r.moduler.slice(0, 16).map((m) => {
     const u = (Array.isArray(m && m.uker) ? m.uker : []).slice(0, Math.max(0, igjen)).map((x) => ({
-      undertemaer: (Array.isArray(x && x.undertemaer) ? x.undertemaer : []).filter((id) => gyldig.has(id)).slice(0, 4),
+      undertemaer: (Array.isArray(x && x.undertemaer) ? x.undertemaer : []).filter((id) => gyldig.has(id)).slice(0, 8),
       notat: kort(x && x.notat, 200),
     }));
     igjen -= u.length;
     return { navn: kort(m && m.navn, 60) || "Modul", uker: u };
   }).filter((m) => m.uker.length);
   if (!moduler.length) throw feil("Forslaget fra KI kunne ikke brukes. Prøv igjen, eller bygg selv.", 502);
-  return json({ moduler, kommentar: kort(r.kommentar, 600) }, 200, h);
+  return json({ moduler, kommentar: kort(r.kommentar, 600), vedlegg: vedleggTekst(vi, r) }, 200, h);
 }
 
 function cors(origin) {
@@ -337,6 +403,7 @@ export default {
       if (sti.endsWith("/fagforslag")) return await fagforslag(request, env, b, h);
       if (sti.endsWith("/kvisslag")) return await kvisslag(request, env, b, h);
       if (sti.endsWith("/materiale")) return await materiale(request, env, b, h);
+      if (sti.endsWith("/salen")) return await salen(request, env, b, h);
       if (sti.endsWith("/dashman")) return await dashman(request, env, b, h);
       return await hint(request, env, b, h);
     } catch (e) {
@@ -431,8 +498,28 @@ async function rad(request, env, b, h) {
 // ---------------------------------------------------------------- Dashman
 const HUMOR = ["noytral", "glad", "ler", "irritert", "trist", "tenker"];
 const NIVATEKST = { forkurs: "Forkurs", ingenior: "Ingeniør", fordypning: "Fordypning" };
-const FASETEKST = ["0 – av (faglæreren har slått Dashman av i faget)", "1 – forkunnskaper og oppstart", "2 – øving og mengdetrening",
+const FASETEKST = ["0 – av (faglæreren har slått Dashman av i kurset)", "1 – forkunnskaper og oppstart", "2 – øving og mengdetrening",
   "3 – formativ vurdering (arbeidskrav og mappe)", "4 – sluttfase og selvstendighet"];
+
+function isoUke(d) {
+  const t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())), dag = t.getUTCDay() || 7;
+  t.setUTCDate(t.getUTCDate() + 4 - dag);
+  return Math.ceil(((t - new Date(Date.UTC(t.getUTCFullYear(), 0, 1))) / 864e5 + 1) / 7);
+}
+// Uka i kursets plan som gjelder nå (startuke i rammen + løpende uker gjennom modulene). Etter siste uke: siste uke.
+function denneUka(ki) {
+  const start = parseInt(ki.ramme && ki.ramme.startuke, 10);
+  if (!start) return null;
+  const naa = isoUke(new Date()), nr = ((naa - start + 52) % 52) + 1;
+  const alle = [];
+  for (const m of ki.moduler) for (const w of (m && Array.isArray(m.uker) ? m.uker : [])) alle.push({ m, w });
+  if (!alle.length) return null;
+  const etter = nr > alle.length;
+  const x = alle[Math.min(nr, alle.length) - 1];
+  const fase = x.w.fase === 0 || (x.w.fase >= 1 && x.w.fase <= 4) ? x.w.fase : undefined;
+  return { nr: Math.min(nr, alle.length) + (etter ? " (planen er ferdig; repetisjon og eksamen)" : ""), kal: naa, modul: x.m.navn || "",
+    tema: (x.w.undertemaer || []).map((id) => String(id).split("/").slice(1).join("/")).join(", "), notat: x.w.notat || "", fase: etter ? undefined : fase };
+}
 
 async function supabaseRpc(env, token, fn, args) {
   const r = await fetch(`${env.SUPABASE_URL}/rest/v1/rpc/${fn}`, {
@@ -463,12 +550,24 @@ async function dashman(request, env, b, h) {
   while (meldinger.length && meldinger[0].role !== "user") meldinger.shift();
   if (!meldinger.length || meldinger[meldinger.length - 1].role !== "user") return json({ feil: "Skriv noe til Dashman først." }, 400, h);
 
+  if (await erUnderviser(request, env)) return await dashmanUnderviser(request, env, b, h, meldinger);
   let k = {};
   try { k = (await supabaseRpc(env, token, "dashman_kontekst")) || {}; } catch { k = {}; }
   const fag = Array.isArray(k.fag) ? k.fag : [];
   const aktivt = fag[0];   // nyeste påmelding
+  // Ukeplanen i kurset: hvilken uke det er nå, hva den dekker, og om faglæreren har satt en egen Dashman-fase for uka.
+  let uka = null;
+  if (aktivt) {
+    try {
+      const r = await fetch(`${env.SUPABASE_URL}/rest/v1/kurs_deltaker?select=pameldt,kursinfo:kurs(navn,moduler,ramme)&order=pameldt.desc&limit=1`,
+        { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` } });
+      const ki = r.ok ? ((await r.json())[0] || {}).kursinfo : null;
+      if (ki && Array.isArray(ki.moduler)) uka = denneUka(ki);
+    } catch {}
+    if (uka && uka.fase !== undefined) aktivt.fase = uka.fase;
+  }
   if (aktivt && aktivt.fase === 0) {
-    return json({ svar: `Jeg har pause i faget «${kort(aktivt.navn, 80)}» nå, etter avtale med faglæreren din. Spør gjerne faglæreren, eller les lærestoffet på siden.`, humor: "trist" }, 200, h);
+    return json({ svar: `Jeg har pause i kurset «${kort(aktivt.navn, 80)}» nå, etter avtale med faglæreren din. Spør gjerne faglæreren, eller les lærestoffet på siden.`, humor: "trist" }, 200, h);
   }
   const side = b.side || {};
   const linjer = [
@@ -479,9 +578,10 @@ async function dashman(request, env, b, h) {
     ...((Array.isArray(k.kunnskap) ? k.kunnskap : []).slice(0, 40).map((x) =>
       `- ${kort(x.tema, 60)} / ${kort(x.undertema, 60)}: forståelse ${x.forstaelse ?? "–"}, presisjon ${x.presisjon ?? "–"}, ${parseInt(x.svar, 10) || 0} svar, sist ${kort(x.sist, 10)}`)),
     ...(k.kunnskap && k.kunnskap.length ? [] : ["- (ingen quizsvar ennå)"]),
-    aktivt ? `Fag studenten er påmeldt: «${kort(aktivt.navn, 120)}». Dashman-fase: ${FASETEKST[aktivt.fase] || FASETEKST[2]}.` : "Ikke påmeldt noe fag: bruk LRI-prinsippene fritt.",
-    ...(aktivt && aktivt.instruks ? [`Faglærerens instrukser for faget (går foran instruksen over, men ikke foran de faste grensene):\n${kort(aktivt.instruks, 2000)}`] : []),
-    ...(aktivt && aktivt.beskrivelse ? [`Om faget: ${kort(aktivt.beskrivelse, 600)}`] : []),
+    aktivt ? `Kurs studenten er påmeldt: «${kort(aktivt.navn, 120)}». Dashman-fase for klassen nå: ${FASETEKST[aktivt.fase] ?? FASETEKST[2]}${uka && uka.fase !== undefined ? " (satt for denne uka)" : ""}. Tilpass den til denne studenten (se «Fasen i kurset»).` : "Ikke påmeldt noe kurs: bruk LRI-prinsippene fritt.",
+    ...(uka ? [`Ukeplanen: uke ${uka.nr} i kurset (kalenderuke ${uka.kal}), modul «${kort(uka.modul, 60)}»: ${uka.tema || "ingen temaer satt"}${uka.notat ? ` – ${kort(uka.notat, 200)}` : ""}.`] : []),
+    ...(aktivt && aktivt.instruks ? [`Faglærerens instrukser for kurset (går foran instruksen over, men ikke foran de faste grensene):\n${kort(aktivt.instruks, 2000)}`] : []),
+    ...(aktivt && aktivt.beskrivelse ? [`Om kurset: ${kort(aktivt.beskrivelse, 600)}`] : []),
     `Siden studenten står på nå: «${kort(side.tittel, 150)}» (${kort(side.url, 200)})`,
     ...(b.oppgave && b.oppgave.oppgave ? [
       "Studenten kom fra hint-knappen på en oppgave og vil jobbe videre med den sammen med deg:",
@@ -502,6 +602,45 @@ async function dashman(request, env, b, h) {
   const notat = r && typeof r.notat === "string" ? r.notat.trim() : "";
   if (notat && notat !== k.notat) { try { await supabaseRpc(env, token, "sett_dashman_notat", { t: kort(notat, 800) }); } catch {} }
   return json({ svar, humor }, 200, h);
+}
+
+// Dashman for undervisere (dashman-underviser.md): hjelpsom kollega som gir hele svar. Står underviseren i kursbyggeren,
+// får Dashman kurset og katalogen, og kan sende tilbake et nytt oppsett ("moduler", "ramme") som kursbyggeren tar i bruk.
+async function dashmanUnderviser(request, env, b, h, meldinger) {
+  const side = b.side || {}, fag = b.fag && typeof b.fag === "object" ? b.fag : null;
+  const katalog = fag && Array.isArray(fag.katalog) ? fag.katalog.slice(0, 400).filter((x) => x && typeof x.id === "string").map((x) => ({ id: x.id, tittel: kort(x.tittel, 120) })) : [];
+  const linjer = [
+    `Siden underviseren står på nå: «${kort(side.tittel, 150)}» (${kort(side.url, 200)})`,
+    ...(side.tekst && !fag ? [`Utdrag av siden:\n${kort(side.tekst, 3000)}`] : []),
+    ...(fag ? [`KURSET i kursbyggeren:\n${kort(JSON.stringify({ navn: fag.navn, ramme: fag.ramme, moduler: fag.moduler }), 20000)}`,
+      `KATALOG (id | tittel):\n${katalog.map((x) => `${x.id} | ${x.tittel}`).join("\n")}`] : ["Underviseren står ikke i kursbyggeren nå, så du kan ikke endre et kurs. Vil underviseren endre et kurs: be hen åpne kurset i kursbyggeren og spørre derfra."]),
+  ];
+  const system = DASHMAN_UNDERVISER.replaceAll("NETTSTED", NETTSTEDNAVN(request)) + "\n\n## Det du vet nå\n\n" + linjer.join("\n");
+  const modell = (fag && env.MODELL_FAG) || env.MODELL_DASHMAN || env.MODELL;
+  const raa = await sporSamtale({ ...env, MODELL: modell }, system, meldinger, fag ? 12000 : 2500);
+  const r = lesJson(raa);
+  const svar = kort(r && typeof r.svar === "string" ? r.svar : raa, 6000).trim();
+  if (!svar) throw feil("Dashman fikk ikke sagt noe denne gangen. Prøv igjen.", 502);
+  const ut = { svar, humor: HUMOR.includes(r && r.humor) ? r.humor : "noytral" };
+  if (fag && r && Array.isArray(r.moduler) && r.moduler.length) {
+    const gyldig = new Set(katalog.map((x) => x.id));
+    ut.moduler = r.moduler.slice(0, 20).map((m) => ({
+      ...(m && typeof m.id === "string" ? { id: kort(m.id, 40) } : {}),
+      navn: kort(m && m.navn, 60) || "Modul",
+      uker: (Array.isArray(m && m.uker) ? m.uker : []).slice(0, 40).map((w) => ({
+        ...(w && typeof w.id === "string" ? { id: kort(w.id, 40) } : {}),
+        undertemaer: (Array.isArray(w && w.undertemaer) ? w.undertemaer : []).filter((id) => gyldig.has(id)).slice(0, 10),
+        notat: kort(w && w.notat, 200),
+      })),
+    }));
+    if (r.ramme && typeof r.ramme === "object") {
+      const rm = {};
+      if (parseInt(r.ramme.uker, 10) > 0) rm.uker = Math.min(52, parseInt(r.ramme.uker, 10));
+      if (parseInt(r.ramme.startuke, 10) > 0) rm.startuke = Math.min(53, parseInt(r.ramme.startuke, 10));
+      if (Object.keys(rm).length) ut.ramme = rm;
+    }
+  }
+  return json(ut, 200, h);
 }
 
 function lesBilde(d) {
@@ -553,7 +692,7 @@ async function dekning(request, env, b, h) {
       .map((s) => ({ url: s.url, tittel: s.tittel, kapittel: s.kapittel })),
   }));
   if (!temaer.length) throw feil("Fant ingen faglige temaer i emnebeskrivelsen.", 422);
-  // Uten innlogging: svar på om faget dekkes, men ikke hvilke sider (veikartet) – det er for registrerte brukere.
+  // Uten innlogging: svar på om emnet dekkes, men ikke hvilke sider (veikartet) – det er for registrerte brukere.
   if (!bruker) temaer.forEach((t) => { t.antallSider = t.sider.length; t.sider = []; });
   return json({ emnekode: kort(r.emnekode, 30), emnenavn: kort(r.emnenavn, 150), kilde, temaer, oppsummering: kort(r.oppsummering, 800), innlogget: !!bruker }, 200, h);
 }
@@ -607,9 +746,12 @@ async function hentInnhold(side) {
 
 function lesJson(s) {
   if (!s) return null;
+  s = s.replace(/```(?:json)?/gi, "");
   const a = s.indexOf("{"), z = s.lastIndexOf("}");
   if (a < 0 || z <= a) return null;
-  try { return JSON.parse(s.slice(a, z + 1)); } catch { return null; }
+  const t = s.slice(a, z + 1);
+  try { return JSON.parse(t); } catch {}
+  try { return JSON.parse(t.replace(/,\s*([}\]])/g, "$1")); } catch { return null; }   // komma før } eller ]
 }
 
 // ---------------------------------------------------------------- felles

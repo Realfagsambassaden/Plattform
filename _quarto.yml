@@ -60,11 +60,8 @@ website:
           - href: larer/index.qmd
             text: "For lærere: design din forelesning"
     right:
-      - href: https://realfagsambassaden.no/doner.html
-        text: "<span class='doner-knapp'>Donér materiale</span>"
-        aria-label: "Donér undervisningsmateriale til Realfagsambassaden"
       - href: dekning.qmd
-        text: Dekker vi faget ditt?
+        text: Dekker vi emnet ditt?
       - href: konto/index.qmd
         text: Logg inn
       - href: https://realfagsambassaden.no
@@ -387,7 +384,7 @@ format:
           <meta name="nettsted-navn" content="fysikkhjelp.no">
           <!-- Appen (installerbar nettapp): manifest, ikon og farge. Tjenestearbeideren (sw.js) registreres i assets/js/konto.js. -->
           <link rel="manifest" href="/manifest.webmanifest">
-          <meta name="theme-color" content="#0d1110">
+          <meta name="theme-color" content="#24272a">
           <link rel="apple-touch-icon" href="/assets/img/app/apple-touch-icon.png">
           <meta name="apple-mobile-web-app-capable" content="yes">
           <meta name="mobile-web-app-capable" content="yes">

@@ -1,22 +1,64 @@
 {
   "name": "Fysikkhjelp – studieappen",
   "short_name": "Fysikkhjelp",
-  "description": "Fag, løype, quizer og kunnskapsprofil fra fysikkhjelp.no.",
+  "description": "Dagens quiz, arbeidskrav, skann løsningen din og spør Dashman. Fra fysikkhjelp.no.",
   "lang": "nb",
   "start_url": "/studie/index.html?kilde=app",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#0d1110",
-  "theme_color": "#0d1110",
+  "background_color": "#24272a",
+  "theme_color": "#24272a",
   "icons": [
-    { "src": "/assets/img/app/ikon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/assets/img/app/ikon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/assets/img/app/ikon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "/assets/img/app/ikon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/img/app/ikon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/img/app/ikon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
   "shortcuts": [
-    { "name": "Løypa mi", "url": "/studie/index.html#hjem", "icons": [{ "src": "/assets/img/app/ikon-192.png", "sizes": "192x192" }] },
-    { "name": "Fag", "url": "/studie/index.html#fag", "icons": [{ "src": "/assets/img/app/ikon-192.png", "sizes": "192x192" }] },
-    { "name": "Min side", "url": "/konto/index.html", "icons": [{ "src": "/assets/img/app/ikon-192.png", "sizes": "192x192" }] }
+    {
+      "name": "Skann svar",
+      "url": "/studie/index.html#skann",
+      "icons": [
+        {
+          "src": "/assets/img/app/ikon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Spør Dashman",
+      "url": "/studie/index.html#dashman",
+      "icons": [
+        {
+          "src": "/assets/img/app/ikon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Løypa mi",
+      "url": "/studie/index.html#hjem",
+      "icons": [
+        {
+          "src": "/assets/img/app/ikon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }
