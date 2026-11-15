@@ -55,7 +55,7 @@ toc: false
 .studie .st-formel { display: block; text-align: center; margin: .45rem 0; font-size: 1.08em; }
 .studie .st-alt { display: block; width: 100%; text-align: left; background: rgba(127,127,127,.06); border: 2px solid var(--bs-border-color); border-radius: 10px; color: inherit; padding: .6rem .8rem; margin: .45rem 0; }
 .studie .st-alt:hover:not(:disabled) { border-color: var(--bs-primary); }
-.studie .st-alt.ok { border-color: var(--bs-success, #6ef04a); }
+.studie .st-alt.ok { border-color: var(--bs-success, #8fcf86); }
 .studie .st-alt.nei { border-color: var(--bs-danger); }
 .studie .st-mrk { display: inline-block; font-size: .75rem; font-weight: 700; border-radius: 20px; padding: .05rem .55rem; border: 1px solid currentColor; }
 .studie .st-mrk.lett { color: var(--bs-info); } .studie .st-mrk.middels { color: var(--bs-warning); } .studie .st-mrk.vanskelig { color: var(--bs-danger); }
@@ -102,7 +102,7 @@ toc: false
 .studie .st-eksempel { background: rgba(241,156,44,.15); border: 1px solid var(--bs-warning); border-radius: 10px; padding: .55rem .85rem; margin-bottom: .8rem; }
 .studie details.st-kort > summary { margin: 0; }
 /* kursbyggeren */
-.studie .st-pabegynt { color: #eee462; font-weight: 400; font-size: .85em; }
+.studie .st-pabegynt { color: #e6d98a; font-weight: 400; font-size: .85em; }
 .studie .st-bygg-topp { margin: .2rem 0 .8rem; }
 .studie .st-to { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; margin: .6rem 0; }
 @media (max-width: 600px) { .studie .st-to { grid-template-columns: 1fr; } }
@@ -158,7 +158,7 @@ html.fh-innebygd .studie .st-faner { display: none; }   /* i fokusvisningens arb
 .studie .st-tl-flaggikon { font-size: 1.4rem; }
 .studie .st-tl-frist { color: #ff8a8f; font-weight: 700; margin-top: .2rem; }
 @media (max-width: 900px) { .studie .st-modrad { grid-template-columns: 1fr; } .studie .st-sidenotat { position: static; } .studie .st-tl-uke { grid-template-columns: 1fr; gap: .2rem; } }
-.studie .st-pakrevd { font-size: .75rem; font-weight: 700; color: #eee462; border: 1px solid #eee462; border-radius: 999px; padding: .05rem .5rem; vertical-align: middle; }
+.studie .st-pakrevd { font-size: .75rem; font-weight: 700; color: #e6d98a; border: 1px solid #e6d98a; border-radius: 999px; padding: .05rem .5rem; vertical-align: middle; }
 .studie .st-feltsett legend { font-weight: 700; font-size: 1rem; padding: 0 .4rem; width: auto; float: none; margin: 0; }
 .studie .st-piller { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .6rem; }
 .studie .st-pille { border: 1px solid var(--bs-border-color); border-radius: 20px; padding: .25rem .8rem; }
@@ -185,8 +185,8 @@ html.fh-innebygd .studie .st-faner { display: none; }   /* i fokusvisningens arb
 .studie .st-dra:hover { opacity: 1; background: rgba(127,127,127,.15); }
 .studie .st-drar { opacity: .45; }
 .studie .st-drar .st-dra { cursor: grabbing; }
-.studie .st-dra-over > .st-modul { box-shadow: 0 -5px 0 0 #6ef04a; }
-.studie .st-dra-under > .st-modul { box-shadow: 0 5px 0 0 #6ef04a; }
+.studie .st-dra-over > .st-modul { box-shadow: 0 -5px 0 0 #8fcf86; }
+.studie .st-dra-under > .st-modul { box-shadow: 0 5px 0 0 #8fcf86; }
 .studie .st-modul header { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .8rem; padding: .6rem .9rem; border-bottom: 1px solid var(--bs-border-color); }
 .studie .st-modnr { font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .studie .st-modnavn { flex: 1 1 160px; min-width: 0; background: transparent; border: 1px solid transparent; border-radius: 6px; color: inherit; font: inherit; font-size: 1.15rem; font-weight: 700; padding: .1rem .3rem; }
@@ -272,8 +272,8 @@ html.st-uv-aktiv, html.st-uv-aktiv body { overflow: hidden; }
 .studie .uv-tidslinje, .studie .uv-side { overflow-y: auto; padding: .6rem .8rem; min-height: 0; }
 .studie .uv-tidslinje { border-right: 1px solid var(--bs-border-color); } .studie .uv-side { border-left: 1px solid var(--bs-border-color); }
 /* Delta på undervisning (student) og «Fra salen» (underviser) */
-.studie .st-lenkeknapp { background: none; border: 0; padding: 0; color: var(--bs-link-color, #6ef04a); text-decoration: underline; cursor: pointer; }
-.studie .st-delta-banner { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; justify-content: space-between; margin: 0 0 1rem; padding: .7rem 1rem; border: 2px solid #6ef04a; border-radius: 12px; background: rgba(110,240,74,.08); }
+.studie .st-lenkeknapp { background: none; border: 0; padding: 0; color: var(--bs-link-color, #8fcf86); text-decoration: underline; cursor: pointer; }
+.studie .st-delta-banner { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; justify-content: space-between; margin: 0 0 1rem; padding: .7rem 1rem; border: 2px solid #8fcf86; border-radius: 12px; background: rgba(110,240,74,.08); }
 .studie .st-delta-raske { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: .5rem; margin-top: .5rem; }
 .studie .st-delta-raske .st-btn { padding: .8rem; font-size: 1rem; }
 .studie .st-delta-mine { margin: .4rem 0 0; padding-left: 1.1rem; }
@@ -281,16 +281,16 @@ html.st-uv-aktiv, html.st-uv-aktiv body { overflow: hidden; }
 .studie .uv-salenhode { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; justify-content: space-between; margin-bottom: .4rem; }
 .studie .uv-signaler { display: flex; flex-wrap: wrap; gap: .3rem; margin: .3rem 0 .5rem; }
 .studie .uv-signal { font-size: .78rem; padding: .1rem .45rem; border-radius: 10px; border: 1px solid var(--bs-border-color); opacity: .6; }
-.studie .uv-signal.har { opacity: 1; border-color: #f19c2c; }
+.studie .uv-signal.har { opacity: 1; border-color: #e39d63; }
 .studie .uv-innspill { max-height: 34vh; overflow-y: auto; }
 .studie .uv-inn { padding: .35rem 0; border-bottom: 1px dashed var(--bs-border-color); }
 .studie .uv-inn.besvart { opacity: .5; }
-.studie .uv-salenki { margin: .4rem 0; padding: .5rem .7rem; border: 1px solid #56d7b8; border-radius: 10px; }
+.studie .uv-salenki { margin: .4rem 0; padding: .5rem .7rem; border: 1px solid #7fc3b4; border-radius: 10px; }
 .studie .uv-salenki ol { margin: .3rem 0 0; padding-left: 1.2rem; } .studie .uv-salenki li { margin-bottom: .45rem; }
-.studie .uv-grep { color: #6ef04a; font-size: .9rem; }
+.studie .uv-grep { color: #8fcf86; font-size: .9rem; }
 .studie .uv-ins { padding: .35rem 0; border-bottom: 1px dashed var(--bs-border-color); }
 .studie .uv-insbar { height: 6px; border-radius: 3px; background: rgba(241,156,44,.35); overflow: hidden; margin-bottom: .15rem; }
-.studie .uv-insbar span { display: block; height: 100%; background: #6ef04a; }
+.studie .uv-insbar span { display: block; height: 100%; background: #8fcf86; }
 .studie .uv-mod { font-weight: 700; margin: .9rem 0 .2rem; } .studie .uv-mod:first-child { margin-top: .2rem; }
 .studie .uv-uke { margin: .5rem 0 .2rem; } .studie .uv-uke.naa { border-left: 3px solid var(--bs-warning); padding-left: .4rem; }
 .studie .uv-naa { font-size: .75rem; font-weight: 700; color: var(--bs-warning); }
@@ -320,7 +320,7 @@ html.st-uv-aktiv, html.st-uv-aktiv body { overflow: hidden; }
 .studie .uv-slide { position: relative; }
 .studie .uv-pennlinje { position: absolute; right: .6rem; bottom: .6rem; z-index: 5; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .35rem; align-items: center; max-width: calc(100% - 1.2rem); }
 .studie .uv-pennlinje button { background: rgba(20, 23, 28, .85); border: 1px solid #3a4048; color: #eef0f2; border-radius: 8px; padding: .3rem .7rem; font: 600 .9rem system-ui, sans-serif; }
-.studie .uv-pennlinje button.tp-pa { background: #6ef04a; border-color: #6ef04a; color: #111; }
+.studie .uv-pennlinje button.tp-pa { background: #8fcf86; border-color: #8fcf86; color: #111; }
 .studie .uv-pennlinje .tp-verktoy { border-right: 0; padding: .2rem .3rem; background: rgba(20, 23, 28, .85); border-radius: 8px; }
 .studie .uv-pennlinje .tp-farge { background: var(--f); width: 1.6rem; height: 1.6rem; padding: 0; border-radius: 50%; border: 2px solid #14171c; }
 .studie .uv-pennlinje .tp-farge.valgt, .studie .uv-pennlinje .tp-egen.valgt { outline: 2px solid #eef0f2; outline-offset: 1px; }

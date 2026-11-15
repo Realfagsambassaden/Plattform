@@ -10,7 +10,7 @@ window.Tavlepenn = function (scene, flate, lagringsnokkel) {
   var bg = getComputedStyle(scene).backgroundColor.match(/\d+/g) || [0, 0, 0];
   var lys = (0.299 * bg[0] + 0.587 * bg[1] + 0.114 * bg[2]) / 255 > 0.5;
   var FARGER = lys ? [['Svart', '#1c2320'], ['Grønn', '#1c8a2c'], ['Gul', '#776600'], ['Oransje', '#b05f08'], ['Turkis', '#0b7b6b']]
-                   : [['Hvit', '#ecefe6'], ['Grønn', '#6ef04a'], ['Gul', '#eee462'], ['Oransje', '#f19c2c'], ['Turkis', '#56d7b8']];
+                   : [['Hvit', '#eceeea'], ['Grønn', '#8fcf86'], ['Gul', '#e6d98a'], ['Oransje', '#e39d63'], ['Turkis', '#7fc3b4']];
   var lerret = document.createElement('canvas'); lerret.className = 'tp-lerret';
   var tavle = document.createElement('div'); tavle.className = 'tp-tavle'; tavle.hidden = true;
   tavle.innerHTML = '<span class="tp-tavlenavn">Tavle</span>';

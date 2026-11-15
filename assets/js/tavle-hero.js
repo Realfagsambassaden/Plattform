@@ -3,7 +3,7 @@
   var cv = document.getElementById('tavle-hero');
   if (!cv) return;
   var c = cv.getContext('2d');
-  var C = { chalk: '#ecefe6', neon: '#6ef04a', orange: '#f19c2c', cyan: '#56d7b8', yellow: '#eee462' };
+  var C = { chalk: '#eceeea', neon: '#8fcf86', orange: '#e39d63', cyan: '#7fc3b4', yellow: '#e6d98a' };
   function chalk(w, color) { c.lineWidth = w; c.strokeStyle = color; c.lineCap = 'round'; c.lineJoin = 'round'; c.shadowColor = color; c.shadowBlur = 2; }
   function line(x1, y1, x2, y2) {
     var n = 14; c.beginPath(); c.moveTo(x1, y1);
