@@ -208,6 +208,8 @@
     if (profil === null) hentProfil().then(function (p) { profil = p; visAlt(); }); else visAlt();
     setTimeout(function () { felt.focus(); }, 50);
   });
+  // Studieappen åpner Dashman fra bunnlinja, eventuelt med et forslag til melding i feltet.
+  window.Dashman = { apne: function (forslag) { if (panel.hidden) knapp.click(); if (forslag) { felt.value = forslag; } setTimeout(function () { felt.focus(); }, 60); } };
   panel.querySelector('.dm-skriv').addEventListener('submit', function (e) { e.preventDefault(); var t = felt.value; felt.value = ''; send(t); });
   felt.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); panel.querySelector('.dm-skriv').requestSubmit(); } });
   panel.addEventListener('click', function (e) {
