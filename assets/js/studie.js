@@ -467,8 +467,8 @@ function studieStart() {
   function isoUke(d) { var t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())), dag = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - dag); var a = new Date(Date.UTC(t.getUTCFullYear(), 0, 1)); return Math.ceil(((t - a) / 864e5 + 1) / 7); }
   var STD_RAMME = function () { return { uker: 14, form: 'forelesninger', samlinger: 2, lengde: 90, startuke: isoUke(new Date()) }; };
   // Dashman-fasene (se hint-tjener/dashman-instruks.md). Faget har én fase; hver uke kan overstyre den (w.fase).
-  var DMFASER = [[1, '1 Oppstart', 'Kartlegger forkunnskaper og tetter hull. Mye støtte.', '#56d7b8'], [2, '2 Øving', 'Læringspartner i øvingene. Støtten trappes ned etter hvert.', '#6ef04a'],
-    [3, '3 Arbeidskrav', 'Innleveringsuker: tilbakemelding på forståelse og utkast, aldri på selve besvarelsen.', '#eee462'], [4, '4 Selvstendig', 'Repetisjon og eksamen: åpne, sammensatte problemer, nesten ingen hint.', '#f19c2c'], [0, 'Av', 'Dashman har pause (f.eks. under en prøve).', '#9a9a9a']];
+  var DMFASER = [[1, '1 Oppstart', 'Kartlegger forkunnskaper og tetter hull. Mye støtte.', '#7fc3b4'], [2, '2 Øving', 'Læringspartner i øvingene. Støtten trappes ned etter hvert.', '#8fcf86'],
+    [3, '3 Arbeidskrav', 'Innleveringsuker: tilbakemelding på forståelse og utkast, aldri på selve besvarelsen.', '#e6d98a'], [4, '4 Selvstendig', 'Repetisjon og eksamen: åpne, sammensatte problemer, nesten ingen hint.', '#e39d63'], [0, 'Av', 'Dashman har pause (f.eks. under en prøve).', '#9a9a9a']];
   var dmFase = function (n) { return DMFASER.find(function (x) { return x[0] === +n; }); };
   var STD_ELEM = { moduler: true, arbeidskrav: true, samlinger: true, tidslinje: true };
   var utNavn = function (id) { var p = id.split('/'), t = K[p[1]]; return t ? (t.undertemaer[p[2]] || p[2]) : p[2]; };
@@ -687,11 +687,11 @@ function studieStart() {
     u.moduler = u.moduler.map(function (m) { var w = m.uker.slice(0, Math.max(0, igjen)); igjen -= w.length; return Object.assign({}, m, { uker: w }); }).filter(function (m) { return m.uker.length; });
     planlagreFag(); varsle('Ukene etter uke ' + u.ramme.uker + ' er fjernet.'); tegn();
   }
-  var MODFARGE = ['var(--st-f)', 'var(--st-p)', '#eee462', 'var(--st-h)', '#c792ea', '#ff8a8f'];
+  var MODFARGE = ['var(--st-f)', 'var(--st-p)', '#e6d98a', 'var(--st-h)', '#c792ea', '#ff8a8f'];
   function byggerHtml() {
     var f = T.fag, u = f.u, c = f.c, r = u.ramme, el = u.elementer;
     medId(u.moduler);
-    var topp = '<div class="st-rad st-bygg-topp"><span class="st-sm">' + (c.status === 'publisert' ? '<b class="st-ord f">Publisert</b> · studentene kan melde seg på med koden ' + esc(c.kode) + ' og ser opplegget' : '<b style="color:#eee462">Påbegynt</b> · studentene finner ikke faget før du publiserer det') + '</span>' +
+    var topp = '<div class="st-rad st-bygg-topp"><span class="st-sm">' + (c.status === 'publisert' ? '<b class="st-ord f">Publisert</b> · studentene kan melde seg på med koden ' + esc(c.kode) + ' og ser opplegget' : '<b style="color:#e6d98a">Påbegynt</b> · studentene finner ikke faget før du publiserer det') + '</span>' +
       '<span class="' + (f.lagreFeil ? 'st-feil' : 'st-sm') + '" id="st-lagret">' + (f.lagreFeil ? 'Ikke lagret!' : f.lagret ? 'Lagret ' + f.lagret.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit' }) : 'Lagres automatisk') + '</span></div>';
     if (f.steg === 'start') {
       var radio = function (v, navn) { return '<label class="st-valg st-pille"><input type="radio" name="st-form" value="' + v + '"' + (r.form === v ? ' checked' : '') + '> ' + navn + '</label>'; };

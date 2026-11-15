@@ -1,19 +1,20 @@
 /*-- scss:defaults --*/
-// Tavla: mørk skifer med krittfarger fra Dr. Normanns tegninger.
+// Tavla: antrasitt tavle med svake formler i kritt (assets/img/tavle-formler.webp) og dempede krittfarger.
 // Fargene er !default, så et nettsted kan bytte dem i sin egen tema-fil (se matematikkhjelp/matte.scss).
-$slate:   #0d1110 !default;
-$slate-2: #151b19 !default;
-$line:    #2a3330 !default;
-$chalk:   #ecefe6 !default;
-$dust:    #9aa49e !default;
-$neon:    #6ef04a !default;
-$orange:  #f19c2c !default;
-$cyan:    #56d7b8 !default;
-$yellow:  #eee462 !default;
+$slate:   #24272a !default;
+$slate-2: #2c3033 !default;
+$line:    #3f4448 !default;
+$chalk:   #eceeea !default;
+$dust:    #a3a9ad !default;
+$neon:    #8fcf86 !default;
+$orange:  #e39d63 !default;
+$cyan:    #7fc3b4 !default;
+$yellow:  #e6d98a !default;
 $rosa:    #ff8a8f !default;   // feilmeldinger
 $eksempel: $yellow !default; // eksempler: gult, som «EKSEMPEL» i videoene
 $on-neon: #0b130a !default;   // tekst på knapper i hovedfargen
 $modus:   dark !default;      // dark eller light (lys modus settes i assets/lys.scss)
+$tavle-bilde: "/assets/img/tavle-formler.webp" !default;   // krittformler i bakgrunnen; none for blank tavle
 
 $web-font-path: "https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800;900&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&family=Architects+Daughter&family=Comic+Neue:ital,wght@0,400;0,700;1,400&display=swap";
 $font-family-sans-serif: "Comic Neue", "Comic Sans MS", "Chalkboard SE", "Nunito Sans", system-ui, sans-serif;
@@ -50,7 +51,8 @@ $input-color: $chalk;
 
 /*-- scss:rules --*/
 :root { color-scheme: $modus; }
-body { background: $slate; }
+body { background-color: $slate; }
+@if $modus == dark and $tavle-bilde != none { body { background-image: url($tavle-bilde); background-size: 800px auto; background-repeat: repeat; } }
 h1, h2, h3, h4 { text-wrap: balance; color: $chalk; }
 // Overskrifter på innholdssidene er oransje, som titlene på tavla i videoene.
 #title-block-header h1.title, main section.level2 > h2, main section.level3 > h3, main section.level4 > h4 { color: $orange; }
@@ -340,8 +342,12 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 @keyframes dm-rist { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
 @keyframes dm-vugg { 50% { transform: rotate(-3deg); } }
 @media (prefers-reduced-motion: reduce) { .dm-holder .dm-bilde { animation: none !important; } }
-.dm-boble { position: relative; flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; max-height: min(72vh, 640px); padding: .8rem .9rem .6rem; border: 2px solid $neon; border-radius: 18px; background: mix($neon, $slate, 9%); color: $chalk; box-shadow: 0 10px 40px rgba(0, 0, 0, .45); }
-.dm-boble::before { content: ""; position: absolute; left: -14px; bottom: 70px; border: 12px solid transparent; border-right-color: $neon; border-left: 0; }
+.dm-boble { position: relative; isolation: isolate; flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; max-height: min(72vh, 640px); padding: 1.4rem 1.6rem 1.1rem; color: $chalk; filter: drop-shadow(0 10px 30px rgba(0, 0, 0, .45)); }
+// Boblen er en håndtegnet krittstrek (svg i dashman.js), ikke en firkant
+.dm-kontur { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.dm-kontur path { fill: $slate-2; stroke: $neon; stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.dm-kontur path.dm-kontur-2 { fill: none; stroke-opacity: .35; stroke-width: 1.1; }
+.dm-kontur.smal { display: none; }
 .dm-topp { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .4rem; }
 .dm-topp b { color: $neon; font-family: "Architects Daughter", cursive; font-size: 1.25rem; }
 .dm-verktoy { display: flex; gap: .3rem; }
@@ -370,7 +376,7 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
   .dm-panel { left: .5rem; bottom: .5rem; width: calc(100vw - 1rem); flex-direction: column; align-items: flex-start; }
   .dm-scene { --dm-skala: .5; min-width: 0; min-height: 0; margin: 0 0 -.2rem .6rem; order: -1; }
   .dm-boble { width: 100%; max-height: 70vh; }
-  .dm-boble::before { left: 32px; top: -14px; bottom: auto; border: 12px solid transparent; border-bottom-color: $neon; border-top: 0; }
+  .dm-kontur.bred { display: none; } .dm-kontur.smal { display: block; }
 }
 @media print { .dm-knapp, .dm-panel { display: none !important; } }
 
@@ -393,7 +399,7 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 .profil-ikonknapp { position: absolute; right: -26px; bottom: -22px; padding: 0; border: 0; background: none; cursor: pointer; }
 .profil-ikonknapp .profil-ikon { position: static; display: block; transition: transform .2s; }
 .profil-ikonknapp:hover .profil-ikon, .profil-ikonknapp[aria-expanded="true"] .profil-ikon { transform: rotate(4deg) scale(1.08); }
-.profil-ikonknapp::after { content: "Fag"; position: absolute; left: 50%; top: -10px; transform: translateX(-50%); font-size: .7rem; padding: 0 .35rem; border-radius: 8px; background: #6ef04a; color: #0d1110; font-weight: 700; }
+.profil-ikonknapp::after { content: "Fag"; position: absolute; left: 50%; top: -10px; transform: translateX(-50%); font-size: .7rem; padding: 0 .35rem; border-radius: 8px; background: $neon; color: $slate; font-weight: 700; }
 .profil-fag { margin-top: .8rem; padding: .7rem 1rem; border: 1px solid $line; border-radius: 10px; }
 .profil-fag ul { margin: .3rem 0 0; padding-left: 1.1rem; }
 .profil-rolle { color: $neon; font-family: "Architects Daughter", cursive; margin: 0 0 .6rem; }
@@ -776,3 +782,18 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
   .tk img { height: 70px; }
   .tk-navn { font-size: 1rem; }
 }
+
+// ---------- forside: sentrert tekst med Dashman på begge sider (index.qmd på fysikkhjelp.no) ----------
+.hero.sentrert { justify-items: center; text-align: center; }
+.hero.sentrert .hero-tekst { max-width: 640px; margin: 0 auto; }
+.hero.sentrert .hero-tekst::before { inset: -3rem -5rem; background: radial-gradient(ellipse at 50% 50%, rgba($slate, .9) 35%, rgba($slate, 0) 72%); }
+.hero.sentrert .lead { margin-inline: auto; max-width: 40ch; }
+.hero.sentrert .niva-knapper { justify-content: center; }
+.hero.sentrert .hero-scene { left: -6rem; right: -6rem; width: auto; top: -2.5rem; }
+.hero.sentrert .hero-scene img { -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent); mask-image: linear-gradient(to bottom, #000 78%, transparent); }
+.hero-dashman-v { position: absolute; z-index: 0; left: 2%; top: 22%; height: clamp(220px, 24vw, 340px); width: auto; filter: drop-shadow(0 0 7px rgba(255, 255, 255, .35)); transform: rotate(-4deg); pointer-events: none; }
+@media (max-width: 860px) {
+  .hero.sentrert { padding-top: 9rem; }
+  .hero-dashman-v { height: 150px; top: .5rem; left: .5rem; }
+}
+@media (min-width: 861px) and (max-width: 1200px) { .hero-dashman-v { height: 190px; top: 30%; left: 0; } }

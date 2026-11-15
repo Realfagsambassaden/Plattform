@@ -37,6 +37,13 @@
   panel.innerHTML =
     '<div class="dm-scene"><div class="dm-holder"></div></div>' +
     '<div class="dm-boble">' +
+      // Krittstrek rundt boblen: hale mot venstre (bred skjerm) eller opp mot Dashman (smal skjerm)
+      '<svg class="dm-kontur bred" viewBox="0 0 600 300" preserveAspectRatio="none" aria-hidden="true">' +
+        '<path d="M70 14 C 200 2, 420 6, 548 18 C 596 26, 598 92, 594 160 C 590 236, 570 284, 470 288 C 340 296, 180 294, 92 284 C 60 280, 44 262, 40 236 L 2 252 L 30 204 C 18 150, 14 80, 24 46 C 32 22, 48 16, 70 14 Z"/>' +
+        '<path class="dm-kontur-2" d="M74 20 C 210 9, 410 12, 544 24 C 588 34, 590 96, 588 160 C 584 230, 566 278, 470 282"/></svg>' +
+      '<svg class="dm-kontur smal" viewBox="0 0 600 300" preserveAspectRatio="none" aria-hidden="true">' +
+        '<path d="M40 30 L 52 2 L 96 22 C 220 10, 430 8, 552 20 C 596 28, 598 92, 594 160 C 590 236, 570 284, 470 288 C 340 296, 180 294, 92 284 C 40 278, 20 250, 16 200 C 10 140, 8 70, 40 30 Z"/>' +
+        '<path class="dm-kontur-2" d="M100 28 C 222 16, 428 14, 548 26 C 588 36, 590 96, 588 160"/></svg>' +
       '<div class="dm-topp"><b>Dashman</b><span class="dm-verktoy">' +
         '<button type="button" data-h="husker" title="Hva Dashman husker om deg">Hva husker du?</button>' +
         '<button type="button" data-h="ny" title="Start en ny samtale">Ny samtale</button>' +
