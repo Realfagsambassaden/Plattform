@@ -49,7 +49,7 @@ anchor-sections: false
             <g class="viser"><path d="M0 -6V-34"/><circle cy="-34" r="4"/></g>
           </svg>
         </button>
-        <p class="bryter-hint">Skru meg!</p>
+        <p class="bryter-navn">NIVÅ</p>
       </div>
     </div>
   </div>

@@ -47,19 +47,27 @@
 
     var bar = document.createElement('nav'); bar.className = 'loype-linje'; bar.setAttribute('aria-label', 'Tema, nivå og navigasjon');
     var h = '';
-    // Nivåknappen: viser nivået, og lar deg bytte til samme undertema på et annet nivå
+    // Nivåbryteren: en liten skrubryter som viser nivået. Hold musa over (eller trykk) for å se de tre nivåene,
+    // Forkurs til venstre, Ingeniør opp og Fordypning til høyre. Bare nivåer der dette temaet finnes, kan velges.
     if (info && info.niva) {
-      var tv = info.tvillinger || [];
       var nvId = function (n) { return { 'Forkurs': 'forkurs', 'Ingeniør': 'ingenior', 'Fordypning': 'fordypning' }[n] || ''; };
-      if (tv.length) {
-        h += '<details class="niva-knapp" data-nv="' + nvId(info.niva) + '"><summary><span>Nivå: ' + esc(info.niva) + ' ▾</span></summary><div class="niva-meny">' +
-             '<span class="nm-tittel">Samme tema på et annet nivå</span>' +
-             '<span class="nm-her" data-nv="' + nvId(info.niva) + '"><b>' + esc(info.niva) + '</b> · denne siden</span>' +
-             tv.map(function (t) { return '<a href="' + t.url + '" data-nv="' + nvId(t.niva) + '" title="' + esc(t.tittel) + '"><b>' + esc(t.niva || 'Annet') + '</b> · ' + esc(t.kilde) + '</a>'; }).join('') +
-             '</div></details>';
-      } else {
-        h += '<span class="niva-knapp alene" data-nv="' + nvId(info.niva) + '"><span>Nivå: ' + esc(info.niva) + '</span></span>';
-      }
+      var hn = nvId(info.niva), tv = info.tvillinger || [], NIVA = [['forkurs', 'Forkurs'], ['ingenior', 'Ingeniør'], ['fordypning', 'Fordypning']];
+      var knott = function (kl) {
+        return '<svg class="' + kl + '" viewBox="-70 -70 140 140" aria-hidden="true">' +
+          '<path class="nb-merke" data-nv="forkurs" d="M-62 0h-12"/><path class="nb-merke" data-nv="ingenior" d="M0 -62v-12"/><path class="nb-merke" data-nv="fordypning" d="M62 0h12"/>' +
+          '<circle r="54" class="nb-ring"/><path class="nb-riller" d="M0 -54v8M27 -46.8l-4 6.9M46.8 -27l-6.9 4M54 0h-8M46.8 27l-6.9 -4M27 46.8l-4 -6.9M0 54v-8M-27 46.8l4 -6.9M-46.8 27l6.9 -4M-54 0h8M-46.8 -27l6.9 4M-27 -46.8l4 6.9"/>' +
+          '<circle r="38" class="nb-topp"/>' +
+          '<g class="nb-viser"><path d="M0 -6V-36"/><circle cy="-36" r="5"/></g></svg>';
+      };
+      var valg = NIVA.map(function (n) {
+        if (n[0] === hn) return '<span class="nb-valg her" data-niva="' + n[0] + '" data-nv="' + n[0] + '" aria-current="page" title="Du er her">' + n[1] + '</span>';
+        var t = tv.filter(function (x) { return nvId(x.niva) === n[0]; })[0];
+        return t ? '<a class="nb-valg" href="' + t.url + '" data-niva="' + n[0] + '" data-nv="' + n[0] + '" title="' + esc(t.tittel + ' (' + t.kilde + ')') + '">' + n[1] + '</a>'
+                 : '<span class="nb-valg mangler" data-niva="' + n[0] + '" data-nv="' + n[0] + '" title="Dette temaet finnes ikke på nivået ' + n[1] + ' ennå">' + n[1] + '</span>';
+      }).join('');
+      h += '<span class="niva-bryter" data-pos="' + hn + '" data-nv="' + hn + '">' +
+           '<button type="button" class="nb-knapp" aria-expanded="false" aria-label="Nivå: ' + esc(info.niva) + '. Bytt nivå">' + knott('nb-liten') + '<span class="nb-navn">' + esc(info.niva) + '</span></button>' +
+           '<span class="nb-panel" role="group" aria-label="Velg nivå">' + valg + knott('nb-stor') + '<span class="nb-tittel">NIVÅ</span></span></span>';
     }
     if (info) h += '<span class="ll-tema"><span class="ll-merke">Tema</span><a href="' + info.temaUrl + '">' + esc(info.omrade) + ' › ' + esc(info.tema) + '</a>' +
                    (info.undertema ? ' › <a href="' + info.undertemaUrl + '">' + esc(info.undertema) + '</a>' : '') + '</span>';
@@ -77,6 +85,32 @@
            '<button type="button" data-bla="tema"' + (modus === 'tema' ? ' class="paa"' : '') + '>Tema</button></span>';
     }
     bar.innerHTML = h;
+    var nb = bar.querySelector('.niva-bryter');
+    if (nb) {
+      // Krittfilteret (samme som på forsiden) legges inn én gang hvis siden ikke har det
+      if (!document.getElementById('kritt')) {
+        var f = document.createElement('div'); f.setAttribute('aria-hidden', 'true'); f.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+        f.innerHTML = '<svg width="0" height="0"><filter id="kritt" x="-5%" y="-15%" width="110%" height="130%">' +
+          '<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="4" result="ujevn"/>' +
+          '<feDisplacementMap in="SourceGraphic" in2="ujevn" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="kant"/>' +
+          '<feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="1" seed="9" result="korn"/>' +
+          '<feColorMatrix in="korn" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.6 1.55" result="hull"/>' +
+          '<feComposite in="kant" in2="hull" operator="in"/></filter></svg>';
+        document.body.appendChild(f);
+      }
+      var nk = nb.querySelector('.nb-knapp');
+      nk.addEventListener('click', function () { var a = !nb.classList.contains('apen'); nb.classList.toggle('apen', a); nk.setAttribute('aria-expanded', String(a)); });
+      document.addEventListener('click', function (e) { if (!nb.contains(e.target)) { nb.classList.remove('apen'); nk.setAttribute('aria-expanded', 'false'); } });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') nb.classList.remove('apen'); });
+      // Skru viseren til det nye nivået før siden byttes
+      nb.querySelectorAll('a.nb-valg').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+          e.preventDefault(); nb.dataset.pos = a.dataset.niva;
+          setTimeout(function () { location.href = a.href; }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 450);
+        });
+      });
+    }
     bar.querySelectorAll('[data-bla]').forEach(function (b) { b.addEventListener('click', function () { lagre('bla', b.getAttribute('data-bla')); location.reload(); }); });
     var hode = main.querySelector('#title-block-header');
     if (hode) hode.parentNode.insertBefore(bar, hode); else main.insertBefore(bar, main.firstChild);
