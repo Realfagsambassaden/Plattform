@@ -24,7 +24,7 @@ anchor-sections: false
   <div class="hero-scene">
     <img src="assets/img/tegninger/hero-dashman.webp" alt="Dashman får en aha-opplevelse, med F = ma og E = mc² tegnet i kritt rundt seg på en tavle full av formler">
   </div>
-  <a class="soster" href="https://matematikkhjelp.no"><span>Søstersiden vår</span><img src="assets/img/mh-logo-linje.png" alt="matematikkhjelp.no"></a>
+  <div class="soster"><span>Våre søstersider</span><a href="https://matematikkhjelp.no"><img src="assets/img/mh-logo-linje.png" alt="matematikkhjelp.no"></a><span class="snart" title="Kommer snart">kjemihjelp.no</span><span class="snart" title="Kommer snart">biologihjelp.no</span></div>
 </section>
 
 <div class="nivaer" id="nivaer">
