@@ -199,6 +199,7 @@ function start() {
         knapp.onclick = function () { sd.hidden = !sd.hidden; knapp.textContent = sd.hidden ? 'Vis studentvisning' : 'Skjul studentvisning'; knapp.setAttribute('aria-expanded', String(!sd.hidden)); };
       } else sd.hidden = false;
       rot.querySelector('.profil-blivunderviser').hidden = underviser;
+      var du = rot.querySelector('.profil-dashman-underviser'); if (du) du.hidden = !underviser;
       rot.querySelector('.profil-admin').hidden = rolle !== 'admin';
       if (underviser) k.from('kurs').select('id,navn,kode,status').eq('eier', sesjon.user.id).order('opprettet').then(function (r2) {
         var l = (r2 && r2.data) || [], el = rot.querySelector('.profil-fagliste');
