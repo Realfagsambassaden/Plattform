@@ -126,6 +126,7 @@ Klassene `.sporsmal` og `.definisjon` settes av `verktoy/fag.py` ut fra tittelen
 - Skriv eget stoff. Ikke kopier tekst, figurer eller oppgaver fra lærebøker. Åpent lisensiert stoff (f.eks. OpenStax, CC BY) kan bearbeides med kildehenvisning.
 - Ingen personopplysninger i de offentlige repoene.
 - **Bilder av studentløsninger** sendes bare til KI og lagres ikke. Eneste unntak (besluttet 16. nov. 2026): Er KI usikker på om bildet er studentens egen håndskrevne løsning, spør appen om bildet kan lagres for gjennomsyn av en lærer og for å gjøre Dashman bedre. Sier studenten nei, godkjennes ikke svaret. Ser KI at bildet ikke er håndskrevet (skjermdump, utskrift, tekst fra en KI-chat), godkjennes det ikke. Lagrede bilder slettes når administratoren har behandlet dem (tabellen `gjennomsyn`).
+- **Skjermbilder i tilbakemeldinger** (besluttet 16. nov. 2026): Tilbakemeldingsknappen kan ta med et skjermbilde. Brukeren må godkjenne lagringen for *hver* melding med bilde, og får vite at meldingen da ikke knyttes til profilen. En melding med bilde lagres uten bruker (`tilbakemeldinger.bruker = null`), bildet skaleres om i nettleseren (metadata fjernes), og det slettes når meldingen settes til «fikset».
 
 ## 5. Video
 
