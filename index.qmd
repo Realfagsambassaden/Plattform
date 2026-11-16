@@ -54,6 +54,12 @@ anchor-sections: false
     </div>
   </div>
   <img class="hero-dashman-v" src="assets/img/dashman/glad.webp" alt="">
+  <a class="app-knapp" href="studie/index.html?app=1">
+    <span class="app-last" aria-hidden="true">Last ned
+      <svg viewBox="0 0 60 50"><path d="M8 6 C 22 6, 40 14, 44 38"/><path d="M34 32 L 44 40 L 50 28"/></svg>
+    </span>
+    <span class="app-navn">📱 StudieApp</span>
+  </a>
   <div class="hero-scene">
     <img src="assets/img/tegninger/hero-dashman.webp" alt="Dashman får en aha-opplevelse, med F = ma og E = mc² tegnet i kritt rundt seg på en tavle full av formler">
   </div>

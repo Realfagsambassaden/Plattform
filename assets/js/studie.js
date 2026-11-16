@@ -1623,7 +1623,7 @@ function studieStart() {
         return '<div class="st-fb' + (g.status === 'avvist' ? ' n' : '') + '"><b>Bildet ditt (' + esc(g.kilde) + ') er ' + (g.status === 'godkjent' ? 'godkjent' : 'ikke godkjent') + ' av en lærer.</b>' +
           (g.kommentar ? '<p>' + esc(g.kommentar) + '</p>' : '') + (g.status === 'avvist' && /^Arbeidskrav/.test(g.kilde) ? '<p class="st-sm">Forsøket teller derfor ikke. Ta arbeidskravet på nytt, med håndskrevne bilder.</p>' : '') + '</div>';
       }).join('');
-      o += '<div class="st-hilsen"><span class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</span><span class="st-sm">' + esc(dato.charAt(0).toUpperCase() + dato.slice(1)) + '</span></div>' + gjsHtml + appKort();
+      o += '<div class="st-hilsen"><span class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</span><span class="st-sm">' + esc(dato.charAt(0).toUpperCase() + dato.slice(1)) + '</span></div>' + gjsHtml + (T.visApp ? appVeiledning() : appKort());
       if (!v.length) o += '<div class="st-dkort g"><span class="st-merke">Kom i gang</span><b class="st-dtittel">Velg hva du skal studere</b><span class="st-sm">Velg temaer, så får du en løype med én uke per tema og en liten quiz hver dag.</span><div><button type="button" class="st-btn" data-h="ga" data-v="innstillinger">Velg temaer</button></div></div>';
       else {
         var dag = T.inn.modus === 'dag', ferdig = dag && iDag(t) >= PER_DAG;
@@ -1952,6 +1952,22 @@ function studieStart() {
       '<span class="st-sm">Samsung Internett: menyen ☰, så «Legg til side på» → «Startskjerm».</span></div>' +
       '</div><p class="st-sm">Appen dukker opp som et ikon på hjemskjermen og åpnes i fullskjerm. Den er gratis og trenger ingen appbutikk.</p></details>';
   }
+  // Kom fra «StudieApp»-knappen på forsiden (?app=1): veiledningen står åpen øverst, også for innloggede og på PC.
+  function tegnAppQr() {
+    var el = document.getElementById('st-app-qr'); if (!el || el.firstChild) return;
+    var lag = function () { el.innerHTML = qrSvg(location.origin + '/studie/index.html?app=1'); };
+    if (window.qrcode) return lag();
+    var sc = document.createElement('script'); sc.src = '../assets/js/qrcode.js'; sc.onload = lag; document.head.appendChild(sc);
+  }
+  function appVeiledning() {
+    var a = window.fhApp || {};
+    if (a.installert || matchMedia('(display-mode: standalone)').matches || navigator.standalone) return '<div class="st-kort st-appkort"><b>📱 Du bruker allerede appen.</b></div>';
+    var mobil = /iphone|ipad|ipod|android|mobile/i.test(navigator.userAgent || '') || navigator.maxTouchPoints > 1;
+    return '<div class="st-kort st-appkort"><div class="st-rad"><b>📱 Få StudieAppen på telefonen eller nettbrettet</b><button type="button" class="st-lenke st-sm" data-h="skjulAppVeiledning">Lukk</button></div>' +
+      (a.kanInstallere ? '<p><button type="button" class="st-btn" data-h="installer">Installer appen</button></p>' : '') +
+      (mobil ? '' : '<p class="st-sm">Du er på en PC. Åpne <b>fysikkhjelp.no/studie</b> på telefonen eller nettbrettet (eller skann QR-koden under), og følg stegene der.</p><div class="st-qr-kode" id="st-app-qr" style="max-width:180px"></div>') +
+      hjemskjermHjelp(true) + '</div>' + (mobil ? '' : (setTimeout(tegnAppQr, 0), ''));
+  }
   function appKort() {
     var a = window.fhApp || {}, ua = navigator.userAgent || '';
     var ios = /iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && navigator.maxTouchPoints > 1), mobil = ios || /android|mobile/i.test(ua);
@@ -2256,6 +2272,7 @@ function studieStart() {
       skannNy: function () { var sk = T.skann || {}; T.skann = { valgt: sk.valgt, fri: sk.fri, oppgave: sk.oppgave }; tegn(); },
       skannAnnen: function () { var b = (T.skann || {}).bilde; T.skann = { bilde: b }; tegn(); },
       skannFri: function () { T.skann = { fri: true }; tegn(); },
+      skjulAppVeiledning: function () { T.visApp = false; history.replaceState(null, '', location.pathname + location.hash); tegn(); },
       qrStart: qrStart,
       qrStopp: function () { qrStopp(); T.skann = {}; tegn(); },
       velgOppg: function () { var b = (T.skann || {}).bilde; T.skann = { valgt: (T.oppg || []).filter(function (o) { return o.id === d.id; })[0] || null, bilde: b }; tegn(); rot.scrollIntoView(); },
@@ -2534,6 +2551,7 @@ function studieStart() {
     var lenkekode = (new URLSearchParams(location.search).get('kode') || '').trim().toUpperCase().slice(0, 12);
     try { if (lenkekode) localStorage.setItem('fh-paamelding', lenkekode); else lenkekode = localStorage.getItem('fh-paamelding') || ''; } catch (e) {}
     T.lenkekode = lenkekode;
+    T.visApp = new URLSearchParams(location.search).get('app') === '1';
     if (!sesjon) {
       rot.innerHTML = '<div class="st-kort st-viktig"><b>Logg inn for å bruke studieappen</b><p>Med en gratis konto får du en løype gjennom temaene, ukentlige quizer tilpasset nivået ditt og en kunnskapsprofil. Samme konto gjelder på alle nettstedene til Realfagsambassaden.</p>' +
         (lenkekode ? '<p><b>Du er på vei inn i et kurs (kode ' + esc(lenkekode) + ').</b> Lag en bruker eller logg inn, så kommer du rett til påmeldingen.</p>' : '') +
@@ -2567,6 +2585,7 @@ function studieStart() {
       else if (/^#skann=/.test(location.hash)) { T.vis = 'skann'; T.skann = { velg: decodeURIComponent(location.hash.slice(7)) }; history.replaceState(null, '', location.pathname); tegn(); }
       else if (/^#(hjem|skann|profil|innstillinger)$/.test(location.hash)) { T.vis = location.hash.slice(1); tegn(); }
       else if (location.hash === '#dashman') { tegn(); setTimeout(function () { apneDashman(); }, 400); }
+      else if (T.visApp) { T.vis = 'idag'; tegn(); }
       else tegn();
       if (T.ny && !T.eksempel) lagreInn();
       if (T.lenkekode && !T.eksempel) {

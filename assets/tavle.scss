@@ -903,3 +903,15 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
   .bryter-dm.o { display: none; }
   .kritt-tittel .k2 { transform: rotate(-4deg) translateX(.4em); }
 }
+
+// «StudieApp»-knappen på forsiden, med «Last ned» og pil i kritt over (studie/index.html?app=1 viser hvordan appen installeres)
+.app-knapp { position: absolute; z-index: 3; left: 3%; bottom: 6.5rem; display: flex; flex-direction: column; align-items: flex-start; text-decoration: none !important; }
+.app-knapp .app-navn { padding: .6rem 1.2rem; border: 2.5px solid $yellow; border-radius: 10px; background: rgba($slate, .85); color: $yellow; font-family: "Kritt", "Architects Daughter", cursive; font-weight: 700; font-size: 1.35rem; box-shadow: 0 0 18px rgba($yellow, .25); transition: transform .2s, background .2s, color .2s; }
+.app-knapp:hover .app-navn { background: $yellow; color: $slate; transform: rotate(-2deg) scale(1.05); }
+.app-knapp .app-last { position: relative; margin: 0 0 .1rem 1.6rem; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; font-size: 1.45rem; -webkit-text-stroke: .5px $chalk; text-shadow: 0 0 8px rgba($chalk, .4); transform: rotate(-6deg); filter: var(--kritt-filter); }
+.app-knapp .app-last svg { position: absolute; left: 100%; top: .3rem; width: 48px; height: 40px; overflow: visible; }
+.app-knapp .app-last svg path { fill: none; stroke: $chalk; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 860px) {
+  .app-knapp { position: static; align-items: center; margin: 1.6rem auto 0; }
+  .app-knapp .app-last { margin-left: 0; }
+}
