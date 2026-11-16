@@ -83,7 +83,7 @@ function studieStart() {
   // Undertemasider finnes bare når det er stoff om dem (se verktoy/tema.py). FINNES lages fra loyper.json:
   // adressen til undertemasiden → sidene om undertemaet ({ url, tittel }).
   var FINNES = null;
-  var LOYPER = [];   // løyper med ukeplan (kilde: utvalg i Plattform/loyper), til «Bygg etter løype»
+  var LOYPER = [], ALLE_LOYPER = [];   // løyper med ukeplan (kilde: utvalg i Plattform/loyper), til «Bygg etter løype»
   var temaUrl = function (t, u) {
     var sti = '/tema/' + S[t].omrade + '/' + t + (u ? '/' + u : '') + '.html';
     return u && FINNES && !FINNES[sti] ? null : '..' + sti;
@@ -124,6 +124,7 @@ function studieStart() {
       k.from('ovelser').select('*').order('opprettet').then(sjekk).catch(function () { return []; }),
       k.from('studie_quiz').select('*').eq('eier', bruker.id).then(sjekk).catch(function () { return []; }),
       k.from('profiler').select('navn').eq('id', bruker.id).maybeSingle().then(function (r) { T.navn = ((r && r.data && r.data.navn) || '').trim(); }, function () {}),
+      k.rpc('apne_kurs').then(function (r) { T.apne = (r && r.data) || []; }, function () { T.apne = []; }),
     ]).then(function (r) {
       T.ovelser = r[5] || []; T.quizer = r[6] || [];
       T.inn = r[0] || { valgt: [], modus: 'alle', repetisjon: true, varsler: true, niva: {} };
@@ -816,6 +817,8 @@ function studieStart() {
     o += '<button type="button" class="st-nymodul" data-h="nyModul">+ Ny modul</button></div></div>';
     o += '<div class="st-bygg-bunn">' + (c.status === 'publisert' ? '<p class="st-sm">Kurset er publisert. Endringer lagres og vises for studentene med en gang. Løypa oppdateres når du trykker «Publiser» på nytt.</p><button type="button" class="st-btn g" data-h="publiser">Oppdater løypa</button>'
       : '<button type="button" class="st-btn" data-h="publiser">Publiser for studentene</button><p class="st-sm">Til da er kurset et utkast, og studentene finner det ikke med koden.</p>') + '</div>';
+    o += '<div class="st-kort"><label class="st-valg"><input type="checkbox" data-h="apenKursValg"' + (c.apen ? ' checked' : '') + (c.status === 'publisert' ? '' : ' disabled') + '> <b>Åpent kurs</b>: vises i lista over åpne kurs i studieappen, og alle kan melde seg på uten kode</label>' +
+      (c.status === 'publisert' ? '' : '<p class="st-sm">Publiser kurset først.</p>') + '</div>';
     o += '<p><button type="button" class="st-btn g liten" data-h="slettKurs" data-id="' + c.id + '">' + (T.slett === c.id ? 'Bekreft: slett kurset for godt' : 'Slett kurset') + '</button></p>';
     if (f.matRed) o += matRedigerer();
     return o;
@@ -1489,7 +1492,7 @@ function studieStart() {
       rad('rute', 'Løypa mi', 'Ukene og temaene dine', 'hjem') +
       rad('bok', 'Les og øv', 'Lærestoff, videoer og oppgaver', '', '../index.html') +
       rad('graf', 'Kunnskapsprofil', 'Forståelse, presisjon og hurtighet', 'profil') +
-      rad('kurs', 'Kursene mine', 'Bli med i et kurs og se arbeidskravene', 'kurs') +
+      rad('kurs', 'Kurs og løyper', 'Åpne kurs, løyper og kursene du er med i', 'kurs') +
       rad('bruker', 'Min side', '', '', '../konto/index.html') +
       rad('tannhjul', 'Innstillinger', 'Temaer, quiz og påminnelser', 'innstillinger') +
       '<button type="button" class="st-mrad" data-h="tilbakemelding"><span class="st-mikon">' + ikon('prat') + '</span><span class="st-mtekst">Gi tilbakemelding<span class="st-sm">Fant du en feil? Har du et forslag?</span></span>' + ikon('pil', 18) + '</button></nav>';
@@ -1752,6 +1755,19 @@ function studieStart() {
           (tm.length && !folger ? '<p><button type="button" class="st-btn liten" data-h="brukLoype" data-id="' + d.kurs + '">Bruk kursets løype (' + tm.length + ' temaer)</button></p>' : '') +
           ovelseListe(d.kurs) + studentFagTillegg(d) + '</div>';
       }).join('') : '<p class="st-ind">Du er ikke med i noe kurs.</p>';
+      // Åpne kurs (underviseren har krysset av for «Åpent kurs») og løypene på nettstedet
+      var apne = (T.apne || []).filter(function (c) { return !T.deltar.some(function (x) { return x.kurs === c.id; }); });
+      o += '<h3 id="st-apne-kurs">Åpne kurs</h3>' + (apne.length ? apne.map(function (c) {
+        return '<div class="st-kort"><div class="st-rad"><b>' + esc(c.navn) + '</b><button type="button" class="st-btn liten" data-h="apentKurs" data-id="' + c.id + '">Meld på</button></div>' +
+          (c.underviser ? '<span class="st-sm">Faglærer: ' + esc(c.underviser) + (c.temaer ? ' · ' + c.temaer + ' temaer' : '') + '</span>' : '') +
+          (c.beskrivelse ? '<p>' + esc(c.beskrivelse) + '</p>' : '') + (c.krev_innsyn ? '<span class="st-sm">Faglærer får innsyn i kunnskapsprofilen din (du må godta ved påmelding).</span>' : '') + '</div>';
+      }).join('') : '<p class="st-ind">Ingen åpne kurs akkurat nå' + ((T.apne || []).length ? ' som du ikke allerede er med i' : '') + '. Har du fått en kode fra faglæreren, bruk den under.</p>');
+      if (ALLE_LOYPER.length) o += '<h3>Løyper</h3><p class="st-sm">Ferdige løyper gjennom lærestoffet, f.eks. for et emne. Du trenger ikke melde deg på: åpne løypa og les i den rekkefølgen den foreslår.</p>' +
+        ALLE_LOYPER.map(function (L) {
+          return '<div class="st-kort"><div class="st-rad"><b>' + esc(L.tittel) + '</b><a class="st-btn g liten" href="..' + esc(L.url) + '">Åpne løypa</a></div>' +
+            ((L.emnekode || L.institusjon) ? '<span class="st-sm">' + esc([L.emnekode, L.institusjon].filter(Boolean).join(' · ')) + ' · ' + L.sider.length + ' sider</span>' : '<span class="st-sm">' + L.sider.length + ' sider</span>') +
+            (L.beskrivelse ? '<p class="st-sm">' + esc(String(L.beskrivelse).slice(0, 240)) + '</p>' : '') + '</div>';
+        }).join('');
       o += '<div class="st-kort"><label class="st-sm" for="st-kode">Meld deg på med koden fra faglæreren</label><div class="st-rad"><input id="st-kode" maxlength="12" placeholder="F.eks. K7Q2MX" autocomplete="off"><button type="button" class="st-btn" data-h="finnKurs">Finn kurs</button></div></div>';
       if (!erUnderviser() && !T.eksempel) o += '<p class="st-sm">Underviser? Be administratoren om en underviserkode, og legg den inn på <a href="../konto/index.html">Min side</a>.</p>';
       return o;
@@ -2203,6 +2219,8 @@ function studieStart() {
           .catch(function (e) { varsle('Fikk ikke lagret: ' + feilmelding(e), true); });
       },
       finnKurs: finnKurs, meldPa: meldPa, lagKurs: lagKurs,
+      apentKurs: function () { var c = (T.apne || []).find(function (x) { return x.id === d.id; }); if (c) ga('pamelding', { kurs: c }); },
+      apenKursValg: function () { var f = T.fag, v = !f.c.apen; k.from('kurs').update({ apen: v }).eq('id', f.c.id).then(sjekk).then(function () { f.c.apen = v; varsle(v ? 'Kurset er nå åpent og vises under «Åpne kurs».' : 'Kurset er ikke lenger åpent. Studentene trenger koden.'); tegn(); }).catch(function (e) { varsle(feilmelding(e), true); }); },
       kiOppsett: function () { if (d.v === 'ja') T.fag.bekreftKi = true; kiOppsett(); }, byggSelv: byggSelv, publiser: publiserFag, kuttUker: kuttUker,
       avbrytKi: function () { T.fag.bekreftKi = false; tegn(); },
       kiEndre: function () { kiOppsett(true); }, angreKi: angreKi,
@@ -2425,7 +2443,8 @@ function studieStart() {
     fetch('../loyper.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }).then(function (d) {
       if (!d || !d.sider) return;   // uten oversikten lenker vi til alle undertemaer
       var titler = {}; (d.temarekke || []).forEach(function (x) { titler[x.url] = x.tittel; });
-      LOYPER = (d.loyper || []).filter(function (x) { return x.uker && x.uker.length; });
+      ALLE_LOYPER = d.loyper || [];
+      LOYPER = ALLE_LOYPER.filter(function (x) { return x.uker && x.uker.length; });
       FINNES = {}; Object.keys(d.sider).forEach(function (k) { var u = d.sider[k].undertemaUrl; if (u) (FINNES[u] = FINNES[u] || []).push({ url: '..' + k, tittel: titler[k] || '', niva: d.sider[k].niva || '' }); });
     }),
     window.fhKonto(),
@@ -2464,6 +2483,7 @@ function studieStart() {
       if (uv && erUnderviser() && !T.eksempel && apneUndervis(decodeURIComponent(uv[1]), uv[2] ? decodeURIComponent(uv[2]) : '')) return;
       var m = /^#fag-([^@]+)(?:@(.+))?$/.exec(location.hash);
       if (m && !T.eksempel && T.mine.some(function (c) { return c.id === m[1]; })) { T.vis = 'kurs'; apneKurs(m[1]); if (m[2]) T.fag.apneMat = decodeURIComponent(m[2]); }
+      else if (location.hash === '#kurs' || location.hash === '#apne-kurs') { T.vis = 'kurs'; tegn(); setTimeout(function () { var h = document.getElementById('st-apne-kurs'); if (h) h.scrollIntoView({ block: 'start' }); }, 50); }
       else if (location.hash === '#fag' || (erUnderviser() && !T.eksempel && !location.hash)) { T.vis = 'kurs'; tegn(); }
       else if (/^#skann=/.test(location.hash)) { T.vis = 'skann'; T.skann = { velg: decodeURIComponent(location.hash.slice(7)) }; history.replaceState(null, '', location.pathname); tegn(); }
       else if (/^#(hjem|skann|profil|innstillinger)$/.test(location.hash)) { T.vis = location.hash.slice(1); tegn(); }

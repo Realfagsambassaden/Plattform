@@ -281,6 +281,7 @@ for o in omrader:
 (P / 'loyper.json').write_text(json.dumps({
     'temarekke': temarekke, 'nivanavn': NIVA_NAVN,
     'loyper': [{'id': L['id'], 'tittel': L['tittel'], 'url': html(L['oversikt']),
+                **{k: L[k] for k in ('beskrivelse', 'institusjon', 'emnekode', 'niva') if L.get(k)},
                 'sider': [{'url': html(s['qmd']), 'tittel': s['tittel']} for s in L['sider']],
                 **({'uker': L['uker']} if L.get('uker') else {})} for L in loyper],
     'sider': side_info}, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
