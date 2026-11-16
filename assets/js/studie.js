@@ -1500,6 +1500,13 @@ function studieStart() {
     if (T.vis === 'hjem') return T.loypeApen && mineLoyper().length > 1 ? 'loyper' : 'idag';
     return { uke: 'hjem', fag: 'kurs', pamelding: 'kurs', delta: 'kurs', profil: 'idag', kurs: 'idag', innstillinger: 'idag', skann: 'idag' }[T.vis] || null;
   }
+  // Hvilket fag hører dette til? (vises på kortene på I dag)
+  function fagForTema(t) {
+    var a = aktivtKurs(); if (a === 'egen') return 'Min egen løype'; if (a) return a.kursinfo.navn;
+    var d = (T.deltar || []).find(function (x) { return kursTemaer(x).indexOf(t) >= 0; });
+    return d ? d.kursinfo.navn : ((T.deltar || []).length ? 'Min egen løype' : '');
+  }
+  function fagForKrav(x) { var d = (T.deltar || []).find(function (y) { return y.kurs === x.kurs; }); return d ? d.kursinfo.navn : ''; }
   function loypeTemaer() { var a = aktivtKurs(); if (a && a !== 'egen') { var kt = kursTemaer(a); if (kt.length) return kt; } return valgt(); }
   function ukensTema() { var v = loypeTemaer(); return v.filter(function (t) { return !T.ukevurd[t]; })[0] || v[v.length - 1]; }
   function apneKrav() {
@@ -1677,18 +1684,20 @@ function studieStart() {
         return '<div class="st-fb' + (g.status === 'avvist' ? ' n' : '') + '"><b>Bildet ditt (' + esc(g.kilde) + ') er ' + (g.status === 'godkjent' ? 'godkjent' : 'ikke godkjent') + ' av en lærer.</b>' +
           (g.kommentar ? '<p>' + esc(g.kommentar) + '</p>' : '') + (g.status === 'avvist' && /^Arbeidskrav/.test(g.kilde) ? '<p class="st-sm">Forsøket teller derfor ikke. Ta arbeidskravet på nytt, med håndskrevne bilder.</p>' : '') + '</div>';
       }).join('');
-      if (ak) o += '<div class="st-kursmerke"><span>' + ikon('bok', 18) + ' <b>' + esc(ak === 'egen' ? 'Min egen løype' : ak.kursinfo.navn) + '</b></span><button type="button" class="st-btn g liten" data-h="byttKurs">Bytt fag</button></div>';
+      if (ak && flereKurs()) o += '<div class="st-kursmerke"><span>' + ikon('bok', 18) + ' <b>' + esc(ak === 'egen' ? 'Min egen løype' : ak.kursinfo.navn) + '</b></span><button type="button" class="st-btn g liten" data-h="byttKurs">Bytt fag</button></div>';
+      else if ((T.deltar || []).length === 1) o += '<div class="st-kursmerke"><span>' + ikon('bok', 18) + ' <b>' + esc(T.deltar[0].kursinfo.navn) + '</b></span></div>';
       o += '<div class="st-hilsen"><span class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</span><span class="st-sm">' + esc(dato.charAt(0).toUpperCase() + dato.slice(1)) + '</span></div>' + gjsHtml + appKort();
       if (!v.length) o += '<div class="st-dkort g"><span class="st-merke">Kom i gang</span><b class="st-dtittel">Velg hva du skal studere</b><span class="st-sm">Velg temaer, så får du en løype med én uke per tema og en liten quiz hver dag.</span><div><button type="button" class="st-btn" data-h="ga" data-v="innstillinger">Velg temaer</button></div></div>';
       else {
         var dag = T.inn.modus === 'dag', ferdig = dag && iDag(t) >= PER_DAG;
-        o += '<div class="st-dkort g"><span class="st-merke">' + (dag ? 'Dagens quiz' : 'Ukens quiz') + '</span><b class="st-dtittel">' + esc(tittel(t)) + '</b>' +
+        var ff = fagForTema(t);
+        o += '<div class="st-dkort g"><span class="st-merke">' + (dag ? 'Dagens quiz' : 'Ukens quiz') + (ff ? ' · ' + esc(ff) : '') + '</span><b class="st-dtittel">' + esc(tittel(t)) + '</b>' +
           '<span class="st-sm">' + (ferdig ? 'Dagens spørsmål er tatt. Bra!' : (dag ? PER_DAG : OKT) + ' spørsmål · nivå: ' + NIV[niva(t)]) + '</span>' +
           '<div>' + (ferdig ? '<button type="button" class="st-btn g" data-h="quizFlere" data-t="' + t + '">Ta flere likevel</button>' : '<button type="button" class="st-btn" data-h="quiz" data-t="' + t + '">Start quizen</button>') + '</div></div>';
       }
       apneKrav().slice(0, 2).forEach(function (x) {
         var beste = besteForsok(x), and = Math.min(1, beste / (x.krav || 1));
-        o += '<div class="st-dkort o"><div class="st-rad"><span class="st-merke">Arbeidskrav</span>' + (x.frist ? '<span class="st-sm st-frist">' + ikon('klokke', 16) + ' ' + esc(fristTekst(x.frist)) + '</span>' : '') + '</div>' +
+        o += '<div class="st-dkort o"><div class="st-rad"><span class="st-merke">Arbeidskrav' + (fagForKrav(x) ? ' · ' + esc(fagForKrav(x)) : '') + '</span>' + (x.frist ? '<span class="st-sm st-frist">' + ikon('klokke', 16) + ' ' + esc(fristTekst(x.frist)) + '</span>' : '') + '</div>' +
           '<b class="st-dtittel">' + esc(x.tittel) + '</b>' +
           '<div class="st-rad" style="align-items:center"><div class="st-bar" style="flex:1"><i class="h" style="width:' + Math.round(and * 100) + '%"></i></div><span class="st-sm">' + (beste ? 'beste: ' + beste + ' av ' + x.krav + ' riktige' : 'krav: ' + x.krav + ' av ' + x.antall + ' riktige') + '</span></div>' +
           '<div><button type="button" class="st-btn o" data-h="ovelse" data-id="' + x.id + '">' + (beste ? 'Prøv igjen' : 'Start') + '</button></div></div>';
