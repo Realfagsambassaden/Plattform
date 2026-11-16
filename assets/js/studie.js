@@ -1637,17 +1637,30 @@ function studieStart() {
       .then(function () { sk.venter = false; tegn(); });
   }
 
+  // Hjemskjermen med flere kurs: først «Denne uka» (gjøremål i alle fagene, arbeidskrav etter frist), så fagene du kan gå inn i.
   function kursVelger() {
-    var fornavn = (T.navn || '').split(/\s+/)[0];
+    var fornavn = (T.navn || '').split(/\s+/)[0], gjore = [];
+    var ukeTema = function (tm) { return tm.filter(function (t) { return !T.ukevurd[t]; })[0]; };
+    (T.deltar || []).forEach(function (d) {
+      var tm = kursTemaer(d), u = ukeTema(tm), navn = d.kursinfo.navn;
+      if (u) gjore.push({ frist: Infinity, html: '<button type="button" class="st-gjore" data-h="velgKurs" data-id="' + d.kurs + '"><span class="st-gjore-merke g">Quiz</span><span><b>' + esc(tittel(u)) + '</b><span class="st-sm">' + esc(navn) + ' · ukens tema</span></span>' + ikon('pil', 18) + '</button>' });
+      (T.ovelser || []).filter(function (x) { return x.kurs === d.kurs && !godkjent(x) && (!x.frist || Date.parse(x.frist) > Date.now()); }).forEach(function (x) {
+        gjore.push({ frist: Date.parse(x.frist) || Infinity - 1, html: '<button type="button" class="st-gjore" data-h="ovelse" data-id="' + x.id + '"><span class="st-gjore-merke o">Arbeidskrav</span><span><b>' + esc(x.tittel) + '</b><span class="st-sm">' + esc(navn) + (x.frist ? ' · frist ' + esc(fristTekst(x.frist)) : '') + '</span></span>' + ikon('pil', 18) + '</button>' });
+      });
+    });
+    if (valgt().length) { var ue = ukeTema(valgt()); if (ue) gjore.push({ frist: Infinity, html: '<button type="button" class="st-gjore" data-h="velgKurs" data-id="egen"><span class="st-gjore-merke">Quiz</span><span><b>' + esc(tittel(ue)) + '</b><span class="st-sm">Min egen løype</span></span>' + ikon('pil', 18) + '</button>' }); }
+    gjore.sort(function (a, b) { return a.frist - b.frist; });
     var kort = (T.deltar || []).map(function (d) {
-      var tm = kursTemaer(d), u = tm.filter(function (t) { return !T.ukevurd[t]; })[0] || tm[tm.length - 1];
+      var tm = kursTemaer(d), u = ukeTema(tm) || tm[tm.length - 1];
       var krav = (T.ovelser || []).filter(function (x) { return x.kurs === d.kurs && !godkjent(x) && (!x.frist || Date.parse(x.frist) > Date.now()); }).length;
       return '<button type="button" class="st-dkort g st-fagvalg" data-h="velgKurs" data-id="' + d.kurs + '"><span class="st-merke">Kurs</span><b class="st-dtittel">' + esc(d.kursinfo.navn) + '</b>' +
         '<span class="st-sm">' + (u ? 'Denne uka: ' + esc(tittel(u)) : 'Ingen temaer ennå') + (krav ? ' · ' + krav + ' arbeidskrav venter' : '') + '</span></button>';
     }).join('');
-    return '<div class="st-hilsen"><span class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</span><span class="st-sm">Hvilket fag vil du jobbe med?</span></div>' + appKort() + kort +
+    return '<div class="st-hilsen"><span class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</span><span class="st-sm">' + esc(new Date().toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long' })) + '</span></div>' + appKort() +
+      '<h2 class="st-h2">Denne uka</h2>' + (gjore.length ? '<div class="st-gjoreliste">' + gjore.map(function (g) { return g.html; }).join('') + '</div>' : '<p class="st-ind">Ingenting som venter denne uka. Bra!</p>') +
+      '<h2 class="st-h2">Fagene dine</h2>' + kort +
       (valgt().length ? '<button type="button" class="st-dkort st-fagvalg" data-h="velgKurs" data-id="egen"><span class="st-merke">Uten kurs</span><b class="st-dtittel">Min egen løype</b><span class="st-sm">Temaene du har valgt selv</span></button>' : '') +
-      '<p class="st-sm">Du kan bytte fag når som helst med «Bytt fag» øverst.</p>';
+      '<p class="st-sm">Gå inn i et fag for quiz, arbeidskrav og Dashman i det faget. Du kommer tilbake hit med «Bytt fag».</p>';
   }
   var SKJ = {
     idag: function () {
