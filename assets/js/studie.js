@@ -251,7 +251,7 @@ function studieStart() {
     }).filter(Boolean).map(function (x) { return [Math.random(), x]; }).sort(function (a, b) { return a[0] - b[0]; }).map(function (a) { return a[1]; }) : null;
     var n = liste ? liste.length : o.antall;
     if (!n) return varsle('Arbeidskravet har ingen spørsmål ennå.', true);
-    T.q = { tema: t, nr: 0, hoved: n, antall: n, brukt: [], res: [], hovedRes: [], rekke: 0, ovelse: o, liste: liste, ut: ut };
+    T.q = { tema: t, nr: 0, hoved: n, antall: n, brukt: [], res: [], hovedRes: [], rekke: 0, ovelse: o, liste: liste, ut: ut, forsok: nyId() };
     nesteSp(); ga('quiz');
   }
   // Lagres når quizen er ferdig. Øvingsquizer teller mot godkjenning.
@@ -260,8 +260,13 @@ function studieStart() {
     var antall = q.hovedRes.length; if (!antall) return;
     var riktige = q.hovedRes.filter(function (x) { return x === 'riktig'; }).length;
     var rad = { nettsted: NETTSTED, tema: q.tema, ovelse: q.ovelse ? q.ovelse.id : null, antall: antall, riktige: riktige };
+    if (q.gjennomsyn) rad.forsok = q.forsok;   // et bilde i forsøket venter på gjennomsyn: avvises det, slettes forsøket
     T.quizer.push(Object.assign({ fullfort: new Date().toISOString() }, rad));
-    k.from('studie_quiz').insert(rad).then(sjekk).then(function () { try { if (window.parent !== window) window.parent.postMessage({ type: 'fh-quiz', ovelse: rad.ovelse }, location.origin); } catch (e) {} })
+    k.from('studie_quiz').insert(rad).then(function (r) {
+      // Er ikke databasen oppdatert med kolonnen «forsok» ennå, lagres resultatet uten den.
+      if (r.error && rad.forsok && /forsok/.test(r.error.message || '')) { delete rad.forsok; return k.from('studie_quiz').insert(rad); }
+      return r;
+    }).then(sjekk).then(function () { try { if (window.parent !== window) window.parent.postMessage({ type: 'fh-quiz', ovelse: rad.ovelse }, location.origin); } catch (e) {} })
       .catch(function (e) { varsle('Resultatet ble ikke lagret: ' + feilmelding(e), true); });
   }
   function startQuiz(t, flere) {
@@ -271,7 +276,7 @@ function studieStart() {
     // Repetisjon bare når det finnes svar fra andre temaer å repetere.
     var kandidater = {}; T.svar.forEach(function (s) { if (s.nettsted === NETTSTED && s.tema !== t && Q.some(function (x) { return x.id === s.id; })) kandidater[s.id] = 1; });
     var rep = T.inn.repetisjon ? Math.min(dag ? 1 : REP, Object.keys(kandidater).length) : 0;
-    T.q = { tema: t, nr: 0, hoved: hoved, antall: hoved + rep, brukt: [], res: [], hovedRes: [], rekke: 0 };
+    T.q = { tema: t, nr: 0, hoved: hoved, antall: hoved + rep, brukt: [], res: [], hovedRes: [], rekke: 0, forsok: nyId() };
     nesteSp();
     ga('quiz');
   }
@@ -390,11 +395,45 @@ function studieStart() {
     q.venter = true; tegn();
     ki('/vurder', { sporsmal: { tekst: x.tekst, riktig: x.riktig, forklaring: x.forklaring }, valgt: x.alt[q.svart].svar, forklaring: tekst, bilde: q.bilde })
       .then(function (d) {
-        q.kiSvar = d; q.kiBilde = !!q.bilde; s.ki = { vurdering: d.vurdering, sikkerhet: d.sikkerhet, tilbakemelding: d.tilbakemelding, kilde: q.bilde ? 'bilde' : 'tekst' };
-        return Promise.resolve(s.lagret).then(function (id) { if (id) return k.from('studie_svar').update({ ki: s.ki }).eq('id', id).then(sjekk); });
+        // Bildet må være studentens egen håndskrevne løsning. Nei: godkjennes ikke. Usikker: spør om bildet kan lagres for gjennomsyn.
+        if (q.bilde && d.handskrift === 'nei') { q.kiSvar = { feil: IKKE_HAND }; q.kiBilde = false; return; }
+        if (q.bilde && d.handskrift === 'usikker') { q.sporLagre = d; return; }
+        return godtaKi(q, s, d);
       })
       .catch(function (e) { q.kiSvar = { feil: feilmelding(e) }; })
       .then(function () { q.venter = false; q.tekst = tekst; tegn(); });
+  }
+  var IKKE_HAND = 'Dette ser ikke ut som din egen håndskrevne løsning (for eksempel en skjermdump, utskrift eller tekst fra en KI-chat). Skriv løsningen for hånd og ta et nytt bilde.';
+  var NEI_LAGRE = 'Da kan jeg ikke godkjenne bildet. Skriv løsningen for hånd, ta et tydelig bilde, og prøv igjen.';
+  function nyId() {
+    try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) {}
+    return 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, function () { return (Math.random() * 16 | 0).toString(16); });
+  }
+  function godtaKi(q, s, d, gjs) {
+    q.kiSvar = d; q.kiBilde = !!q.bilde; s.ki = { vurdering: d.vurdering, sikkerhet: d.sikkerhet, tilbakemelding: d.tilbakemelding, kilde: q.bilde ? 'bilde' : 'tekst' };
+    if (gjs) s.ki.gjennomsyn = 'venter';
+    return Promise.resolve(s.lagret).then(function (id) { if (id) return k.from('studie_svar').update({ ki: s.ki }).eq('id', id).then(sjekk); });
+  }
+  // Lagrer bildet til gjennomsyn (studenten har sagt ja) og varsler administratoren (Min side, og e-post hvis satt opp).
+  function lagreGjennomsyn(rad) {
+    rad.nettsted = NETTSTED;
+    return k.from('gjennomsyn').insert(rad).then(sjekk).then(function () { ki('/gjennomsyn', {}, 20).catch(function () {}); });
+  }
+  function svarLagre(ja) {
+    var q = T.q, s = q.sist, d = q.sporLagre, x = q.na; q.sporLagre = null;
+    if (!ja) { q.kiSvar = { feil: NEI_LAGRE }; q.kiBilde = false; return tegn(); }
+    q.venter = true; tegn();
+    lagreGjennomsyn({ kilde: q.ovelse ? 'Arbeidskrav: ' + q.ovelse.tittel : 'Quiz: ' + tittel(q.tema), ovelse: q.ovelse ? q.ovelse.id : null, forsok: q.forsok,
+      oppgave: String(x.tekst || '').slice(0, 3000), bilde: q.bilde, ki: { vurdering: d.vurdering, sikkerhet: d.sikkerhet, tilbakemelding: d.tilbakemelding } })
+      .then(function () { q.gjennomsyn = true; return godtaKi(q, s, d, true); })
+      .catch(function (e) { q.kiSvar = { feil: 'Bildet ble ikke lagret (' + feilmelding(e) + '). ' + NEI_LAGRE }; q.kiBilde = false; })
+      .then(function () { q.venter = false; tegn(); });
+  }
+  function samtykkeHtml(h) {
+    return '<div class="st-fb r"><b>Er dette håndskrevet?</b><p>Jeg er ikke sikker på om bildet viser din egen håndskrevne løsning. Får jeg lagre bildet, så en lærer kan se på det? ' +
+      'Det brukes også til å gjøre Dashman flinkere til å se forskjell. Bildet slettes når læreren har sett på det.</p>' +
+      '<p class="st-sm">Sier du nei, kan jeg ikke godkjenne bildet. Da kan du skrive løsningen for hånd og prøve igjen.</p>' +
+      '<div class="st-knapperad"><button type="button" class="st-btn" data-h="' + h + '" data-v="ja">Ja, lagre for gjennomsyn</button><button type="button" class="st-btn g" data-h="' + h + '" data-v="nei">Nei</button></div></div>';
   }
   function hentRad() {
     var r = profilRader().map(function (x) { return { tema: tittel(x.t), undertema: S[x.t].undertemaer[x.u], f: x.s.f, p: x.s.p, h: x.s.h, n: x.s.n }; });
@@ -1469,7 +1508,19 @@ function studieStart() {
     var oppg = (document.getElementById('st-skann-oppg') || {}).value || '';
     sk.oppgave = oppg.trim(); sk.venter = true; sk.svar = null; tegn();
     ki('/vurder', { sporsmal: { tekst: sk.oppgave || 'Oppgaven står på bildet. Les oppgaven og studentens løsning derfra.', riktig: '(ikke oppgitt: vurder selv om fysikken og regningen i løsningen er riktig)', forklaring: '' }, valgt: '', forklaring: sk.oppgave ? 'Oppgaven: ' + sk.oppgave : '', bilde: sk.bilde })
-      .then(function (d) { sk.svar = d; }, function (e) { sk.svar = { feil: feilmelding(e) }; })
+      .then(function (d) {
+        if (d.handskrift === 'nei') sk.svar = { feil: IKKE_HAND };
+        else if (d.handskrift === 'usikker') sk.sporLagre = d;
+        else sk.svar = d;
+      }, function (e) { sk.svar = { feil: feilmelding(e) }; })
+      .then(function () { sk.venter = false; tegn(); });
+  }
+  function skannLagre(ja) {
+    var sk = T.skann, d = sk.sporLagre; sk.sporLagre = null;
+    if (!ja) { sk.svar = { feil: NEI_LAGRE }; return tegn(); }
+    sk.venter = true; tegn();
+    lagreGjennomsyn({ kilde: 'Skann', oppgave: (sk.oppgave || '').slice(0, 3000), bilde: sk.bilde, ki: { vurdering: d.vurdering, sikkerhet: d.sikkerhet, tilbakemelding: d.tilbakemelding } })
+      .then(function () { sk.svar = Object.assign({ gjennomsyn: true }, d); }, function (e) { sk.svar = { feil: 'Bildet ble ikke lagret (' + feilmelding(e) + '). ' + NEI_LAGRE }; })
       .then(function () { sk.venter = false; tegn(); });
   }
 
@@ -1477,7 +1528,13 @@ function studieStart() {
     idag: function () {
       var fornavn = (T.navn || '').split(/\s+/)[0], v = valgt(), t = ukensTema(), o = '';
       var dato = new Date().toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long' });
-      o += '<div class="st-hilsen"><span class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</span><span class="st-sm">' + esc(dato.charAt(0).toUpperCase() + dato.slice(1)) + '</span></div>' + appKort();
+      if (T.gjs === undefined) { T.gjs = []; k.from('gjennomsyn').select('id, kilde, status, kommentar, behandlet').neq('status', 'venter').gte('behandlet', new Date(Date.now() - 14 * 864e5).toISOString())
+        .then(function (r) { if (!r.error && r.data && r.data.length) { T.gjs = r.data; if (T.vis === 'idag') tegn(); } }, function () {}); }
+      var gjsHtml = (T.gjs || []).map(function (g) {
+        return '<div class="st-fb' + (g.status === 'avvist' ? ' n' : '') + '"><b>Bildet ditt (' + esc(g.kilde) + ') er ' + (g.status === 'godkjent' ? 'godkjent' : 'ikke godkjent') + ' av en lærer.</b>' +
+          (g.kommentar ? '<p>' + esc(g.kommentar) + '</p>' : '') + (g.status === 'avvist' && /^Arbeidskrav/.test(g.kilde) ? '<p class="st-sm">Forsøket teller derfor ikke. Ta arbeidskravet på nytt, med håndskrevne bilder.</p>' : '') + '</div>';
+      }).join('');
+      o += '<div class="st-hilsen"><span class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</span><span class="st-sm">' + esc(dato.charAt(0).toUpperCase() + dato.slice(1)) + '</span></div>' + gjsHtml + appKort();
       if (!v.length) o += '<div class="st-dkort g"><span class="st-merke">Kom i gang</span><b class="st-dtittel">Velg hva du skal studere</b><span class="st-sm">Velg temaer, så får du en løype med én uke per tema og en liten quiz hver dag.</span><div><button type="button" class="st-btn" data-h="ga" data-v="innstillinger">Velg temaer</button></div></div>';
       else {
         var dag = T.inn.modus === 'dag', ferdig = dag && iDag(t) >= PER_DAG;
@@ -1507,12 +1564,13 @@ function studieStart() {
         var fig = { riktig: 'glad', regnefeil: 'tenker', begrep: 'tenker', uklar: 'noytral' }[sk.svar.vurdering] || 'noytral';
         return '<div class="st-skann-svar"><img src="' + sk.bilde + '" alt="Bildet du tok" class="st-skann-mini">' +
           '<div class="st-dmrad stor"><img src="' + DMBILDER + fig + '.webp" alt="" class="st-dmfigur">' + krittboble('<span class="st-hand st-kt">' + kt + '</span><div class="st-avsnitt">' + tx(sk.svar.tilbakemelding) + '</div>', true) + '</div>' +
-          '<p class="st-sm">Tilbakemeldingen er laget av KI og kan ta feil. Bildet er ikke lagret.</p>' +
+          '<p class="st-sm">Tilbakemeldingen er laget av KI og kan ta feil. ' + (sk.svar.gjennomsyn ? 'Bildet er sendt til gjennomsyn hos en lærer, og slettes etterpå.' : 'Bildet er ikke lagret.') + '</p>' +
           '<div class="st-knapperad"><button type="button" class="st-btn" data-h="skannNy">' + ikon('kamera', 18) + ' Skann en ny</button>' +
           '<button type="button" class="st-btn g" data-h="skannDashman">' + ikon('prat', 18) + ' Spør Dashman om dette</button></div></div>';
       }
+      if (sk.sporLagre) return samtykkeHtml('lagreSkann') + '<img src="' + sk.bilde + '" alt="Bildet du tok" class="st-skann-forhand">';
       if (sk.svar && sk.svar.feil) o += '<p class="st-feil">' + esc(sk.svar.feil) + '</p>';
-      o += '<p class="st-sm">Løs oppgaven på papir, ta bilde av løsningen, og få tilbakemelding på om du har forstått fysikken. Bildet lagres ikke.</p>';
+      o += '<p class="st-sm">Løs oppgaven for hånd på papir, ta bilde av løsningen, og få tilbakemelding på om du har forstått fysikken. Bildet lagres ikke.</p>';
       if (!sk.bilde) o += '<label class="st-kamera">' + ikon('kamera', 40) + '<span>Ta bilde av løsningen</span><input type="file" accept="image/*" capture="environment" id="st-skann-bilde"></label>';
       else o += '<div class="st-skann-klar"><img src="' + sk.bilde + '" alt="Bildet du tok" class="st-skann-forhand">' +
         '<label class="st-sm" for="st-skann-oppg">Hvilken oppgave er det? (valgfritt, men gir bedre tilbakemelding)</label>' +
@@ -1572,9 +1630,11 @@ function studieStart() {
         var ti = a.type === 'riktig' ? 'Riktig!' : (a.type === 'regnefeil' ? 'Riktig tanke, men regnefeil.' : 'Ikke riktig.');
         fb = '<div class="st-fb ' + kl + '"><b>' + ti + '</b><div class="st-avsnitt">' + tx(x.forklaring) + '</div></div>';
         var kis = q.kiSvar;
-        if (kis && !kis.feil) {
+        if (q.sporLagre) fb += samtykkeHtml('lagreSvar') + (q.bilde ? '<img class="st-forhand" alt="Bildet ditt" src="' + q.bilde + '">' : '');
+        else if (kis && !kis.feil) {
           var kt = { riktig: 'KI: Riktig fysikk og riktig regning.', regnefeil: 'KI: Riktig tankegang, men en regnefeil.', begrep: 'KI: Her bør du se på fysikken igjen.', uklar: 'KI: Klarte ikke å lese besvarelsen.' }[kis.vurdering];
-          fb += '<div class="st-fb ki"><b>' + kt + '</b><div class="st-avsnitt">' + tx(kis.tilbakemelding) + '</div>' + (kis.vurdering !== 'uklar' ? '<p class="st-sm">Denne vurderingen teller i kunnskapsprofilen din.</p>' : '') + '</div>';
+          fb += '<div class="st-fb ki"><b>' + kt + '</b><div class="st-avsnitt">' + tx(kis.tilbakemelding) + '</div>' + (kis.vurdering !== 'uklar' ? '<p class="st-sm">Denne vurderingen teller i kunnskapsprofilen din.</p>' : '') +
+            (q.gjennomsyn && q.sist && q.sist.ki && q.sist.ki.gjennomsyn ? '<p class="st-sm">Bildet er sendt til gjennomsyn hos en lærer. Avvises det, teller ikke forsøket.</p>' : '') + '</div>';
         } else {
           var sf = q.ovelse && q.ovelse.svarform && q.ovelse.svarform !== 'valgfri' ? q.ovelse.svarform : '', kanTale = Tale && !taleNei, bareTale = sf === 'muntlig' && kanTale;
           fb += '<h3>Vis hvordan du tenkte' + (sf ? ' <span class="st-pakrevd">påkrevd</span>' : '') + '</h3><p class="st-sm">' +
@@ -1587,7 +1647,7 @@ function studieStart() {
             (q.bilde ? '<img class="st-forhand" alt="Bildet ditt" src="' + q.bilde + '">' : '') +
             (kis && kis.feil ? '<p class="st-feil">' + esc(kis.feil) + '</p>' : '');
         }
-        var sfk = q.ovelse && q.ovelse.svarform, mangler = sfk && sfk !== 'valgfri' && (!q.kiSvar || (sfk === 'bilde' && !q.kiBilde));
+        var sfk = q.ovelse && q.ovelse.svarform, mangler = q.sporLagre || (sfk && sfk !== 'valgfri' && (!q.kiSvar || q.kiSvar.feil || (sfk === 'bilde' && !q.kiBilde)));
         fb += '<p class="st-videre"><button type="button" class="st-btn" data-h="videre"' + (mangler ? ' disabled title="Forklar svaret først"' : '') + '>' + (q.nr + 1 >= q.antall ? 'Se resultat' : 'Neste') + '</button>' + (mangler ? ' <span class="st-sm">' + (sfk === 'bilde' ? 'Last opp bilde av utregningen og trykk «Få tilbakemelding» først.' : 'Forklar svaret og trykk «Få tilbakemelding» først.') + '</span>' : '') + '</p>';
       }
       return '<div class="st-rad st-sm"><span>' + esc(tittel(x.tema)) + (function (n) { return n ? ' · ' + esc(n) : ''; })(((S[x.tema] || K[x.tema] || {}).undertemaer || {})[x.undertema]) + (x.rep ? ' · repetisjon' : '') + '</span><span>' + (q.nr + 1) + ' av ' + q.antall + '</span></div>' +
@@ -1921,7 +1981,8 @@ function studieStart() {
     if (appModus()) {
       var tt = appTittel(), fokus = T.vis === 'quiz';
       rot.innerHTML = (T.eksempel ? '<div class="st-eksempel"><b>Studentvisning.</b> Du ser ' + (T.eksempelFag ? '«' + esc(T.eksempelFag.navn) + '»' : 'appen') + ' som en fiktiv student. Ingenting lagres. <a href="#" data-h="avsluttEksempel">Tilbake til undervisning</a></div>' : '') +
-        '<div class="st-topp"><span class="st-topptittel">' + esc(tt) + '</span><button type="button" class="st-ikonknapp" data-h="meny" aria-label="Meny" aria-expanded="' + !!T.meny + '">' + ikon('meny') + '</button></div>' +
+        '<div class="st-topp">' + (T.vis === 'quiz' || T.vis === 'resultat' ? '<button type="button" class="st-ikonknapp" data-h="lukkQuiz" aria-label="' + (T.vis === 'quiz' ? 'Lukk quizen' : 'Lukk') + '">' + ikon('x') + '</button>' : '') +
+        '<span class="st-topptittel">' + esc(tt || (T.vis === 'quiz' && T.q ? (T.q.ovelse ? T.q.ovelse.tittel : 'Quiz') : '')) + '</span><button type="button" class="st-ikonknapp" data-h="meny" aria-label="Meny" aria-expanded="' + !!T.meny + '">' + ikon('meny') + '</button></div>' +
         '<div class="st-innhold">' + (T.vis === 'delta' ? '' : deltaBanner()) + SKJ[T.vis]() + '</div>' + (fokus ? '' : bunnlinje()) + (T.meny ? menyHtml() : '') +
         '<p id="st-varsel" class="st-varsel" role="status" hidden></p>';
       if (vis) { var ny1 = document.getElementById('st-varsel'); ny1.textContent = vis.t; ny1.className = vis.k; ny1.hidden = false; }
@@ -2049,6 +2110,13 @@ function studieStart() {
       dashman: function () { apneDashman(); },
       ovelse: function () { startOvelse(d.id); },
       skannSend: skannSend,
+      lagreSvar: function () { svarLagre(d.v === 'ja'); },
+      lagreSkann: function () { skannLagre(d.v === 'ja'); },
+      lukkQuiz: function () {
+        var q = T.q, halv = q && T.vis === 'quiz' && q.res.length > 0 && !q.lagret;
+        stoppTale(); T.q = null; ga('idag');
+        if (halv) varsle(q.ovelse ? 'Arbeidskravet er avbrutt. Forsøket teller ikke før du har fullført det.' : 'Quizen er avsluttet. Svarene du har gitt, er lagret i kunnskapsprofilen din.');
+      },
       skannNy: function () { T.skann = {}; tegn(); },
       skannDashman: function () { var sk = T.skann || {}; apneDashman('Jeg skannet løsningen min' + (sk.oppgave ? ' på denne oppgaven: ' + sk.oppgave : '') + '. Tilbakemeldingen var: «' + ((sk.svar && sk.svar.tilbakemelding) || '') + '». Kan du hjelpe meg videre?'); },
       uke: function () { ga('uke', { t: d.t }); },

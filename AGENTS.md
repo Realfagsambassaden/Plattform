@@ -125,6 +125,7 @@ Klassene `.sporsmal` og `.definisjon` settes av `verktoy/fag.py` ut fra tittelen
 - Stoff skrevet av en KI merkes `<!-- tillegg: Claude -->` foran. Donert stoff merkes `<!-- fra notatene -->`; behold den merkingen. Retter du feil i donert stoff, skriv en kort kommentar om hva som er endret.
 - Skriv eget stoff. Ikke kopier tekst, figurer eller oppgaver fra lærebøker. Åpent lisensiert stoff (f.eks. OpenStax, CC BY) kan bearbeides med kildehenvisning.
 - Ingen personopplysninger i de offentlige repoene.
+- **Bilder av studentløsninger** sendes bare til KI og lagres ikke. Eneste unntak (besluttet 16. nov. 2026): Er KI usikker på om bildet er studentens egen håndskrevne løsning, spør appen om bildet kan lagres for gjennomsyn av en lærer og for å gjøre Dashman bedre. Sier studenten nei, godkjennes ikke svaret. Ser KI at bildet ikke er håndskrevet (skjermdump, utskrift, tekst fra en KI-chat), godkjennes det ikke. Lagrede bilder slettes når administratoren har behandlet dem (tabellen `gjennomsyn`).
 
 ## 5. Video
 

@@ -91,8 +91,14 @@ Tilbakemeldingen skal være kort: 1–3 korte setninger på norsk bokmål, i du-
 Personvern: Vurder bare det faglige innholdet. Ikke gjengi, beskriv eller kommenter håndskriften, navn, studentnummer eller annet som kan
 identifisere studenten, selv om det står på bildet. Tilbakemeldingen skal bare handle om fysikken og regningen.
 
+Håndskrift (bare når det er vedlagt et bilde): Vurder om bildet viser studentens egen håndskrevne løsning, på papir, tavle eller nettbrett med penn.
+- "ja": tydelig håndskrift, med utregning slik en student skriver den.
+- "nei": skjermdump, maskinskrevet eller trykt tekst, typesatte formler, en løsning fra en KI-chat eller nettside, eller et bilde av en skjerm.
+- "usikker": du klarer ikke å avgjøre det (for eksempel svært ryddig skrift, delvis skjerm, uskarpt bilde).
+Uten bilde: bruk "ja".
+
 Svar KUN med gyldig JSON:
-{"vurdering":"riktig|regnefeil|begrep|uklar","sikkerhet":"hoy|middels|lav","tilbakemelding":"…"}`;
+{"vurdering":"riktig|regnefeil|begrep|uklar","sikkerhet":"hoy|middels|lav","handskrift":"ja|nei|usikker","tilbakemelding":"…"}`;
 
 const SYSTEM_RAD = `Du er en erfaren fysikklærer på NETTSTED, laget av Dr. Normann. Du får kunnskapsprofilen til en student: for hvert tema og undertema andelen (0–1) for
 forståelse (riktig tankegang), presisjon (riktig regning når tanken er riktig) og hurtighet (riktig innen forventet tid), og antall svar.
@@ -405,6 +411,7 @@ export default {
       if (sti.endsWith("/materiale")) return await materiale(request, env, b, h);
       if (sti.endsWith("/salen")) return await salen(request, env, b, h);
       if (sti.endsWith("/dashman")) return await dashman(request, env, b, h);
+      if (sti.endsWith("/gjennomsyn")) return await gjennomsynVarsel(request, env, b, h);
       return await hint(request, env, b, h);
     } catch (e) {
       return json({ feil: e.brukermelding || "Tjenesten er midlertidig utilgjengelig. Prøv igjen om litt." }, e.status || 502, h);
@@ -474,7 +481,9 @@ async function vurder(request, env, b, h) {
   const r = lesJson(raa) || {};
   const vurdering = ["riktig", "regnefeil", "begrep", "uklar"].includes(r.vurdering) ? r.vurdering : "uklar";
   const sikkerhet = ["hoy", "middels", "lav"].includes(r.sikkerhet) ? r.sikkerhet : "lav";
-  return json({ vurdering, sikkerhet, tilbakemelding: kort(r.tilbakemelding, 1200) || "Klarte ikke å vurdere besvarelsen denne gangen." }, 200, h);
+  // Uten bilde er det ingenting å sjekke. Med bilde: alt annet enn et tydelig ja/nei regnes som usikkert.
+  const handskrift = !bilde ? "ja" : (["ja", "nei", "usikker"].includes(r.handskrift) ? r.handskrift : "usikker");
+  return json({ vurdering, sikkerhet, handskrift, tilbakemelding: kort(r.tilbakemelding, 1200) || "Klarte ikke å vurdere besvarelsen denne gangen." }, 200, h);
 }
 
 async function rad(request, env, b, h) {
@@ -493,6 +502,29 @@ async function rad(request, env, b, h) {
   const liste = (v, n, m) => (Array.isArray(v) ? v : []).filter((x) => typeof x === "string" && x.trim()).slice(0, n).map((x) => kort(x.trim(), m));
   const del = (d) => ({ undertemaer: liste(d && d.undertemaer, 2, 80), tiltak: liste(d && d.tiltak, 3, 160), formel: kort(d && typeof d.formel === "string" ? d.formel.trim() : "", 200) });
   return json({ rad: { forstaelse: del(r.forstaelse), presisjon: del(r.presisjon), hurtighet: del(r.hurtighet), bra: kort(r.bra, 200) } }, 200, h);
+}
+
+// ---------------------------------------------------------------- varsel om bilder til gjennomsyn
+// Studieappen kaller denne når et bilde er lagret til gjennomsyn. Administratoren får en e-post (uten innhold om studenten)
+// hvis RESEND_API_KEY og VARSEL_EPOST er satt som hemmeligheter på workeren. Ellers vises varselet bare på Min side.
+async function gjennomsynVarsel(request, env, b, h) {
+  const bruker = await innloggetBruker(request, env);
+  if (!bruker) return json({ feil: "Du må være logget inn." }, 401, h);
+  if (!env.RESEND_API_KEY || !env.VARSEL_EPOST) return json({ sendt: false }, 200, h);
+  // Høyst én e-post per time, uansett hvor mange bilder som kommer inn.
+  if (!(await innenforGrense(env, `gjennomsyn-epost:${new Date().toISOString().slice(0, 13)}`, 1, 3700))) return json({ sendt: false }, 200, h);
+  const nettsted = NETTSTEDNAVN(request);
+  const r = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${env.RESEND_API_KEY}` },
+    body: JSON.stringify({
+      from: env.VARSEL_FRA || `${nettsted} <varsel@${nettsted}>`,
+      to: [env.VARSEL_EPOST],
+      subject: `Bilde til gjennomsyn på ${nettsted}`,
+      text: `Et bilde av en løsning venter på gjennomsyn (KI var usikker på om det er håndskrevet).\n\nSe og behandle det på Min side: https://${nettsted}/konto/\n`
+    })
+  });
+  return json({ sendt: r.ok }, 200, h);
 }
 
 // ---------------------------------------------------------------- Dashman

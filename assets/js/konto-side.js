@@ -260,7 +260,35 @@ function start() {
           '<p><button type="button" data-tb-alle="1">' + (visAlle ? 'Skjul de som er fikset' : 'Vis også de som er fikset') + '</button></p>';
       });
     }
+    // Bilder til gjennomsyn (studieappen): vis bildet, KI-vurderingen og oppgaven, og godkjenn eller avvis.
+    function tegnGjennomsyn() {
+      var el = boks.querySelector('.admin-gjennomsyn'); if (!el) return;
+      k.from('gjennomsyn').select('*').eq('status', 'venter').order('tid', { ascending: true }).limit(30).then(function (r) {
+        if (r.error) { el.innerHTML = '<p class="konto-ingress">Tabellen «gjennomsyn» finnes ikke ennå. Kjør supabase/oppsett.sql på nytt i Supabase.</p>'; return; }
+        var l = r.data || [], ant = boks.querySelector('.admin-gjs-antall');
+        if (ant) ant.textContent = l.length ? String(l.length) : '';
+        varselOverst(l.length);
+        el.innerHTML = l.length ? l.map(function (g) {
+          var kv = g.ki || {};
+          return '<div class="admin-gjs"><a href="' + esc(g.bilde || '') + '" target="_blank" rel="noopener">' + (g.bilde ? '<img src="' + esc(g.bilde) + '" alt="Bilde til gjennomsyn">' : '') + '</a><div>' +
+            '<p><b>' + esc(g.kilde || 'Ukjent') + '</b> · ' + esc(g.nettsted) + ' · ' + dato(g.tid) + '</p>' +
+            (g.oppgave ? '<p class="konto-ingress" style="white-space:pre-wrap">' + esc(g.oppgave.slice(0, 600)) + '</p>' : '') +
+            '<p class="konto-ingress">KI: ' + esc(kv.vurdering || '–') + (kv.tilbakemelding ? ' – ' + esc(kv.tilbakemelding) : '') + '</p>' +
+            '<label class="konto-ingress" for="gjs-kom-' + g.id + '">Kommentar til studenten (valgfritt)</label><textarea id="gjs-kom-' + g.id + '" rows="2"></textarea>' +
+            '<button type="button" data-gjs="' + g.id + '" data-gjs-status="godkjent">Godkjenn</button> <button type="button" data-gjs="' + g.id + '" data-gjs-status="avvist">Avvis</button></div></div>';
+        }).join('') : '<p class="konto-ingress">Ingen bilder venter på gjennomsyn.</p>';
+      });
+    }
+    // Varsel øverst på Min side når noe venter.
+    function varselOverst(n) {
+      var v = rot.querySelector('.konto-varsel-gjs');
+      if (!n) { if (v) v.remove(); return; }
+      if (!v) { v = document.createElement('p'); v.className = 'konto-varsel-gjs'; rot.insertBefore(v, rot.firstChild); }
+      v.innerHTML = '<b>' + n + (n === 1 ? ' bilde venter' : ' bilder venter') + ' på gjennomsyn.</b> <a href="#" data-til-gjs="1">Se på ' + (n === 1 ? 'det' : 'dem') + '</a>';
+      v.querySelector('a').onclick = function (e) { e.preventDefault(); boks.querySelector('.admin-gjennomsyn-boks').scrollIntoView({ behavior: 'smooth' }); };
+    }
     function tegnAdmin() {
+      tegnGjennomsyn();
       tegnTilbakemeldinger();
       k.rpc('admin_foresporsler').then(function (r) {
         var l = (r && r.data) || [], el = boks.querySelector('.admin-foresporsler');
@@ -293,6 +321,17 @@ function start() {
     };
     boks.onclick = function (ev) {
       var b = ev.target.closest('button'); if (!b) return;
+      if (b.dataset.gjs) {
+        var st = b.dataset.gjsStatus;
+        if (st === 'avvist' && b.dataset.bekreft !== '1') { b.dataset.bekreft = '1'; b.textContent = 'Bekreft avvisning'; return; }
+        var kom = (document.getElementById('gjs-kom-' + b.dataset.gjs) || {}).value || '';
+        b.disabled = true;
+        k.rpc('behandle_gjennomsyn', { g: +b.dataset.gjs, s: st, kom: kom }).then(function (r) {
+          if (r.error || !r.data) { m.classList.add('feil'); m.textContent = 'Klarte ikke å lagre: ' + ((r.error && r.error.message) || 'ukjent feil'); b.disabled = false; return; }
+          tegnGjennomsyn();
+        });
+        return;
+      }
       if (b.dataset.tb) { k.from('tilbakemeldinger').update({ status: b.dataset.status }).eq('id', +b.dataset.tb).then(tegnTilbakemeldinger); return; }
       if (b.dataset.tbAlle) { visAlle = !visAlle; tegnTilbakemeldinger(); return; }
       if (b.dataset.slettKode) k.from('underviserkoder').delete().eq('kode', b.dataset.slettKode).then(tegnAdmin);
