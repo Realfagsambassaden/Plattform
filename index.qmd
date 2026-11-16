@@ -21,9 +21,10 @@ anchor-sections: false
     <p class="eyebrow">Fysikk for forkurs og universitet!</p>
     <h1 class="kritt-tittel"><span class="k1">FORSTÅ</span> <span class="k2">fysikk</span></h1>
     <div class="kritt-ramme">
-      <p class="kritt-formel"><span class="t">Video + tekst + eksempler &amp; oppgaver + KI =</span> <span class="hjerte" aria-label="kjærlighet">❤️</span></p>
+      <p class="kritt-laer">Lær med</p>
+      <p class="kritt-formel"><span class="t">Video + lærebok + KI =</span> <span class="hjerte" aria-label="kjærlighet">♥</span></p>
+      <p class="kritt-av">GRATIS, av EKTE fysikere!</p>
     </div>
-    <p class="kritt-av">Utviklet av ekte fysikere</p>
     <div class="velg-niva">
       <p class="velg-niva-tittel">Velg nivå!</p>
       <div class="bryter" data-pos="av">
