@@ -633,7 +633,7 @@ async function dashman(request, env, b, h) {
       ...((Array.isArray(b.oppgave.hint) ? b.oppgave.hint : []).slice(0, 3).map((x, i) => `Hint ${i + 1} studenten allerede har fått: ${kort(x, 600)}`)),
     ] : []),
     ...(side.tekst ? [`Utdrag av siden:\n${kort(side.tekst, 3000)}`] : []),
-    ...(bilde ? ["Studenten har lagt ved et bilde av sin egen løsning i siste melding. Les utregningen, finn det første stedet det går galt (eller bekreft at det ser riktig ut), og veiled derfra med et spørsmål eller hint – ikke regn ut svaret for studenten. Ikke kommenter håndskrift, navn eller annet personlig på bildet."] : []),
+    ...(bilde ? ["Studenten har lagt ved et bilde av sin egen løsning i siste melding. Les utregningen nøye, finn det første stedet det faktisk går galt (eller bekreft det som er riktig, også når det ikke er forenklet eller ferdig ennå – si «riktig» og spør om det kan skrives enklere), og veiled derfra med et spørsmål eller hint – ikke regn ut svaret for studenten. Ikke kommenter håndskrift, navn eller annet personlig på bildet."] : []),
   ];
   const system = DASHMAN_INSTRUKS.replaceAll("NETTSTED", NETTSTEDNAVN(request)) + "\n\n## Det du får vite om studenten\n\n" + linjer.join("\n");
   const modell = env.MODELL_DASHMAN || env.MODELL;
