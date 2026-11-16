@@ -414,12 +414,14 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 .profil-foto { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid $neon; box-shadow: 0 0 0 6px rgba($neon, .12), 0 0 28px rgba($neon, .25); }
 .profil-ikon { position: absolute; right: -26px; bottom: -22px; width: 84px; height: auto; filter: drop-shadow(0 0 6px rgba(0,0,0,.8)); transform: rotate(-6deg); }
 .profilkort h3 { margin: .3rem 0 0; font-size: 1.4rem; border: 0; }
-.profil-ikonknapp { position: absolute; right: -26px; bottom: -22px; padding: 0; border: 0; background: none; cursor: pointer; }
-.profil-ikonknapp .profil-ikon { position: static; display: block; transition: transform .2s; }
-.profil-ikonknapp:hover .profil-ikon, .profil-ikonknapp[aria-expanded="true"] .profil-ikon { transform: rotate(4deg) scale(1.08); }
-.profil-ikonknapp::after { content: "Fag"; position: absolute; left: 50%; top: -10px; transform: translateX(-50%); font-size: .7rem; padding: 0 .35rem; border-radius: 8px; background: $neon; color: $slate; font-weight: 700; }
-.profil-fag { margin-top: .8rem; padding: .7rem 1rem; border: 1px solid $line; border-radius: 10px; }
-.profil-fag ul { margin: .3rem 0 0; padding-left: 1.1rem; }
+.profil-lenke { position: relative; display: block; width: 150px; height: 150px; }
+.profil-lenke .profil-ikon { transition: transform .2s; }
+.profil-lenke:hover .profil-ikon { transform: rotate(4deg) scale(1.08); }
+.profil-lenke:hover .profil-foto { box-shadow: 0 0 0 6px rgba($neon, .25), 0 0 34px rgba($neon, .4); }
+.profil-tilbud { display: inline-block; margin-top: 2rem; font-size: .9rem; padding: .35rem .9rem; }
+// Egen side per foreleser (profiler/*.qmd)
+.profilside { position: relative; width: 170px; height: 170px; margin: .5rem 0 1.5rem; }
+.profilside .profil-foto { width: 170px; height: 170px; }
 .profil-rolle { color: $neon; font-family: "Architects Daughter", cursive; margin: 0 0 .6rem; }
 @media (max-width: 860px) {
   .hero { min-height: 0; padding-top: 11rem; }

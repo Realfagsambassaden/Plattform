@@ -1,0 +1,37 @@
+---
+title: "Dr. Normann"
+subtitle: "Ben David Normann · ph.d. i matematisk kosmologi"
+toc: false
+---
+
+<!-- tillegg: Claude – utkast, Ben fyller ut og retter -->
+
+```{=html}
+<div class="profilside">
+  <img class="profil-foto" src="../assets/img/ben-portrett.webp" alt="Portrett av Ben David Normann">
+  <img class="profil-ikon" src="../assets/img/drnormann-ikon.png" alt="">
+</div>
+```
+
+## Om meg
+
+Jeg heter Ben, har doktorgrad i matematisk kosmologi og har formidlet og undervist realfag i ti år. I 2018 vant jeg den nasjonale finalen i Forsker Grand Prix.
+
+## Hva jeg brenner for
+
+Forklaringene jeg selv skulle ønske jeg hadde som student: én idé om gangen, tegnet ut på tavla, med regning du kan følge linje for linje. Jeg vil at du skal skjønne *hvorfor* fysikken er som den er, ikke bare hvilken formel du skal bruke.
+
+## Erfaring
+
+- Doktorgrad i matematisk kosmologi
+- Forsker og underviser i fysikk og matematikk ved NTNU
+- Vinner av den nasjonale finalen i Forsker Grand Prix (2018)
+- Lager undervisningsvideoer som Dr. Normann
+
+## Mine tilbud
+
+- [Forkurs i fysikk](../fysikk-forkurs/index.html)
+- [TRES0312 (NTNU)](../loyper/tres0312.html): løype, og kurs i studieappen med påmelding fra faglæreren
+- [Ingeniørfysikk](../ingeniorfysikk/index.html)
+- [Forkurs i matematikk](https://matematikkhjelp.no/matte-forkurs/index.html) (matematikkhjelp.no)
+- [Flervariabel kalkulus](https://matematikkhjelp.no/flervariabel-kalkulus/index.html) (matematikkhjelp.no)
