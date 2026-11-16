@@ -610,6 +610,19 @@ create policy "tilbakemeldinger: admin endrer" on public.tilbakemeldinger for up
 grant insert on public.tilbakemeldinger to anon, authenticated;
 grant select, update on public.tilbakemeldinger to authenticated;
 grant usage on sequence public.tilbakemeldinger_id_seq to anon, authenticated;
+-- Skjermbilde (valgfritt): lagres bare når den som sender, har godkjent det for akkurat denne meldingen. En melding med
+-- bilde sendes uten bruker (knyttes ikke til profilen). Bildet slettes når meldingen settes til «fikset».
+alter table public.tilbakemeldinger add column if not exists bilde text check (bilde is null or char_length(bilde) <= 1500000);
+create or replace function public.tilbakemelding_rydd_bilde() returns trigger language plpgsql as $$
+begin
+  if new.status = 'fikset' then new.bilde := null; end if;
+  return new;
+end $$;
+drop trigger if exists tilbakemelding_rydd_bilde on public.tilbakemeldinger;
+create trigger tilbakemelding_rydd_bilde before update on public.tilbakemeldinger for each row execute function public.tilbakemelding_rydd_bilde();
+drop policy if exists "tilbakemeldinger: alle kan sende" on public.tilbakemeldinger;
+create policy "tilbakemeldinger: alle kan sende" on public.tilbakemeldinger for insert to anon, authenticated
+  with check (status = 'ny' and (bruker is null or bruker = auth.uid()) and (bilde is null or (bruker is null and bilde like 'data:image/%')));
 
 -- ============================================================================================================
 -- Mitt materiale: plan for dagen og slides per samling i et fag (fagbyggeren og undervisningsmodus)

@@ -114,6 +114,14 @@
       '#fh-chat textarea,#fh-chat input{width:100%;background:#24272a;color:#eceeea;border:1px solid #3a4440;border-radius:8px;padding:.45rem .6rem;font:inherit;font-size:.93rem}' +
       '#fh-chat .fc-send{align-self:flex-end;border:0;background:#8fcf86;color:#24272a;border-radius:999px;padding:.35rem 1rem;font:inherit;font-weight:700;cursor:pointer}' +
       '#fh-chat .fc-send:disabled{opacity:.5}' +
+      '#fh-chat .fc-vedlegg{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}' +
+      '#fh-chat .fc-fil{border:1px dashed #3a4440;border-radius:8px;padding:.3rem .6rem;font-size:.85rem;color:#a3a9ad;cursor:pointer}' +
+      '#fh-chat .fc-fil:hover{border-color:#8fcf86;color:#8fcf86}' +
+      '#fh-chat .fc-fil input{position:absolute;width:1px;height:1px;opacity:0}' +
+      '#fh-chat .fc-bilde{position:relative}#fh-chat .fc-bilde img{display:block;max-height:80px;max-width:140px;border-radius:6px;border:1px solid #3a4440}' +
+      '#fh-chat .fc-bilde button{position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;border:0;background:#3a4440;color:#eceeea;cursor:pointer;line-height:1}' +
+      '#fh-chat .fc-samtykke{display:flex;gap:.45rem;align-items:flex-start;font-size:.82rem;line-height:1.35;color:#d7dad4;background:#1d2422;border:1px solid #e6d98a;border-radius:8px;padding:.45rem .55rem}' +
+      '#fh-chat .fc-samtykke input{width:auto;margin-top:.15rem;flex:0 0 auto}' +
       'html.fk-aktiv #fh-chat{bottom:64px}html.fk-aktiv #fh-chat .fc-knapp{padding:.4rem .8rem;font-size:.9rem}' +   /* over Forrige/Neste i fokusvisningen */
       '@media print{#fh-chat{display:none}}';
     document.head.appendChild(st);
@@ -123,6 +131,8 @@
       '<div class="fc-logg" aria-live="polite"><div class="fc-boble fc-oss">Hei! Skriv hva som er feil eller hva vi kan gjøre bedre. Vi ser hvilken side du er på, så du trenger ikke forklare det.</div></div>' +
       '<form><textarea name="tekst" rows="3" maxlength="2000" placeholder="Skriv her …" required></textarea>' +
       '<input name="epost" type="email" maxlength="200" placeholder="E-post (valgfritt, hvis du vil ha svar)">' +
+      '<div class="fc-vedlegg"><label class="fc-fil">📎 Legg ved skjermbilde<input type="file" accept="image/*" name="bilde"></label><span class="fc-bilde" hidden></span></div>' +
+      '<label class="fc-samtykke" hidden><input type="checkbox" name="samtykke"><span>Jeg godtar at skjermbildet lagres, så dere kan finne og rette feilen. Meldingen med bildet sendes <b>uten</b> å knyttes til profilen min, og bildet slettes når feilen er rettet.</span></label>' +
       '<button type="submit" class="fc-send">Send</button></form></div>' +
       '<button type="button" class="fc-knapp" aria-expanded="false">💬 Tilbakemelding</button>';
     document.body.appendChild(rot);
@@ -133,6 +143,34 @@
     rot.querySelector('.fc-lukk').onclick = function () { apne(false); };
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !panel.hidden) apne(false); });
     function boble(t, deg) { var b = document.createElement('div'); b.className = 'fc-boble ' + (deg ? 'fc-deg' : 'fc-oss'); b.textContent = t; logg.appendChild(b); logg.scrollTop = logg.scrollHeight; }
+    // Skjermbilde: skaleres ned (høyst 1600 px) og gjøres om til JPEG i nettleseren, så metadata (EXIF) forsvinner.
+    // Det må godkjennes for hver melding, og en melding med bilde sendes uten bruker.
+    var bildeUrl = null, bildeBoks = rot.querySelector('.fc-bilde'), samtykke = rot.querySelector('.fc-samtykke');
+    function settBilde(url) {
+      bildeUrl = url; skj.samtykke.checked = false;
+      samtykke.hidden = !url; bildeBoks.hidden = !url;
+      bildeBoks.innerHTML = url ? '<img alt="Skjermbildet ditt" src="' + url + '"><button type="button" aria-label="Fjern bildet">×</button>' : '';
+      if (url) bildeBoks.querySelector('button').onclick = function () { settBilde(null); };
+      skj.bilde.value = '';
+    }
+    skj.bilde.onchange = function () {
+      var fil = skj.bilde.files[0]; if (!fil || !/^image\//.test(fil.type)) return;
+      var r = new FileReader();
+      r.onload = function () {
+        var img = new Image();
+        img.onload = function () {
+          var m = Math.min(1, 1600 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+          c.width = Math.round(img.width * m); c.height = Math.round(img.height * m);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          var url = c.toDataURL('image/jpeg', 0.8);
+          if (url.length > 1400000) url = c.toDataURL('image/jpeg', 0.55);
+          settBilde(url);
+        };
+        img.onerror = function () { boble('Klarte ikke å lese bildet. Prøv et skjermbilde i PNG eller JPEG.'); };
+        img.src = r.result;
+      };
+      r.readAsDataURL(fil);
+    };
     var innlogget = false;
     if (window.fhKonto && window.fhKonto.sattOpp) window.fhKonto().then(function (k) { return k.auth.getSession(); }).then(function (r) {
       innlogget = !!(r && r.data && r.data.session);
@@ -140,16 +178,21 @@
     }).catch(function () {});
     skj.onsubmit = function (ev) {
       ev.preventDefault();
-      var tekst = skj.tekst.value.trim(); if (tekst.length < 2) return;
+      var tekst = skj.tekst.value.trim();
+      if (tekst.length < 2 && bildeUrl) { tekst = '(skjermbilde)'; }
+      if (tekst.length < 2) return;
+      if (bildeUrl && !skj.samtykke.checked) { boble('Kryss av for at bildet kan lagres, eller fjern bildet, før du sender.'); return; }
       var send = skj.querySelector('.fc-send'); send.disabled = true;
       boble(tekst, true);
       var rad = { tekst: tekst, side: (location.pathname + location.hash).slice(0, 300), nettsted: location.hostname.slice(0, 40), epost: innlogget ? null : (skj.epost.value.trim() || null) };
+      var medBilde = !!bildeUrl;
+      if (medBilde) { rad.bilde = bildeUrl; rad.bruker = null; }   // knyttes ikke til profilen
       (window.fhKonto && window.fhKonto.sattOpp ? window.fhKonto() : Promise.reject(new Error('ikke satt opp')))
         .then(function (k) { return k.from('tilbakemeldinger').insert(rad); })
         .then(function (r) {
           if (r && r.error) throw r.error;
-          skj.tekst.value = '';
-          boble('Takk! Meldingen er sendt. Skriv gjerne mer om du vil.' + (rad.epost || innlogget ? ' Trenger vi mer informasjon, tar vi kontakt.' : ''));
+          skj.tekst.value = ''; if (medBilde) settBilde(null);
+          boble('Takk! Meldingen er sendt' + (medBilde ? ' med skjermbildet, uten navnet ditt' : '') + '. Skriv gjerne mer om du vil.' + (!medBilde && (rad.epost || innlogget) ? ' Trenger vi mer informasjon, tar vi kontakt.' : ''));
         })
         .catch(function () { boble('Beklager, meldingen ble ikke sendt. Prøv igjen om litt.'); })
         .then(function () { send.disabled = false; });
