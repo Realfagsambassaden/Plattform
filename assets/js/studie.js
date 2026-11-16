@@ -1687,7 +1687,6 @@ function studieStart() {
           (g.kommentar ? '<p>' + esc(g.kommentar) + '</p>' : '') + (g.status === 'avvist' && /^Arbeidskrav/.test(g.kilde) ? '<p class="st-sm">Forsøket teller derfor ikke. Ta arbeidskravet på nytt, med håndskrevne bilder.</p>' : '') + '</div>';
       }).join('');
       if (ak && flereKurs()) o += '<div class="st-kursmerke"><span>' + ikon('bok', 18) + ' <b>' + esc(ak === 'egen' ? 'Min egen løype' : fagnavn(ak)) + '</b></span><button type="button" class="st-btn g liten" data-h="byttKurs">Bytt fag</button></div>';
-      else if ((T.deltar || []).length === 1) o += '<div class="st-kursmerke"><span>' + ikon('bok', 18) + ' <b>' + esc(fagnavn(T.deltar[0])) + '</b></span></div>';
       o += '<div class="st-hilsen"><span class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</span><span class="st-sm">' + esc(dato.charAt(0).toUpperCase() + dato.slice(1)) + '</span></div>' + gjsHtml + appKort();
       if (!v.length) o += '<div class="st-dkort g"><span class="st-merke">Kom i gang</span><b class="st-dtittel">Velg hva du skal studere</b><span class="st-sm">Velg temaer, så får du en løype med én uke per tema og en liten quiz hver dag.</span><div><button type="button" class="st-btn" data-h="ga" data-v="innstillinger">Velg temaer</button></div></div>';
       else {
