@@ -98,6 +98,7 @@
           '<feComposite in="kant" in2="hull" operator="in"/></filter></svg>';
         document.body.appendChild(f);
       }
+      document.documentElement.style.setProperty('--kritt-filter', 'url(#kritt)');
       var nk = nb.querySelector('.nb-knapp');
       nk.addEventListener('click', function () { var a = !nb.classList.contains('apen'); nb.classList.toggle('apen', a); nk.setAttribute('aria-expanded', String(a)); });
       document.addEventListener('click', function (e) { if (!nb.contains(e.target)) { nb.classList.remove('apen'); nk.setAttribute('aria-expanded', 'false'); } });
