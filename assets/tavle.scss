@@ -672,7 +672,10 @@ body.har-foredrag { overflow: hidden; }
 .nb-knapp { display: inline-flex; align-items: center; gap: .45rem; padding: .15rem .7rem .15rem .2rem; border: 2px solid var(--nv, $neon); border-radius: 999px; background: none; color: var(--nv, $neon); font: inherit; font-weight: 800; cursor: pointer; white-space: nowrap; }
 .nb-knapp:hover, .niva-bryter.apen .nb-knapp { background: color-mix(in srgb, var(--nv) 15%, transparent); }
 .nb-liten { width: 30px; height: 30px; overflow: visible; }
-.niva-bryter svg .nb-ring { fill: $slate-2; stroke: $chalk; stroke-width: 5; }
+.niva-bryter svg { filter: url(#kritt); }
+.niva-bryter svg .nb-topp { fill: none; stroke: rgba($chalk, .5); stroke-width: 2.5; stroke-dasharray: 5 6; }
+.nb-liten .nb-topp { display: none; }
+.niva-bryter svg .nb-ring { fill: rgba($slate-2, .95); stroke: $chalk; stroke-width: 4; }
 .niva-bryter svg .nb-riller { stroke: rgba($chalk, .5); stroke-width: 3; stroke-linecap: round; }
 .niva-bryter svg .nb-merke { stroke: var(--nv); stroke-width: 6; stroke-linecap: round; }
 .niva-bryter svg .nb-viser { transition: transform .45s cubic-bezier(.3, 1.6, .5, 1); }
@@ -685,14 +688,15 @@ body.har-foredrag { overflow: hidden; }
 .niva-bryter:hover .nb-panel, .niva-bryter:focus-within .nb-panel, .niva-bryter.apen .nb-panel { opacity: 1; visibility: visible; transform: none; }
 .nb-panel::before { content: ""; position: absolute; left: 0; right: 0; top: -.5rem; height: .5rem; }   // musa kan gå fra knappen til panelet
 .nb-stor { position: absolute; left: 50%; top: 52px; width: 84px; height: 84px; margin-left: -42px; overflow: visible; }
-.nb-valg { position: absolute; padding: .2rem .6rem; border: 2px solid var(--nv); border-radius: 8px; color: var(--nv) !important; font-family: "Architects Daughter", cursive; font-weight: 700; font-size: .95rem; text-decoration: none !important; white-space: nowrap; background: $slate-2; transition: transform .15s, background .15s; }
+.nb-valg { position: absolute; padding: .2rem .6rem; border: 2px solid var(--nv); border-radius: 8px; color: var(--nv) !important; font-family: "Kritt", "Architects Daughter", cursive; font-weight: 700; font-size: 1rem; text-decoration: none !important; white-space: nowrap; background: $slate-2; transition: transform .15s, background .15s; }
 a.nb-valg:hover { transform: scale(1.07); background: color-mix(in srgb, var(--nv) 18%, $slate-2); }
 .nb-valg.her { background: var(--nv); color: $slate !important; cursor: default; }
 .nb-valg.mangler { opacity: .35; border-style: dashed; cursor: not-allowed; }
 .nb-valg[data-niva="forkurs"] { right: calc(50% + 52px); top: 80px; }
 .nb-valg[data-niva="ingenior"] { left: 50%; top: 8px; translate: -50% 0; }
 .nb-valg[data-niva="fordypning"] { left: calc(50% + 52px); top: 80px; }
-.nb-tittel { position: absolute; left: 50%; bottom: 6px; translate: -50% 0; font-family: "Architects Daughter", cursive; color: $chalk; letter-spacing: .18em; font-size: .9rem; }
+.nb-tittel { position: absolute; left: 50%; bottom: 4px; translate: -50% 0; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; letter-spacing: .18em; font-size: 1.05rem; -webkit-text-stroke: .4px $chalk; text-shadow: 0 0 8px rgba($chalk, .4); filter: url(#kritt); }
+.nb-navn { font-family: "Kritt", "Architects Daughter", cursive; }
 @media (max-width: 480px) { .nb-panel { width: 300px; left: -.5rem; } .nb-valg { font-size: .85rem; padding: .15rem .45rem; } }
 
 .ll-modus { display: inline-flex; align-items: center; gap: .3rem; font-size: .85rem; }

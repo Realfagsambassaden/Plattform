@@ -56,6 +56,7 @@
         return '<svg class="' + kl + '" viewBox="-70 -70 140 140" aria-hidden="true">' +
           '<path class="nb-merke" data-nv="forkurs" d="M-62 0h-12"/><path class="nb-merke" data-nv="ingenior" d="M0 -62v-12"/><path class="nb-merke" data-nv="fordypning" d="M62 0h12"/>' +
           '<circle r="54" class="nb-ring"/><path class="nb-riller" d="M0 -54v8M27 -46.8l-4 6.9M46.8 -27l-6.9 4M54 0h-8M46.8 27l-6.9 -4M27 46.8l-4 -6.9M0 54v-8M-27 46.8l4 -6.9M-46.8 27l6.9 -4M-54 0h8M-46.8 -27l6.9 4M-27 -46.8l4 6.9"/>' +
+          '<circle r="38" class="nb-topp"/>' +
           '<g class="nb-viser"><path d="M0 -6V-36"/><circle cy="-36" r="5"/></g></svg>';
       };
       var valg = NIVA.map(function (n) {
@@ -86,6 +87,17 @@
     bar.innerHTML = h;
     var nb = bar.querySelector('.niva-bryter');
     if (nb) {
+      // Krittfilteret (samme som på forsiden) legges inn én gang hvis siden ikke har det
+      if (!document.getElementById('kritt')) {
+        var f = document.createElement('div'); f.setAttribute('aria-hidden', 'true'); f.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+        f.innerHTML = '<svg width="0" height="0"><filter id="kritt" x="-5%" y="-15%" width="110%" height="130%">' +
+          '<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="4" result="ujevn"/>' +
+          '<feDisplacementMap in="SourceGraphic" in2="ujevn" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="kant"/>' +
+          '<feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="1" seed="9" result="korn"/>' +
+          '<feColorMatrix in="korn" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.6 1.55" result="hull"/>' +
+          '<feComposite in="kant" in2="hull" operator="in"/></filter></svg>';
+        document.body.appendChild(f);
+      }
       var nk = nb.querySelector('.nb-knapp');
       nk.addEventListener('click', function () { var a = !nb.classList.contains('apen'); nb.classList.toggle('apen', a); nk.setAttribute('aria-expanded', String(a)); });
       document.addEventListener('click', function (e) { if (!nb.contains(e.target)) { nb.classList.remove('apen'); nk.setAttribute('aria-expanded', 'false'); } });
