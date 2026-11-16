@@ -399,6 +399,9 @@ body.st-app-modus .studie { max-width: 560px; margin: 0 auto; padding-bottom: ca
 .studie .st-meny { position: fixed; top: 0; right: 0; bottom: 0; z-index: 1041; width: min(330px, 88vw); overflow-y: auto; padding: 1rem 1.2rem calc(1rem + env(safe-area-inset-bottom)); background: color-mix(in srgb, var(--bs-body-bg) 92%, white); border-left: 1px solid var(--bs-border-color); box-shadow: -10px 0 40px rgba(0,0,0,.4); }
 .studie .st-meny .st-rad { margin-bottom: .6rem; }
 .studie .st-mrad { display: flex; align-items: center; gap: .9rem; width: 100%; min-height: 56px; padding: .4rem 0; border: 0; border-bottom: 1px solid var(--bs-border-color); background: none; color: var(--bs-body-color); text-decoration: none; text-align: left; font: inherit; font-size: 1.05rem; cursor: pointer; }
+.studie .st-mrad.her { color: #e39d63; background: rgba(227, 157, 99, .1); box-shadow: inset 4px 0 0 #e39d63; padding-left: .6rem; font-weight: 700; }
+.studie .st-mrad.her .st-sm { color: rgba(227, 157, 99, .8); }
+.studie .st-tilbakepil { color: #e39d63 !important; }
 .studie .st-mikon { color: var(--bs-primary); display: inline-flex; }
 .studie .st-mtekst { flex: 1; display: flex; flex-direction: column; }
 .studie .st-mtekst .st-sm { font-size: .8rem; }
@@ -408,6 +411,9 @@ body.st-app-modus .studie { max-width: 560px; margin: 0 auto; padding-bottom: ca
 .studie .st-oppggruppe { border: 1px solid var(--bs-border-color); border-radius: 14px; margin: 0 0 .6rem; padding: 0 .8rem; background: color-mix(in srgb, var(--bs-body-bg) 92%, white); }
 .studie .st-oppggruppe > summary { cursor: pointer; padding: .7rem 0; font-weight: 700; }
 .studie .st-oppgrad { display: flex; align-items: center; gap: .6rem; width: 100%; min-height: 52px; padding: .5rem 0; border: 0; border-top: 1px solid var(--bs-border-color); background: none; color: inherit; text-align: left; font: inherit; cursor: pointer; }
+.st-kursmerke { display: flex; align-items: center; justify-content: space-between; gap: .6rem; margin: 0 0 .8rem; padding: .45rem .7rem; border: 1px solid var(--bs-border-color); border-radius: 12px; }
+.st-kursmerke b { font-family: "Architects Daughter", cursive; }
+.st-fagvalg { width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; }
 .st-skann-forslag { margin: .4rem 0 .8rem; }
 .st-hjelp { margin: .6rem 0 0; text-align: left; }
 .st-hjelp summary { cursor: pointer; font-weight: 700; color: var(--bs-link-color); }
