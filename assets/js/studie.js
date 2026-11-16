@@ -1667,7 +1667,7 @@ function studieStart() {
       return '<button type="button" class="st-dkort g st-fagvalg" data-h="velgKurs" data-id="' + d.kurs + '"><span class="st-merke">Kurs</span><b class="st-dtittel">' + esc(d.kursinfo.navn) + '</b>' +
         '<span class="st-sm">' + (u ? 'Denne uka: ' + esc(tittel(u)) : 'Ingen temaer ennå') + (krav ? ' · ' + krav + ' arbeidskrav venter' : '') + '</span></button>';
     }).join('');
-    return '<div class="st-hilsen"><span class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</span><span class="st-sm">' + esc(new Date().toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long' })) + '</span></div>' + appKort() +
+    return '<div class="st-hilsen"><span class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</span><span class="st-sm">' + esc(new Date().toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long' })) + '</span></div>' + appKort() + varselKort() +
       '<h2 class="st-h2">Denne uka</h2>' + (gjore.length ? '<div class="st-gjoreliste">' + gjore.map(function (g) { return g.html; }).join('') + '</div>' : '<p class="st-ind">Ingenting som venter denne uka. Bra!</p>') +
       '<h2 class="st-h2">Fagene dine</h2>' + kort +
       (valgt().length ? '<button type="button" class="st-dkort st-fagvalg" data-h="velgKurs" data-id="egen"><span class="st-merke">Uten kurs</span><b class="st-dtittel">Min egen løype</b><span class="st-sm">Temaene du har valgt selv</span></button>' : '') +
