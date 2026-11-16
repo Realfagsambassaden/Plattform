@@ -15,6 +15,7 @@ python3 "$ROT/verktoy/fag.py" "$HER" matematikkhjelp
 python3 "$ROT/verktoy/forside.py" "$HER"
 python3 "$ROT/verktoy/tema.py" "$HER"
 python3 "$ROT/verktoy/innhold.py" "$HER"
+python3 "$ROT/verktoy/oppgaver.py" "$HER"
 
 cd "$HER"
 if [ "${1:-}" = "preview" ]; then

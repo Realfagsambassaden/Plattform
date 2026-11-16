@@ -50,7 +50,8 @@
         '<button type="button" data-h="ny" title="Start en ny samtale">Ny samtale</button>' +
         '<button type="button" data-h="lukk" aria-label="Lukk">×</button></span></div>' +
       '<div class="dm-logg" aria-live="polite"></div>' +
-      '<form class="dm-skriv"><textarea rows="2" maxlength="2000" placeholder="Hva lurer du på? Fortell gjerne hvor du står fast." aria-label="Melding til Dashman"></textarea>' +
+      '<div class="dm-vedlegg" hidden><img alt="Bildet du legger ved"><button type="button" data-h="fjernbilde" aria-label="Fjern bildet">×</button></div>' +
+      '<form class="dm-skriv"><label class="dm-kamera" title="Ta bilde av løsningen din, så ser Dashman på den"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span class="dm-skjult">Ta bilde av løsningen din</span><input type="file" accept="image/*" capture="environment"></label><textarea rows="2" maxlength="2000" placeholder="Hva lurer du på? Fortell gjerne hvor du står fast." aria-label="Melding til Dashman"></textarea>' +
       '<button type="submit">Send</button></form>' +
       '<p class="dm-info">Dashman er en KI-veileder. Han gir hint, ikke fasit. Samtalen lagres ikke. Sjekk viktige ting med faglæreren din.</p>' +
     '</div>';
@@ -194,15 +195,41 @@
     return { tittel: (h1 && h1.textContent.trim()) || document.title, url: location.pathname, tekst: (main.innerText || '').replace(/\s+/g, ' ').slice(0, 3000) };
   }
 
+  // Bilde fra kameraknappen: krympes til 1600 px og sendes med neste melding. Lagres ikke (bare i minnet til det er sendt).
+  var vedlegg = null, vedBoks = panel.querySelector('.dm-vedlegg');
+  function settVedlegg(url) { vedlegg = url || null; vedBoks.hidden = !vedlegg; if (vedlegg) vedBoks.querySelector('img').src = vedlegg; }
+  function krymp(fil) {
+    return new Promise(function (ok, nei) {
+      if (!fil || !/^image\//.test(fil.type)) return nei(new Error('Velg et bilde.'));
+      var r = new FileReader();
+      r.onload = function () {
+        var img = new Image();
+        img.onload = function () {
+          var f = Math.min(1, 1600 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+          c.width = Math.round(img.width * f); c.height = Math.round(img.height * f); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          ok(c.toDataURL('image/jpeg', 0.85));
+        };
+        img.onerror = function () { nei(new Error('Klarte ikke å lese bildet.')); }; img.src = r.result;
+      };
+      r.readAsDataURL(fil);
+    });
+  }
+  panel.querySelector('.dm-kamera input').addEventListener('change', function (e) {
+    var f = e.target.files && e.target.files[0]; e.target.value = '';
+    krymp(f).then(function (u) { settVedlegg(u); felt.focus(); }).catch(function () {});
+  });
+
   function send(tekst) {
-    if (opptatt || !tekst.trim()) return;
+    if (opptatt || (!tekst.trim() && !vedlegg)) return;
     opptatt = true; panel.classList.add('dm-venter');
-    var m = { rolle: 'student', tekst: tekst.trim().slice(0, 2000) };
+    var bildeNa = vedlegg; settVedlegg(null);
+    var m = { rolle: 'student', tekst: (tekst.trim() || 'Her er løsningen min så langt. Hva synes du?').slice(0, 2000) + (bildeNa ? ' [bilde av løsningen]' : '') };
     samtale.push(m); lagre(); visMelding(m); settHumor('tenker');
+    if (bildeNa) { var vis1 = document.createElement('img'); vis1.className = 'dm-mbilde'; vis1.alt = 'Bildet du sendte'; vis1.src = bildeNa; logg.lastChild.appendChild(vis1); logg.scrollTop = logg.scrollHeight; }
     var tenk = document.createElement('div'); tenk.className = 'dm-m dm-fra dm-tenker'; tenk.innerHTML = '<p><span></span><span></span><span></span></p>'; logg.appendChild(tenk); logg.scrollTop = logg.scrollHeight;
     token().then(function (t) {
       if (!t) throw { melding: 'Du må logge inn på nytt for å snakke med Dashman.' };
-      return fetch(api, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t }, body: JSON.stringify({ meldinger: samtale, side: sideInfo(), oppgave: oppgave, fag: window.fhDashmanFag ? window.fhDashmanFag() : null }) });
+      return fetch(api, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t }, body: JSON.stringify({ meldinger: samtale, side: sideInfo(), oppgave: oppgave, bilde: bildeNa || undefined, fag: window.fhDashmanFag ? window.fhDashmanFag() : null }) });
     }).then(function (r) { return r.json().then(function (d) { if (!r.ok) throw { melding: d.feil }; return d; }); })
       .then(function (d) {
         tenk.remove(); settHumor(d.humor || 'noytral');
@@ -215,7 +242,7 @@
         tenk.remove(); samtale.pop(); lagre(); settHumor('trist');
         var f = document.createElement('div'); f.className = 'dm-m dm-fra dm-feil';
         f.innerHTML = '<p>' + esc((e && e.melding) || 'Jeg fikk ikke svart nå. Prøv igjen om litt.') + '</p>'; logg.appendChild(f); logg.scrollTop = logg.scrollHeight;
-        felt.value = m.tekst;
+        felt.value = m.tekst.replace(/ \[bilde av løsningen\]$/, ''); if (bildeNa) settVedlegg(bildeNa);
       })
       .then(function () { opptatt = false; panel.classList.remove('dm-venter'); felt.focus(); });
   }
@@ -227,11 +254,12 @@
     setTimeout(function () { felt.focus(); }, 50);
   });
   // Studieappen åpner Dashman fra bunnlinja, eventuelt med et forslag til melding i feltet.
-  window.Dashman = { apne: function (forslag) { if (panel.hidden) knapp.click(); if (forslag) { felt.value = forslag; } setTimeout(function () { felt.focus(); }, 60); } };
+  window.Dashman = { apne: function (forslag, bilde) { if (panel.hidden) knapp.click(); if (forslag) { felt.value = forslag; } if (bilde) settVedlegg(bilde); setTimeout(function () { felt.focus(); }, 60); } };
   panel.querySelector('.dm-skriv').addEventListener('submit', function (e) { e.preventDefault(); var t = felt.value; felt.value = ''; send(t); });
   felt.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); panel.querySelector('.dm-skriv').requestSubmit(); } });
   panel.addEventListener('click', function (e) {
     var h = e.target.getAttribute && e.target.getAttribute('data-h');
+    if (h === 'fjernbilde') { settVedlegg(null); return; }
     if (h === 'lukk') { panel.hidden = true; knapp.hidden = false; knapp.focus(); }
     if (h === 'ny') { samtale = []; lagre(); oppgave = null; lagreOppgave(); settHumor('glad'); visAlt(); }
     if (h === 'husker') {
@@ -256,12 +284,14 @@
   window.addEventListener('dashman:oppgave', function (e) {
     var d = e.detail || {}; if (!d.oppgave || !innlogget()) return;
     oppgave = { tittel: String(d.tittel || '').slice(0, 150), oppgave: String(d.oppgave).slice(0, 2000), losning: String(d.losning || '').slice(0, 2500),
-                forsok: String(d.forsok || '').slice(0, 1500), hint: (d.hint || []).slice(0, 3) };
+                forsok: String(d.forsok || '').slice(0, 1500), hint: (d.hint || []).slice(0, 3), kilde: d.kilde || 'hint' };
     lagreOppgave(); samtale = []; lagre();
     forhandslast(); panel.hidden = false; knapp.hidden = true; settHumor('glad');
     (profil === null ? hentProfil().then(function (p) { profil = p; }) : Promise.resolve()).then(function () {
       visAlt();
-      send('Jeg står fast på denne oppgaven' + (oppgave.hint.length ? ' og har fått ' + oppgave.hint.length + ' hint' : '') + '. Kan du hjelpe meg videre?');
+      if (d.bilde) settVedlegg(d.bilde);
+      if (d.startmelding === false) { felt.focus(); return; }
+      send(d.startmelding || ('Jeg står fast på denne oppgaven' + (oppgave.hint.length ? ' og har fått ' + oppgave.hint.length + ' hint' : '') + '. Kan du hjelpe meg videre?'));
     });
   });
 })();

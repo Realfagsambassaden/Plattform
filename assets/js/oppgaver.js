@@ -43,7 +43,9 @@
     var verktoy = document.createElement('div');
     verktoy.className = 'oppg-verktoy';
     verktoy.innerHTML = '<button type="button" class="hint" aria-expanded="false">Få et hint</button>' +
-                        (los ? '<button type="button" class="vis" aria-expanded="false">Vis løsning</button>' : '');
+                        (los ? '<button type="button" class="vis" aria-expanded="false">Vis løsning</button>' : '') +
+                        // Skann: ta bilde av den håndskrevne løsningen i studieappen, som henter oppgaven og løsningsforslaget fra oppgaver.json
+                        '<a class="skann" href="/studie/index.html#skann=' + encodeURIComponent(location.pathname + '#' + i) + '">📷 Skann løsningen din</a>';
     var panel = document.createElement('div');
     panel.className = 'hint-panel'; panel.hidden = true;
     var id = 'forsok-' + (i + 1);

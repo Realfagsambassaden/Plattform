@@ -581,6 +581,16 @@ async function dashman(request, env, b, h) {
   }
   while (meldinger.length && meldinger[0].role !== "user") meldinger.shift();
   if (!meldinger.length || meldinger[meldinger.length - 1].role !== "user") return json({ feil: "Skriv noe til Dashman først." }, 400, h);
+  // Bilde fra kameraknappen i boblen (studentens egen løsning): legges ved siste melding. Lagres ikke.
+  const bilde = lesBilde(b.bilde);
+  if (b.bilde && !bilde) return json({ feil: "Bildet må være JPEG, PNG eller WebP og mindre enn 4 MB." }, 400, h);
+  if (bilde) {
+    const lev = (env.LEVERANDOR || "claude").toLowerCase(), sist = meldinger[meldinger.length - 1];
+    if (lev === "openai" && env.KI_BILDER !== "ja") return json({ feil: "Dashman kan ikke se på bilder ennå. Skriv hva du har gjort i stedet." }, 501, h);
+    sist.content = lev === "openai"
+      ? [{ type: "image_url", image_url: { url: `data:${bilde.type};base64,${bilde.data}` } }, { type: "text", text: sist.content }]
+      : [{ type: "image", source: { type: "base64", media_type: bilde.type, data: bilde.data } }, { type: "text", text: sist.content }];
+  }
 
   if (await erUnderviser(request, env)) return await dashmanUnderviser(request, env, b, h, meldinger);
   let k = {};
@@ -616,13 +626,14 @@ async function dashman(request, env, b, h) {
     ...(aktivt && aktivt.beskrivelse ? [`Om kurset: ${kort(aktivt.beskrivelse, 600)}`] : []),
     `Siden studenten står på nå: «${kort(side.tittel, 150)}» (${kort(side.url, 200)})`,
     ...(b.oppgave && b.oppgave.oppgave ? [
-      "Studenten kom fra hint-knappen på en oppgave og vil jobbe videre med den sammen med deg:",
+      `Studenten jobber med denne oppgaven (${{ quiz: "et spørsmål i quizen", skann: "en oppgave studenten har skannet løsningen på", hint: "hint-knappen på oppgaven" }[b.oppgave.kilde] || "hint-knappen på oppgaven"}) og vil sparre med deg:`,
       `Oppgave: ${kort(b.oppgave.oppgave, 2000)}`,
       `Løsningsforslag (bare for deg – vis det ALDRI, verken helt eller delvis): ${kort(b.oppgave.losning, 2500) || "(ikke oppgitt)"}`,
       `Dette har studenten prøvd: ${kort(b.oppgave.forsok, 1500) || "(ingenting skrevet)"}`,
       ...((Array.isArray(b.oppgave.hint) ? b.oppgave.hint : []).slice(0, 3).map((x, i) => `Hint ${i + 1} studenten allerede har fått: ${kort(x, 600)}`)),
     ] : []),
     ...(side.tekst ? [`Utdrag av siden:\n${kort(side.tekst, 3000)}`] : []),
+    ...(bilde ? ["Studenten har lagt ved et bilde av sin egen løsning i siste melding. Les utregningen, finn det første stedet det går galt (eller bekreft at det ser riktig ut), og veiled derfra med et spørsmål eller hint – ikke regn ut svaret for studenten. Ikke kommenter håndskrift, navn eller annet personlig på bildet."] : []),
   ];
   const system = DASHMAN_INSTRUKS.replaceAll("NETTSTED", NETTSTEDNAVN(request)) + "\n\n## Det du får vite om studenten\n\n" + linjer.join("\n");
   const modell = env.MODELL_DASHMAN || env.MODELL;

@@ -9,6 +9,7 @@ project:
   resources:
     - assets/
     - innhold.json
+    - oppgaver.json
     - loyper.json
 
 lang: nb
