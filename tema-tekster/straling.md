@@ -1,0 +1,2 @@
+<!-- tillegg: Claude -->
+Lys, radiobølger, varmestråling og røntgen er alle samme sak: elektromagnetiske bølger, bare med forskjellig bølgelengde. Her ser du hvordan det elektromagnetiske spekteret henger sammen, og hvordan vi regner på hvor mye energi strålingen fører med seg. Alt som har en temperatur, stråler, og jo varmere det er, desto mer og desto kortere bølgelengde. Med de samme lovene kan vi regne ut temperaturen på jorda og forstå **drivhuseffekten**: hvorfor jorda er levelig, og hvorfor litt mer CO₂ i lufta gjør den varmere.
