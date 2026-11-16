@@ -130,7 +130,11 @@
       return '<p>' + inline(avsnitt).replace(/\n/g, '<br>') + '</p>';
     }).join('');
   }
-  function inline(s) { return s.replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<i>$2</i>'); }
+  // Lenker: bare til sider på nettstedene våre (/… eller https://fysikkhjelp.no/…, matematikkhjelp.no, realfagsambassaden.no)
+  function lenker(s) {
+    return s.replace(/\[([^\]\n]+)\]\(((?:\/|https:\/\/(?:www\.)?(?:fysikkhjelp|matematikkhjelp|realfagsambassaden)\.no\/)[^)\s"<>]*)\)/g, function (_, t, u) { return '<a href="' + u + '">' + t + '</a>'; });
+  }
+  function inline(s) { return lenker(s).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<i>$2</i>'); }
   // Formler: MathJax lastes bare av Quarto på sider som selv har formler. Mangler det, laster vi det her.
   var mjLofte = null;
   function mathjax() {

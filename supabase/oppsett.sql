@@ -837,3 +837,17 @@ end
 $$;
 revoke execute on function public.behandle_gjennomsyn(bigint, text, text) from public, anon;
 grant execute on function public.behandle_gjennomsyn(bigint, text, text) to authenticated;
+
+-- =====================================================================
+-- Åpne kurs (16. nov. 2026): underviseren kan gjøre et publisert kurs åpent. Åpne kurs vises i studieappen under
+-- Kurs, og alle innloggede kan melde seg på uten kode (påmeldingen krever ikke kode fra før).
+-- =====================================================================
+alter table public.kurs add column if not exists apen boolean not null default false;
+create or replace function public.apne_kurs()
+  returns table (id uuid, navn text, beskrivelse text, krev_innsyn boolean, underviser text, temaer int)
+  language sql stable security definer set search_path = public as
+  $$ select k.id, k.navn, k.beskrivelse, k.krev_innsyn, coalesce(nullif(trim(p.navn), ''), ''), jsonb_array_length(k.temaer)
+     from kurs k left join profiler p on p.id = k.eier
+     where k.apen and k.status = 'publisert' order by k.navn $$;
+revoke all on function public.apne_kurs() from public, anon;
+grant execute on function public.apne_kurs() to authenticated;
