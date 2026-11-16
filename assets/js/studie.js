@@ -239,7 +239,7 @@ function studieStart() {
   }
   // Obligatorisk øving: godkjent når en quiz for øvingen har minst «krav» riktige innen fristen.
   function godkjent(o) { return (T.quizer || []).some(function (q) { return q.ovelse === o.id && q.riktige >= o.krav && (!o.frist || Date.parse(q.fullfort) <= Date.parse(o.frist)); }); }
-  function mineOvelser() { var mine = T.deltar.map(function (d) { return d.kurs; }); return (T.ovelser || []).filter(function (o) { return mine.indexOf(o.kurs) >= 0; }); }
+  function mineOvelser() { var a = aktivtKurs(), mine = a ? (a === 'egen' ? [] : [a.kurs]) : T.deltar.map(function (d) { return d.kurs; }); return (T.ovelser || []).filter(function (o) { return mine.indexOf(o.kurs) >= 0; }); }
   function startOvelse(id) {
     var o = T.ovelser.find(function (x) { return x.id === id; }), t = o.tema.split('/')[1];
     if (!K[t] && !S[t]) return varsle('Temaet finnes ikke lenger.', true);
@@ -1475,7 +1475,18 @@ function studieStart() {
   function ikon(n, st) { return '<svg class="st-svg" width="' + (st || 22) + '" height="' + (st || 22) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IKON[n] + '</svg>'; }
   function appModus() { return !erUnderviser() || T.eksempel; }
   // Ukens tema i løypa: det første som ikke er vurdert ennå (én uke per tema, i valgt rekkefølge).
-  function ukensTema() { var v = valgt(); return v.filter(function (t) { return !T.ukevurd[t]; })[0] || v[v.length - 1]; }
+  // Flere kurs: studenten velger først et kurs (fag) på I dag. Quiz, ukens tema og arbeidskrav gjelder så bare det kurset.
+  // Med null eller ett kurs er det som før. Valget huskes på enheten. 'egen' = egen løype uten kurs.
+  function flereKurs() { return !T.eksempel && (T.deltar || []).length > 1; }
+  function aktivtKurs() {
+    if (!flereKurs()) return null;
+    var id = T.aktivKurs; if (id == null) try { id = T.aktivKurs = localStorage.getItem('fh-aktivt-kurs'); } catch (e) {}
+    return id === 'egen' ? 'egen' : ((T.deltar || []).find(function (d) { return d.kurs === id; }) || null);
+  }
+  function settAktivtKurs(id) { T.aktivKurs = id; try { if (id) localStorage.setItem('fh-aktivt-kurs', id); else localStorage.removeItem('fh-aktivt-kurs'); } catch (e) {} }
+  function kursTemaer(d) { return ((d && d.kursinfo && d.kursinfo.temaer) || []).filter(function (x) { return x.indexOf(NETTSTED + '/') === 0; }).map(function (x) { return x.slice(NETTSTED.length + 1); }).filter(function (t) { return S[t]; }); }
+  function loypeTemaer() { var a = aktivtKurs(); if (a && a !== 'egen') { var kt = kursTemaer(a); if (kt.length) return kt; } return valgt(); }
+  function ukensTema() { var v = loypeTemaer(); return v.filter(function (t) { return !T.ukevurd[t]; })[0] || v[v.length - 1]; }
   function apneKrav() {
     return mineOvelser().filter(function (o) { return !godkjent(o) && (!o.frist || Date.parse(o.frist) > Date.now()); })
       .sort(function (a, b) { return (Date.parse(a.frist) || Infinity) - (Date.parse(b.frist) || Infinity); });
@@ -1613,9 +1624,22 @@ function studieStart() {
       .then(function () { sk.venter = false; tegn(); });
   }
 
+  function kursVelger() {
+    var fornavn = (T.navn || '').split(/\s+/)[0];
+    var kort = (T.deltar || []).map(function (d) {
+      var tm = kursTemaer(d), u = tm.filter(function (t) { return !T.ukevurd[t]; })[0] || tm[tm.length - 1];
+      var krav = (T.ovelser || []).filter(function (x) { return x.kurs === d.kurs && !godkjent(x) && (!x.frist || Date.parse(x.frist) > Date.now()); }).length;
+      return '<button type="button" class="st-dkort g st-fagvalg" data-h="velgKurs" data-id="' + d.kurs + '"><span class="st-merke">Kurs</span><b class="st-dtittel">' + esc(d.kursinfo.navn) + '</b>' +
+        '<span class="st-sm">' + (u ? 'Denne uka: ' + esc(tittel(u)) : 'Ingen temaer ennå') + (krav ? ' · ' + krav + ' arbeidskrav venter' : '') + '</span></button>';
+    }).join('');
+    return '<div class="st-hilsen"><span class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</span><span class="st-sm">Hvilket fag vil du jobbe med?</span></div>' + appKort() + kort +
+      (valgt().length ? '<button type="button" class="st-dkort st-fagvalg" data-h="velgKurs" data-id="egen"><span class="st-merke">Uten kurs</span><b class="st-dtittel">Min egen løype</b><span class="st-sm">Temaene du har valgt selv</span></button>' : '') +
+      '<p class="st-sm">Du kan bytte fag når som helst med «Bytt fag» øverst.</p>';
+  }
   var SKJ = {
     idag: function () {
-      var fornavn = (T.navn || '').split(/\s+/)[0], v = valgt(), t = ukensTema(), o = '';
+      if (flereKurs() && !aktivtKurs()) return kursVelger();
+      var fornavn = (T.navn || '').split(/\s+/)[0], v = loypeTemaer(), t = ukensTema(), o = '', ak = aktivtKurs();
       var dato = new Date().toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long' });
       if (T.gjs === undefined) { T.gjs = []; k.from('gjennomsyn').select('id, kilde, status, kommentar, behandlet').neq('status', 'venter').gte('behandlet', new Date(Date.now() - 14 * 864e5).toISOString())
         .then(function (r) { if (!r.error && r.data && r.data.length) { T.gjs = r.data; if (T.vis === 'idag') tegn(); } }, function () {}); }
@@ -1623,6 +1647,7 @@ function studieStart() {
         return '<div class="st-fb' + (g.status === 'avvist' ? ' n' : '') + '"><b>Bildet ditt (' + esc(g.kilde) + ') er ' + (g.status === 'godkjent' ? 'godkjent' : 'ikke godkjent') + ' av en lærer.</b>' +
           (g.kommentar ? '<p>' + esc(g.kommentar) + '</p>' : '') + (g.status === 'avvist' && /^Arbeidskrav/.test(g.kilde) ? '<p class="st-sm">Forsøket teller derfor ikke. Ta arbeidskravet på nytt, med håndskrevne bilder.</p>' : '') + '</div>';
       }).join('');
+      if (ak) o += '<div class="st-kursmerke"><span>' + ikon('bok', 18) + ' <b>' + esc(ak === 'egen' ? 'Min egen løype' : ak.kursinfo.navn) + '</b></span><button type="button" class="st-btn g liten" data-h="byttKurs">Bytt fag</button></div>';
       o += '<div class="st-hilsen"><span class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</span><span class="st-sm">' + esc(dato.charAt(0).toUpperCase() + dato.slice(1)) + '</span></div>' + gjsHtml + appKort();
       if (!v.length) o += '<div class="st-dkort g"><span class="st-merke">Kom i gang</span><b class="st-dtittel">Velg hva du skal studere</b><span class="st-sm">Velg temaer, så får du en løype med én uke per tema og en liten quiz hver dag.</span><div><button type="button" class="st-btn" data-h="ga" data-v="innstillinger">Velg temaer</button></div></div>';
       else {
@@ -2256,6 +2281,8 @@ function studieStart() {
       skannNy: function () { var sk = T.skann || {}; T.skann = { valgt: sk.valgt, fri: sk.fri, oppgave: sk.oppgave }; tegn(); },
       skannAnnen: function () { var b = (T.skann || {}).bilde; T.skann = { bilde: b }; tegn(); },
       skannFri: function () { T.skann = { fri: true }; tegn(); },
+      velgKurs: function () { settAktivtKurs(d.id); ga('idag'); },
+      byttKurs: function () { settAktivtKurs(null); ga('idag'); },
       qrStart: qrStart,
       qrStopp: function () { qrStopp(); T.skann = {}; tegn(); },
       velgOppg: function () { var b = (T.skann || {}).bilde; T.skann = { valgt: (T.oppg || []).filter(function (o) { return o.id === d.id; })[0] || null, bilde: b }; tegn(); rot.scrollIntoView(); },
