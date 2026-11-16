@@ -1533,6 +1533,51 @@ function studieStart() {
         return '<details class="st-oppggruppe"' + (g.apen ? ' open' : '') + '><summary>' + esc(g.navn) + ' <span class="st-sm">(' + g.l.length + ')</span></summary>' + g.l.map(oppgRad).join('') + '</details>';
       }).join('');
   }
+  // QR-skanner i appen: kameraet leter etter kurskoden (lenken ?kode=… eller selve koden) og melder studenten på.
+  // Bruker nettleserens BarcodeDetector der den finnes, ellers jsQR (lastes ved behov).
+  var qrStrom = null;
+  function qrStopp() { if (qrStrom) { qrStrom.getTracks().forEach(function (t) { t.stop(); }); qrStrom = null; } }
+  function qrKode(tekst) {
+    var t = String(tekst || '').trim(), m;
+    try { var u = new URL(t); m = u.searchParams.get('kode'); if (m) return m.trim().toUpperCase(); } catch (e) {}
+    m = /^[A-Za-z0-9]{6}$/.exec(t); return m ? t.toUpperCase() : '';
+  }
+  function lastJsQr() {
+    if (window.jsQR) return Promise.resolve(window.jsQR);
+    return new Promise(function (ok, feil) { var sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js'; sc.onload = function () { ok(window.jsQR); }; sc.onerror = function () { feil(new Error('Fikk ikke lastet QR-leseren.')); }; document.head.appendChild(sc); });
+  }
+  function qrStart() {
+    T.skann = { qr: true }; tegn();
+    var v = document.getElementById('st-qr-video'), st = document.getElementById('st-qr-status');
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { st.textContent = 'Nettleseren gir ikke appen tilgang til kameraet. Skriv inn koden under Kurs i stedet.'; return; }
+    var finn = null, lerret = document.createElement('canvas'), ctx = lerret.getContext('2d', { willReadFrequently: true });
+    var detektor = ('BarcodeDetector' in window) ? new window.BarcodeDetector({ formats: ['qr_code'] }) : null;
+    (detektor ? Promise.resolve() : lastJsQr()).then(function () {
+      finn = detektor ? function () { return detektor.detect(v).then(function (l) { return l.length ? l[0].rawValue : null; }); }
+        : function () {
+            if (!v.videoWidth) return Promise.resolve(null);
+            var b = Math.min(640, v.videoWidth), h = Math.round(v.videoHeight * b / v.videoWidth); lerret.width = b; lerret.height = h;
+            ctx.drawImage(v, 0, 0, b, h); var r = window.jsQR(ctx.getImageData(0, 0, b, h).data, b, h); return Promise.resolve(r ? r.data : null);
+          };
+      return navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+    }).then(function (strom) {
+      qrStrom = strom; v.srcObject = strom; v.play(); st.textContent = 'Leter etter QR-koden …';
+      var sist = '';
+      (function runde() {
+        if (!qrStrom) return;
+        if (!document.body.contains(v)) return qrStopp();   // studenten har gått videre
+        finn().then(function (tekst) {
+          if (!tekst) return setTimeout(runde, 250);
+          var kode = qrKode(tekst);
+          if (!kode) { if (tekst !== sist) { sist = tekst; st.textContent = 'Det er ikke en QR-kode til et kurs. Prøv igjen.'; } return setTimeout(runde, 400); }
+          qrStopp(); if (navigator.vibrate) navigator.vibrate(60);
+          T.skann = {}; ga('kurs'); finnKurs(kode);
+        }).catch(function () { setTimeout(runde, 400); });
+      })();
+    }).catch(function (e) {
+      st.textContent = (e && e.name === 'NotAllowedError') ? 'Appen fikk ikke bruke kameraet. Gi tilgang i innstillingene, eller skriv inn koden under Kurs.' : 'Kameraet kunne ikke startes (' + feilmelding(e) + '). Skriv inn koden under Kurs i stedet.';
+    });
+  }
   // Forslag fra lærebøkene mens studenten skriver hvilken oppgave det er (alle ordene må finnes; treff i tittel teller mest).
   function skannForslag(q) {
     var ord = String(q || '').toLowerCase().replace(/[«»"',.:;!?()]/g, ' ').split(/\s+/).filter(function (w) { return w.length > 1 && !/^(oppgave|oppg|nr|fra|i|på|om|og|med)$/.test(w); });
@@ -1603,6 +1648,9 @@ function studieStart() {
     skann: function () {
       var sk = T.skann || (T.skann = {}), o = '', krav = apneKrav(), vo = sk.valgt;
       hentOppgaver();
+      if (sk.qr) return '<h2 class="st-h1">Skann QR-koden til kurset</h2><p class="st-sm">Hold kameraet mot QR-koden faglæreren viser.</p>' +
+        '<div class="st-qr-ramme"><video id="st-qr-video" playsinline muted></video><span class="st-qr-sikte" aria-hidden="true"></span></div>' +
+        '<p class="st-sm" id="st-qr-status">Starter kameraet …</p><p><button type="button" class="st-btn g" data-h="qrStopp">Avbryt</button></p>';
       if (sk.sporLagre) return samtykkeHtml('lagreSkann') + '<img src="' + sk.bilde + '" alt="Bildet du tok" class="st-skann-forhand">';
       if (sk.svar && !sk.svar.feil) {
         var kt = { riktig: 'Riktig fysikk!', regnefeil: 'Riktig tanke, men se over regningen', begrep: 'Her bør du se på fysikken igjen', uklar: 'Jeg fikk ikke lest løsningen' }[sk.svar.vurdering] || 'Tilbakemelding';
@@ -1623,7 +1671,8 @@ function studieStart() {
       if (!sk.bilde) {
         o += '<label class="st-kamera">' + ikon('kamera', 40) + '<span>Ta bilde av løsningen din</span><span class="st-sm">Løs oppgaven for hånd først. Bildet lagres ikke.</span><input type="file" accept="image/*" capture="environment" id="st-skann-bilde"></label>';
         if (vo) o += '<p class="st-dmhjelp"><button type="button" class="st-btn g liten" data-h="skannDashman">' + ikon('prat', 18) + ' Står du fast? Spør Dashman om oppgaven</button></p>';
-        else if (krav.length) o += '<h3>Arbeidskrav</h3><p class="st-sm">Arbeidskrav gjør du som en quiz. Der det trengs, tar du bilde av utregningen underveis.</p>' + krav.map(function (x) {
+        else o += '<button type="button" class="st-oppgrad annen" data-h="qrStart"><span><b>Skann QR-kode til et kurs</b><span class="st-sm">Har faglæreren vist en QR-kode? Skann den her, så blir du meldt på kurset.</span></span>' + ikon('pil', 18) + '</button>';
+        if (!vo && krav.length) o += '<h3>Arbeidskrav</h3><p class="st-sm">Arbeidskrav gjør du som en quiz. Der det trengs, tar du bilde av utregningen underveis.</p>' + krav.map(function (x) {
           return '<button type="button" class="st-kort" data-h="ovelse" data-id="' + x.id + '"><div class="st-rad"><b>' + esc(x.tittel) + '</b><span class="st-sm">' + (x.frist ? esc(fristTekst(x.frist)) + ' ' : '') + '→</span></div></button>';
         }).join('');
         return o;
@@ -2195,6 +2244,8 @@ function studieStart() {
       skannNy: function () { var sk = T.skann || {}; T.skann = { valgt: sk.valgt, fri: sk.fri, oppgave: sk.oppgave }; tegn(); },
       skannAnnen: function () { var b = (T.skann || {}).bilde; T.skann = { bilde: b }; tegn(); },
       skannFri: function () { T.skann = { fri: true }; tegn(); },
+      qrStart: qrStart,
+      qrStopp: function () { qrStopp(); T.skann = {}; tegn(); },
       velgOppg: function () { var b = (T.skann || {}).bilde; T.skann = { valgt: (T.oppg || []).filter(function (o) { return o.id === d.id; })[0] || null, bilde: b }; tegn(); rot.scrollIntoView(); },
       quizDashman: function () {
         var q = T.q, x = q.na, a = q.svart == null ? null : x.alt[q.svart], bokst = 'ABCDEFG';
