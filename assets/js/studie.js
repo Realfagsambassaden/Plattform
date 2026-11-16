@@ -1466,7 +1466,7 @@ function studieStart() {
   }
   var IKON = {
     kamera: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>', hjem: '<path d="M4 11l8-6 8 6v8h-5v-5h-6v5H4z"/>',
-    prat: '<path d="M5 6h14v9H10l-4 3v-3H5z"/>', meny: '<path d="M4 7h16M4 12h16M4 17h16"/>', pil: '<path d="M9 6l6 6-6 6"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>',
+    prat: '<path d="M5 6h14v9H10l-4 3v-3H5z"/>', meny: '<path d="M4 7h16M4 12h16M4 17h16"/>', pil: '<path d="M9 6l6 6-6 6"/>', tilbake: '<path d="M15 6l-6 6 6 6"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>',
     bok: '<path d="M5 5h6a2 2 0 012 2v12a2 2 0 00-2-2H5zM19 5h-6a2 2 0 00-2 2v12a2 2 0 012-2h6z"/>', rute: '<path d="M5 19c3-6 11-2 14-12"/><circle cx="5" cy="19" r="1.6"/><circle cx="19" cy="7" r="1.6"/>',
     graf: '<path d="M5 19V5M5 19h14M8 15l3-4 3 2 4-6"/>', kurs: '<path d="M3 9l9-4 9 4-9 4zM7 11v5c3 2 7 2 10 0v-5"/>',
     bruker: '<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-5 7-5s6 1 7 5"/>', tannhjul: '<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>',
@@ -1479,12 +1479,23 @@ function studieStart() {
   // Med null eller ett kurs er det som før. Valget huskes på enheten. 'egen' = egen løype uten kurs.
   function flereKurs() { return !T.eksempel && (T.deltar || []).length > 1; }
   function aktivtKurs() {
-    if (!flereKurs()) return null;
+    if (T.eksempel) return null;
     var id = T.aktivKurs; if (id == null) try { id = T.aktivKurs = localStorage.getItem('fh-aktivt-kurs'); } catch (e) {}
     return id === 'egen' ? 'egen' : ((T.deltar || []).find(function (d) { return d.kurs === id; }) || null);
   }
   function settAktivtKurs(id) { T.aktivKurs = id; try { if (id) localStorage.setItem('fh-aktivt-kurs', id); else localStorage.removeItem('fh-aktivt-kurs'); } catch (e) {} }
   function kursTemaer(d) { return ((d && d.kursinfo && d.kursinfo.temaer) || []).filter(function (x) { return x.indexOf(NETTSTED + '/') === 0; }).map(function (x) { return x.slice(NETTSTED.length + 1); }).filter(function (t) { return S[t]; }); }
+  // «Løypene mine»: én løype per kurs med temaer, pluss egen løype hvis studenten har valgt temaer selv.
+  function mineLoyper() {
+    var l = (T.deltar || []).filter(function (d) { return kursTemaer(d).length; }).map(function (d) { return { id: d.kurs, navn: d.kursinfo.navn, tm: kursTemaer(d) }; });
+    if (valgt().length) l.push({ id: 'egen', navn: 'Min egen løype', tm: valgt() });
+    return l;
+  }
+  // Tilbake-pila øverst til venstre: hvor den fører fra hver visning (null = ingen pil)
+  function tilbakeMal() {
+    if (T.vis === 'hjem') return T.loypeApen && mineLoyper().length > 1 ? 'loyper' : 'idag';
+    return { uke: 'hjem', fag: 'kurs', pamelding: 'kurs', delta: 'kurs', profil: 'idag', kurs: 'idag', innstillinger: 'idag', skann: 'idag' }[T.vis] || null;
+  }
   function loypeTemaer() { var a = aktivtKurs(); if (a && a !== 'egen') { var kt = kursTemaer(a); if (kt.length) return kt; } return valgt(); }
   function ukensTema() { var v = loypeTemaer(); return v.filter(function (t) { return !T.ukevurd[t]; })[0] || v[v.length - 1]; }
   function apneKrav() {
@@ -1493,15 +1504,17 @@ function studieStart() {
   }
   function besteForsok(o) { return (T.quizer || []).filter(function (q) { return q.ovelse === o.id; }).reduce(function (m, q) { return Math.max(m, q.riktige || 0); }, 0); }
   function fristTekst(f) { if (!f) return ''; return new Date(f).toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'short' }); }
-  function appTittel() { return { skann: 'Skann svaret ditt', hjem: 'Løypa mi', uke: 'Løypa mi', profil: 'Kunnskapsprofil', kurs: 'Kursene mine', fag: 'Kursene mine', pamelding: 'Kursene mine', innstillinger: 'Innstillinger', resultat: 'Resultat' }[T.vis] || ''; }
+  function appTittel() { if (T.vis === 'hjem') { var a = aktivtKurs(); return T.loypeApen && mineLoyper().length > 1 ? (a && a !== 'egen' ? a.kursinfo.navn : 'Min egen løype') : 'Løypene mine'; } return { skann: 'Skann svaret ditt', uke: 'Løypene mine', profil: 'Kunnskapsprofil', kurs: 'Kursene mine', fag: 'Kursene mine', pamelding: 'Kursene mine', innstillinger: 'Innstillinger', resultat: 'Resultat' }[T.vis] || ''; }
   function menyHtml() {
     var rad = function (ik, t, u, v, href) {
       var inni = '<span class="st-mikon">' + ikon(ik) + '</span><span class="st-mtekst">' + t + (u ? '<span class="st-sm">' + u + '</span>' : '') + '</span>' + ikon('pil', 18);
-      return href ? '<a class="st-mrad" href="' + href + '">' + inni + '</a>' : '<button type="button" class="st-mrad" data-h="ga" data-v="' + v + '">' + inni + '</button>';
+      var her = v && (T.vis === v || ({ uke: 'hjem', fag: 'kurs', pamelding: 'kurs', delta: 'kurs' })[T.vis] === v);
+      return href ? '<a class="st-mrad" href="' + href + '">' + inni + '</a>' : '<button type="button" class="st-mrad' + (her ? ' her' : '') + '" data-h="ga" data-v="' + v + '"' + (her ? ' aria-current="page"' : '') + '>' + inni + '</button>';
     };
     return '<div class="st-meny-bak" data-h="lukkMeny"></div><nav class="st-meny" aria-label="Meny"><div class="st-rad"><span class="st-hand" style="font-size:1.5rem">Meny</span>' +
       '<button type="button" class="st-ikonknapp" data-h="lukkMeny" aria-label="Lukk menyen">' + ikon('x') + '</button></div>' +
-      rad('rute', 'Løypa mi', 'Ukene og temaene dine', 'hjem') +
+      rad('hjem', 'I dag', 'Quiz, arbeidskrav og Dashman', 'idag') +
+      rad('rute', 'Løypene mine', 'Ukene og temaene i kursene dine', 'hjem') +
       rad('bok', 'Les og øv', 'Lærestoff, videoer og oppgaver', '', '../index.html') +
       rad('graf', 'Kunnskapsprofil', 'Forståelse, presisjon og hurtighet', 'profil') +
       rad('kurs', 'Kurs og løyper', 'Åpne kurs, løyper og kursene du er med i', 'kurs') +
@@ -1725,7 +1738,13 @@ function studieStart() {
         '<p class="st-sm">Påminnelser sendes når studieappen kommer som app på mobilen. Valget ditt blir husket til da.</p>';
     },
     hjem: function () {
-      var v = valgt(), alle = skar(T.svar.filter(function (s) { return s.nettsted === NETTSTED && v.indexOf(s.tema) >= 0; }));
+      var lp = mineLoyper();
+      if (lp.length > 1 && !T.loypeApen) return '<p class="st-sm">Velg en løype.</p>' + lp.map(function (L) {
+        var u = L.tm.filter(function (t) { return !T.ukevurd[t]; })[0], ferdig = L.tm.filter(function (t) { return T.ukevurd[t]; }).length;
+        return '<button type="button" class="st-dkort ' + (L.id === 'egen' ? '' : 'g ') + 'st-fagvalg" data-h="apneLoype" data-id="' + L.id + '"><span class="st-merke">' + (L.id === 'egen' ? 'Uten kurs' : 'Kurs') + '</span><b class="st-dtittel">' + esc(L.navn) + '</b>' +
+          '<span class="st-sm">' + ferdig + ' av ' + L.tm.length + ' uker' + (u ? ' · denne uka: ' + esc(tittel(u)) : ' · ferdig!') + '</span></button>';
+      }).join('');
+      var v = loypeTemaer(), alle = skar(T.svar.filter(function (s) { return s.nettsted === NETTSTED && v.indexOf(s.tema) >= 0; }));
       var fornavn = (T.navn || '').split(/\s+/)[0];
       var o = '<p class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</p>' + (!T.navn && !T.eksempel ? '<p class="st-sm">Legg inn navnet ditt på <a href="../konto/index.html">Min side</a>, så ser faglæreren navnet ditt i stedet for e-posten.</p>' : '') + appKort();
       if (!v.length) o += '<div class="st-kort st-viktig"><b>Kom i gang</b><p>Velg temaene du skal studere, så lager vi en løype med én uke per tema.</p></div>';
@@ -2141,7 +2160,8 @@ function studieStart() {
     if (appModus()) {
       var tt = appTittel(), fokus = T.vis === 'quiz';
       rot.innerHTML = (T.eksempel ? '<div class="st-eksempel"><b>Studentvisning.</b> Du ser ' + (T.eksempelFag ? '«' + esc(T.eksempelFag.navn) + '»' : 'appen') + ' som en fiktiv student. Ingenting lagres. <a href="#" data-h="avsluttEksempel">Tilbake til undervisning</a></div>' : '') +
-        '<div class="st-topp">' + (T.vis === 'quiz' || T.vis === 'resultat' ? '<button type="button" class="st-ikonknapp" data-h="lukkQuiz" aria-label="' + (T.vis === 'quiz' ? 'Lukk quizen' : 'Lukk') + '">' + ikon('x') + '</button>' : '') +
+        '<div class="st-topp">' + (T.vis === 'quiz' || T.vis === 'resultat' ? '<button type="button" class="st-ikonknapp" data-h="lukkQuiz" aria-label="' + (T.vis === 'quiz' ? 'Lukk quizen' : 'Lukk') + '">' + ikon('x') + '</button>'
+          : tilbakeMal() ? '<button type="button" class="st-ikonknapp st-tilbakepil" data-h="tilbake" aria-label="Tilbake">' + ikon('tilbake', 26) + '</button>' : '') +
         '<span class="st-topptittel">' + esc(tt || (T.vis === 'quiz' && T.q ? (T.q.ovelse ? T.q.ovelse.tittel : 'Quiz') : '')) + '</span><button type="button" class="st-ikonknapp" data-h="meny" aria-label="Meny" aria-expanded="' + !!T.meny + '">' + ikon('meny') + '</button></div>' +
         '<div class="st-innhold">' + (T.vis === 'delta' ? '' : deltaBanner()) + SKJ[T.vis]() + '</div>' + (fokus ? '' : bunnlinje()) + (T.meny ? menyHtml() : '') +
         '<p id="st-varsel" class="st-varsel" role="status" hidden></p>';
@@ -2281,6 +2301,8 @@ function studieStart() {
       skannNy: function () { var sk = T.skann || {}; T.skann = { valgt: sk.valgt, fri: sk.fri, oppgave: sk.oppgave }; tegn(); },
       skannAnnen: function () { var b = (T.skann || {}).bilde; T.skann = { bilde: b }; tegn(); },
       skannFri: function () { T.skann = { fri: true }; tegn(); },
+      apneLoype: function () { settAktivtKurs(d.id); T.loypeApen = true; tegn(); },
+      tilbake: function () { var m = tilbakeMal(); if (m === 'loyper') { T.loypeApen = false; tegn(); } else if (m) ga(m); },
       velgKurs: function () { settAktivtKurs(d.id); ga('idag'); },
       byttKurs: function () { settAktivtKurs(null); ga('idag'); },
       qrStart: qrStart,
