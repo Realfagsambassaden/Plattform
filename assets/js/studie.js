@@ -1692,7 +1692,7 @@ function studieStart() {
         var dag = T.inn.modus === 'dag', ferdig = dag && iDag(t) >= PER_DAG;
         var ff = fagForTema(t);
         o += '<div class="st-dkort g"><span class="st-merke">' + (dag ? 'Dagens quiz' : 'Ukens quiz') + (ff ? ' · ' + esc(ff) : '') + '</span><b class="st-dtittel">' + esc(tittel(t)) + '</b>' +
-          '<span class="st-sm">' + (ferdig ? 'Dagens spørsmål er tatt. Bra!' : (dag ? PER_DAG : OKT) + ' spørsmål · nivå: ' + NIV[niva(t)]) + '</span>' +
+          '<span class="st-sm">' + (ferdig ? 'Dagens spørsmål er tatt. Bra!' : (dag ? PER_DAG : OKT) + ' spørsmål') + '</span>' +
           '<div>' + (ferdig ? '<button type="button" class="st-btn g" data-h="quizFlere" data-t="' + t + '">Ta flere likevel</button>' : '<button type="button" class="st-btn" data-h="quiz" data-t="' + t + '">Start quizen</button>') + '</div></div>';
       }
       apneKrav().slice(0, 2).forEach(function (x) {
