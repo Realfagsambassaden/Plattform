@@ -616,13 +616,14 @@ body.har-foredrag { overflow: hidden; }
 @media (max-width: 1199.98px) { .tavle-kant { display: none; } }
 @media (min-width: 992px) { #quarto-sidebar.sidebar, .sidebar.toc-left { background-color: transparent; } }
 
-// Søstersidene midt nederst i forsidebildet; de som ikke finnes ennå, vises i grått
-.hero .soster { position: absolute; left: 50%; bottom: -1rem; transform: translateX(-50%); z-index: 2; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .5rem 1.1rem; padding: .55rem 1.1rem; border: 1px solid $line; border-radius: 14px; background: rgba($slate, .82); color: $dust; font-size: .95rem; white-space: nowrap; }
+// Søstersidene under forsidebildet: overskrift på egen linje, sidene på én linje under. De som ikke finnes ennå, er grå.
+.hero .soster { position: relative; z-index: 2; margin: 2.2rem auto 0; display: flex; flex-direction: column; align-items: center; gap: .45rem; padding: .7rem 1.4rem .8rem; border: 1px solid $line; border-radius: 14px; background: rgba($slate, .82); color: $dust; font-size: .95rem; }
+.hero .soster-tittel { margin: 0; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; font-size: 1.15rem; }
+.hero .soster-lenker { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .5rem 1.4rem; }
 .hero .soster img { height: 28px; width: auto; display: block; }
 .hero .soster a { border-radius: 8px; transition: transform .2s; }
 .hero .soster a:hover { transform: scale(1.05); }
-.hero .soster .snart { color: rgba($dust, .55); font-weight: 700; font-style: italic; cursor: default; }
-@media (max-width: 767.98px) { .hero .soster { position: static; transform: none; margin: 1.5rem auto 0; white-space: normal; } }
+.hero .soster .snart { color: rgba($dust, .5); font-weight: 700; font-style: italic; cursor: default; }
 
 // Forrige / neste nederst på sider i en løype (assets/js/loype.js)
 .loype-bunn { display: flex; justify-content: space-between; gap: 1rem; margin: 3rem 0 1rem; padding-top: 1.2rem; border-top: 1px solid $line; }
@@ -814,7 +815,6 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .hero.sentrert .hero-tekst { max-width: 640px; margin: 0 auto; }
 .hero.sentrert .hero-tekst::before { inset: -3rem -5rem; background: radial-gradient(ellipse at 50% 50%, rgba($slate, .9) 35%, rgba($slate, 0) 72%); }
 .hero.sentrert .lead { margin-inline: auto; max-width: 40ch; }
-.hero.sentrert .niva-knapper { justify-content: center; }
 .hero.sentrert .hero-scene { left: -6rem; right: -6rem; width: auto; top: -2.5rem; }
 .hero.sentrert .hero-scene img { -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent); mask-image: linear-gradient(to bottom, #000 78%, transparent); }
 .hero-dashman-v { position: absolute; z-index: 0; left: 2%; top: 22%; height: clamp(220px, 24vw, 340px); width: auto; filter: drop-shadow(0 0 7px rgba(255, 255, 255, .35)); transform: rotate(-4deg); pointer-events: none; }
@@ -823,3 +823,60 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
   .hero-dashman-v { height: 150px; top: .5rem; left: .5rem; }
 }
 @media (min-width: 861px) and (max-width: 1200px) { .hero-dashman-v { height: 190px; top: 30%; left: 0; } }
+
+// ---------- Forsiden: «FORSTÅ fysikk» i kritt og skrubryter for nivå ----------
+// Kritt: Architects Daughter med synlig ring i «å» (fra videoer/_verktoy), lisens i assets/fonts/OFL-ArchitectsDaughter.txt
+@font-face { font-family: "Kritt"; src: url("/assets/fonts/ArchitectsDaughter-Norsk.woff2") format("woff2"); font-display: swap; }
+.hero h1.kritt-tittel { font-family: "Kritt", "Architects Daughter", cursive; font-weight: 400; line-height: .95; margin: .3rem 0 0; }
+.kritt-tittel span { display: block; filter: url(#kritt); }
+.kritt-tittel .k1 { color: $chalk; font-size: clamp(3.4rem, 10vw, 7rem); letter-spacing: .05em; -webkit-text-stroke: 2.5px $chalk; text-shadow: 0 0 14px rgba($chalk, .45); transform: rotate(-2deg); }
+.kritt-tittel .k2 { color: #7be35f; font-size: clamp(3rem, 8.5vw, 6rem); -webkit-text-stroke: 2px #7be35f; text-shadow: 0 0 10px rgba(#7be35f, .8), 0 0 26px rgba(#7be35f, .45); transform: rotate(-4deg) translateX(.8em); margin-top: -.05em; }
+.kritt-ramme { position: relative; display: inline-block; margin: 1.6rem auto 0; padding: .8rem 1.5rem; }
+.kritt-ramme::before { content: ""; position: absolute; inset: 0; border: 2.5px solid rgba($chalk, .9); border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px; filter: url(#kritt); pointer-events: none; }
+.kritt-formel { margin: 0; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; font-size: clamp(1.15rem, 2.6vw, 1.55rem); -webkit-text-stroke: .5px $chalk; text-shadow: 0 0 8px rgba($chalk, .35); }
+.kritt-formel .t { filter: url(#kritt); }
+.kritt-formel .hjerte { font-size: 1.15em; vertical-align: -.05em; display: inline-block; transform: rotate(8deg); }
+.kritt-av { margin: .8rem 0 0; font-family: "Kritt", "Architects Daughter", cursive; color: $yellow; font-size: 1.2rem; transform: rotate(-1.5deg); }
+
+.bryter { position: relative; width: 380px; max-width: 100%; height: 250px; margin: .2rem auto 0; }
+.bryter .niva-knapper { display: block; }
+.bryter-valg { position: absolute; z-index: 2; font-family: "Kritt", "Architects Daughter", cursive; font-weight: 700; font-size: 1.2rem; color: var(--nv) !important; text-decoration: none; padding: .25rem .75rem; border: 2px solid transparent; border-radius: 999px; transition: background .25s, color .25s, transform .2s; }
+.bryter-valg:hover { transform: scale(1.08); border-color: color-mix(in srgb, var(--nv) 60%, transparent); }
+.bryter-valg.valgt { background: var(--nv); color: $slate !important; box-shadow: 0 0 16px color-mix(in srgb, var(--nv) 60%, transparent); }
+.bryter-valg[data-niva="forkurs"] { right: calc(50% + 90px); top: 122px; transform-origin: right center; }
+.bryter-valg[data-niva="ingenior"] { left: 50%; top: 0; translate: -50% 0; }
+.bryter-valg[data-niva="fordypning"] { left: calc(50% + 90px); top: 122px; transform-origin: left center; }
+.bryter-knott { position: absolute; left: 50%; top: 64px; width: 150px; height: 150px; margin-left: -75px; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 50%; }
+.bryter-knott:focus-visible { outline: 2px dashed $yellow; outline-offset: 4px; }
+.bryter-knott svg { width: 100%; height: 100%; overflow: visible; filter: url(#kritt); }
+.bryter-knott .ring { fill: rgba($slate-2, .95); stroke: $chalk; stroke-width: 3; }
+.bryter-knott .riller path { stroke: rgba($chalk, .55); stroke-width: 2.5; stroke-linecap: round; }
+.bryter-knott .topp { fill: none; stroke: rgba($chalk, .5); stroke-width: 2; stroke-dasharray: 5 6; }
+.bryter-knott .merker path { stroke: var(--nv); stroke-width: 4; stroke-linecap: round; }
+.bryter-knott .viser { transform: rotate(-135deg); transition: transform .7s cubic-bezier(.3, 1.6, .5, 1); }
+.bryter-knott .viser path { stroke: $yellow; stroke-width: 6; stroke-linecap: round; }
+.bryter-knott .viser circle { fill: $yellow; }
+.bryter[data-pos="forkurs"] .viser { transform: rotate(-90deg); }
+.bryter[data-pos="ingenior"] .viser { transform: rotate(0deg); }
+.bryter[data-pos="fordypning"] .viser { transform: rotate(90deg); }
+.bryter[data-pos="forkurs"] .viser path, .bryter[data-pos="forkurs"] .viser circle { stroke: $neon; fill: $neon; }
+.bryter[data-pos="ingenior"] .viser path, .bryter[data-pos="ingenior"] .viser circle { stroke: $cyan; fill: $cyan; }
+.bryter[data-pos="fordypning"] .viser path, .bryter[data-pos="fordypning"] .viser circle { stroke: $orange; fill: $orange; }
+.bryter[data-pos="fordypning"] .viser circle { stroke: none; }
+.bryter-knott:hover .viser { transform: rotate(-120deg); }
+.bryter:not([data-pos="av"]) .bryter-knott:hover .viser { transition-duration: .3s; }
+.bryter-hint { position: absolute; left: 50%; bottom: -4px; translate: -50% 0; margin: 0; font-family: "Kritt", "Architects Daughter", cursive; color: $yellow; font-size: 1rem; transform: rotate(-3deg); transition: opacity .3s; pointer-events: none; }
+.bryter:not([data-pos="av"]) .bryter-hint { opacity: 0; }
+.bryter-dm { position: absolute; z-index: 1; height: 118px; width: auto; filter: drop-shadow(0 0 5px rgba(255, 255, 255, .3)); pointer-events: none; }
+.bryter-dm.v { left: 34px; bottom: -34px; transform: rotate(-6deg); }
+.bryter-dm.h { right: 14px; bottom: -34px; height: 124px; transform: rotate(5deg); }
+.bryter-dm.o { left: 70px; top: -18px; height: 86px; transform: rotate(-4deg); }
+@media (max-width: 480px) {
+  .bryter { width: 330px; }
+  .bryter-valg { font-size: 1.02rem; padding: .2rem .5rem; }
+  .bryter-valg[data-niva="forkurs"] { right: calc(50% + 80px); }
+  .bryter-valg[data-niva="fordypning"] { left: calc(50% + 80px); }
+  .bryter-knott { width: 130px; height: 130px; margin-left: -65px; top: 72px; }
+  .bryter-dm.o { display: none; }
+  .kritt-tittel .k2 { transform: rotate(-4deg) translateX(.4em); }
+}
