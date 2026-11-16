@@ -1,15 +1,24 @@
 /*-- scss:defaults --*/
-// matematikkhjelp.no: samme tavle som fysikkhjelp.no, men i blått.
+// matematikkhjelp.no: samme tavle som fysikkhjelp.no (dempet tavlesvart, krittformler, krittskrift), men blå i stedet for grønn.
 // Overstyrer fargene i assets/tavle.scss (der de er !default).
-$slate:   #0b1020;   // bakgrunn: mørk blåtavle
-$slate-2: #121a2e;   // bokser og kodeblokker
-$line:    #27334d;   // streker og rammer
-$chalk:   #eaf0fb;   // tekst
-$dust:    #9aa8c2;   // dempet tekst
-$neon:    #5aaeff;   // hovedfarge: lenker, knapper, uthevinger
-$cyan:    #8fd8ff;   // merknader
-$orange:  #f6a54a;
-$yellow:  #f2e67a;
-$tavle-bilde: none;   // krittbakgrunnen er grå; matematikkhjelp beholder blank blåtavle inntil videre
+$slate:   #24272a;   // samme tavle som fysikkhjelp.no
+$slate-2: #2c3033;
+$line:    #3f4448;
+$chalk:   #eceeea;
+$dust:    #a3a9ad;
+$neon:    #86b4e8;   // hovedfarge: dempet blå (fysikkhjelp: dempet grønn)
+$cyan:    #9fd0e8;
+$orange:  #e39d63;
+$yellow:  #e6d98a;
+$on-neon: #0e1724;   // tekst på blå knapper
+$kritt-uthev: #5fb0ff;   // lysende blått kritt i «FORSTÅ matematikk»
+$tavle-bilde: "/assets/img/tavle-formler-matte.webp";   // matteformler i kritt
 
 /*-- scss:rules --*/
+// Forsidebildet (matte-scene.webp) er fullt av formler på venstre side; vis bare flaten med normalvektoren til høyre,
+// så teksten i midten står på ren tavle.
+.hero.sentrert .hero-scene img {
+  -webkit-mask-image: linear-gradient(to right, transparent 48%, #000 66%), linear-gradient(to bottom, #000 70%, transparent);
+  -webkit-mask-composite: source-in; mask-image: linear-gradient(to right, transparent 48%, #000 66%), linear-gradient(to bottom, #000 70%, transparent);
+  mask-composite: intersect;
+}
