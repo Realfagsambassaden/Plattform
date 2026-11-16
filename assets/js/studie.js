@@ -662,6 +662,7 @@ function studieStart() {
       '<div class="st-qr-kode">' + qrSvg(lenke) + '</div>' +
       '<p class="st-qr-tekst">' + (fag ? 'Skann for å få appen, lage bruker og bli med i faget.<br>Kode: <b class="st-kode">' + esc(c.kode) + '</b>' : 'Skann for å åpne studieappen og installere den på telefonen.') + '</p>' +
       '<p class="st-sm st-qr-lenke">' + esc(lenke.replace(/^https?:\/\//, '')) + '</p>' +
+      hjemskjermHjelp(!fag) +
       '<p><button type="button" class="st-btn g liten" data-qr="kopier">Kopier lenken</button> <button type="button" class="st-btn liten" data-qr="lukk">Lukk</button></p></div>';
     d.addEventListener('click', function (e) {
       var v = e.target.getAttribute('data-qrvalg'), h = e.target.getAttribute('data-qr');
@@ -1940,6 +1941,17 @@ function studieStart() {
     },
   };
   // «Få appen på telefonen»: installerbar nettapp. Android/Chrome gir en knapp; iPhone/iPad må bruke Del-menyen.
+  // Kort veiledning: legg studieappen på hjemskjermen (Apple og Android, telefon og nettbrett). Brukes i appkortet og ved QR-koden.
+  function hjemskjermHjelp(apen) {
+    return '<details class="st-hjelp"' + (apen ? ' open' : '') + '><summary>Slik legger du appen på hjemskjermen</summary><div class="st-hjelp-grid">' +
+      '<div><b> iPhone og iPad (Safari)</b><ol><li>Trykk <b>Del</b>-knappen (firkant med pil opp): nederst på iPhone, øverst på iPad.</li>' +
+      '<li>Bla ned og velg <b>«Legg til på Hjem-skjerm»</b>.</li><li>Trykk <b>«Legg til»</b>.</li></ol>' +
+      '<span class="st-sm">Bruker du Chrome på iPhone/iPad: Del-knappen i adressefeltet, så «Legg til på Hjem-skjerm».</span></div>' +
+      '<div><b>Android, telefon og nettbrett (Chrome)</b><ol><li>Trykk menyen <b>⋮</b> øverst til høyre.</li>' +
+      '<li>Velg <b>«Installer app»</b> eller <b>«Legg til på startskjermen»</b>.</li><li>Trykk <b>«Installer»</b>.</li></ol>' +
+      '<span class="st-sm">Samsung Internett: menyen ☰, så «Legg til side på» → «Startskjerm».</span></div>' +
+      '</div><p class="st-sm">Appen dukker opp som et ikon på hjemskjermen og åpnes i fullskjerm. Den er gratis og trenger ingen appbutikk.</p></details>';
+  }
   function appKort() {
     var a = window.fhApp || {}, ua = navigator.userAgent || '';
     var ios = /iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && navigator.maxTouchPoints > 1), mobil = ios || /android|mobile/i.test(ua);
@@ -1949,7 +1961,7 @@ function studieStart() {
       : ios ? '<span class="st-sm">I Safari: trykk <b>Del</b>-knappen (firkant med pil opp) og velg <b>«Legg til på Hjem-skjerm»</b>.</span>'
       : '<span class="st-sm">Åpne nettlesermenyen (⋮) og velg <b>«Installer app»</b> eller <b>«Legg til på startskjermen»</b>.</span>';
     return '<div class="st-kort st-appkort"><div class="st-rad"><b>📱 Få appen på telefonen</b><button type="button" class="st-lenke st-sm" data-h="skjulApp">Ikke nå</button></div>' +
-      '<p class="st-sm" style="margin:.2rem 0 .5rem">Med appen åpner du løypa, quizene og kursene dine rett fra hjemskjermen, i fullskjerm.</p>' + hjelp + '</div>';
+      '<p class="st-sm" style="margin:.2rem 0 .5rem">Med appen åpner du løypa, quizene og kursene dine rett fra hjemskjermen, i fullskjerm.</p>' + hjelp + hjemskjermHjelp(false) + '</div>';
   }
   document.addEventListener('fh-app', function () { if (T.svar) tegn(); });
   // Beskjeder fra underviseren og fagets tidslinje for studenten.
@@ -2525,7 +2537,9 @@ function studieStart() {
     if (!sesjon) {
       rot.innerHTML = '<div class="st-kort st-viktig"><b>Logg inn for å bruke studieappen</b><p>Med en gratis konto får du en løype gjennom temaene, ukentlige quizer tilpasset nivået ditt og en kunnskapsprofil. Samme konto gjelder på alle nettstedene til Realfagsambassaden.</p>' +
         (lenkekode ? '<p><b>Du er på vei inn i et kurs (kode ' + esc(lenkekode) + ').</b> Lag en bruker eller logg inn, så kommer du rett til påmeldingen.</p>' : '') +
-        '<p><a class="st-btn" href="../konto/index.html?neste=studie">Logg inn eller registrer deg</a></p></div>';
+        '<p><a class="st-btn" href="../konto/index.html?neste=studie">Logg inn eller registrer deg</a></p></div>' +
+        // Kom man hit fra QR-koden: vis med en gang hvordan appen legges på hjemskjermen (ikke når den alt er installert)
+        ((window.fhApp && window.fhApp.installert) || matchMedia('(display-mode: standalone)').matches || navigator.standalone ? '' : '<div class="st-kort st-appkort"><b>📱 Få appen på telefonen eller nettbrettet</b>' + hjemskjermHjelp(true) + '</div>');
       return;
     }
     bruker = sesjon.user;
