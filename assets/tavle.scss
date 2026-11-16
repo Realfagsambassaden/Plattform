@@ -348,7 +348,7 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 @keyframes dm-rist { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
 @keyframes dm-vugg { 50% { transform: rotate(-3deg); } }
 @media (prefers-reduced-motion: reduce) { .dm-holder .dm-bilde { animation: none !important; } }
-.dm-boble { position: relative; isolation: isolate; flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; max-height: min(72vh, 640px); padding: 1.4rem 1.6rem 1.1rem; color: $chalk; filter: drop-shadow(0 10px 30px rgba(0, 0, 0, .45)); }
+.dm-boble { position: relative; isolation: isolate; flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; max-height: min(72vh, 640px); padding: 1.4rem 1.6rem 1.9rem 2.2rem; color: $chalk; filter: drop-shadow(0 10px 30px rgba(0, 0, 0, .45)); }
 // Boblen er en håndtegnet krittstrek (svg i dashman.js), ikke en firkant
 .dm-kontur { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .dm-kontur path { fill: $slate-2; stroke: $neon; stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
@@ -389,7 +389,7 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 .dm-figurventer { color: $dust; font-style: italic; }
 .dm-figurfeil { color: $orange; font-size: .85rem; }
 .dm-m:has(.dm-figurboks) { max-width: 96%; }
-.dm-info { margin: .45rem 0 0; font-size: .75rem; color: $dust; }
+.dm-info { margin: .45rem 0 0; padding: 0 1.6rem 0 1rem; font-size: .75rem; color: $dust; text-align: center; }   // krittstreken svinger inn i hjørnene
 .dm-oppgave { display: flex; flex-direction: column; gap: .2rem; padding: .5rem .7rem; border: 1px dashed $yellow; border-radius: 10px; font-size: .85rem; color: $dust; }
 .dm-oppgave b { color: $yellow; font-weight: 700; }
 @media (max-width: 600px) {
