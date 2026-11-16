@@ -637,9 +637,9 @@ async function dashman(request, env, b, h) {
   ];
   const system = DASHMAN_INSTRUKS.replaceAll("NETTSTED", NETTSTEDNAVN(request)) + "\n\n## Det du får vite om studenten\n\n" + linjer.join("\n");
   const modell = env.MODELL_DASHMAN || env.MODELL;
-  const raa = await sporSamtale({ ...env, MODELL: modell }, system, meldinger, 1200);
+  const raa = await sporSamtale({ ...env, MODELL: modell }, system, meldinger, 1800);
   const r = lesJson(raa);
-  const svar = kort(r && typeof r.svar === "string" ? r.svar : raa, 4000).trim();
+  const svar = kort(r && typeof r.svar === "string" ? r.svar : raa, 6000).trim();
   if (!svar) throw feil("Dashman fikk ikke sagt noe denne gangen. Prøv igjen.", 502);
   const humor = HUMOR.includes(r && r.humor) ? r.humor : "noytral";
   const notat = r && typeof r.notat === "string" ? r.notat.trim() : "";

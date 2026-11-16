@@ -102,16 +102,28 @@
   // Enkel Markdown: avsnitt, fet, kursiv, kode, lister. LaTeX tas av MathJax etterpå.
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   // Formler ($…$ og $$…$$) tas ut først, så Markdown ikke ødelegger dem, og settes inn igjen som \(…\) og \[…\] for MathJax.
+  // Figurer: Dashman skriver ```figur {JSON} ``` (se hint-tjener/dashman-instruks.md), tegnet av dashman-figur.js.
+  var FIGUR_RE = /```\s*figur\s*\n?([\s\S]*?)```/g;
+  function figurHtml(json) {
+    try {
+      if (!window.DashmanFigur) throw new Error('mangler tegneverktøyet');
+      return '<div class="dm-figurboks">' + window.DashmanFigur.lag(json.trim()) + '</div>';
+    } catch (e) { return '<p class="dm-figurfeil">(Dashman prøvde å tegne en figur, men den ble ikke riktig. Spør ham gjerne om å forklare den med ord.)</p>'; }
+  }
   function md(s) {
-    var formler = [];
-    s = String(s).replace(/\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\$([^$\n]+?)\$|\\\(([\s\S]+?)\\\)/g, function (_, b1, b2, l1, l2) {
+    var formler = [], figurer = [];
+    s = String(s).replace(FIGUR_RE, function (_, j) { figurer.push(figurHtml(j)); return '\n\n\u0002' + (figurer.length - 1) + '\u0002\n\n'; })
+      .replace(/```\s*figur[\s\S]*$/, '\n\n\u0003\n\n');   // figur som ikke er ferdig skrevet ennå
+    s = s.replace(/\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\$([^$\n]+?)\$|\\\(([\s\S]+?)\\\)/g, function (_, b1, b2, l1, l2) {
       var blokk = b1 != null ? b1 : b2, linje = l1 != null ? l1 : l2;
       formler.push(blokk != null ? '\\[' + blokk + '\\]' : '\\(' + linje + '\\)'); return '\u0000' + (formler.length - 1) + '\u0000';
     });
-    return mdTekst(s).replace(/\u0000(\d+)\u0000/g, function (_, i) { return esc(formler[+i]); });
+    return mdTekst(s.trim()).replace(/\u0000(\d+)\u0000/g, function (_, i) { return esc(formler[+i]); })
+      .replace(/(?:<p>)?\u0002(\d+)\u0002(?:<\/p>)?/g, function (_, i) { return figurer[+i]; })
+      .replace(/(?:<p>)?\u0003(?:<\/p>)?/g, '<p class="dm-figurventer">Tegner en figur …</p>');
   }
   function mdTekst(s) {
-    return esc(s).split(/\n{2,}/).map(function (avsnitt) {
+    return esc(s).split(/\n{2,}/).filter(function (a) { return a.trim(); }).map(function (avsnitt) {
       var l = avsnitt.split('\n');
       if (l.every(function (x) { return /^\s*([-*]|\d+\.)\s/.test(x); }))
         return '<ul>' + l.map(function (x) { return '<li>' + inline(x.replace(/^\s*([-*]|\d+\.)\s/, '')) + '</li>'; }).join('') + '</ul>';
@@ -140,7 +152,9 @@
     logg.appendChild(d);
     if (!animer || m.rolle !== 'dashman') { d.innerHTML = m.rolle === 'dashman' ? md(m.tekst) : '<p>' + esc(m.tekst).replace(/\n/g, '<br>') + '</p>'; matte(d); logg.scrollTop = logg.scrollHeight; return Promise.resolve(); }
     // Dashman «snakker»: teksten kommer fram ord for ord mens munnen går.
-    var ord = m.tekst.split(/(\s+)/), i = 0;
+    // Ord for ord, men en hel figur regnes som ett «ord», så den dukker opp på én gang
+    var ord = [], i = 0;
+    m.tekst.split(/(```\s*figur[\s\S]*?```)/).forEach(function (del, k) { if (k % 2) ord.push(del); else ord = ord.concat(del.split(/(\s+)/)); });
     var raskt = matchMedia('(prefers-reduced-motion: reduce)').matches;
     return new Promise(function (ferdig) {
       if (raskt) { d.innerHTML = md(m.tekst); matte(d); logg.scrollTop = logg.scrollHeight; return ferdig(); }
