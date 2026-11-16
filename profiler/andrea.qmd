@@ -1,0 +1,31 @@
+---
+title: "Andrea"
+subtitle: "Dobbel mastergrad"
+toc: false
+---
+
+<!-- tillegg: Claude – utkast, Andrea fyller ut og retter -->
+
+```{=html}
+<div class="profilside">
+  <img class="profil-foto" src="../assets/img/andrea-portrett.webp" alt="Portrett av Andrea">
+  <img class="profil-ikon" src="../assets/img/andrea-ikon.png" alt="">
+</div>
+```
+
+## Om meg
+
+Andrea har i en årrekke vært ansiktet utad og selve drivkraften i NTNU Fysikkstudio, som lager fysikkvideoer av høy kvalitet.
+
+## Hva jeg brenner for
+
+Kommer snart.
+
+## Erfaring
+
+- Dobbel mastergrad
+- NTNU Fysikkstudio: fysikkvideoer av høy kvalitet
+
+## Mine tilbud
+
+Andreas kurs kommer snart.
