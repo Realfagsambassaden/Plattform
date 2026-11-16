@@ -8,6 +8,7 @@ project:
   resources:
     - assets/
     - innhold.json
+    - oppgaver.json
     - loyper.json
     - manifest.webmanifest
     - sw.js
