@@ -1533,6 +1533,17 @@ function studieStart() {
         return '<details class="st-oppggruppe"' + (g.apen ? ' open' : '') + '><summary>' + esc(g.navn) + ' <span class="st-sm">(' + g.l.length + ')</span></summary>' + g.l.map(oppgRad).join('') + '</details>';
       }).join('');
   }
+  // Forslag fra lærebøkene mens studenten skriver hvilken oppgave det er (alle ordene må finnes; treff i tittel teller mest).
+  function skannForslag(q) {
+    var ord = String(q || '').toLowerCase().replace(/[«»"',.:;!?()]/g, ' ').split(/\s+/).filter(function (w) { return w.length > 1 && !/^(oppgave|oppg|nr|fra|i|på|om|og|med)$/.test(w); });
+    if (!ord.length || !Array.isArray(T.oppg)) return '';
+    var treff = T.oppg.map(function (o) {
+      var hoved = ((o.tittel || '') + ' ' + (o.side || '') + ' ' + (o.kilde || '')).toLowerCase(), alt = hoved + ' ' + (o.oppgave || '').toLowerCase().slice(0, 600);
+      if (!ord.every(function (w) { return alt.indexOf(w) >= 0; })) return null;
+      return { o: o, p: ord.filter(function (w) { return hoved.indexOf(w) >= 0; }).length };
+    }).filter(Boolean).sort(function (a, b) { return b.p - a.p; }).slice(0, 5);
+    return treff.length ? '<p class="st-sm">Er det en av disse fra lærebøkene? Trykk på den, så får Dashman løsningsforslaget.</p>' + treff.map(function (x) { return oppgRad(x.o); }).join('') : '';
+  }
   function skannSend() {
     var sk = T.skann; if (!sk || !sk.bilde) return varsle('Ta bilde av løsningen først.', true);
     var oppg = (document.getElementById('st-skann-oppg') || {}).value || '';
@@ -1601,30 +1612,32 @@ function studieStart() {
           '<p class="st-sm">Tilbakemeldingen er laget av KI og kan ta feil. ' + (sk.svar.gjennomsyn ? 'Bildet er sendt til gjennomsyn hos en lærer, og slettes etterpå.' : 'Bildet er ikke lagret.') + '</p>' +
           '<div class="st-knapperad"><button type="button" class="st-btn g" data-h="skannDashman">' + ikon('prat', 18) + ' Snakk med Dashman om dette</button>' +
           '<button type="button" class="st-btn" data-h="skannNy">' + ikon('kamera', 18) + ' Ta nytt bilde</button>' +
-          '<button type="button" class="st-btn g" data-h="skannAnnen">Velg en annen oppgave</button></div></div>';
+          '<button type="button" class="st-btn g" data-h="skannAnnen">Feil oppgave?</button></div></div>';
       }
       if (sk.svar && sk.svar.feil) o += '<p class="st-feil">' + esc(sk.svar.feil) + '</p>';
-      // 1. Velg oppgave (eller «Annen oppgave»)
-      if (!vo && !sk.fri) {
-        o += '<p class="st-sm">Velg oppgaven du har løst for hånd. Da får Dashman løsningsforslaget og kan gi deg en presis tilbakemelding.</p>' + oppgListe() +
-          '<button type="button" class="st-oppgrad annen" data-h="skannFri"><span><b>Annen oppgave</b><span class="st-sm">Fra en øving, en eksamen eller forelesningen. Dashman leser oppgaven fra bildet.</span></span>' + ikon('pil', 18) + '</button>';
-        if (krav.length) o += '<h3>Arbeidskrav</h3><p class="st-sm">Arbeidskrav gjør du som en quiz. Der det trengs, tar du bilde av utregningen underveis.</p>' + krav.map(function (x) {
+      // Rekkefølge: 1) ta bilde, 2) Dashman spør hvilken oppgave det er (forslag fra lærebøkene mens man skriver), 3) tilbakemelding.
+      // Kommer man fra «Skann løsningen din» i læreboka, er oppgaven valgt fra før.
+      if (vo) o += '<div class="st-dkort g"><div class="st-rad"><span class="st-merke">' + esc(vo.kilde) + (vo.niva ? ' · ' + esc(vo.niva) : '') + '</span><button type="button" class="st-btn g liten" data-h="skannAnnen">Bytt oppgave</button></div>' +
+        '<b class="st-dtittel">' + esc(vo.tittel || 'Oppgave') + '</b><div class="st-avsnitt">' + tx(vo.oppgave) + '</div>' +
+        '<a class="st-sm" href="..' + esc(vo.url) + '">Åpne oppgaven i læreboka (' + esc(vo.side) + ')</a></div>';
+      if (!sk.bilde) {
+        o += '<label class="st-kamera">' + ikon('kamera', 40) + '<span>Ta bilde av løsningen din</span><span class="st-sm">Løs oppgaven for hånd først. Bildet lagres ikke.</span><input type="file" accept="image/*" capture="environment" id="st-skann-bilde"></label>';
+        if (vo) o += '<p class="st-dmhjelp"><button type="button" class="st-btn g liten" data-h="skannDashman">' + ikon('prat', 18) + ' Står du fast? Spør Dashman om oppgaven</button></p>';
+        else if (krav.length) o += '<h3>Arbeidskrav</h3><p class="st-sm">Arbeidskrav gjør du som en quiz. Der det trengs, tar du bilde av utregningen underveis.</p>' + krav.map(function (x) {
           return '<button type="button" class="st-kort" data-h="ovelse" data-id="' + x.id + '"><div class="st-rad"><b>' + esc(x.tittel) + '</b><span class="st-sm">' + (x.frist ? esc(fristTekst(x.frist)) + ' ' : '') + '→</span></div></button>';
         }).join('');
         return o;
       }
-      // 2. Oppgaven + kamera
-      if (vo) o += '<div class="st-dkort g"><div class="st-rad"><span class="st-merke">' + esc(vo.kilde) + (vo.niva ? ' · ' + esc(vo.niva) : '') + '</span><button type="button" class="st-btn g liten" data-h="skannAnnen">Bytt oppgave</button></div>' +
-        '<b class="st-dtittel">' + esc(vo.tittel || 'Oppgave') + '</b><div class="st-avsnitt">' + tx(vo.oppgave) + '</div>' +
-        '<a class="st-sm" href="..' + esc(vo.url) + '">Åpne oppgaven i læreboka (' + esc(vo.side) + ')</a></div>';
-      else o += '<p><button type="button" class="st-btn g liten" data-h="skannAnnen">← Velg fra oppgavelista</button></p>';
-      if (!sk.bilde) o += '<label class="st-kamera">' + ikon('kamera', 40) + '<span>Ta bilde av løsningen din</span><span class="st-sm">Løs oppgaven for hånd først. Bildet lagres ikke.</span><input type="file" accept="image/*" capture="environment" id="st-skann-bilde"></label>';
-      else o += '<div class="st-skann-klar"><img src="' + sk.bilde + '" alt="Bildet du tok" class="st-skann-forhand">' +
-        (vo ? '' : '<label class="st-sm" for="st-skann-oppg">Hvilken oppgave er det? (valgfritt, men gir bedre tilbakemelding)</label>' +
-          '<textarea id="st-skann-oppg" rows="2" placeholder="F.eks. «Oppgave 3: to vogner kolliderer og henger sammen»">' + esc(sk.oppgave || '') + '</textarea>') +
-        '<div class="st-knapperad"><button type="button" class="st-btn" data-h="skannSend"' + (sk.venter ? ' disabled' : '') + '>' + (sk.venter ? 'Dashman ser på det …' : 'Få tilbakemelding') + '</button>' +
-        '<label class="st-btn g">' + ikon('kamera', 18) + ' Ta nytt bilde<input type="file" accept="image/*" capture="environment" id="st-skann-bilde"></label></div></div>';
-      if (vo) o += '<p class="st-dmhjelp"><button type="button" class="st-btn g liten" data-h="skannDashman">' + ikon('prat', 18) + ' Står du fast? Spør Dashman om oppgaven</button></p>';
+      o += '<div class="st-skann-klar"><img src="' + sk.bilde + '" alt="Bildet du tok" class="st-skann-forhand">';
+      if (!vo) {
+        o += '<div class="st-dmrad"><img src="' + DMBILDER + 'tenker.webp" alt="" class="st-dmfigur">' +
+          krittboble('Hvilken oppgave er dette? Skriv hvor den er fra, f.eks. «skrått kast, oppgave 2», «øving 4, oppgave 3» eller hva oppgaven handler om. Da kan jeg gi deg en mer presis tilbakemelding.', true) + '</div>' +
+          '<textarea id="st-skann-oppg" rows="2" placeholder="Hvilken oppgave er det?">' + esc(sk.oppgave || '') + '</textarea>' +
+          '<div id="st-skann-forslag" class="st-skann-forslag">' + skannForslag(sk.oppgave || '') + '</div>';
+      }
+      o += '<div class="st-knapperad"><button type="button" class="st-btn" data-h="skannSend"' + (sk.venter ? ' disabled' : '') + '>' + (sk.venter ? 'Dashman ser på det …' : 'Få tilbakemelding') + '</button>' +
+        '<label class="st-btn g">' + ikon('kamera', 18) + ' Ta nytt bilde<input type="file" accept="image/*" capture="environment" id="st-skann-bilde"></label></div>' +
+        (vo ? '' : '<p class="st-sm">Står oppgaveteksten på bildet, kan du la feltet stå tomt.</p>') + '</div>';
       return o;
     },
     innstillinger: function () {
@@ -2180,9 +2193,9 @@ function studieStart() {
         if (halv) varsle(q.ovelse ? 'Arbeidskravet er avbrutt. Forsøket teller ikke før du har fullført det.' : 'Quizen er avsluttet. Svarene du har gitt, er lagret i kunnskapsprofilen din.');
       },
       skannNy: function () { var sk = T.skann || {}; T.skann = { valgt: sk.valgt, fri: sk.fri, oppgave: sk.oppgave }; tegn(); },
-      skannAnnen: function () { T.skann = {}; tegn(); },
+      skannAnnen: function () { var b = (T.skann || {}).bilde; T.skann = { bilde: b }; tegn(); },
       skannFri: function () { T.skann = { fri: true }; tegn(); },
-      velgOppg: function () { T.skann = { valgt: (T.oppg || []).filter(function (o) { return o.id === d.id; })[0] || null }; tegn(); rot.scrollIntoView(); },
+      velgOppg: function () { var b = (T.skann || {}).bilde; T.skann = { valgt: (T.oppg || []).filter(function (o) { return o.id === d.id; })[0] || null, bilde: b }; tegn(); rot.scrollIntoView(); },
       quizDashman: function () {
         var q = T.q, x = q.na, a = q.svart == null ? null : x.alt[q.svart], bokst = 'ABCDEFG';
         var riktig = x.alt.filter(function (o) { return o.type === 'riktig'; })[0];
@@ -2385,6 +2398,7 @@ function studieStart() {
   function settSti(rotObj, sti, verdi) { var p = sti.split('.'), o = rotObj; for (var i = 0; i < p.length - 1; i++) o = o[p[i]]; o[p[p.length - 1]] = verdi; }
   rot.addEventListener('input', function (ev) {
     var el = ev.target;
+    if (el.id === 'st-skann-oppg') { if (T.skann) T.skann.oppgave = el.value; var fb = document.getElementById('st-skann-forslag'); if (fb) fb.innerHTML = skannForslag(el.value); return; }
     if (el.id === 'st-oppg-sok') {
       var ord = el.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
       rot.querySelectorAll('.st-oppggruppe').forEach(function (g) {
