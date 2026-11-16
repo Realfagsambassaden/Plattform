@@ -1537,7 +1537,7 @@ function studieStart() {
     var f = function (v, ik, t) { return '<button type="button" class="st-fane' + (T.vis === v ? ' pa' : '') + '" data-h="ga" data-v="' + v + '"' + (T.vis === v ? ' aria-current="page"' : '') + '>' + ikon(ik, 24) + '<span>' + t + '</span></button>'; };
     return '<nav class="st-bunn" aria-label="Hovedvalg"><div class="st-bunn-inni">' + f('idag', 'hjem', 'I dag') +
       '<button type="button" class="st-skannknapp' + (T.vis === 'skann' ? ' pa' : '') + '" data-h="ga" data-v="skann" aria-label="Skann svar">' + ikon('kamera', 28) + '<span>Skann</span></button>' +
-      '<button type="button" class="st-fane" data-h="dashman">' + ikon('prat', 24) + '<span>Dashman</span></button></div></nav>';
+      '<button type="button" class="st-fane st-dmfane" data-h="dashman" aria-label="Spør Dashman"><span class="st-dmhode"><img src="' + DMBILDER + 'ikon.webp" alt=""><span class="st-dmspor" aria-hidden="true">Spør meg!</span></span><span>Dashman</span></button></div></nav>';
   }
   function apneDashman(forslag) {
     if (window.Dashman && window.Dashman.apne) return window.Dashman.apne(forslag);
