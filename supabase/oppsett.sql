@@ -851,3 +851,79 @@ create or replace function public.apne_kurs()
      where k.apen and k.status = 'publisert' order by k.navn $$;
 revoke all on function public.apne_kurs() from public, anon;
 grant execute on function public.apne_kurs() to authenticated;
+
+-- =====================================================================
+-- Push-varsler (16. nov. 2026). Studieappen lagrer telefonens push-abonnement her når studenten slår på varsler.
+-- KI-tjeneren (hint-tjener/push.js) kaller push_jobb hvert kvarter med en hemmelighet (GitHub/Cloudflare:
+-- PUSH_HEMMELIG; her står bare SHA-256 av den). push_jobb finner nye varsler, merker dem som sendt og gir
+-- tilbake hvem de skal til. Varsler: nytt arbeidskrav, frist innen et døgn (bare til dem som ikke er godkjent),
+-- ny beskjed fra faglæreren, og bilde som er sett gjennom av en lærer.
+-- =====================================================================
+create table if not exists public.push_abonnement (
+  endpoint  text primary key check (char_length(endpoint) <= 1000),
+  bruker    uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  p256dh    text not null check (char_length(p256dh) <= 200),
+  auth      text not null check (char_length(auth) <= 100),
+  opprettet timestamptz not null default now()
+);
+alter table public.push_abonnement enable row level security;
+drop policy if exists "push_abonnement: egne" on public.push_abonnement;
+create policy "push_abonnement: egne" on public.push_abonnement for all to authenticated
+  using (bruker = auth.uid()) with check (bruker = auth.uid());
+grant select, insert, update, delete on public.push_abonnement to authenticated;
+
+create table if not exists public.push_sendt (nokkel text primary key, tid timestamptz not null default now());
+alter table public.push_sendt enable row level security;   -- ingen regler: bare funksjonene under kommer til
+
+create or replace function public.push_jobb(h text) returns jsonb
+  language plpgsql security definer set search_path = public as
+$$
+declare ut jsonb;
+begin
+  if encode(sha256(convert_to(coalesce(h, ''), 'UTF8')), 'hex') <> 'cc6df8546e2d5ec8b359c4675e6fa1c132ddd29066c3c65a0392e2ef1c0216ba' then raise exception 'ikke tillatt'; end if;
+  delete from push_sendt where tid < now() - interval '30 days';
+  with m as (
+    -- nytt arbeidskrav i et publisert kurs
+    select 'ny:' || o.id as nokkel, d.student as mottaker, 'Nytt arbeidskrav i ' || k.navn as tittel,
+           o.tittel || coalesce(' · frist ' || to_char(o.frist at time zone 'Europe/Oslo', 'DD.MM. "kl." HH24:MI'), '') as tekst
+      from ovelser o join kurs k on k.id = o.kurs and k.status = 'publisert' join kurs_deltaker d on d.kurs = o.kurs
+     where o.opprettet > now() - interval '3 days'
+    union all
+    -- frist innen et døgn, bare til dem som ikke har klart kravet ennå
+    select 'frist:' || o.id, d.student, 'Frist snart: ' || o.tittel,
+           k.navn || ' · frist ' || to_char(o.frist at time zone 'Europe/Oslo', 'DD.MM. "kl." HH24:MI')
+      from ovelser o join kurs k on k.id = o.kurs and k.status = 'publisert' join kurs_deltaker d on d.kurs = o.kurs
+     where o.frist between now() and now() + interval '24 hours'
+       and not exists (select 1 from studie_quiz q where q.ovelse = o.id and q.eier = d.student and q.riktige >= o.krav)
+    union all
+    -- ny beskjed fra faglæreren (ligger i modulene i kurset)
+    select 'besk:' || k.id || ':' || (b ->> 'tid'), d.student, 'Beskjed i ' || k.navn, left(b ->> 'tekst', 160)
+      from kurs k join kurs_deltaker d on d.kurs = k.id
+           cross join lateral jsonb_array_elements(k.moduler) mod
+           cross join lateral jsonb_array_elements(coalesce(mod -> 'beskjeder', '[]'::jsonb)) b
+     where k.status = 'publisert' and k.endret > now() - interval '3 days'
+       and coalesce(b ->> 'tid', '') <> '' and (b ->> 'tid')::timestamptz > now() - interval '3 days'
+    union all
+    -- bilde sett gjennom av en lærer
+    select 'gjs:' || g.id, g.bruker, 'Bildet ditt er sett gjennom',
+           'Bildet (' || g.kilde || ') er ' || case when g.status = 'godkjent' then 'godkjent.' else 'ikke godkjent.' end
+      from gjennomsyn g where g.status in ('godkjent', 'avvist') and g.behandlet > now() - interval '3 days'
+  ), nye as (
+    insert into push_sendt (nokkel) select distinct nokkel from m on conflict do nothing returning nokkel
+  )
+  select coalesce(jsonb_agg(jsonb_build_object('endpoint', a.endpoint, 'p256dh', a.p256dh, 'auth', a.auth,
+                                               'tittel', m.tittel, 'tekst', m.tekst, 'url', '/studie/index.html')), '[]'::jsonb)
+    into ut
+    from m join nye using (nokkel) join push_abonnement a on a.bruker = m.mottaker;
+  return ut;
+end $$;
+
+create or replace function public.push_fjern(h text, e text) returns void
+  language plpgsql security definer set search_path = public as
+$$
+begin
+  if encode(sha256(convert_to(coalesce(h, ''), 'UTF8')), 'hex') <> 'cc6df8546e2d5ec8b359c4675e6fa1c132ddd29066c3c65a0392e2ef1c0216ba' then raise exception 'ikke tillatt'; end if;
+  delete from push_abonnement where endpoint = e;
+end $$;
+revoke all on function public.push_jobb(text), public.push_fjern(text, text) from public;
+grant execute on function public.push_jobb(text), public.push_fjern(text, text) to anon, authenticated;
