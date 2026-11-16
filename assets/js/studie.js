@@ -1697,7 +1697,9 @@ function studieStart() {
         (q.ovelse && q.nr === 0 && q.ovelse.beskrivelse && sv == null ? '<div class="st-fb"><b>' + esc(q.ovelse.tittel) + '</b><p>' + esc(q.ovelse.beskrivelse) + '</p></div>' : '') +
         '<span class="st-mrk ' + x.vanskelighet + '">' + x.vanskelighet + '</span><p class="st-sporsmal">' + tx(x.tekst) + '</p>' +
         x.alt.map(function (o, i) { var c = ''; if (a) { if (o.type === 'riktig') c = 'ok'; else if (i === sv) c = 'nei'; } return '<button type="button" class="st-alt ' + c + '"' + (a ? ' disabled' : '') + ' data-h="svar" data-i="' + i + '">' + tx(o.svar) + '</button>'; }).join('') +
-        (appModus() ? '<p class="st-dmhjelp"><button type="button" class="st-btn g liten" data-h="quizDashman">' + ikon('prat', 18) + ' ' + (a ? 'Snakk med Dashman om dette' : 'Spør Dashman om hjelp') + '</button></p>' : '') + fb;
+        '<p class="st-dmhjelp">' + (a ? '' : '<label class="st-btn g liten">' + ikon('kamera', 18) + ' ' + (q.bilde ? 'Skann på nytt' : 'Skann utregningen') + '<input type="file" accept="image/*" capture="environment" id="st-qskann" hidden></label> ') +
+        (appModus() || !a ? '<button type="button" class="st-btn g liten" data-h="quizDashman">' + ikon('prat', 18) + ' ' + (a ? 'Snakk med Dashman om dette' : 'Spør Dashman om hjelp') + '</button>' : '') + '</p>' +
+        (!a && q.bilde ? '<img class="st-forhand" alt="Utregningen din" src="' + q.bilde + '"><p class="st-sm">Dashman ser på utregningen og gir hint uten å si svaret. Bildet blir med når du har valgt svar.</p>' : '') + fb;
     },
     resultat: function () {
       var q = T.q, r = q.res, c = function (t) { return r.filter(function (x) { return x === t; }).length; };
@@ -2174,7 +2176,7 @@ function studieStart() {
           losning: 'Riktig svar: ' + (riktig ? riktig.svar : x.riktig) + '\n' + (x.forklaring || ''),
           forsok: (a ? 'Studenten svarte: ' + a.svar + (a.type === 'riktig' ? ' (riktig)' : ' (feil)') + '. ' : 'Studenten har ikke svart ennå. ') + (q.tekst || ''),
           bilde: q.bilde || null,
-          startmelding: a ? 'Jeg svarte «' + a.svar.slice(0, 120) + '» på dette spørsmålet. Kan du hjelpe meg å forstå det?' : 'Jeg står fast på dette quizspørsmålet. Kan du gi meg et hint uten å si svaret?'
+          startmelding: !a && q.bilde ? 'Her er utregningen min så langt. Er jeg på rett vei? Ikke si svaret, gi meg heller et hint.' : a ? 'Jeg svarte «' + a.svar.slice(0, 120) + '» på dette spørsmålet. Kan du hjelpe meg å forstå det?' : 'Jeg står fast på dette quizspørsmålet. Kan du gi meg et hint uten å si svaret?'
         } }));
       },
       skannDashman: function () {
@@ -2347,6 +2349,10 @@ function studieStart() {
     else if (el.id === 'st-skann-bilde' && el.files[0]) {
       var oppg = (document.getElementById('st-skann-oppg') || {}).value;
       lesBilde(el.files[0]).then(function (url) { var gml = T.skann || {}; T.skann = { bilde: url, valgt: gml.valgt, fri: gml.fri, oppgave: oppg || gml.oppgave || '' }; tegn(); }).catch(function (e) { varsle(e.message, true); });
+    }
+    else if (el.id === 'st-qskann' && el.files[0] && T.q) {
+      // Skann i quizen før man svarer: bildet går til Dashman som sparring (hint, ikke svar) og blir med i «Vis hvordan du tenkte».
+      lesBilde(el.files[0]).then(function (url) { T.q.bilde = url; tegn(); var kb = rot.querySelector('[data-h=quizDashman]'); if (kb) kb.click(); }).catch(function (e) { varsle(e.message, true); });
     }
     else if (el.id === 'st-bilde' && el.files[0]) {
       var tekst = (document.getElementById('st-forklaring') || {}).value || '';
