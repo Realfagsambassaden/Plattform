@@ -119,7 +119,7 @@ toc: false
 .studie .st-var .st-felt { padding: .2rem .4rem; }
 .studie .st-eks { border-left: 3px solid var(--st-f); padding: .2rem .7rem; }
 html.fh-innebygd .studie .st-faner { display: none; }   /* i fokusvisningens arbeidskrav-kort */
-.studie.st-bred { max-width: none; width: min(1240px, 96vw); position: relative; left: 50%; transform: translateX(-50%); }
+.studie.st-bred, .studie:has(#st-lerret) { max-width: none; width: min(1240px, 96vw); position: relative; left: 50%; transform: translateX(-50%); }
 .studie .st-visning { align-items: center; gap: 1rem; margin: .6rem 0; }
 .studie .st-lerret { display: flex; gap: .6rem; position: relative; align-items: flex-start; }
 .studie .st-kravkol { position: relative; flex: none; align-self: stretch; }

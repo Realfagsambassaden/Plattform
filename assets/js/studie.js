@@ -2179,7 +2179,7 @@ function studieStart() {
         '<div class="st-innhold">' + (T.vis === 'delta' ? '' : deltaBanner()) + SKJ[T.vis]() + '</div>' + (fokus ? '' : bunnlinje()) + (T.meny ? menyHtml() : '') +
         '<p id="st-varsel" class="st-varsel" role="status" hidden></p>';
       if (vis) { var ny1 = document.getElementById('st-varsel'); ny1.textContent = vis.t; ny1.className = vis.k; ny1.hidden = false; }
-      rot.classList.toggle('st-bred', !!document.getElementById('st-lerret'));
+      rot.classList.toggle('st-bred', !!document.getElementById('st-lerret') || T.vis === 'fag');
       var rull3 = document.querySelector('.st-matrull'); if (rull3 && rullTopp) rull3.scrollTop = rullTopp;
       tegnKravStolper();
       return;
@@ -2189,7 +2189,7 @@ function studieStart() {
     rot.innerHTML = (T.eksempel ? '<div class="st-eksempel"><b>Studentvisning.</b> Du ser ' + (T.eksempelFag ? '«' + esc(T.eksempelFag.navn) + '»' : 'appen') + ' som en fiktiv student. Ingenting lagres. <a href="#" data-h="avsluttEksempel">Tilbake til undervisning</a></div>' : '') + '<nav class="st-faner" role="tablist">' + faner.map(function (f) { return '<button type="button" role="tab" aria-selected="' + (aktiv === f[0]) + '" data-h="ga" data-v="' + f[0] + '">' + f[1] + '</button>'; }).join('') + '</nav>' +
       '<div class="st-innhold">' + (T.vis === 'delta' ? '' : deltaBanner()) + SKJ[T.vis]() + '</div><p id="st-varsel" class="st-varsel" role="status" hidden></p>';
     if (vis) { var ny = document.getElementById('st-varsel'); ny.textContent = vis.t; ny.className = vis.k; ny.hidden = false; }
-    rot.classList.toggle('st-bred', !!document.getElementById('st-lerret'));
+    rot.classList.toggle('st-bred', !!document.getElementById('st-lerret') || T.vis === 'fag');
     var rull2 = document.querySelector('.st-matrull'); if (rull2 && rullTopp) rull2.scrollTop = rullTopp;
     tegnKravStolper();
   }
