@@ -414,6 +414,14 @@ body.st-app-modus .studie { max-width: 560px; margin: 0 auto; padding-bottom: ca
 .st-kursmerke { display: flex; align-items: center; justify-content: space-between; gap: .6rem; margin: 0 0 .8rem; padding: .45rem .7rem; border: 1px solid var(--bs-border-color); border-radius: 12px; }
 .st-kursmerke b { font-family: "Architects Daughter", cursive; }
 .st-fagvalg { width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.st-h2 { font-family: "Architects Daughter", cursive; font-size: 1.3rem; margin: 1.2rem 0 .5rem; }
+.st-gjoreliste { display: flex; flex-direction: column; border: 1px solid var(--bs-border-color); border-radius: 14px; overflow: hidden; }
+.st-gjore { display: flex; align-items: center; gap: .7rem; width: 100%; padding: .65rem .8rem; border: 0; border-top: 1px solid var(--bs-border-color); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.st-gjore:first-child { border-top: 0; }
+.st-gjore > span:nth-child(2) { flex: 1; display: flex; flex-direction: column; }
+.st-gjore-merke { flex: 0 0 auto; min-width: 6.4rem; text-align: center; font-size: .72rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; padding: .2rem .45rem; border-radius: 6px; border: 1.5px solid #a3a9ad; color: #a3a9ad; }
+.st-gjore-merke.g { border-color: #8fcf86; color: #8fcf86; }
+.st-gjore-merke.o { border-color: #e39d63; color: #e39d63; }
 .st-skann-forslag { margin: .4rem 0 .8rem; }
 .st-hjelp { margin: .6rem 0 0; text-align: left; }
 .st-hjelp summary { cursor: pointer; font-weight: 700; color: var(--bs-link-color); }
