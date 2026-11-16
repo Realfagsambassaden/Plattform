@@ -1760,8 +1760,11 @@ function studieStart() {
         '<label class="st-valg"><input type="radio" name="st-modus" value="alle"' + (T.inn.modus === 'alle' ? ' checked' : '') + '> Alle spørsmålene på én gang</label>' +
         '<label class="st-valg"><input type="radio" name="st-modus" value="dag"' + (T.inn.modus === 'dag' ? ' checked' : '') + '> Noen spørsmål hver dag (' + PER_DAG + ' per tema)</label>' +
         '<label class="st-valg"><input type="checkbox" data-inn="repetisjon"' + (T.inn.repetisjon ? ' checked' : '') + '> Repetisjonsspørsmål</label>' +
-        '<label class="st-valg"><input type="checkbox" data-inn="varsler"' + (T.inn.varsler ? ' checked' : '') + '> Påminnelser</label>' +
-        '<p class="st-sm">Påminnelser sendes når studieappen kommer som app på mobilen. Valget ditt blir husket til da.</p>';
+        '<h2>Varsler</h2>' +
+        '<label class="st-valg"><input type="checkbox" id="st-varsler"' + (T.inn.varsler && ('Notification' in window) && Notification.permission === 'granted' ? ' checked' : '') + (pushMulig() ? '' : ' disabled') + '> Varsel om nye arbeidskrav, frister og beskjeder fra faglæreren</label>' +
+        '<p class="st-sm">' + (pushMulig() ? 'Varslene kommer på denne enheten. Slår du dem på, får du et testvarsel med en gang.'
+          : erIos() ? 'På iPhone og iPad kan appen bare gi varsler når den ligger på hjemskjermen. Legg den til (Del → «Legg til på Hjem-skjerm»), åpne den derfra og slå på varsler her.'
+          : 'Nettleseren din støtter ikke varsler. Prøv Chrome, Edge eller Firefox, eller appen på telefonen.') + '</p>';
     },
     hjem: function () {
       var lp = mineLoyper();
@@ -2021,6 +2024,41 @@ function studieStart() {
       '<li>Velg <b>«Installer app»</b> eller <b>«Legg til på startskjermen»</b>.</li><li>Trykk <b>«Installer»</b>.</li></ol>' +
       '<span class="st-sm">Samsung Internett: menyen ☰, så «Legg til side på» → «Startskjerm».</span></div>' +
       '</div><p class="st-sm">Appen dukker opp som et ikon på hjemskjermen og åpnes i fullskjerm. Den er gratis og trenger ingen appbutikk.</p></details>';
+  }
+  // ---------------------------------------------------------------- push-varsler
+  // Studenten slår på varsler: nettleseren gir et abonnement, som lagres i push_abonnement. KI-tjeneren sender varsler
+  // om nye arbeidskrav, frister og beskjeder (hint-tjener/push.js). På iPhone/iPad virker det bare i appen på hjemskjermen.
+  var VAPID = 'BF6VR9S7RsTBPzjxObu_ILs8B1ZYFnGeIWlYFu-fHeqGMm_xYFC-IZG1o3SBtihF3xDY8AnDlaAmFcvDRJV6xXY';
+  function erIos() { var ua = navigator.userAgent || ''; return /iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && navigator.maxTouchPoints > 1); }
+  function frittstaende() { return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; }
+  function pushMulig() { return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window && (!erIos() || frittstaende()); }
+  function b64tilBytes(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+  function slaPaVarsler() {
+    if (!pushMulig()) return Promise.reject(new Error(erIos() ? 'På iPhone og iPad må appen ligge på hjemskjermen for å kunne gi varsler.' : 'Nettleseren din støtter ikke varsler.'));
+    return Notification.requestPermission().then(function (p) {
+      if (p !== 'granted') throw new Error('Du sa nei til varsler. Du kan slå dem på i innstillingene på telefonen.');
+      return navigator.serviceWorker.ready;
+    }).then(function (reg) {
+      return reg.pushManager.getSubscription().then(function (gml) { return gml || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64tilBytes(VAPID) }); });
+    }).then(function (sub) {
+      var j = sub.toJSON();
+      return k.from('push_abonnement').upsert({ endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, bruker: bruker.id }).then(sjekk);
+    }).then(function () { T.inn.varsler = true; lagreInn(); return ki('/push-test', {}).catch(function () {}); });
+  }
+  function slaAvVarsler() {
+    T.inn.varsler = false; lagreInn();
+    if (!('serviceWorker' in navigator)) return Promise.resolve();
+    return navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); }).then(function (sub) {
+      if (!sub) return;
+      var e = sub.endpoint; return sub.unsubscribe().then(function () { return k.from('push_abonnement').delete().eq('endpoint', e); });
+    }).catch(function () {});
+  }
+  // Kort på I dag: tilbud om varsler (når det går an og studenten ikke har svart ennå)
+  function varselKort() {
+    try { if (T.eksempel || !pushMulig() || Notification.permission !== 'default' || localStorage.getItem('fh-varsel-skjul')) return ''; } catch (e) { return ''; }
+    return '<div class="st-kort st-appkort"><div class="st-rad"><b>🔔 Få varsel om nye arbeidskrav og frister</b><button type="button" class="st-lenke st-sm" data-h="skjulVarselKort">Ikke nå</button></div>' +
+      '<p class="st-sm" style="margin:.2rem 0 .5rem">Du får beskjed når faglæreren legger ut et arbeidskrav, når en frist nærmer seg, og når det kommer en beskjed.</p>' +
+      '<button type="button" class="st-btn liten" data-h="slaPaVarsler">Slå på varsler</button></div>';
   }
   function appKort() {
     var a = window.fhApp || {}, ua = navigator.userAgent || '';
@@ -2327,6 +2365,8 @@ function studieStart() {
       skannNy: function () { var sk = T.skann || {}; T.skann = { valgt: sk.valgt, fri: sk.fri, oppgave: sk.oppgave }; tegn(); },
       skannAnnen: function () { var b = (T.skann || {}).bilde; T.skann = { bilde: b }; tegn(); },
       skannFri: function () { T.skann = { fri: true }; tegn(); },
+      slaPaVarsler: function () { slaPaVarsler().then(function () { varsle('Varsler er slått på. Du får et testvarsel nå.'); tegn(); }).catch(function (e) { varsle(feilmelding(e), true); tegn(); }); },
+      skjulVarselKort: function () { try { localStorage.setItem('fh-varsel-skjul', '1'); } catch (e) {} tegn(); },
       apneLoype: function () { settAktivtKurs(d.id); T.loypeApen = true; tegn(); },
       tilbake: function () { var m = tilbakeMal(); if (m === 'loyper') { T.loypeApen = false; tegn(); } else if (m) ga(m); },
       velgKurs: function () { settAktivtKurs(d.id); ga('idag'); },
@@ -2473,6 +2513,7 @@ function studieStart() {
       var andre = (T.inn.valgt || []).filter(function (x) { return x.indexOf(NETTSTED + '/') !== 0; });
       T.inn.valgt = andre.concat(ny.map(nokkel)); lagreInn(); tegn();
     } else if (el.name === 'st-modus') { T.inn.modus = el.value; lagreInn(); }
+    else if (el.id === 'st-varsler') { (el.checked ? slaPaVarsler().then(function () { varsle('Varsler er slått på. Du får et testvarsel nå.'); }) : slaAvVarsler().then(function () { varsle('Varsler er slått av.'); })).catch(function (e) { el.checked = false; varsle(feilmelding(e), true); }); }
     else if (el.dataset.inn) { T.inn[el.dataset.inn] = el.checked; lagreInn(); }
     else if (el.dataset.felt === 'leggUT' && el.value) { var w = T.fag.u.moduler[+el.dataset.m].uker[+el.dataset.u]; if (w.undertemaer.indexOf(el.value) < 0) w.undertemaer.push(el.value); planlagreFag(); tegn(); }
     else if (el.name === 'st-form') { T.fag.u.ramme.form = el.value; planlagreFag(); }

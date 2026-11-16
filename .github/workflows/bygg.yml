@@ -102,6 +102,8 @@ jobs:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
       VARSEL_EPOST: ${{ secrets.VARSEL_EPOST }}
+      PUSH_HEMMELIG: ${{ secrets.PUSH_HEMMELIG }}
+      VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
     steps:
       - uses: actions/checkout@v4
       - name: Publiser KI-tjeneren
@@ -139,6 +141,21 @@ jobs:
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           VARSEL_EPOST: ${{ secrets.VARSEL_EPOST }}
+      # Push-varsler i studieappen. Legg PUSH_HEMMELIG og VAPID_PRIVATE_KEY inn som GitHub-hemmeligheter.
+      - name: Push-varsler (hvis satt opp)
+        if: env.PUSH_HEMMELIG != '' && env.VAPID_PRIVATE_KEY != ''
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: hint-tjener
+          command: deploy
+          secrets: |
+            PUSH_HEMMELIG
+            VAPID_PRIVATE_KEY
+        env:
+          PUSH_HEMMELIG: ${{ secrets.PUSH_HEMMELIG }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
 
   # Realfagsambassaden (paraplysiden) – ren HTML, publiseres direkte uten bygging.
   realfagsambassaden:

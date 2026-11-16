@@ -33,6 +33,7 @@
 
 import DASHMAN_INSTRUKS from "./dashman-instruks.md";
 import DASHMAN_UNDERVISER from "./dashman-underviser.md";
+import { pushRunde, sendPush } from "./push.js";
 
 const STANDARD_MODELL = { claude: "claude-haiku-5-5", openai: "gpt-4o-mini" };
 const NETTSTED = "https://fysikkhjelp.no";
@@ -391,6 +392,8 @@ const json = (data, status, headers) =>
 const kort = (s, n) => String(s || "").slice(0, n);
 
 export default {
+  // Push-varsler: cron (wrangler.toml) hvert kvarter
+  async scheduled(event, env, ctx) { ctx.waitUntil(pushRunde(env).catch(() => {})); },
   async fetch(request, env) {
     const origin = request.headers.get("Origin") || "";
     const h = cors(origin);
@@ -412,12 +415,27 @@ export default {
       if (sti.endsWith("/salen")) return await salen(request, env, b, h);
       if (sti.endsWith("/dashman")) return await dashman(request, env, b, h);
       if (sti.endsWith("/gjennomsyn")) return await gjennomsynVarsel(request, env, b, h);
+      if (sti.endsWith("/push-test")) return await pushTest(request, env, b, h);
       return await hint(request, env, b, h);
     } catch (e) {
       return json({ feil: e.brukermelding || "Tjenesten er midlertidig utilgjengelig. Prøv igjen om litt." }, e.status || 502, h);
     }
   },
 };
+
+// ---------------------------------------------------------------- push-varsler
+// Når studenten slår på varsler, sender appen /push-test: et bekreftelsesvarsel til den innloggedes egne abonnementer.
+async function pushTest(request, env, b, h) {
+  const bruker = await innloggetBruker(request, env);
+  if (!bruker) return json({ feil: "Du må være logget inn." }, 401, h);
+  if (!env.VAPID_PRIVATE_KEY) return json({ feil: "Varsler er ikke satt opp på tjeneren ennå." }, 503, h);
+  const token = request.headers.get("Authorization").replace(/^Bearer\s+/i, "");
+  const r = await fetch(`${env.SUPABASE_URL}/rest/v1/push_abonnement?select=endpoint,p256dh,auth`, { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` } });
+  const l = r.ok ? await r.json() : [];
+  let ok = 0;
+  for (const a of l) { try { if ((await sendPush(env, a, { tittel: "Varsler er slått på 🔔", tekst: "Du får beskjed om nye arbeidskrav, frister og beskjeder fra faglæreren.", url: "/studie/index.html" })) < 300) ok++; } catch { /* neste */ } }
+  return json({ sendt: ok }, 200, h);
+}
 
 // ---------------------------------------------------------------- hint
 async function hint(request, env, b, h) {

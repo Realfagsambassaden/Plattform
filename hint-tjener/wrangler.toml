@@ -28,3 +28,8 @@ fallthrough = true
 
 # Valgfritt: egen modell for Dashman (ellers MODELL / standardmodellen), f.eks.
 # MODELL_DASHMAN = "claude-sonnet-5-5"   (legg under [vars])
+
+# Push-varsler: hent og send nye varsler hvert kvarter (hint-tjener/push.js, supabase/oppsett.sql: push_jobb).
+# Hemmelighetene PUSH_HEMMELIG og VAPID_PRIVATE_KEY settes fra GitHub ved publisering.
+[triggers]
+crons = ["*/15 * * * *"]
