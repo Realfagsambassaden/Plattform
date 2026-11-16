@@ -106,24 +106,24 @@ filer:
     dato: '2026-11-15'
     versjon: 2
   flervariabel-kalkulus/kapitler/03-kurver-og-flater/03-flateintegraler.qmd:
-    blob: b47b1fc1a1d0efdfe3067cb054dcd7a66ec0f342
-    dato: '2026-11-11'
+    blob: 2c6229298a0d33b9e98092b44bc69012b84b7da8
+    dato: '2026-11-16'
     versjon: 2
   flervariabel-kalkulus/kapitler/03-kurver-og-flater/04-oppgaver.qmd:
-    blob: f3597abe8da1e22be77879635295167c680dcb0d
-    dato: '2026-11-11'
+    blob: dcf2913f7175a371d274bc2c41e35f085e205839
+    dato: '2026-11-16'
     versjon: 2
   flervariabel-kalkulus/kapitler/03-kurver-og-flater/index.qmd:
     blob: d07cca1d6992e0b24904f68ed9de5ffd46aacb6a
     dato: '2026-11-11'
     versjon: 2
   flervariabel-kalkulus/kapitler/04-vektorfelt/01-vektorfelt.qmd:
-    blob: a27df8cafb56d360cccb5242f397a299dae616ca
-    dato: '2026-11-11'
+    blob: 9742e34a65f762fa68a7c9417a0c84ee20f0144b
+    dato: '2026-11-16'
     versjon: 2
   flervariabel-kalkulus/kapitler/04-vektorfelt/02-divergens-og-curl.qmd:
-    blob: 21dbff06c90bd79fcb3639243406247d74b83994
-    dato: '2026-11-11'
+    blob: 6c6e42dbbec00c1a660e1a885a5551580b824017
+    dato: '2026-11-16'
     versjon: 2
   flervariabel-kalkulus/kapitler/04-vektorfelt/03-linjeintegraler-av-vektorfelt.qmd:
     blob: 48d43c35836f54551525ef8349c806a5b0b2644f
@@ -373,9 +373,73 @@ filer:
     blob: 38370fdd8f1795fe0ca4b2c66d59af7913d79fa3
     dato: '2026-11-15'
     versjon: 2
+  fysikk-forkurs/kapitler/04-krefter/01-bevegelsesmengde.qmd:
+    blob: d9e39089f1ca979927c445db13c36d2cdd77ac0e
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/04-krefter/02-newtons-lover-og-kraft-begrepet.qmd:
+    blob: ed9dd1d3850a9db07cd889044ce45d301fa52f93
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/04-krefter/03-krefter-i-dagliglivet.qmd:
+    blob: e8c89590e29b96c5d454921ab1537a346c8aae86
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/04-krefter/04-krefter-i-planet-dekomponering.qmd:
+    blob: d2dfcf93e82794a88c036187b179b8fe19bd76b6
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/04-krefter/05-sirkelbevegelse-og-krefter.qmd:
+    blob: c0c410a661385da557046b456f1c138db484cec9
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/04-krefter/06-bevaring-av-bevegelsesmengde.qmd:
+    blob: 173b5460b94c27008dfd871fc8f2169e52f1c59b
+    dato: '2026-11-16'
+    versjon: 2
   fysikk-forkurs/kapitler/04-krefter/07-sammensatte-mekanikkoppgaver.qmd:
     blob: 9829c3d8ac92f49bb03caf93a07e9d18bbd43b1e
     dato: '2026-11-11'
+    versjon: 2
+  fysikk-forkurs/kapitler/04-krefter/08-ekstraoppgaver.qmd:
+    blob: a73d1ca1be8b2e28854bd8307050bff1edbdaa85
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/04-krefter/index.qmd:
+    blob: 5b8f64c867ba15ffa04b1cb1494ec4efd0f31d9a
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/05-energi/01-arbeid.qmd:
+    blob: fb64745c95dc252c34960c74947adf5cfc6db735
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/05-energi/02-energi.qmd:
+    blob: f5211ed75120f2850b467eb06da7ecb86a33b968
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/05-energi/03-energitap.qmd:
+    blob: e20ca7a316d0a6f7551a1705e2dd0ff6ebfcf5b7
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/05-energi/04-bevaring-av-mekanisk-energi.qmd:
+    blob: c6cf233790ce030353d27aca322b92633fe7a179
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/05-energi/05-effekt.qmd:
+    blob: 8a765e3560eb0f606a671405c71ad6c8c7c59b88
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/05-energi/06-stot.qmd:
+    blob: ecaa60a30879e5d62ee05ebfa9cda877abfdc20d
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/05-energi/07-ekstraoppgaver.qmd:
+    blob: 1b69519034d641cd2c1d06c023308f181d487e7f
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/05-energi/index.qmd:
+    blob: af155d593e70176364324caeeb1ec76c47adb7c9
+    dato: '2026-11-16'
     versjon: 2
   fysikk-forkurs/kapitler/09-termofysikk/04-termodynamikkens-1-lov.qmd:
     blob: 1ef877ce6a3262acc15a7e20e4c620ab376413c6
@@ -416,6 +480,34 @@ filer:
   fysikk-forkurs/kapitler/11-elektrisitet/03-kirchoff-s-lover.qmd:
     blob: 21e076361b4a5f094cd7f162ce00c25d56f50bb1
     dato: '2026-11-13'
+    versjon: 2
+  fysikk-forkurs/kapitler/12-atom-og-kjernefysikk/01-atomets-oppbygning.qmd:
+    blob: 86ac631836c82511e00e26ccfd951c66fea5a3b7
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/12-atom-og-kjernefysikk/02-kvanter-og-fotoner.qmd:
+    blob: 33bd1ee37a0df718170b7f212736d58bcb938d16
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/12-atom-og-kjernefysikk/03-spektre-og-energinivaer.qmd:
+    blob: 615cf5fb82fbcaeeb55ccd05b9d49155291503ac
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/12-atom-og-kjernefysikk/04-atomkjernen.qmd:
+    blob: 48d615d65b6d3dae46900971f613e8672479facf
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/12-atom-og-kjernefysikk/05-radioaktivitet-og-straling.qmd:
+    blob: b5283736cd942fe52841585875428d143d0d1b91
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/12-atom-og-kjernefysikk/06-kjernereaksjoner-og-kjerneenergi.qmd:
+    blob: 3286133f22d3e625f41d60080fd43219ca8ec0a0
+    dato: '2026-11-16'
+    versjon: 2
+  fysikk-forkurs/kapitler/12-atom-og-kjernefysikk/index.qmd:
+    blob: a6f920f5613639a060a6d8995807d77ce9fb9cc1
+    dato: '2026-11-16'
     versjon: 2
   fysikk-forkurs/kapitler/13-programmering/04-skratt-kast-med-luftmotstand.qmd:
     blob: 4629df4a534b1d33dcf232d912249c87d7bb9060
@@ -601,6 +693,10 @@ filer:
     blob: 87208138c9df648273ceba258069d31593bee5b0
     dato: '2026-11-09'
     versjon: 2
+  plattform/tema-tekster/atom-og-kjerne.md:
+    blob: 18d1a33f838ed426d6368bf594591718134d08ff
+    dato: '2026-11-16'
+    versjon: 2
   plattform/tema-tekster/hva-er-fysikk.md:
     blob: 2c83ba9bf784e6f162912073c7c300bbf1490d2d
     dato: '2026-11-09'
@@ -608,5 +704,13 @@ filer:
   plattform/tema-tekster/kinematikk.md:
     blob: 247dc4fdd20df018041078666fa8fa1203d316a3
     dato: '2026-11-09'
+    versjon: 2
+  plattform/tema-tekster/newtons-lover.md:
+    blob: f34c0b2bf0c3ac23dd4518a05850b74273845657
+    dato: '2026-11-16'
+    versjon: 2
+  plattform/tema-tekster/straling.md:
+    blob: 0f123d9fc0101e496ade42e85a3a722293c131f3
+    dato: '2026-11-16'
     versjon: 2
 versjon: 2
