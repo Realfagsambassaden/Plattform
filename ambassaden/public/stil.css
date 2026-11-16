@@ -1,11 +1,13 @@
-:root{--tavle:#0d1110;--tavle2:#131917;--linje:#2a3330;--kritt:#ecefe6;--stov:#9aa49e;--neon:#6ef04a;--gul:#eee462;--bla:#7aa8ff;--oransje:#f0a03c;--rosa:#f08fb0}
+:root{--tavle:#24272a;--tavle2:#2c3033;--linje:#3f4448;--kritt:#eceeea;--stov:#a3a9ad;--neon:#8fcf86;--gul:#e6d98a;--bla:#86a8e0;--oransje:#e39d63;--rosa:#d99ab0;--turkis:#7fc3b4}
+/* Samme tavlestil som fysikkhjelp.no: dempet tavlesvart med krittformler i bakgrunnen, krittskrift (Kritt = Architects Daughter med ring i «å») og krittfilteret #kritt (SVG i HTML-en) */
+@font-face{font-family:"Kritt";src:url(fonter/ArchitectsDaughter-Norsk.woff2) format("woff2");font-display:swap}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;overflow-x:clip}
-body{margin:0;background:var(--tavle);color:var(--kritt);font:400 1.08rem/1.6 "Comic Neue","Comic Sans MS","Chalkboard SE",system-ui,sans-serif;overflow-x:clip}
+body{margin:0;background:var(--tavle) url(img/tavle-formler.webp) 0 0/800px auto repeat;color:var(--kritt);font:400 1.08rem/1.6 "Comic Neue","Comic Sans MS","Chalkboard SE",system-ui,sans-serif;overflow-x:clip}
 a{color:var(--neon)}
 h1,h2,h3{font-weight:700;line-height:1.1;margin:0}
 .overlinje{font:700 .8rem/1 "Comic Neue",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--neon);margin:0 0 .6rem}
-.topp{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.8rem clamp(16px,4vw,48px);background:rgba(13,17,16,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--linje)}
+.topp{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.8rem clamp(16px,4vw,48px);background:rgba(36,39,42,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--linje)}
 .merke{display:flex;align-items:center;gap:.6rem;color:var(--kritt);text-decoration:none;font-size:1.25rem}
 .merke b{color:var(--neon)}
 .topp nav{display:flex;gap:1.3rem;flex-wrap:wrap}
@@ -19,7 +21,7 @@ main{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
 .hero h1 span{color:var(--neon)}
 .ingress{font-size:1.2rem;max-width:56ch;margin:1.3rem 0 0}
 .knapper{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.8rem}
-.knapp{display:inline-flex;padding:.85rem 1.3rem;border-radius:8px;background:var(--neon);color:#0b130a;font-weight:700;text-decoration:none;border:2px solid var(--neon)}
+.knapp{display:inline-flex;padding:.85rem 1.3rem;border-radius:8px;background:var(--neon);color:#24272a;font-weight:700;text-decoration:none;border:2px solid var(--neon)}
 .knapp.spokelse{background:transparent;color:var(--kritt);border-color:var(--linje)}
 .knapp.spokelse:hover{border-color:var(--stov)}
 .seksjon{padding:4rem 0 1rem;scroll-margin-top:70px}
@@ -32,7 +34,7 @@ main{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
 .fagkort .status{font:700 .72rem/1 "Comic Neue",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--farge)}
 .fagkort.fysikk{--farge:var(--neon)}.fagkort.matte{--farge:var(--bla)}.fagkort.kjemi{--farge:var(--oransje)}.fagkort.bio{--farge:var(--gul)}
 .fagkort:not(.aapen) img{filter:grayscale(.5);opacity:.75}
-.fagkort.aapen{border-color:color-mix(in srgb,var(--neon) 55%,var(--linje));background:rgba(110,240,74,.05);color:var(--kritt)}
+.fagkort.aapen{border-color:color-mix(in srgb,var(--neon) 55%,var(--linje));background:rgba(143,207,134,.05);color:var(--kritt)}
 .fagkort.aapen:hover{border-color:var(--neon)}
 .gaa{margin-top:auto;padding-top:.6rem;color:var(--neon);font-weight:700}
 .podkast{display:grid;grid-template-columns:1.3fr 1fr;gap:2rem;align-items:center}
@@ -45,7 +47,7 @@ a.plattform{color:var(--kritt);text-decoration:none}a.plattform:hover{border-col
 .profiler{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem}
 .profil{display:grid;grid-template-columns:150px 1fr;gap:1.3rem;padding:1.3rem;border:1px solid var(--linje);border-radius:14px}
 .bilder{position:relative;width:150px}
-.foto{width:150px;height:150px;border-radius:50%;object-fit:cover;border:3px solid var(--neon);box-shadow:0 0 0 6px rgba(110,240,74,.12),0 0 28px rgba(110,240,74,.25)}
+.foto{width:150px;height:150px;border-radius:50%;object-fit:cover;border:3px solid var(--neon);box-shadow:0 0 0 6px rgba(143,207,134,.12),0 0 28px rgba(143,207,134,.25)}
 .ikon{position:absolute;right:-26px;bottom:-22px;width:84px;transform:rotate(-6deg);filter:drop-shadow(0 0 6px rgba(0,0,0,.8))}
 .ikon.bred{width:112px;right:-30px;bottom:-30px}
 .profil h3{font-size:1.4rem;margin-top:.3rem}
@@ -72,9 +74,9 @@ a.plattform{color:var(--kritt);text-decoration:none}a.plattform:hover{border-col
 .valgfritt{font-weight:400;color:var(--stov);font-size:.9rem}
 .doner-skjema input,.doner-skjema select,.doner-skjema textarea{background:rgba(255,255,255,.04);border:1px solid var(--linje);border-radius:8px;color:var(--kritt);padding:.65rem .75rem;font:inherit;font-weight:400}
 .doner-skjema select option{background:var(--tavle2)}
-.doner-skjema input:focus,.doner-skjema select:focus,.doner-skjema textarea:focus{outline:2px solid rgba(110,240,74,.6);border-color:transparent}
+.doner-skjema input:focus,.doner-skjema select:focus,.doner-skjema textarea:focus{outline:2px solid rgba(143,207,134,.6);border-color:transparent}
 .slipp{border:2px dashed var(--linje)!important;border-radius:12px;padding:1.6rem;text-align:center;cursor:pointer;font-weight:400!important}
-.slipp.over,.slipp:hover{border-color:var(--neon)!important;background:rgba(110,240,74,.04)}
+.slipp.over,.slipp:hover{border-color:var(--neon)!important;background:rgba(143,207,134,.04)}
 .slipp small{color:var(--stov)}
 .filliste{list-style:none;padding:0;margin:.4rem 0 0;text-align:left;display:flex;flex-direction:column;gap:.3rem}
 .filliste li{display:flex;justify-content:space-between;align-items:center;gap:.5rem;background:rgba(255,255,255,.04);border-radius:6px;padding:.35rem .6rem;font-size:.95rem;word-break:break-all}
@@ -98,6 +100,21 @@ a.plattform{color:var(--kritt);text-decoration:none}a.plattform:hover{border-col
 .hero::after{content:"";position:absolute;z-index:-1;top:0;bottom:0;right:-6vw;width:min(1100px,92%);background:url(img/ambassadorer-bakgrunn.webp) right center/contain no-repeat;opacity:.32;filter:blur(1.5px) contrast(1.05);-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 38%);mask-image:linear-gradient(90deg,transparent 0,#000 38%);pointer-events:none}
 .hero-tekst{position:relative;text-shadow:0 2px 18px rgba(13,17,16,.9)}
 .hero h1{font-size:clamp(2.4rem,5.6vw,4.4rem);letter-spacing:-.01em}
-.hero h1 .kamp{display:block;font:400 1.45em/.95 "Nanum Brush Script","Comic Neue",cursive;color:var(--neon);transform:rotate(-3deg);transform-origin:left;-webkit-text-stroke:1.5px var(--neon);margin-top:.2em;text-shadow:0 0 18px rgba(110,240,74,.55),0 0 2px rgba(110,240,74,.9)}
+.hero h1 .kamp{display:block;font:400 1.45em/.95 "Nanum Brush Script","Comic Neue",cursive;color:var(--neon);transform:rotate(-3deg);transform-origin:left;-webkit-text-stroke:1.5px var(--neon);margin-top:.2em;text-shadow:0 0 18px rgba(143,207,134,.55),0 0 2px rgba(143,207,134,.9)}
 .hero h1 .kamp svg{display:block;width:min(480px,85%);height:22px;margin-top:-.15em}
 @media (max-width:560px){.hero::after{opacity:.18;width:100%;right:0}}
+
+/* ---------- krittstil (som fysikkhjelp.no) ---------- */
+.hero h1,.seksjon h2,.doner-topp h1{font-family:"Kritt","Architects Daughter",cursive;font-weight:400;letter-spacing:.01em;-webkit-text-stroke:1px currentColor;text-shadow:0 0 10px rgba(236,238,234,.3);filter:url(#kritt)}
+.hero h1 .kamp{filter:none}
+.seksjon h2{transform:rotate(-1deg);transform-origin:left}
+.overlinje{font-family:"Kritt","Architects Daughter",cursive;letter-spacing:.12em;font-size:.95rem}
+.rolle,.snart{font-family:"Kritt","Architects Daughter",cursive}
+.knapp{font-family:"Kritt","Architects Daughter",cursive;font-size:1.1rem;border-radius:10px;box-shadow:0 0 16px rgba(143,207,134,.25)}
+.knapp:hover{transform:rotate(-1.5deg) scale(1.03)}
+.knapp{transition:transform .2s}
+.knapp.spokelse{border:2px solid var(--kritt);color:var(--kritt);box-shadow:none}
+.fagkort,.profil,.doner-skjema{background:rgba(44,48,51,.82)}
+.fagkort h3,.profil h3{font-family:"Kritt","Architects Daughter",cursive;font-weight:400;font-size:1.45rem}
+.fagkort.aapen{background:rgba(143,207,134,.07)}
+.hero::before{opacity:.13}
