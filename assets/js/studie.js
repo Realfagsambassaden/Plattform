@@ -1517,7 +1517,7 @@ function studieStart() {
   }
   function besteForsok(o) { return (T.quizer || []).filter(function (q) { return q.ovelse === o.id; }).reduce(function (m, q) { return Math.max(m, q.riktige || 0); }, 0); }
   function fristTekst(f) { if (!f) return ''; return new Date(f).toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'short' }); }
-  function appTittel() { if (T.vis === 'hjem') { var a = aktivtKurs(); return T.loypeApen && mineLoyper().length > 1 ? (a && a !== 'egen' ? fagnavn(a) : 'Min egen løype') : 'Løypene mine'; } return { skann: 'Skann svaret ditt', uke: 'Løypene mine', profil: 'Kunnskapsprofil', kurs: 'Kursene mine', fag: 'Kursene mine', pamelding: 'Kursene mine', innstillinger: 'Innstillinger', resultat: 'Resultat' }[T.vis] || ''; }
+  function appTittel() { if (T.vis === 'hjem') { var a = aktivtKurs(); return T.loypeApen && mineLoyper().length > 1 ? (a && a !== 'egen' ? fagnavn(a) : 'Min egen løype') : 'Ukeplanen min'; } return { skann: 'Skann svaret ditt', uke: 'Ukeplanen min', profil: 'Kunnskapsprofil', kurs: 'Finn kurs', fag: 'Kursene mine', pamelding: 'Finn kurs', innstillinger: 'Innstillinger', resultat: 'Resultat' }[T.vis] || ''; }
   function menyHtml() {
     var rad = function (ik, t, u, v, href) {
       var inni = '<span class="st-mikon">' + ikon(ik) + '</span><span class="st-mtekst">' + t + (u ? '<span class="st-sm">' + u + '</span>' : '') + '</span>' + ikon('pil', 18);
@@ -1527,10 +1527,10 @@ function studieStart() {
     return '<div class="st-meny-bak" data-h="lukkMeny"></div><nav class="st-meny" aria-label="Meny"><div class="st-rad"><span class="st-hand" style="font-size:1.5rem">Meny</span>' +
       '<button type="button" class="st-ikonknapp" data-h="lukkMeny" aria-label="Lukk menyen">' + ikon('x') + '</button></div>' +
       rad('hjem', 'I dag', 'Quiz, arbeidskrav og Dashman', 'idag') +
-      rad('rute', 'Løypene mine', 'Ukene og temaene i kursene dine', 'hjem') +
+      rad('rute', 'Ukeplanen min', 'Uker, temaer og quiz i kursene dine', 'hjem') +
       rad('bok', 'Les og øv', 'Lærestoff, videoer og oppgaver', '', '../index.html') +
       rad('graf', 'Kunnskapsprofil', 'Forståelse, presisjon og hurtighet', 'profil') +
-      rad('kurs', 'Kurs og løyper', 'Åpne kurs, løyper og kursene du er med i', 'kurs') +
+      rad('kurs', 'Finn kurs', 'Meld deg på eller av, og se løypene på nettstedet', 'kurs') +
       rad('bruker', 'Min side', '', '', '../konto/index.html') +
       rad('tannhjul', 'Innstillinger', 'Temaer, quiz og påminnelser', 'innstillinger') +
       '<button type="button" class="st-mrad" data-h="tilbakemelding"><span class="st-mikon">' + ikon('prat') + '</span><span class="st-mtekst">Gi tilbakemelding<span class="st-sm">Fant du en feil? Har du et forslag?</span></span>' + ikon('pil', 18) + '</button></nav>';

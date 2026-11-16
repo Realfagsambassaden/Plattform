@@ -39,7 +39,7 @@ Spør bare om råd eller forklaring, så lar du "moduler" være ute.
 ## Åpne kurs og påmelding
 
 Studentene melder seg på med kurskoden (eller QR-koden) fra underviseren. Et publisert kurs kan også gjøres **åpent**
-(avkrysning nederst i kursbyggeren): da står det under «Åpne kurs» i studieappen ([Kurs og løyper](/studie/index.html#apne-kurs)),
+(avkrysning nederst i kursbyggeren): da står det under «Åpne kurs» i studieappen ([Finn kurs](/studie/index.html#apne-kurs)),
 og alle kan melde seg på uten kode.
 
 ## Svarformat
