@@ -667,19 +667,34 @@ body.har-foredrag { overflow: hidden; }
 .niva-tabell .dl-lenke { color: $chalk; text-decoration: none; border-bottom: 1px dotted $dust; }
 .niva-tabell .dl-lenke:hover { color: $neon; }
 
-// Nivåknappen øverst på innholdssidene: skråstilt, som «Donér materiale» men mer firkantet (assets/js/loype.js)
-.niva-knapp { position: relative; display: inline-block; }
-.niva-knapp > summary, .niva-knapp.alene { list-style: none; display: inline-block; padding: .3rem .9rem; border: 2px solid var(--nv, $neon); border-radius: 4px; color: var(--nv, $neon); font-weight: 800; letter-spacing: .02em; transform: skewX(-12deg); white-space: nowrap; }
-.niva-knapp > summary::-webkit-details-marker { display: none; }
-.niva-knapp > summary > span, .niva-knapp.alene > span { display: inline-block; transform: skewX(12deg); }
-.niva-knapp > summary { cursor: pointer; }
-.niva-knapp > summary:hover, .niva-knapp[open] > summary { background: var(--nv, $neon); color: $slate; }
-.niva-meny { position: absolute; z-index: 20; top: calc(100% + .4rem); left: 0; min-width: 260px; display: flex; flex-direction: column; gap: .35rem; padding: .7rem; border: 1px solid $line; border-radius: 8px; background: $slate-2; box-shadow: 0 8px 24px rgba(0,0,0,.45); }
-.niva-meny .nm-tittel { font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: $dust; }
-.niva-meny a, .niva-meny .nm-her { padding: .35rem .6rem; border: 1px solid $line; border-radius: 6px; font-size: .9rem; }
-.niva-meny .nm-her { color: $dust; border-style: dashed; }
-.niva-meny a:hover { border-color: $neon; }
-.niva-meny b { color: $neon; } .niva-meny [data-nv] b { color: var(--nv); } .niva-meny a[data-nv] { border-left: 3px solid var(--nv); }
+// Nivåbryteren øverst på innholdssidene: liten skrubryter, panelet med de tre nivåene kommer fram ved hover/trykk (assets/js/loype.js)
+.niva-bryter { position: relative; display: inline-flex; align-items: center; }
+.nb-knapp { display: inline-flex; align-items: center; gap: .45rem; padding: .15rem .7rem .15rem .2rem; border: 2px solid var(--nv, $neon); border-radius: 999px; background: none; color: var(--nv, $neon); font: inherit; font-weight: 800; cursor: pointer; white-space: nowrap; }
+.nb-knapp:hover, .niva-bryter.apen .nb-knapp { background: color-mix(in srgb, var(--nv) 15%, transparent); }
+.nb-liten { width: 30px; height: 30px; overflow: visible; }
+.niva-bryter svg .nb-ring { fill: $slate-2; stroke: $chalk; stroke-width: 5; }
+.niva-bryter svg .nb-riller { stroke: rgba($chalk, .5); stroke-width: 3; stroke-linecap: round; }
+.niva-bryter svg .nb-merke { stroke: var(--nv); stroke-width: 6; stroke-linecap: round; }
+.niva-bryter svg .nb-viser { transition: transform .45s cubic-bezier(.3, 1.6, .5, 1); }
+.niva-bryter svg .nb-viser path { stroke: var(--vf, $yellow); stroke-width: 9; stroke-linecap: round; }
+.niva-bryter svg .nb-viser circle { fill: var(--vf, $yellow); }
+.niva-bryter[data-pos="forkurs"] { --vf: #{$neon}; } .niva-bryter[data-pos="ingenior"] { --vf: #{$cyan}; } .niva-bryter[data-pos="fordypning"] { --vf: #{$orange}; }
+.niva-bryter[data-pos="forkurs"] .nb-viser { transform: rotate(-90deg); }
+.niva-bryter[data-pos="fordypning"] .nb-viser { transform: rotate(90deg); }
+.nb-panel { position: absolute; z-index: 30; top: calc(100% + .3rem); left: -1rem; width: 330px; height: 170px; padding: .5rem; border: 1px solid $line; border-radius: 12px; background: $slate-2; box-shadow: 0 10px 30px rgba(0,0,0,.5); opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity .15s, transform .15s, visibility .15s; }
+.niva-bryter:hover .nb-panel, .niva-bryter:focus-within .nb-panel, .niva-bryter.apen .nb-panel { opacity: 1; visibility: visible; transform: none; }
+.nb-panel::before { content: ""; position: absolute; left: 0; right: 0; top: -.5rem; height: .5rem; }   // musa kan gå fra knappen til panelet
+.nb-stor { position: absolute; left: 50%; top: 52px; width: 84px; height: 84px; margin-left: -42px; overflow: visible; }
+.nb-valg { position: absolute; padding: .2rem .6rem; border: 2px solid var(--nv); border-radius: 8px; color: var(--nv) !important; font-family: "Architects Daughter", cursive; font-weight: 700; font-size: .95rem; text-decoration: none !important; white-space: nowrap; background: $slate-2; transition: transform .15s, background .15s; }
+a.nb-valg:hover { transform: scale(1.07); background: color-mix(in srgb, var(--nv) 18%, $slate-2); }
+.nb-valg.her { background: var(--nv); color: $slate !important; cursor: default; }
+.nb-valg.mangler { opacity: .35; border-style: dashed; cursor: not-allowed; }
+.nb-valg[data-niva="forkurs"] { right: calc(50% + 52px); top: 80px; }
+.nb-valg[data-niva="ingenior"] { left: 50%; top: 8px; translate: -50% 0; }
+.nb-valg[data-niva="fordypning"] { left: calc(50% + 52px); top: 80px; }
+.nb-tittel { position: absolute; left: 50%; bottom: 6px; translate: -50% 0; font-family: "Architects Daughter", cursive; color: $chalk; letter-spacing: .18em; font-size: .9rem; }
+@media (max-width: 480px) { .nb-panel { width: 300px; left: -.5rem; } .nb-valg { font-size: .85rem; padding: .15rem .45rem; } }
+
 .ll-modus { display: inline-flex; align-items: center; gap: .3rem; font-size: .85rem; }
 .ll-modus button { background: none; border: 1px solid $line; border-radius: 6px; color: $dust; padding: .1rem .5rem; }
 .ll-modus button.paa { border-color: $neon; color: $neon; }
@@ -841,14 +856,14 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .kritt-laer { margin: 0 0 .1rem; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; font-size: 1.25rem; filter: url(#kritt); }
 .kritt-av { margin: .35rem 0 0; font-family: "Kritt", "Architects Daughter", cursive; color: $yellow; font-size: clamp(1.1rem, 2.4vw, 1.4rem); letter-spacing: .03em; text-shadow: 0 0 8px rgba($yellow, .45); filter: url(#kritt); transform: rotate(-1.5deg); }
 
-.bryter { position: relative; width: 380px; max-width: 100%; height: 250px; margin: .2rem auto 0; }
+.bryter { position: relative; width: 400px; max-width: 100%; height: 265px; margin: .2rem auto 0; }
 .bryter .niva-knapper { display: block; }
-.bryter-valg { position: absolute; z-index: 2; font-family: "Kritt", "Architects Daughter", cursive; font-weight: 700; font-size: 1.2rem; color: var(--nv) !important; text-decoration: none; padding: .25rem .75rem; border: 2px solid transparent; border-radius: 999px; transition: background .25s, color .25s, transform .2s; }
-.bryter-valg:hover { transform: scale(1.08); border-color: color-mix(in srgb, var(--nv) 60%, transparent); }
+.bryter-valg { position: absolute; z-index: 2; font-family: "Kritt", "Architects Daughter", cursive; font-weight: 700; font-size: 1.15rem; color: var(--nv) !important; text-decoration: none; padding: .3rem .8rem; border: 2px solid var(--nv); border-radius: 8px; background: rgba($slate, .75); transition: background .25s, color .25s, transform .2s; }
+.bryter-valg:hover { transform: scale(1.08); background: color-mix(in srgb, var(--nv) 16%, $slate); }
 .bryter-valg.valgt { background: var(--nv); color: $slate !important; box-shadow: 0 0 16px color-mix(in srgb, var(--nv) 60%, transparent); }
-.bryter-valg[data-niva="forkurs"] { right: calc(50% + 90px); top: 122px; transform-origin: right center; }
+.bryter-valg[data-niva="forkurs"] { right: calc(50% + 92px); top: 118px; transform-origin: right center; }
 .bryter-valg[data-niva="ingenior"] { left: 50%; top: 0; translate: -50% 0; }
-.bryter-valg[data-niva="fordypning"] { left: calc(50% + 90px); top: 122px; transform-origin: left center; }
+.bryter-valg[data-niva="fordypning"] { left: calc(50% + 92px); top: 118px; transform-origin: left center; }
 .bryter-knott { position: absolute; left: 50%; top: 64px; width: 150px; height: 150px; margin-left: -75px; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 50%; }
 .bryter-knott:focus-visible { outline: 2px dashed $yellow; outline-offset: 4px; }
 .bryter-knott svg { width: 100%; height: 100%; overflow: visible; filter: url(#kritt); }
@@ -868,8 +883,7 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .bryter[data-pos="fordypning"] .viser circle { stroke: none; }
 .bryter-knott:hover .viser { transform: rotate(-120deg); }
 .bryter:not([data-pos="av"]) .bryter-knott:hover .viser { transition-duration: .3s; }
-.bryter-hint { position: absolute; left: 50%; bottom: -4px; translate: -50% 0; margin: 0; font-family: "Kritt", "Architects Daughter", cursive; color: $yellow; font-size: 1rem; transform: rotate(-3deg); transition: opacity .3s; pointer-events: none; }
-.bryter:not([data-pos="av"]) .bryter-hint { opacity: 0; }
+.bryter-navn { position: absolute; left: 50%; top: 222px; translate: -50% 0; margin: 0; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; font-size: 1.35rem; letter-spacing: .18em; -webkit-text-stroke: .6px $chalk; text-shadow: 0 0 8px rgba($chalk, .4); filter: url(#kritt); pointer-events: none; }
 .bryter-dm { position: absolute; z-index: 1; height: 118px; width: auto; filter: drop-shadow(0 0 5px rgba(255, 255, 255, .3)); pointer-events: none; }
 .bryter-dm.v { left: 34px; bottom: -34px; transform: rotate(-6deg); }
 .bryter-dm.h { right: 14px; bottom: -34px; height: 124px; transform: rotate(5deg); }
