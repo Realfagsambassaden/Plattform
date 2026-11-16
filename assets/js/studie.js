@@ -767,6 +767,10 @@ function studieStart() {
       return '<optgroup label="' + esc(K[t].tittel) + '">' + Object.keys(K[t].undertemaer).map(function (x) { return '<option value="' + NETTSTED + '/' + t + '/' + x + '">' + esc(K[t].undertemaer[x]) + '</option>'; }).join('') + '</optgroup>'; }).join('');
     var brukt = u.moduler.reduce(function (a, m) { return a + m.uker.length; }, 0);
     var o = topp + '<div class="st-rad"><button type="button" class="st-tilbake" data-h="tilStart">← Beskrivelse og ramme</button><span class="st-sm' + (brukt > r.uker ? ' st-feil' : '') + '">' + brukt + ' av ' + r.uker + ' uker brukt</span></div>';
+    // Forklaring av Dashman-fasene (samme som under Beskrivelse og ramme), så fargene på ukene er lette å lese
+    if ('dashman_fase' in f.c) o += '<details class="st-kort st-faseforklaring"><summary><b>Dashman-fasene</b> <span class="st-sm">(fargene på ukene, bare du ser dem)</span></summary>' +
+      '<p class="st-sm">Fasen sier hvor mye støtte Dashman gir studentene. Kurset har én fase (velges under Beskrivelse og ramme), og hver uke kan få en annen i nedtrekkslista på uka. Dashman justerer i tillegg for hver student ut fra quizer og arbeidskrav.</p>' +
+      '<ul class="st-sm st-faseliste">' + DMFASER.map(function (x) { return '<li><b style="color:' + x[3] + '">' + x[1] + ':</b> ' + esc(x[2]) + '</li>'; }).join('') + '</ul></details>';
     o += forMangeUker();
     if (f.kiKommentar || f.forrige) o += '<div class="st-fb ki"><b>KI-forslag</b>' + (f.kiKommentar ? '<div class="st-avsnitt">' + txLinje(f.kiKommentar) + '</div>' : '') +
       (f.forrige ? '<p><button type="button" class="st-btn g liten" data-h="angreKi">Angre: hent tilbake forrige oppsett</button></p>' : '') + '</div>';
