@@ -67,6 +67,7 @@ anchor-sections: false
   <!-- >>> nivakort (lages av verktoy/tema.py fra nivaer.yml – ikke rediger mellom disse linjene) -->
   <!-- <<< nivakort -->
 </div>
+<script>document.documentElement.style.setProperty('--kritt-filter', 'url(#kritt)');</script>
 <script>
 // «Velg nivå!» som skrubryter: Forkurs til venstre, Ingeniør rett opp, Fordypning til høyre. Knotten skrus til valget,
 // og bare det valgte nivået vises (så hopper siden ned til det). Uten JavaScript er valgene vanlige lenker.

@@ -672,7 +672,7 @@ body.har-foredrag { overflow: hidden; }
 .nb-knapp { display: inline-flex; align-items: center; gap: .45rem; padding: .15rem .7rem .15rem .2rem; border: 2px solid var(--nv, $neon); border-radius: 999px; background: none; color: var(--nv, $neon); font: inherit; font-weight: 800; cursor: pointer; white-space: nowrap; }
 .nb-knapp:hover, .niva-bryter.apen .nb-knapp { background: color-mix(in srgb, var(--nv) 15%, transparent); }
 .nb-liten { width: 30px; height: 30px; overflow: visible; }
-.niva-bryter svg { filter: url(#kritt); }
+.niva-bryter svg { filter: var(--kritt-filter); }
 .niva-bryter svg .nb-topp { fill: none; stroke: rgba($chalk, .5); stroke-width: 2.5; stroke-dasharray: 5 6; }
 .nb-liten .nb-topp { display: none; }
 .niva-bryter svg .nb-ring { fill: rgba($slate-2, .95); stroke: $chalk; stroke-width: 4; }
@@ -695,7 +695,7 @@ a.nb-valg:hover { transform: scale(1.07); background: color-mix(in srgb, var(--n
 .nb-valg[data-niva="forkurs"] { right: calc(50% + 52px); top: 80px; }
 .nb-valg[data-niva="ingenior"] { left: 50%; top: 8px; translate: -50% 0; }
 .nb-valg[data-niva="fordypning"] { left: calc(50% + 52px); top: 80px; }
-.nb-tittel { position: absolute; left: 50%; bottom: 4px; translate: -50% 0; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; letter-spacing: .18em; font-size: 1.05rem; -webkit-text-stroke: .4px $chalk; text-shadow: 0 0 8px rgba($chalk, .4); filter: url(#kritt); }
+.nb-tittel { position: absolute; left: 50%; bottom: 4px; translate: -50% 0; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; letter-spacing: .18em; font-size: 1.05rem; -webkit-text-stroke: .4px $chalk; text-shadow: 0 0 8px rgba($chalk, .4); filter: var(--kritt-filter); }
 .nb-navn { font-family: "Kritt", "Architects Daughter", cursive; }
 @media (max-width: 480px) { .nb-panel { width: 300px; left: -.5rem; } .nb-valg { font-size: .85rem; padding: .15rem .45rem; } }
 
@@ -845,20 +845,22 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 @media (min-width: 861px) and (max-width: 1200px) { .hero-dashman-v { height: 190px; top: 30%; left: 0; } }
 
 // ---------- Forsiden: «FORSTÅ fysikk» i kritt og skrubryter for nivå ----------
+// Krittfilteret settes som --kritt-filter av JavaScript (index.qmd, loype.js) der SVG-filteret #kritt finnes.
+// Ikke skriv filter-url-en direkte her: Quarto tolker url(...) i CSS som en fil og bygget feiler.
 // Kritt: Architects Daughter med synlig ring i «å» (fra videoer/_verktoy), lisens i assets/fonts/OFL-ArchitectsDaughter.txt
 @font-face { font-family: "Kritt"; src: url("/assets/fonts/ArchitectsDaughter-Norsk.woff2") format("woff2"); font-display: swap; }
 .hero h1.kritt-tittel { font-family: "Kritt", "Architects Daughter", cursive; font-weight: 400; line-height: .95; margin: .3rem 0 0; }
-.kritt-tittel span { display: block; filter: url(#kritt); }
+.kritt-tittel span { display: block; filter: var(--kritt-filter); }
 .kritt-tittel .k1 { color: $chalk; font-size: clamp(3.4rem, 10vw, 7rem); letter-spacing: .05em; -webkit-text-stroke: 2.5px $chalk; text-shadow: 0 0 14px rgba($chalk, .45); transform: rotate(-2deg); }
 .kritt-tittel .k2 { color: #7be35f; font-size: clamp(3rem, 8.5vw, 6rem); -webkit-text-stroke: 2px #7be35f; text-shadow: 0 0 10px rgba(#7be35f, .8), 0 0 26px rgba(#7be35f, .45); transform: rotate(-4deg) translateX(.8em); margin-top: -.05em; }
 .kritt-ramme { position: relative; display: inline-block; margin: 1.6rem auto 0; padding: .9rem 1.8rem 1rem; }
 .hero-tekst .velg-niva { margin-top: 3.2rem; }
-.kritt-ramme::before { content: ""; position: absolute; inset: 0; border: 2.5px solid rgba($chalk, .9); border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px; filter: url(#kritt); pointer-events: none; }
+.kritt-ramme::before { content: ""; position: absolute; inset: 0; border: 2.5px solid rgba($chalk, .9); border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px; filter: var(--kritt-filter); pointer-events: none; }
 .kritt-formel { margin: 0; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; font-size: clamp(1.4rem, 3.4vw, 2rem); -webkit-text-stroke: .5px $chalk; text-shadow: 0 0 8px rgba($chalk, .35); }
-.kritt-formel .t { filter: url(#kritt); }
-.kritt-formel .hjerte { font-size: 1.25em; line-height: 1; vertical-align: -.08em; display: inline-block; color: $yellow; -webkit-text-stroke: 1px $yellow; text-shadow: 0 0 10px rgba($yellow, .7); filter: url(#kritt); transform: rotate(8deg); }
-.kritt-laer { margin: 0 0 .1rem; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; font-size: 1.25rem; filter: url(#kritt); }
-.kritt-av { margin: .35rem 0 0; font-family: "Kritt", "Architects Daughter", cursive; color: $yellow; font-size: clamp(1.1rem, 2.4vw, 1.4rem); letter-spacing: .03em; text-shadow: 0 0 8px rgba($yellow, .45); filter: url(#kritt); transform: rotate(-1.5deg); }
+.kritt-formel .t { filter: var(--kritt-filter); }
+.kritt-formel .hjerte { font-size: 1.25em; line-height: 1; vertical-align: -.08em; display: inline-block; color: $yellow; -webkit-text-stroke: 1px $yellow; text-shadow: 0 0 10px rgba($yellow, .7); filter: var(--kritt-filter); transform: rotate(8deg); }
+.kritt-laer { margin: 0 0 .1rem; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; font-size: 1.25rem; filter: var(--kritt-filter); }
+.kritt-av { margin: .35rem 0 0; font-family: "Kritt", "Architects Daughter", cursive; color: $yellow; font-size: clamp(1.1rem, 2.4vw, 1.4rem); letter-spacing: .03em; text-shadow: 0 0 8px rgba($yellow, .45); filter: var(--kritt-filter); transform: rotate(-1.5deg); }
 
 .bryter { position: relative; width: 400px; max-width: 100%; height: 265px; margin: .2rem auto 0; }
 .bryter .niva-knapper { display: block; }
@@ -870,7 +872,7 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .bryter-valg[data-niva="fordypning"] { left: calc(50% + 92px); top: 118px; transform-origin: left center; }
 .bryter-knott { position: absolute; left: 50%; top: 64px; width: 150px; height: 150px; margin-left: -75px; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 50%; }
 .bryter-knott:focus-visible { outline: 2px dashed $yellow; outline-offset: 4px; }
-.bryter-knott svg { width: 100%; height: 100%; overflow: visible; filter: url(#kritt); }
+.bryter-knott svg { width: 100%; height: 100%; overflow: visible; filter: var(--kritt-filter); }
 .bryter-knott .ring { fill: rgba($slate-2, .95); stroke: $chalk; stroke-width: 3; }
 .bryter-knott .riller path { stroke: rgba($chalk, .55); stroke-width: 2.5; stroke-linecap: round; }
 .bryter-knott .topp { fill: none; stroke: rgba($chalk, .5); stroke-width: 2; stroke-dasharray: 5 6; }
@@ -887,7 +889,7 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .bryter[data-pos="fordypning"] .viser circle { stroke: none; }
 .bryter-knott:hover .viser { transform: rotate(-120deg); }
 .bryter:not([data-pos="av"]) .bryter-knott:hover .viser { transition-duration: .3s; }
-.bryter-navn { position: absolute; left: 50%; top: 222px; translate: -50% 0; margin: 0; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; font-size: 1.35rem; letter-spacing: .18em; -webkit-text-stroke: .6px $chalk; text-shadow: 0 0 8px rgba($chalk, .4); filter: url(#kritt); pointer-events: none; }
+.bryter-navn { position: absolute; left: 50%; top: 222px; translate: -50% 0; margin: 0; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; font-size: 1.35rem; letter-spacing: .18em; -webkit-text-stroke: .6px $chalk; text-shadow: 0 0 8px rgba($chalk, .4); filter: var(--kritt-filter); pointer-events: none; }
 .bryter-dm { position: absolute; z-index: 1; height: 118px; width: auto; filter: drop-shadow(0 0 5px rgba(255, 255, 255, .3)); pointer-events: none; }
 .bryter-dm.v { left: 34px; bottom: -34px; transform: rotate(-6deg); }
 .bryter-dm.h { right: 14px; bottom: -34px; height: 124px; transform: rotate(5deg); }
