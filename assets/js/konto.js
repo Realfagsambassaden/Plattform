@@ -128,6 +128,7 @@
     document.body.appendChild(rot);
     var panel = rot.querySelector('.fc-panel'), knapp = rot.querySelector('.fc-knapp'), logg = rot.querySelector('.fc-logg'), skj = rot.querySelector('form');
     function apne(v) { panel.hidden = !v; knapp.setAttribute('aria-expanded', String(v)); if (v) skj.tekst.focus(); }
+    window.fhTilbakemelding = function () { apne(true); };   // studieappen åpner tilbakemeldingen fra menyen
     knapp.onclick = function () { apne(panel.hidden); };
     rot.querySelector('.fc-lukk').onclick = function () { apne(false); };
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !panel.hidden) apne(false); });

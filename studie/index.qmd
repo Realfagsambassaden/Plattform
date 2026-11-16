@@ -402,7 +402,9 @@ body.st-app-modus .studie { max-width: 560px; margin: 0 auto; padding-bottom: ca
 .studie .st-mikon { color: var(--bs-primary); display: inline-flex; }
 .studie .st-mtekst { flex: 1; display: flex; flex-direction: column; }
 .studie .st-mtekst .st-sm { font-size: .8rem; }
-.studie .st-ikon { flex: 0 0 auto; }
+.studie .st-svg { flex: 0 0 auto; }
+body.st-app-modus #fh-chat .fc-knapp { display: none; }
+body.st-app-modus #fh-chat { bottom: calc(96px + env(safe-area-inset-bottom)); }
 </style>
 <script src="../assets/js/xlsx-lite.js"></script>
 <script src="../assets/js/studie.js"></script>

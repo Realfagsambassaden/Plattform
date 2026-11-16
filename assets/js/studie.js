@@ -1468,7 +1468,7 @@ function studieStart() {
     bruker: '<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-5 7-5s6 1 7 5"/>', tannhjul: '<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>',
     klokke: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>'
   };
-  function ikon(n, st) { return '<svg class="st-ikon" width="' + (st || 22) + '" height="' + (st || 22) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IKON[n] + '</svg>'; }
+  function ikon(n, st) { return '<svg class="st-svg" width="' + (st || 22) + '" height="' + (st || 22) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IKON[n] + '</svg>'; }
   function appModus() { return !erUnderviser() || T.eksempel; }
   // Ukens tema i løypa: det første som ikke er vurdert ennå (én uke per tema, i valgt rekkefølge).
   function ukensTema() { var v = valgt(); return v.filter(function (t) { return !T.ukevurd[t]; })[0] || v[v.length - 1]; }
@@ -1491,7 +1491,8 @@ function studieStart() {
       rad('graf', 'Kunnskapsprofil', 'Forståelse, presisjon og hurtighet', 'profil') +
       rad('kurs', 'Kursene mine', 'Bli med i et kurs og se arbeidskravene', 'kurs') +
       rad('bruker', 'Min side', '', '', '../konto/index.html') +
-      rad('tannhjul', 'Innstillinger', 'Temaer, quiz og påminnelser', 'innstillinger') + '</nav>';
+      rad('tannhjul', 'Innstillinger', 'Temaer, quiz og påminnelser', 'innstillinger') +
+      '<button type="button" class="st-mrad" data-h="tilbakemelding"><span class="st-mikon">' + ikon('prat') + '</span><span class="st-mtekst">Gi tilbakemelding<span class="st-sm">Fant du en feil? Har du et forslag?</span></span>' + ikon('pil', 18) + '</button></nav>';
   }
   function bunnlinje() {
     var f = function (v, ik, t) { return '<button type="button" class="st-fane' + (T.vis === v ? ' pa' : '') + '" data-h="ga" data-v="' + v + '"' + (T.vis === v ? ' aria-current="page"' : '') + '>' + ikon(ik, 24) + '<span>' + t + '</span></button>'; };
@@ -2107,6 +2108,7 @@ function studieStart() {
       ga: function () { ga(d.v, { meny: false }); },
       meny: function () { T.meny = true; tegn(); var f = document.querySelector('.st-meny .st-mrad'); if (f) f.focus(); },
       lukkMeny: function () { T.meny = false; tegn(); },
+      tilbakemelding: function () { T.meny = false; tegn(); if (window.fhTilbakemelding) window.fhTilbakemelding(); },
       dashman: function () { apneDashman(); },
       ovelse: function () { startOvelse(d.id); },
       skannSend: skannSend,
