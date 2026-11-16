@@ -137,6 +137,11 @@ Svar KUN med gyldig JSON:
 const SYSTEM_KVISS = `Du er en erfaren fysikklærer og lager flervalgsspørsmål til et obligatorisk arbeidskrav på NETTSTED.
 Du får tema, eventuelt undertemaer, ønsket antall og vanskelighetsgrad, og kanskje underviserens egne oppgaver (tekst, bilde eller PDF).
 Har du fått egne oppgaver: lag spørsmålene ut fra dem (samme fysikk og omtrent samme tall), og bruk dem i rekkefølge så langt det går.
+UNDERVISERENS ØNSKER ER ABSOLUTTE KRAV. Teksten fra underviseren kan være egne oppgaver, ønsker eller begge deler.
+Står det at noe IKKE skal være med (et tema, et begrep, en formel, en oppgavetype – f.eks. «ikke om elektrisk felt eller
+kraft»), skal ingen spørsmål handle om det, bruke det i utregningen eller nevne det i forklaringen, selv om det hører til
+undertemaet. Står det hvordan spørsmålene skal fordeles (f.eks. «to per delkapittel»), følg det. Sjekk hvert spørsmål
+mot ønskene før du svarer, og bytt ut dem som bryter dem.
 
 Regneoppgaver lages som MALER med varierende tall, slik at hver student får egne tall (ett spørsmål = én oppgave):
 - "tekst" med tallene som {{navn}}, f.eks. "En kloss på {{m}} kg trekkes med {{F}} N. Hva er akselerasjonen?"
@@ -274,7 +279,8 @@ async function kvisslag(request, env, b, h) {
     .map((x) => ({ id: kort(x.id, 80), tittel: kort(x.tittel, 120) }));
   const vi = vedleggInfo(b), vedlegg = vi.vedlegg;
   const melding = `Tema: ${kort(b.tema, 120)}\nUndertemaer (id | tittel):\n${ut.map((x) => `${x.id} | ${x.tittel}`).join("\n") || "(hele temaet)"}\n` +
-    `Antall spørsmål: ${antall}\nVanskelighet: ${niva}\n\nUnderviserens egne oppgaver:\n${kort(b.grunnlag, 8000) || (vedlegg ? "(se vedlegget)" : "(ingen – lag egne)")}` + vi.ber;
+    `Antall spørsmål: ${antall}\nVanskelighet: ${niva}\n\nFra underviseren (ønsker og/eller egne oppgaver – ønskene er krav):\n${kort(b.grunnlag, 8000) || (vedlegg ? "(se vedlegget)" : "(ingen – lag egne)")}` + vi.ber +
+    (kort(b.grunnlag, 8000).trim() ? `\n\nHusk: følg underviserens ønsker over nøyaktig. Ingen spørsmål om det underviseren har sagt at ikke skal være med.` : "");
   const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_KVISS.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000, vedlegg));
   const gyldigeUt = new Set(ut.map((x) => x.id));
   const tall = (v) => (Number.isFinite(+v) ? +v : null);
