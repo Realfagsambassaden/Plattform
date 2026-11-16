@@ -18,7 +18,7 @@ page-layout: full
   <div class="hero-scene">
     <img src="assets/img/tegninger/matte-scene.webp" alt="En krum flate med en normalvektor, omgitt av formler tegnet i kritt">
   </div>
-  <a class="soster" href="https://fysikkhjelp.no"><span>Søstersiden vår</span><img src="assets/img/fh-logo-linje.png" alt="fysikkhjelp.no"></a>
+  <div class="soster"><span>Våre søstersider</span><a href="https://fysikkhjelp.no"><img src="assets/img/fh-logo-linje.png" alt="fysikkhjelp.no"></a><span class="snart" title="Kommer snart">kjemihjelp.no</span><span class="snart" title="Kommer snart">biologihjelp.no</span></div>
 </section>
 ```
 
