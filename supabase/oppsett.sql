@@ -775,3 +775,52 @@ $$
 $$;
 revoke execute on function public.kurs_innsikt(uuid, text[], timestamptz) from public, anon;
 grant execute on function public.kurs_innsikt(uuid, text[], timestamptz) to authenticated;
+
+-- ============================================================================================================
+-- Gjennomsyn: bilder av løsninger som KI ikke er sikker på er håndskrevet
+-- KI vurderer om bildet er en håndskrevet løsning (ikke skjermdump, utskrift eller tekst fra en KI-chat).
+-- Er KI usikker, spør appen studenten om bildet kan lagres for gjennomsyn av en lærer (og for å gjøre Dashman bedre).
+-- Sier studenten nei, godkjennes ikke svaret. Bildet slettes når administratoren har tatt stilling til det.
+-- Avviser administratoren, slettes quizforsøket (studie_quiz med samme «forsok»), så arbeidskravet ikke lenger er godkjent.
+-- ============================================================================================================
+alter table public.studie_quiz add column if not exists forsok uuid;
+create table if not exists public.gjennomsyn (
+  id        bigserial primary key,
+  tid       timestamptz not null default now(),
+  bruker    uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  nettsted  text not null default '' check (char_length(nettsted) <= 40),
+  kilde     text not null default '' check (char_length(kilde) <= 200),    -- f.eks. «Arbeidskrav: Kollisjoner» eller «Skann»
+  ovelse    uuid references public.ovelser (id) on delete set null,
+  forsok    uuid,                                                          -- quizforsøket bildet hører til
+  oppgave   text not null default '' check (char_length(oppgave) <= 3000),
+  bilde     text check (bilde is null or char_length(bilde) <= 6000000),   -- JPEG som data-URL; slettes ved behandling
+  ki        jsonb,
+  status    text not null default 'venter' check (status in ('venter', 'godkjent', 'avvist')),
+  kommentar text check (kommentar is null or char_length(kommentar) <= 1000),
+  behandlet timestamptz
+);
+create index if not exists gjennomsyn_status on public.gjennomsyn (status, tid);
+alter table public.gjennomsyn enable row level security;
+drop policy if exists "gjennomsyn: student sender" on public.gjennomsyn;
+create policy "gjennomsyn: student sender" on public.gjennomsyn for insert to authenticated
+  with check (bruker = auth.uid() and status = 'venter' and behandlet is null and kommentar is null);
+drop policy if exists "gjennomsyn: lese" on public.gjennomsyn;
+create policy "gjennomsyn: lese" on public.gjennomsyn for select to authenticated using (bruker = auth.uid() or public.er_admin());
+grant select, insert on public.gjennomsyn to authenticated;
+grant usage on sequence public.gjennomsyn_id_seq to authenticated;
+
+create or replace function public.behandle_gjennomsyn(g bigint, s text, kom text) returns boolean
+  language plpgsql security definer set search_path = public as
+$$
+declare r gjennomsyn;
+begin
+  if not public.er_admin() or s not in ('godkjent', 'avvist') then return false; end if;
+  update gjennomsyn set status = s, kommentar = nullif(left(coalesce(kom, ''), 1000), ''), behandlet = now(), bilde = null
+    where id = g returning * into r;
+  if r.id is null then return false; end if;
+  if s = 'avvist' and r.forsok is not null then delete from studie_quiz where forsok = r.forsok and eier = r.bruker; end if;
+  return true;
+end
+$$;
+revoke execute on function public.behandle_gjennomsyn(bigint, text, text) from public, anon;
+grant execute on function public.behandle_gjennomsyn(bigint, text, text) to authenticated;

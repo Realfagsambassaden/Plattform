@@ -129,6 +129,11 @@ toc: false
 
     <div class="profil-admin" hidden>
       <h2 class="profil-del">Administrator</h2>
+      <div class="konto-boks admin-gjennomsyn-boks">
+        <h3>Til gjennomsyn <span class="admin-gjs-antall"></span></h3>
+        <p class="konto-ingress">Bilder av løsninger der KI var usikker på om de er håndskrevet. Studenten har sagt ja til at bildet lagres. Bildet slettes når du har godkjent eller avvist. Avviser du et bilde fra et arbeidskrav, teller ikke forsøket.</p>
+        <div class="admin-gjennomsyn"><p class="konto-ingress">Laster …</p></div>
+      </div>
       <div class="konto-boks">
         <h3>Tilbakemeldinger</h3>
         <p class="konto-ingress">Fra chatten nederst til høyre på alle sidene. Nye øverst.</p>
@@ -183,6 +188,13 @@ toc: false
 .profil-admin .konto-boks, .profil-blivunderviser { margin: 1rem 0; }
 .profil-foresporsel { margin: 1rem 0; border-color: #eee462 !important; }
 .profil-foresporsel b { color: #eee462; }
+.admin-gjs { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 1rem; padding: .9rem 0; border-bottom: 1px solid var(--bs-border-color); }
+.admin-gjs img { width: 100%; border-radius: 8px; cursor: zoom-in; }
+.admin-gjs textarea { width: 100%; border-radius: 8px; border: 1px solid var(--bs-border-color); background: transparent; color: inherit; padding: .4rem .6rem; margin: .4rem 0; }
+.admin-gjs-antall { display: inline-block; min-width: 1.6em; padding: 0 .45em; border-radius: 99px; background: var(--bs-warning); color: #1b1b1b; font-size: .85rem; text-align: center; }
+.admin-gjs-antall:empty { display: none; }
+.konto-varsel-gjs { border: 1.5px solid var(--bs-warning); border-radius: 12px; padding: .7rem 1rem; margin: 0 0 1rem; }
+@media (max-width: 640px) { .admin-gjs { grid-template-columns: 1fr; } }
 .admin-tabell { width: 100%; border-collapse: collapse; font-size: .92rem; margin-top: .8rem; }
 .admin-tabell th, .admin-tabell td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid var(--bs-border-color); }
 .admin-tabell .kode { font-family: monospace; letter-spacing: .08em; font-weight: 700; }
