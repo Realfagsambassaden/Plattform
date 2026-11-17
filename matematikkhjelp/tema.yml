@@ -69,10 +69,17 @@ omrader:
     beskrivelse: "Grenseverdier, derivasjon og integrasjon: matematikken for endring."
     bilde: flate-normal
     temaer:
+      - id: inverse-funksjoner
+        tittel: "Inverse og elementære funksjoner"
+        undertemaer:
+          - { id: inverse, tittel: "Inverse funksjoner" }
+          - { id: arcus, tittel: "Arcusfunksjonene" }
+          - { id: hyperbolske, tittel: "Hyperbolske funksjoner" }
       - id: grenseverdier
         tittel: "Grenseverdier og kontinuitet"
         undertemaer:
           - { id: grenseverdier, tittel: "Grenseverdier" }
+          - { id: formell-definisjon, tittel: "Den formelle definisjonen av grenseverdi" }
           - { id: kontinuitet, tittel: "Kontinuitet" }
           - { id: asymptoter, tittel: "Asymptoter" }
       - id: derivasjon
@@ -84,15 +91,23 @@ omrader:
           - { id: kjerneregelen, tittel: "Sammensatte funksjoner og kjerneregelen" }
           - { id: produkt-og-kvotient, tittel: "Produkt- og kvotientregelen" }
           - { id: eksponential-og-trig, tittel: "Derivasjon av eksponential-, logaritme- og trigonometriske funksjoner" }
+          - { id: implisitt, tittel: "Implisitt derivasjon" }
+          - { id: inverse-derivasjon, tittel: "Derivasjon av inverse funksjoner" }
+          - { id: middelverdisetningen, tittel: "Middelverdisetningen" }
       - id: anvendelser-derivasjon
         tittel: "Anvendelser av derivasjon"
         undertemaer:
           - { id: fart-og-akselerasjon, tittel: "Fart og akselerasjon" }
+          - { id: relaterte-rater, tittel: "Relaterte endringsrater" }
+          - { id: linearisering, tittel: "Linearisering og differensialer" }
+          - { id: lhopital, tittel: "L'Hôpitals regel" }
           - { id: drofting, tittel: "Funksjonsdrøfting" }
           - { id: optimering, tittel: "Optimering" }
+          - { id: newtons-metode, tittel: "Newtons metode" }
       - id: integrasjon
         tittel: "Integrasjon"
         undertemaer:
+          - { id: riemann, tittel: "Riemann-summer og det bestemte integralet" }
           - { id: ubestemt-integral, tittel: "Ubestemt integral" }
           - { id: bestemt-integral, tittel: "Bestemt integral og fundamentalsetningen" }
           - { id: areal, tittel: "Areal ved integrasjon" }
@@ -102,11 +117,16 @@ omrader:
           - { id: numerisk, tittel: "Numerisk integrasjon" }
           - { id: variabelskifte, tittel: "Variabelskifte" }
           - { id: delvis, tittel: "Delvis integrasjon" }
+          - { id: trigonometriske, tittel: "Trigonometriske integraler og substitusjoner" }
           - { id: delbrok, tittel: "Delbrøkoppspalting" }
+          - { id: uegentlige, tittel: "Uegentlige integraler" }
       - id: anvendelser-integrasjon
         tittel: "Anvendelser av integrasjon"
         undertemaer:
           - { id: volum, tittel: "Integrasjon og volum" }
+          - { id: buelengde, tittel: "Buelengde og overflateareal" }
+          - { id: middelverdi, tittel: "Middelverdi" }
+          - { id: fysiske, tittel: "Arbeid, masse og tyngdepunkt" }
       - id: flervariable-funksjoner
         tittel: "Funksjoner av flere variabler"
         undertemaer:
@@ -120,8 +140,22 @@ omrader:
           - { id: aritmetiske, tittel: "Aritmetiske følger og rekker" }
           - { id: geometriske, tittel: "Geometriske følger og rekker" }
           - { id: uendelige, tittel: "Uendelige rekker" }
-      - { id: taylor, tittel: "Taylorpolynomer og -rekker" }
-      - { id: differensiallikninger, tittel: "Differensiallikninger" }
+          - { id: konvergenstester, tittel: "Konvergenstester" }
+          - { id: potensrekker, tittel: "Potensrekker" }
+      - id: taylor
+        tittel: "Taylorpolynomer og -rekker"
+        undertemaer:
+          - { id: taylorpolynomer, tittel: "Taylorpolynomer" }
+          - { id: restledd, tittel: "Restledd og feilestimat" }
+          - { id: taylorrekker, tittel: "Taylorrekker" }
+      - id: differensiallikninger
+        tittel: "Differensiallikninger"
+        undertemaer:
+          - { id: innforing, tittel: "Hva er en differensiallikning?" }
+          - { id: separable, tittel: "Separable likninger" }
+          - { id: lineaere-forste, tittel: "Lineære likninger av første orden" }
+          - { id: andre-orden, tittel: "Andre ordens lineære likninger" }
+          - { id: eulers-metode, tittel: "Eulers metode" }
 
   - id: linalg
     tittel: "Lineær algebra"
