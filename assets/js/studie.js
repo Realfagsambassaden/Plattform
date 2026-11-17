@@ -2037,7 +2037,7 @@ function studieStart() {
           else if (kis.forstaelse === 'ja' && kis.streker !== 'ja') fb += '<div class="st-fb kanskje"><b>Sett to streker under svaret</b><p class="st-sm">Utregningen ser bra ut, men sluttsvaret må ha to streker under. Ta et nytt bilde.</p></div>';
           else if (q.forstatt && q.forstatt.id === x.id && a.type !== 'riktig') fb += '<div class="st-fb kanskje"><b>Utregningen viser forståelse</b><p class="st-sm">Finn feilen, trykk «Prøv igjen» og skriv inn riktig svar. Da er spørsmålet godkjent, uten nytt bilde.</p></div>';
           else if (q.kiGodkjent === 'kanskje') fb += '<div class="st-fb kanskje"><b>Kanskje godkjent</b><p class="st-sm">Dashman tror utregningen er riktig, men er ikke helt sikker. Spørsmålet teller som riktig inntil faglæreren eventuelt sier noe annet.</p></div>';
-          fb += '<div class="st-fb ki"><b>' + kt + '</b><div class="st-avsnitt">' + tx(kis.tilbakemelding) + '</div>' + (kis.vurdering !== 'uklar' ? '<p class="st-sm">Denne vurderingen teller i kunnskapsprofilen din.</p>' : '') +
+          fb += '<div class="st-fb ki"><b>' + kt + '</b><div class="st-avsnitt">' + tx(kis.tilbakemelding) + '</div>' + 
             (q.gjennomsyn && q.sist && q.sist.ki && q.sist.ki.gjennomsyn ? '<p class="st-sm">Bildet er sendt til gjennomsyn hos en lærer. Avvises det, teller ikke forsøket.</p>' : '') + '</div>';
         } else {
           var sf = q.ovelse && q.ovelse.svarform && q.ovelse.svarform !== 'valgfri' ? q.ovelse.svarform : '', kanTale = Tale && !taleNei, bareTale = sf === 'muntlig' && kanTale;
