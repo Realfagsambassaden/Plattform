@@ -47,8 +47,12 @@ Forkurset ble tidligere skrevet i LaTeX (`kosmoben/TRES0312`). Fra november 2026
 
 ## 3. Innholdsmodell: tema → undertema → nivå
 
-- Alt stoff er ordnet etter **tema** og **undertema** (i `tema.yml`), ikke etter kurs. Undertemaet `oppgaver` (blandede oppgaver) finnes i alle temaer.
-- **Blandede oppgaver (ekstraoppgaver) holder seg innenfor temaet** (besluttet 17. nov. 2026). Oppgavene på en slik side skal bare bruke stoff fra undertemaene i det samme temaet, og sidene står sist i temaet. I en løype skal ingen oppgave kreve stoff som ikke er gjennomgått tidligere i løypa. Sjekk dette når en løype lages eller endres.
+- Alt stoff er ordnet etter **tema** og **undertema** (i `tema.yml`), ikke etter kurs. Undertemaet `oppgaver` (**sammensatte oppgaver**) finnes i alle temaer og står sist i temaet.
+- **Sammensatte oppgaver** (besluttet 17. nov. 2026; erstatter «ekstraoppgaver» og «blandede oppgaver»): oppgaver som bygger på en helhetlig forståelse og gjerne knytter sammen flere delkapitler, også på tvers av temaer. Regler:
+  - Siden er undertemaet `oppgaver` i et tema og følger temastrukturen: oppgavene bruker bare stoff fra det temaet og temaer som kommer **før** i strukturen (`tema.yml`), aldri stoff som kommer senere.
+  - Hver oppgave sier hva den bygger på: `::: {.oppgave tittel="…" krever="kretser/motstand, kretser/effekt"}` (tema-id/undertema-id fra `tema.yml`, kommaseparert). Ta med alle undertemaer oppgaven trenger, også fra andre temaer.
+  - **Oppgavene følger løypa:** i en løype skjuler `assets/js/loype.js` oppgaver som bygger på stoff som ikke er gjennomgått tidligere i løypa (med knappen «Vis likevel»). `verktoy/tema.py` advarer om ukjente `krever` og lister hvilke oppgaver som skjules i hver løype. Sjekk lista når en løype lages eller endres.
+  - Tittelen på siden er «Sammensatte oppgaver: <tema>».
 - **Si «tema», ikke «emne».** «Emne» betyr også et kurs (emnekode, emnebeskrivelse), så ordet brukes bare om kurs. De gamle feltnavnene `emne:` og `delemne:` godtas fortsatt av byggeverktøyet, men nye sider skal bruke `tema:` og `undertema:`.
 - Hver side har nivå **Forkurs**, **Ingeniør** eller **Fordypning** (`forkurs`, `ingenior`, `fordypning`). Nivået arves fra læreboka (`niva:` i `fag.yml` her i Plattform) og kan overstyres med `niva:` øverst på siden.
 - Hver side starter slik:

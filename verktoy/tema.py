@@ -26,8 +26,8 @@ tema_info = {}                       # tema-id → (område, tema)
 for o in omrader:
     for e in o['temaer']:
         tema_info[e['id']] = (o, e)
-        # Undertemaer: listen i tema.yml + «oppgaver» (blandede oppgaver), som finnes i alle temaer
-        e['undertemaer'] = list(e.get('undertemaer') or e.get('delemner') or []) + [{'id': 'oppgaver', 'tittel': 'Blandede oppgaver'}]
+        # Undertemaer: listen i tema.yml + «oppgaver» (sammensatte oppgaver, sist i hvert tema)
+        e['undertemaer'] = list(e.get('undertemaer') or e.get('delemner') or []) + [{'id': 'oppgaver', 'tittel': 'Sammensatte oppgaver'}]
 NIVAER = [('forkurs', 'Forkurs'), ('ingenior', 'Ingeniør'), ('fordypning', 'Fordypning')]
 NIVA_NAVN = dict(NIVAER)
 def topp(t, felt):
@@ -268,6 +268,11 @@ for sti, eid in side_tema.items():
     side_info[html(sti)] = {'tema': e['tittel'], 'temaUrl': f'/tema/{o["id"]}/{e["id"]}.html', 'omrade': o['tittel'],
                             'undertema': dl['tittel'] if dl else None,
                             'undertemaUrl': f'/tema/{o["id"]}/{e["id"]}/{dl["id"]}.html' if dl else None, 'niva': NIVA_NAVN.get(side['niva'], ''), 'tvillinger': tvillinger}
+# Undertema-id (tema/undertema) for hver side, brukt til «krever» på sammensatte oppgaver (assets/js/loype.js)
+side_ut = {}
+for sti, eid in side_tema.items():
+    side = next(x for x in sider_per_tema[eid] if x['qmd'] == sti)
+    if side.get('undertema'): side_ut[sti] = f"{eid}/{side['undertema']}"
 # Temarekka: alle sider i menyrekkefølge (område → tema → undertema), brukt til forrige/neste på samme nivå
 temarekke = []
 for o in omrader:
@@ -282,7 +287,7 @@ for o in omrader:
     'temarekke': temarekke, 'nivanavn': NIVA_NAVN,
     'loyper': [{'id': L['id'], 'tittel': L['tittel'], 'url': html(L['oversikt']),
                 **{k: L[k] for k in ('beskrivelse', 'institusjon', 'emnekode', 'niva') if L.get(k)},
-                'sider': [{'url': html(s['qmd']), 'tittel': s['tittel']} for s in L['sider']],
+                'sider': [{'url': html(s['qmd']), 'tittel': s['tittel'], **({'ut': side_ut[s['qmd']]} if side_ut.get(s['qmd']) else {})} for s in L['sider']],
                 **({'uker': L['uker']} if L.get('uker') else {})} for L in loyper],
     'sider': side_info}, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
 
@@ -376,3 +381,30 @@ if indeks.exists() and nv_f.exists() and '<!-- >>> nivakort' in indeks.read_text
                 lambda m: m.group(1) + ''.join(x + '\n' for x in h) + m.group(2), t_, count=1, flags=re.S)
     indeks.write_text(t_, encoding='utf-8')
     print('forside: nivåkort skrevet')
+
+# ---- sjekk «krever» på sammensatte oppgaver (::: {.oppgave krever="tema/undertema, …"})
+# Ukjente undertemaer er en feil i læreboka; oppgaver som bygger på stoff senere i en løype, skjules der av loype.js.
+gyldige_ut = {f"{eid}/{d['id']}" for eid, (o, e) in tema_info.items() for d in e['undertemaer']}
+krever_re = re.compile(r'^:::\s*\{\.oppgave\b[^}]*?krever="([^"]*)"', re.M)
+krever_per_side = {}
+tema_rang = {eid: i for i, eid in enumerate(tema_info)}
+for sti in side_tema:
+    f = P / sti
+    if not f.exists(): continue
+    l = [[k for k in re.split(r'[,\s]+', m.group(1)) if k] for m in krever_re.finditer(f.read_text(encoding='utf-8'))]
+    if l: krever_per_side[sti] = l
+    for kl in l:
+        for k in kl:
+            if k not in gyldige_ut: print(f'  ADVARSEL: krever="{k}" i {sti} finnes ikke i tema.yml')
+            elif side_tema.get(sti) in tema_rang and tema_rang[k.split('/')[0]] > tema_rang[side_tema[sti]]:
+                print(f'  ADVARSEL: {sti} (tema {side_tema[sti]}) har en oppgave som krever {k}, som kommer senere i tema.yml')
+for L in loyper:
+    dekket, skjules = set(), []
+    for s in L['sider']:
+        if side_ut.get(s['qmd']): dekket.add(side_ut[s['qmd']])
+        for kl in krever_per_side.get(s['qmd'], []):
+            mangler = [k for k in kl if k not in dekket]
+            if mangler: skjules.append((s['qmd'], mangler))
+    if skjules:
+        print(f'  Løypa «{L["tittel"]}»: {len(skjules)} sammensatte oppgaver skjules fordi de bygger på stoff senere i (eller utenfor) løypa:')
+        for sti, m in skjules[:12]: print(f'    {sti}: {", ".join(m)}')

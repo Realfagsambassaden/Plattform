@@ -33,6 +33,25 @@
     if (modus === 'loype' && !L) modus = 'tema';
     if (modus === 'tema' && !E) modus = 'loype';
 
+    // Sammensatte oppgaver: en oppgave kan si hva den bygger på (krever="tema/undertema, …"). Går du i en løype, skjules
+    // oppgaver som bygger på stoff som kommer senere i løypa (eller ikke er med), med en knapp for å vise dem likevel.
+    if (modus === 'loype' && L) {
+      var ix = L.sider.findIndex(function (s) { return s.url === sti; }), dekket = {};
+      L.sider.slice(0, ix + 1).forEach(function (s) { if (s.ut) dekket[s.ut] = 1; });
+      var skjult = [];
+      main.querySelectorAll('div.oppgave[data-krever]').forEach(function (o) {
+        var mangler = o.getAttribute('data-krever').split(/[,\s]+/).filter(function (k) { return k && !dekket[k]; });
+        if (mangler.length) { o.classList.add('krever-skjult'); o.hidden = true; skjult.push(o); }
+      });
+      if (skjult.length) {
+        var boks = document.createElement('p'); boks.className = 'krever-melding';
+        boks.innerHTML = '<span>' + skjult.length + (skjult.length === 1 ? ' oppgave bygger' : ' oppgaver bygger') + ' på stoff som kommer senere i løypa «' + L.tittel.replace(/[<&]/g, '') + '», og er skjult.</span> <button type="button">Vis likevel</button>';
+        boks.querySelector('button').addEventListener('click', function () { skjult.forEach(function (o) { o.hidden = false; }); boks.remove(); });
+        var forste = skjult[0].closest('.oppgaver') || skjult[0];
+        forste.parentNode.insertBefore(boks, forste);
+      }
+    }
+
     var f = null, n = null, merkeF = '', merkeN = '';
     if (modus === 'loype' && L) {
       var i = L.sider.findIndex(function (s) { return s.url === sti; });
