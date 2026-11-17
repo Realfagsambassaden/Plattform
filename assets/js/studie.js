@@ -269,7 +269,7 @@ function studieStart() {
     if (liste) liste = grupper(liste);   // tilpasset nivå: varianter av samme spørsmål samles, nesteSp velger én
     var n = liste ? liste.length : o.antall;
     if (!n) return varsle('Arbeidskravet har ingen spørsmål ennå.', true);
-    T.q = { tema: t, nr: 0, hoved: n, antall: n, brukt: [], res: [], hovedRes: [], rekke: 0, ovelse: o, liste: liste, ut: ut, forsok: nyId() };
+    T.q = { tema: t, nr: 0, hoved: n, antall: n, brukt: [], res: [], hovedRes: [], rekke: 0, ovelse: o, liste: liste, ut: ut, forsok: nyUuid() };
     nesteSp(); ga('quiz');
   }
   // Lagres når quizen er ferdig. Øvingsquizer teller mot godkjenning.
@@ -295,7 +295,7 @@ function studieStart() {
     // Repetisjon bare når det finnes svar fra andre temaer å repetere.
     var kandidater = {}; T.svar.forEach(function (s) { if (s.nettsted === NETTSTED && s.tema !== t && Q.some(function (x) { return x.id === s.id; })) kandidater[s.id] = 1; });
     var rep = T.inn.repetisjon ? Math.min(dag ? 1 : REP, Object.keys(kandidater).length) : 0;
-    T.q = { tema: t, nr: 0, hoved: hoved, antall: hoved + rep, brukt: [], res: [], hovedRes: [], rekke: 0, forsok: nyId() };
+    T.q = { tema: t, nr: 0, hoved: hoved, antall: hoved + rep, brukt: [], res: [], hovedRes: [], rekke: 0, forsok: nyUuid() };
     nesteSp();
     ga('quiz');
   }
@@ -479,7 +479,8 @@ function studieStart() {
   }
   var IKKE_HAND = 'Dette ser ikke ut som din egen håndskrevne løsning (for eksempel en skjermdump, utskrift eller tekst fra en KI-chat). Skriv løsningen for hånd og ta et nytt bilde.';
   var NEI_LAGRE = 'Da kan jeg ikke godkjenne bildet. Skriv løsningen for hånd, ta et tydelig bilde, og prøv igjen.';
-  function nyId() {
+  // NB: egen navn – nyId() lenger ned (korte id-er til moduler) overstyrte denne, og forsøk-id-en ble ikke en gyldig uuid.
+  function nyUuid() {
     try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) {}
     return 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, function () { return (Math.random() * 16 | 0).toString(16); });
   }
