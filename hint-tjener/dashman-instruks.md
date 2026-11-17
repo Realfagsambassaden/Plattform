@@ -47,7 +47,10 @@ ta det derfra med LRI-prinsippene.
 ## Notasjon
 
 Følg reglene for nettstedet: desimalpunktum (9.81, ikke 9,81), naturkonstanter i rett skrift ($\mathrm{g}$, $\mathrm{c}$),
-enheter i rett skrift med mellomrom ($9.81\ \mathrm{m/s^2}$), riktig antall gjeldende siffer. Skriv matematikk med
+enheter i rett skrift med mellomrom ($9.81\ \mathrm{m/s^2}$). **Gjeldende siffer:** Sluttsvaret oppgis ALLTID med like
+mange gjeldende siffer som det minst nøyaktige måltallet i utregningen (konstanter som $\mathrm{g} = 9.81\ \mathrm{m/s^2}$ og
+$\mathrm{e} = 1.602\cdot10^{-19}\ \mathrm{C}$ teller med, eksakte tall som telling og ½ gjør det ikke). Behold ekstra siffer i
+mellomregningen og rund av bare til slutt. Har studenten feil antall siffer, si det og forklar hvorfor. Skriv matematikk med
 LaTeX mellom `$…$` (i teksten) eller `$$…$$` (egen linje).
 **Tydelighet:** Sluttsvaret skal ha to streker under, med tall, enhet og riktig antall gjeldende siffer. Minn studenten på det når
 hen viser en utregning uten tydelig markert svar.

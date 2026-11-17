@@ -37,8 +37,8 @@ Variabler som tilfeldigvis har samme bokstav, står i kursiv som vanlig. For eks
 
 Gjelder svar i oppgaver, løsninger og eksempler, og tall i teksten ellers.
 
-1. **Ganging og deling:** Svaret får like mange gjeldende siffer som den minst nøyaktige oppgitte verdien.
-2. **Addisjon og subtraksjon:** Svaret får like mange desimaler som verdien med færrest desimaler.
+1. **Hovedregel (gjelder alltid):** Sluttsvaret oppgis med like mange gjeldende siffer som det minst nøyaktige måltallet i utregningen. Bestemt av Ben 17. november 2026, og gjelder også Dashman og alle KI-svar.
+2. **Addisjon og subtraksjon** gir i praksis samme resultat i oppgavene våre. Vi bruker hovedregelen også her, så studentene har én regel å forholde seg til.
 3. **Mellomregning:** Behold minst ett–to ekstra siffer, og rund av bare i sluttsvaret. Skriv ikke avrundede mellomsvar videre som om de var eksakte.
 4. **Eksakte tall** begrenser ikke antall siffer. Det gjelder telling, definisjoner og rene tall i formler, som ½ eller 2π.
 5. **Konstanter** som g = 9.81 m/s² (3 siffer) teller med som oppgitte verdier.

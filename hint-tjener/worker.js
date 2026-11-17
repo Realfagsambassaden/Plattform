@@ -60,7 +60,8 @@ Regler:
 - Still gjerne et ledende spørsmål i stedet for å fortelle svaret.
 - Løsningsforslaget du får er bare til hjelp for deg. Ikke siter det.
 - Formler står på egen linje med \\[ ... \\] rundt, for eksempel\n  \\[ W = F s \\cos\\theta \\]\n  Bruk \\( ... \\) bare for et enkelt symbol i teksten, som \\( v_0 \\). Ikke bruk Markdown, overskrifter eller lister.
-- Spør studenten om noe som ikke handler om oppgaven, svar kort at du bare hjelper med oppgaven.`;
+- Spør studenten om noe som ikke handler om oppgaven, svar kort at du bare hjelper med oppgaven.
+- Gjeldende siffer: Sluttsvar har ALLTID like mange gjeldende siffer som det minst nøyaktige måltallet i oppgaven (konstanter teller med, eksakte tall ikke). Si fra hvis studenten bruker for mange eller for få.`;
 
 const SYSTEM_DEKNING = `Du hjelper studenter å finne ut hvor godt nettstedet fysikkhjelp.no dekker pensum i et emne de skal ta eksamen i.
 Du får (1) teksten fra en emnebeskrivelse og (2) en liste over sidene på fysikkhjelp.no med id, kapittel, tittel, overskrifter, definisjoner og oppgaver.
@@ -102,7 +103,8 @@ Håndskrift (bare når det er vedlagt et bilde): Vurder om bildet viser studente
 Uten bilde: bruk "ja".
 
 Svar KUN med gyldig JSON:
-{"vurdering":"riktig|regnefeil|begrep|uklar","sikkerhet":"hoy|middels|lav","handskrift":"ja|nei|usikker","tilbakemelding":"…"}`;
+{"vurdering":"riktig|regnefeil|begrep|uklar","sikkerhet":"hoy|middels|lav","handskrift":"ja|nei|usikker","tilbakemelding":"…"}
+- Gjeldende siffer: Sluttsvar har ALLTID like mange gjeldende siffer som det minst nøyaktige måltallet i oppgaven (konstanter teller med, eksakte tall ikke). Si fra hvis studenten bruker for mange eller for få.`;
 
 const SYSTEM_RAD = `Du er en erfaren fysikklærer på NETTSTED, laget av Dr. Normann. Du får kunnskapsprofilen til en student: for hvert tema og undertema andelen (0–1) for
 forståelse (riktig tankegang), presisjon (riktig regning når tanken er riktig) og hurtighet (riktig innen forventet tid), og antall svar.
@@ -150,7 +152,7 @@ mot ønskene før du svarer, og bytt ut dem som bryter dem.
 Regneoppgaver lages som MALER med varierende tall, slik at hver student får egne tall (ett spørsmål = én oppgave):
 - "tekst" med tallene som {{navn}}, f.eks. "En kloss på {{m}} kg trekkes med {{F}} N. Hva er akselerasjonen?"
 - "variabler": [{"navn":"m","min":1,"maks":5,"steg":0.5}, …] – realistiske områder; unngå tall som gir like svar.
-- "svar": fasit som uttrykk i variablene, f.eks. "F/m". "enhet": "m/s^2" (ren tekst, f.eks. m/s^2, N, J). "siffer": 3.
+- "svar": fasit som uttrykk i variablene, f.eks. "F/m". "enhet": "m/s^2" (ren tekst, f.eks. m/s^2, N, J). "siffer": antall gjeldende siffer i det minst nøyaktige måltallet (variabler og konstanter). Sluttsvar har ALLTID like mange gjeldende siffer som det minst nøyaktige måltallet i oppgaven (konstanter teller med, eksakte tall ikke).
 - "feil": 3 gale svar som uttrykk: {"uttrykk":"m/F","type":"regnefeil"} eller {"uttrykk":"F*m","type":"begrep"}.
 - "forklaring": løsningen med {{svar}} og gjerne {{…}}-uttrykk, f.eks. "$a = F/m$ = {{svar}} m/s^2".
 - Uttrykk kan bruke + - * / ^, parenteser, pi og sqrt, sin, cos, tan (radianer), sind, cosd, tand (grader), asin/asind osv., ln, log, exp, abs. Ingen implisitt multiplikasjon (skriv 2*m).
@@ -158,7 +160,7 @@ Rene begrepsspørsmål uten utregning lages som faste spørsmål (punktene under
 
 Faste spørsmål:
 - "tekst": kort oppgavetekst med tall og enheter. Formler i LaTeX mellom $ … $.
-- "riktig": det riktige svaret (kort, med enhet).
+- "riktig": det riktige svaret (kort, med enhet), med riktig antall gjeldende siffer. Sluttsvar har ALLTID like mange gjeldende siffer som det minst nøyaktige måltallet i oppgaven (konstanter teller med, eksakte tall ikke). Bruk desimalpunktum og tierpotenser i LaTeX ($1.602\\cdot 10^{-19}\\ \\mathrm{C}$), aldri komma eller ^ i ren tekst.
 - "feil": nøyaktig 3 gale svar som avslører typiske feil: {"svar":"…","type":"regnefeil"} for riktig fysikk men feil regning
   (glemt kvadrat, feil enhet, fortegn), og {"svar":"…","type":"begrep"} for feil fysikk. Minst ett av hver type.
 - "forklaring": 1–2 setninger med løsningen, formel i $ … $.
