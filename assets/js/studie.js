@@ -238,7 +238,7 @@ function studieStart() {
     return null;
   }
   // Obligatorisk øving: godkjent når en quiz for øvingen har minst «krav» riktige innen fristen.
-  function godkjent(o) { return (T.quizer || []).some(function (q) { return q.ovelse === o.id && q.riktige >= o.krav && (!o.frist || Date.parse(q.fullfort) <= Date.parse(o.frist)); }); }
+  function godkjent(o) { return (T.quizer || []).some(function (q) { return q.ovelse === o.id && q.riktige >= Math.min(o.krav, q.antall || o.krav) && (!o.frist || Date.parse(q.fullfort) <= Date.parse(o.frist)); }); }
   function mineOvelser() { var a = aktivtKurs(), mine = a ? (a === 'egen' ? [] : [a.kurs]) : T.deltar.map(function (d) { return d.kurs; }); return (T.ovelser || []).filter(function (o) { return mine.indexOf(o.kurs) >= 0; }); }
   // Spørsmål i arbeidskrav ordnes etter delkapitlenes rekkefølge (temaenes og undertemaenes rekkefølge på nettstedet),
   // så studentene jobber sekvensielt. Innenfor et delkapittel beholdes rekkefølgen underviseren har.
@@ -255,7 +255,13 @@ function studieStart() {
     if (!K[t] && !S[t]) return varsle('Temaet finnes ikke lenger.', true);
     var ut = kravIder(o).map(function (id) { return id.split('/').slice(1).join('/'); });
     // Egne spørsmål: i delkapitlenes rekkefølge (sekvensielt). Spørsmålsbanken: tilpasset nivået, eventuelt bare valgte undertemaer.
-    var liste = o.kilde === 'egne' ? (o.tilfeldig ? (o.sporsmal || []).map(function (x) { return [Math.random(), x]; }).sort(function (a, b) { return a[0] - b[0]; }).map(function (a) { return a[1]; }) : sorterDelkap(o.sporsmal || [], t)).map(function (x) { if (!erMal(x)) return x; try { return lagVariant(x); } catch (e) { return null; } }).map(function (x, i) {
+    // Arbeidskrav laget med «Tilpasset nivå» der KI-en glemte «gruppe»: ser spørsmålene ut som lett/middels/vanskelig-tripler
+    // om samme undertema, slås de sammen her, så studenten får 12 spørsmål og ikke 36.
+    var raw = (o.sporsmal || []).map(function (x) { return Object.assign({}, x); });
+    if (raw.length >= 3 && raw.length % 3 === 0 && !raw.some(function (x) { return x.gruppe != null; }) && raw.every(function (x, j) {
+      var a = raw[j - j % 3], tre = raw.slice(j - j % 3, j - j % 3 + 3);
+      return x.undertema === a.undertema && tre.map(function (y) { return y.vanskelighet; }).sort().join() === 'lett,middels,vanskelig'; })) gjettGrupper(raw, 'auto');
+    var liste = o.kilde === 'egne' ? (o.tilfeldig ? raw.map(function (x) { return [Math.random(), x]; }).sort(function (a, b) { return a[0] - b[0]; }).map(function (a) { return a[1]; }) : sorterDelkap(o.sporsmal || [], t)).map(function (x) { if (!erMal(x)) return x; try { return lagVariant(x); } catch (e) { return null; } }).map(function (x, i) {
       if (!x) return null;
       var tu = String(x.undertema || ut[0] || '').split('/'), tt = tu.length > 1 ? tu[0] : t, uu = tu.length > 1 ? tu[1] : tu[0];
       return Object.assign({}, x, { id: 'ov-' + o.id.slice(0, 8) + '-' + i, tema: K[tt] || S[tt] ? tt : t, undertema: uu || '', vanskelighet: x.vanskelighet || 'middels', forventet_tid_s: x.forventet_tid_s || 90, forklaring: x.forklaring || '' });
@@ -269,7 +275,8 @@ function studieStart() {
   // Lagres når quizen er ferdig. Øvingsquizer teller mot godkjenning.
   function avsluttQuiz() {
     var q = T.q; if (q.lagret) return; q.lagret = true;
-    var antall = q.hovedRes.length; if (!antall) return;
+    // Arbeidskrav: antallet er det planlagte (overhoppede spørsmål teller som ikke riktige), så kravet ikke kan omgås.
+    var antall = q.ovelse ? Math.max(q.hoved, q.hovedRes.length) : q.hovedRes.length; if (!q.hovedRes.length) return;
     var riktige = q.hovedRes.filter(function (x) { return x === 'riktig'; }).length;
     var rad = { nettsted: NETTSTED, tema: q.tema, ovelse: q.ovelse ? q.ovelse.id : null, antall: antall, riktige: riktige };
     if (q.gjennomsyn) rad.forsok = q.forsok;   // et bilde i forsøket venter på gjennomsyn: avvises det, slettes forsøket
@@ -1943,7 +1950,8 @@ function studieStart() {
             (kis && kis.feil ? '<p class="st-feil">' + esc(kis.feil) + '</p>' : '');
         }
         var sfk = q.ovelse && q.ovelse.svarform, mangler = q.sporLagre || (sfk && sfk !== 'valgfri' && (!q.kiSvar || q.kiSvar.feil || (sfk === 'bilde' && !q.kiBilde)));
-        fb += '<p class="st-videre"><button type="button" class="st-btn" data-h="videre"' + (mangler ? ' disabled title="Forklar svaret først"' : '') + '>' + (q.nr + 1 >= q.antall ? 'Se resultat' : 'Neste') + '</button>' + (mangler ? ' <span class="st-sm">' + (sfk === 'bilde' ? 'Last opp bilde av utregningen og trykk «Få tilbakemelding» først.' : 'Forklar svaret og trykk «Få tilbakemelding» først.') + '</span>' : '') + '</p>';
+        var igjen = a.type !== 'riktig' && !x.rep && !(q.ovelse && q.ovelse.ettForsok);
+        fb += '<p class="st-videre">' + (igjen ? '<button type="button" class="st-btn g" data-h="provIgjen">↻ Prøv igjen</button> ' : '') + '<button type="button" class="st-btn" data-h="videre"' + (mangler ? ' disabled title="Forklar svaret først"' : '') + '>' + (q.nr + 1 >= q.antall ? 'Se resultat' : 'Neste') + '</button>' + (mangler ? ' <span class="st-sm">' + (sfk === 'bilde' ? 'Last opp bilde av utregningen og trykk «Få tilbakemelding» først.' : 'Forklar svaret og trykk «Få tilbakemelding» først.') + '</span>' : '') + '</p>';
       }
       return '<div class="st-rad st-sm"><span>' + esc(tittel(x.tema)) + (function (n) { return n ? ' · ' + esc(n) : ''; })(((S[x.tema] || K[x.tema] || {}).undertemaer || {})[x.undertema]) + (x.rep ? ' · repetisjon' : '') + '</span><span>' + (q.nr + 1) + ' av ' + q.antall + '</span></div>' +
         '<div class="st-fram"><i style="width:' + (q.nr / q.antall * 100) + '%"></i></div>' +
@@ -1955,16 +1963,17 @@ function studieStart() {
               '<p class="st-sm">Desimaltegn: punktum eller komma. Tierpotens: 2.1e-3 eller 2.1*10^-3. Prefikser som m, µ (u), k og M går fint.</p>')
           : x.alt.map(function (o, i) { var c = ''; if (a) { if (o.type === 'riktig') c = 'ok'; else if (i === sv) c = 'nei'; } return '<button type="button" class="st-alt ' + c + '"' + (a ? ' disabled' : '') + ' data-h="svar" data-i="' + i + '">' + tx(o.svar) + '</button>'; }).join('')) +
         '<p class="st-dmhjelp">' + (a ? '' : '<label class="st-btn g liten">' + ikon('kamera', 18) + ' ' + (q.bilde ? 'Skann på nytt' : 'Skann utregningen') + '<input type="file" accept="image/*" capture="environment" id="st-qskann" hidden></label> ') +
+        (!a && !x.rep ? '<button type="button" class="st-btn g liten" data-h="hoppOver" title="Gå videre uten å svare. Spørsmålet kommer igjen til slutt.">Hopp over →</button> ' : '') +
         (appModus() || !a ? '<button type="button" class="st-btn g liten st-dmknapp" data-h="quizDashman"><img class="st-dmknapp-ikon" src="' + DMBILDER + 'ikon.webp" alt=""> ' + (a ? 'Snakk med Dashman om dette' : 'Spør Dashman om hjelp') + '</button>' : '') + '</p>' +
         (!a && q.bilde ? '<img class="st-forhand" alt="Utregningen din" src="' + q.bilde + '"><p class="st-sm">Dashman ser på utregningen og gir hint uten å si svaret. Bildet blir med når du har valgt svar.</p>' : '') + fb;
     },
     resultat: function () {
       var q = T.q, r = q.res, c = function (t) { return r.filter(function (x) { return x === t; }).length; };
-      var ov = q.ovelse, ok = ov && q.hovedRes.filter(function (x) { return x === 'riktig'; }).length >= ov.krav;
+      var ov = q.ovelse, kravN = ov ? Math.min(ov.krav, q.hoved) : 0, ok = ov && q.hovedRes.filter(function (x) { return x === 'riktig'; }).length >= kravN;
       if (ov && ok && ov.frist && Date.now() > Date.parse(ov.frist)) ok = false;
       return '<h2 class="st-h1">Quizzen er ferdig</h2><p class="st-hand">' + c('riktig') + ' av ' + r.length + ' riktige</p>' +
         (ov ? '<div class="st-fb ' + (ok ? '' : 'n') + '"><b>' + esc(ov.tittel) + ': ' + (ok ? 'Godkjent ✓' : 'Ikke godkjent') + '</b><p>' +
-          (ok ? 'Bra jobbet! Øvingen er registrert som godkjent.' : 'Du trenger minst ' + ov.krav + ' av ' + ov.antall + ' riktige' + (ov.frist && Date.now() > Date.parse(ov.frist) ? ', og fristen har gått ut.' : '. Les på temaet og prøv igjen.')) + '</p></div>' : '') +
+          (ok ? 'Bra jobbet! Øvingen er registrert som godkjent.' : 'Du trenger minst ' + kravN + ' av ' + q.hoved + ' riktige' + (ov.frist && Date.now() > Date.parse(ov.frist) ? ', og fristen har gått ut.' : '. Les på temaet og prøv igjen.')) + '</p></div>' : '') +
         '<div class="st-kort"><div class="st-rad"><span>Riktig</span><b>' + c('riktig') + '</b></div><div class="st-rad"><span>Riktig tanke, regnefeil</span><b>' + c('regnefeil') + '</b></div><div class="st-rad"><span>Må jobbes mer med</span><b>' + c('begrep') + '</b></div></div>' +
         '<p>Neste gang starter du på nivå <b>' + NIV[niva(q.tema)] + '</b>.</p><h3>Hvor vanskelig var dette temaet?</h3>' + skala(q.tema) +
         '<p class="st-sm">Faglæreren din ser bare samletall for kurset, og bare når minst 5 har svart.</p>' +
@@ -2503,6 +2512,20 @@ function studieStart() {
       qrStart: qrStart,
       qrStopp: function () { qrStopp(); T.skann = {}; tegn(); },
       velgOppg: function () { var b = (T.skann || {}).bilde; T.skann = { valgt: (T.oppg || []).filter(function (o) { return o.id === d.id; })[0] || null, bilde: b }; tegn(); rot.scrollIntoView(); },
+      provIgjen: function () {
+        // Uendelig mange forsøk: siste svar tas bort fra resultatet (det lagrede svaret blir stående i statistikken).
+        var q = T.q, x = q.na; if (q.svart == null) return;
+        q.res.pop(); if (!x.rep) q.hovedRes.pop();
+        q.svart = null; q.kiSvar = null; q.kiBilde = false; q.sporLagre = false; q.tekst = ''; x.tallInn = ''; x.tallMelding = '';
+        x.start = performance.now(); tegn();
+      },
+      hoppOver: function () {
+        // Hopp over: spørsmålet flyttes sist (arbeidskrav) eller hoppes over (quiz fra banken).
+        var q = T.q; if (q.svart != null) return;
+        if (q.liste && q.nr < q.liste.length - 1) { q.liste.push(q.liste.splice(q.nr, 1)[0]); q.brukt.pop(); nesteSp(); tegn(); return; }
+        if (q.liste) return varsle('Dette er det siste spørsmålet. Svar på det, eller trykk ✕ for å avslutte.', true);
+        q.brukt.pop(); q.nr++; if (q.nr >= q.antall) { avsluttQuiz(); return ga('resultat'); } nesteSp(); tegn();
+      },
       quizDashman: function () {
         var q = T.q, x = q.na, a = q.svart == null ? null : x.alt[q.svart], bokst = 'ABCDEFG';
         var riktig = x.alt.filter(function (o) { return o.type === 'riktig'; })[0];
