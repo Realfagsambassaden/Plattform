@@ -293,7 +293,7 @@ function studieStart() {
     if (raw.length >= 3 && raw.length % 3 === 0 && !raw.some(function (x) { return x.gruppe != null; }) && raw.every(function (x, j) {
       var a = raw[j - j % 3], tre = raw.slice(j - j % 3, j - j % 3 + 3);
       return x.undertema === a.undertema && tre.map(function (y) { return y.vanskelighet; }).sort().join() === 'lett,middels,vanskelig'; })) gjettGrupper(raw, 'auto');
-    var liste = o.kilde === 'egne' ? (o.tilfeldig ? raw.map(function (x) { return [Math.random(), x]; }).sort(function (a, b) { return a[0] - b[0]; }).map(function (a) { return a[1]; }) : sorterDelkap(o.sporsmal || [], t)).map(function (x) { if (!erMal(x)) return x; try { return lagVariant(x); } catch (e) { return null; } }).map(function (x, i) {
+    var liste = o.kilde === 'egne' ? (o.tilfeldig ? raw.map(function (x) { return [Math.random(), x]; }).sort(function (a, b) { return a[0] - b[0]; }).map(function (a) { return a[1]; }) : sorterDelkap(raw, t)).map(function (x) { if (!erMal(x)) return x; try { return Object.assign(lagVariant(x), { gruppe: x.gruppe, _i: x._i }); } catch (e) { return null; } }).map(function (x, i) {
       if (!x) return null;
       var tu = String(x.undertema || ut[0] || '').split('/'), tt = tu.length > 1 ? tu[0] : t, uu = tu.length > 1 ? tu[1] : tu[0];
       return Object.assign({}, x, { id: 'ov-' + o.id.slice(0, 8) + '-' + (x._i != null ? x._i : i), tema: K[tt] || S[tt] ? tt : t, undertema: uu || '', vanskelighet: x.vanskelighet || 'middels', forventet_tid_s: x.forventet_tid_s || 90, forklaring: x.forklaring || '' });
