@@ -235,6 +235,8 @@ html.fh-innebygd .studie .st-faner { display: none; }   /* i fokusvisningens arb
 .studie .st-matpanel-hode, .studie .st-matpanel-fot { display: flex; justify-content: space-between; align-items: center; gap: .6rem; padding: .7rem 1rem; border-bottom: 1px solid var(--bs-border-color); flex-wrap: wrap; }
 .studie .st-matpanel-fot { border-bottom: 0; border-top: 1px solid var(--bs-border-color); }
 .studie .st-matrull { flex: 1; min-height: 0; overflow-y: auto; padding: .6rem 1rem 1rem; }
+.studie .st-dmknapp { display: inline-flex; align-items: center; gap: .4rem; }
+.studie .st-dmknapp-ikon { width: 26px; height: auto; margin: -4px 0; }
 .studie .st-matrull h4 { font-size: 1rem; margin: 1rem 0 .4rem; }
 .studie .st-matrull > label.st-sm { display: block; margin: .6rem 0; }
 .studie .st-matut { margin: .2rem 0 .4rem; }
@@ -453,3 +455,4 @@ body.st-app-modus #fh-chat { bottom: calc(96px + env(safe-area-inset-bottom)); }
 <script src="../assets/js/xlsx-lite.js"></script>
 <script src="../assets/js/studie.js"></script>
 ```
+

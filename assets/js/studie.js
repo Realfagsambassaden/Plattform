@@ -1314,6 +1314,17 @@ function studieStart() {
     liste.forEach(function (x) { if (x.gruppe == null) return ut.push([x]); if (ix[x.gruppe] == null) { ix[x.gruppe] = ut.length; ut.push([]); } ut[ix[x.gruppe]].push(x); });
     return ut;
   }
+  // KI-en glemmer av og til «gruppe». Da grupperes variantene etter rekkefølgen: et nytt spørsmål starter når
+  // undertemaet skifter, eller når en vanskelighet gjentar seg (lett, middels, vanskelig, lett, …).
+  function gjettGrupper(liste, stempel) {
+    var g = null, nr = 0;
+    liste.forEach(function (x) {
+      if (x.gruppe != null) { g = null; return; }
+      if (!g || g.ut !== (x.undertema || '') || g.niv[x.vanskelighet] || g.n >= 3) { nr++; g = { ut: x.undertema || '', niv: {}, n: 0 }; }
+      g.niv[x.vanskelighet] = 1; g.n++; x.gruppe = stempel + '-g' + nr;
+    });
+    return liste;
+  }
   function velgVariant(g) {
     if (!g || g.length < 2) return g && g[0];
     var n = niva(g[0].tema);
@@ -1328,7 +1339,7 @@ function studieStart() {
     if (v.kilde === 'egne') {
       if (!n) return varsle('Legg til minst ett spørsmål.', true);
       if (n > 20) return varsle('Et arbeidskrav kan ha høyst 20 spørsmål.', true);
-      for (var i = 0; i < n; i++) { var x = v.sporsmal[i];
+      for (var i = 0; i < v.sporsmal.length; i++) { var x = v.sporsmal[i];
         x.tall = !v.flervalg;
         if (erMal(x)) { var pv = provVariant(x); if (pv.feil) return varsle('Spørsmål ' + (i + 1) + ': ' + pv.feil, true); continue; }
         if (x.tall) { if (!x.tekst.trim() || !lesTall(x.riktig)) return varsle('Spørsmål ' + (i + 1) + ' mangler tekst eller et riktig svar med tall (f.eks. «4.5 mC»).', true); continue; }
@@ -1372,6 +1383,7 @@ function studieStart() {
         if (!l.length) throw new Error('Fikk ingen spørsmål fra KI denne gangen. Prøv igjen.');
         var stempel = Date.now().toString(36);   // gruppene fra KI (1, 2, …) gjøres unike i arbeidskravet
         l.forEach(function (y) { if (y.gruppe != null) y.gruppe = stempel + '-' + y.gruppe; });
+        if (kk.vanskelighet === 'tilpasset' && l.some(function (y) { return y.gruppe == null; })) gjettGrupper(l, stempel);
         v.sporsmal = v.rekkefolge === 'tilfeldig' ? v.sporsmal.concat(l) : sorterDelkap(v.sporsmal.concat(l), (v.ut[0] || '').split('/')[1]); v.kilde = 'egne'; if (v.krav > spAntall(v.sporsmal)) v.krav = spAntall(v.sporsmal);
         var ng = spAntall(l);
         varsle((ng < l.length ? ng + ' spørsmål i tre varianter hver (' + l.length + ' i alt) lagt til. Studenten får variant etter nivået sitt.' : l.length + ' spørsmål lagt til.') + ' Sjekk fasiten før du lagrer.' + (d.vedlegg ? ' ' + d.vedlegg : '')); kk.ulest = [];
@@ -1446,7 +1458,8 @@ function studieStart() {
           '<input class="st-felt" data-ovsp="' + i + '.enhet" value="' + esc(x.enhet || '') + '" placeholder="enhet" style="flex:1"></div>' + ff(0) + ff(1) + ff(2) +
           '<textarea class="st-felt" rows="2" data-ovsp="' + i + '.forklaring" placeholder="Løsning, f.eks. $F = ma$ = {{svar}}">' + esc(x.forklaring) + '</textarea>' +
           '<div id="st-eks-' + i + '">' + eksHtml(pv) + '</div></div>';
-      }).join('') + '<p><button type="button" class="st-btn g liten" data-h="nyttSp">+ Skriv spørsmål selv</button></p>';
+      }).join('') + '<p><button type="button" class="st-btn g liten" data-h="nyttSp">+ Skriv spørsmål selv</button>' +
+        (v.sporsmal.length > spAntall(v.sporsmal) || !v.sporsmal.length ? '' : ' <button type="button" class="st-btn g liten" data-h="grupperVarianter" title="For spørsmål laget med «Tilpasset studentens nivå» der variantene ikke ble slått sammen">Slå sammen lett/middels/vanskelig til varianter</button>') + '</p>';
     }
     o += '</fieldset>' + (v.kilde === 'egne' ? '<label class="st-valg"><input type="checkbox" id="st-ov-flervalg"' + (v.flervalg ? ' checked' : '') + '> <b>Flervalg</b>: studenten velger blant alternativer. Uten flervalg skriver studenten svaret selv (tall med enhet), og appen sjekker verdi, enhet og gjeldende siffer.</label>' : '') +
       (v.kilde === 'egne' ? '<label class="st-sm" for="st-ov-rekke">Rekkefølge på spørsmålene</label><select id="st-ov-rekke" data-ovvalg="rekkefolge">' +
@@ -1936,7 +1949,7 @@ function studieStart() {
               '<p class="st-sm">Desimaltegn: punktum eller komma. Tierpotens: 2.1e-3 eller 2.1*10^-3. Prefikser som m, µ (u), k og M går fint.</p>')
           : x.alt.map(function (o, i) { var c = ''; if (a) { if (o.type === 'riktig') c = 'ok'; else if (i === sv) c = 'nei'; } return '<button type="button" class="st-alt ' + c + '"' + (a ? ' disabled' : '') + ' data-h="svar" data-i="' + i + '">' + tx(o.svar) + '</button>'; }).join('')) +
         '<p class="st-dmhjelp">' + (a ? '' : '<label class="st-btn g liten">' + ikon('kamera', 18) + ' ' + (q.bilde ? 'Skann på nytt' : 'Skann utregningen') + '<input type="file" accept="image/*" capture="environment" id="st-qskann" hidden></label> ') +
-        (appModus() || !a ? '<button type="button" class="st-btn g liten" data-h="quizDashman">' + ikon('prat', 18) + ' ' + (a ? 'Snakk med Dashman om dette' : 'Spør Dashman om hjelp') + '</button>' : '') + '</p>' +
+        (appModus() || !a ? '<button type="button" class="st-btn g liten st-dmknapp" data-h="quizDashman"><img class="st-dmknapp-ikon" src="' + DMBILDER + 'ikon.webp" alt=""> ' + (a ? 'Snakk med Dashman om dette' : 'Spør Dashman om hjelp') + '</button>' : '') + '</p>' +
         (!a && q.bilde ? '<img class="st-forhand" alt="Utregningen din" src="' + q.bilde + '"><p class="st-sm">Dashman ser på utregningen og gir hint uten å si svaret. Bildet blir med når du har valgt svar.</p>' : '') + fb;
     },
     resultat: function () {
@@ -2559,6 +2572,7 @@ function studieStart() {
       nyVar: function () { T.fag.ov.sporsmal[+d.i].variabler.push({ navn: '', min: 1, maks: 10, steg: 1 }); tegn(); },
       slettVar: function () { T.fag.ov.sporsmal[+d.i].variabler.splice(+d.j, 1); tegn(); },
       nyeTall: function () { tegn(); },
+      grupperVarianter: function () { var v = T.fag.ov; v.sporsmal.forEach(function (x) { delete x.gruppe; }); gjettGrupper(v.sporsmal, Date.now().toString(36)); if (v.krav > spAntall(v.sporsmal)) v.krav = spAntall(v.sporsmal); varsle(spAntall(v.sporsmal) + ' spørsmål med varianter. Husk å lagre arbeidskravet.'); tegn(); },
       slettSp: function () { var v = T.fag.ov; v.sporsmal.splice(+d.i, 1); if (v.krav > spAntall(v.sporsmal)) v.krav = Math.max(1, spAntall(v.sporsmal)); tegn(); },
       slettOvelse: function () { slettOvelse(d.id); },
       eksempel: function () { ev.preventDefault(); location.hash = 'eksempel'; location.reload(); },
