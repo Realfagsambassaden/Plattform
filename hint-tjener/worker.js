@@ -83,7 +83,8 @@ const SYSTEM_VURDER = `Du er en tålmodig fysikklærer på NETTSTED, laget av Dr
 Du får spørsmålet, riktig svar, en kort forklaring, alternativet studenten valgte og studentens forklaring.
 
 Vurder hva besvarelsen viser:
-- "riktig": riktig fysikk og riktig regning.
+- "riktig": sluttsvaret er riktig, og besvarelsen viser tilstrekkelig forståelse. Fremgangsmåten trenger IKKE være 100 % perfekt
+  eller lik fasiten; små skjønnhetsfeil underveis er greit når svaret er riktig og tankegangen holder.
 - "regnefeil": riktig tankegang og riktige formler, men feil i utregning, avrunding, enheter eller fortegn.
 - "begrep": feil eller manglende forståelse av fysikken (feil formel, feil modell, gjetting), selv om studenten kanskje valgte riktig alternativ.
 Er besvarelsen tom, uleselig eller handler om noe annet, bruk "uklar".
@@ -104,8 +105,14 @@ Håndskrift (bare når det er vedlagt et bilde): Vurder om bildet viser studente
 - "usikker": du klarer ikke å avgjøre det (for eksempel svært ryddig skrift, delvis skjerm, uskarpt bilde).
 Uten bilde: bruk "ja".
 
+Forståelse (bare med bilde), uavhengig av om sluttsvaret er riktig:
+- "forstaelse": "ja" når utregningen viser tilstrekkelig forståelse: riktig fysikk/modell og en fornuftig vei mot svaret, selv om det
+  er en regnefeil, fortegnsfeil, avrundingsfeil eller feil antall siffer. "nei" ved feil fysikk, gjetting, eller for lite utregning.
+- "streker": "ja" hvis sluttsvaret i bildet har to streker under, ellers "nei".
+Studenten kan rette sluttsvaret i appen etterpå; da holder det at bildet viser forståelse.
+
 Svar KUN med gyldig JSON:
-{"vurdering":"riktig|regnefeil|begrep|uklar","sikkerhet":"hoy|middels|lav","handskrift":"ja|nei|usikker","tilbakemelding":"…"}
+{"vurdering":"riktig|regnefeil|begrep|uklar","forstaelse":"ja|nei","streker":"ja|nei","sikkerhet":"hoy|middels|lav","handskrift":"ja|nei|usikker","tilbakemelding":"…"}
 - Gjeldende siffer: Sluttsvar har ALLTID like mange gjeldende siffer som det minst nøyaktige måltallet i oppgaven (konstanter teller med, eksakte tall ikke). Si fra hvis studenten bruker for mange eller for få.`;
 
 const SYSTEM_RAD = `Du er en erfaren fysikklærer på NETTSTED, laget av Dr. Normann. Du får kunnskapsprofilen til en student: for hvert tema og undertema andelen (0–1) for
@@ -535,7 +542,9 @@ async function vurder(request, env, b, h) {
   const sikkerhet = ["hoy", "middels", "lav"].includes(r.sikkerhet) ? r.sikkerhet : "lav";
   // Uten bilde er det ingenting å sjekke. Med bilde: alt annet enn et tydelig ja/nei regnes som usikkert.
   const handskrift = !bilde ? "ja" : (["ja", "nei", "usikker"].includes(r.handskrift) ? r.handskrift : "usikker");
-  return json({ vurdering, sikkerhet, handskrift, tilbakemelding: kort(r.tilbakemelding, 1200) || "Klarte ikke å vurdere besvarelsen denne gangen." }, 200, h);
+  const forstaelse = bilde && (r.forstaelse === "ja" || vurdering === "riktig") ? "ja" : "nei";
+  const streker = bilde && r.streker === "ja" ? "ja" : "nei";
+  return json({ vurdering, forstaelse, streker, sikkerhet, handskrift, tilbakemelding: kort(r.tilbakemelding, 1200) || "Klarte ikke å vurdere besvarelsen denne gangen." }, 200, h);
 }
 
 async function rad(request, env, b, h) {
