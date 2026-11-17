@@ -708,6 +708,8 @@ function studieStart() {
   // QR-koder. Fagets kode åpner studieappen med ?kode=…: studenten logger inn eller registrerer seg, blir meldt på faget
   // og får tilbud om å installere appen. «Bare appen» åpner studieappen uten fag.
   function paameldingslenke(kode) { return location.origin + '/studie/index.html' + (kode ? '?kode=' + encodeURIComponent(kode) : ''); }
+  var qrLaster = false;
+  function lastQr() { if (window.qrcode || qrLaster) return; qrLaster = true; var s = document.createElement('script'); s.src = '../assets/js/qrcode.js'; s.onload = function () { tegn(); if (T.uv) try { visSlide(); } catch (e) {} }; document.head.appendChild(s); }
   function qrSvg(tekst) {
     if (!window.qrcode) return '';
     var q = window.qrcode(0, 'M'); q.addData(tekst); q.make();
@@ -936,7 +938,11 @@ function studieStart() {
     var o = '', run = [], kul = [];
     function tomRun() { var t = run.join('\n').trim(); if (t) o += t.split(/\n\s*\n/).map(function (a) { return '<div class="uv-avsn">' + tx(a) + '</div>'; }).join(''); run = []; }
     function tomKul() { if (kul.length) o += '<ul>' + kul.map(function (x) { return '<li>' + txLinje(x) + '</li>'; }).join('') + '</ul>'; kul = []; }
-    String((sl && sl.tekst) || '').split('\n').forEach(function (x) { var m = /^\s*[-*•]\s+(.*)$/.exec(x); if (m) { tomRun(); kul.push(m[1]); } else { tomKul(); run.push(x); } });
+    // {{kode}} = kurskoden, {{qr}} alene på en linje = QR-kode til påmelding i kurset (samme som «📱 QR-kode»).
+    var kc = (T.uv && T.uv.c) || (T.fag && T.fag.c) || null, kode = kc ? kc.kode || '' : '';
+    String((sl && sl.tekst) || '').replace(/\{\{\s*kode\s*\}\}/gi, kode).split('\n').forEach(function (x) {
+      if (/^\s*\{\{\s*qr\s*\}\}\s*$/i.test(x)) { tomRun(); tomKul(); var ln = paameldingslenke(kode); if (!window.qrcode) lastQr(); o += '<div class="uv-qr">' + (window.qrcode ? qrSvg(ln) : '') + '<div class="st-sm">' + esc(ln.replace(/^https?:\/\//, '')) + '</div></div>'; return; }
+      var m = /^\s*[-*•]\s+(.*)$/.exec(x); if (m) { tomRun(); kul.push(m[1]); } else { tomKul(); run.push(x); } });
     tomRun(); tomKul();
     return '<div class="uv-sinn"><h2 class="uv-stittel">' + txLinje((sl && sl.tittel) || '') + '</h2><div class="uv-skropp">' + o + '</div>' +
       (medLos && sl.losning ? '<div class="uv-losning"><b>Løsning</b>' + tx(sl.losning) + '</div>' : '') + '</div>';
@@ -978,7 +984,7 @@ function studieStart() {
     v.kiVenter = true; tegn();
     ki('/materiale', { fag: u.navn, ramme: { form: r.form, lengde: +r.lengde || 90, samlinger: antSamlinger(r, el) }, niva: NIVANAVN[r.niva] || '', modul: m.navn, uke: uke, samling: v.s,
       undertemaer: w.undertemaer.map(function (id) { var url = utLenke(id, nivaFor(w, id, r)); return { id: id, tittel: utTema(id) + ': ' + utNavn(id), url: url ? url.replace(/^\.\./, '') : '', niva: NIVANAVN[nivaFor(w, id, r)] || '' }; }),
-      notat: w.notat || '', arbeidskrav: krav, onske: ki0.tekst, vedlegg: ki0.vedlegg, filnavn: ki0.filnavn, ulest: ki0.ulest || [], hva: ki0.hva, navarende: endre ? { tittel: v.tittel, plan: v.plan, slides: v.slides } : null }, 150)
+      notat: w.notat || '', arbeidskrav: krav, kurs: { kode: f.c.kode, lenke: paameldingslenke(f.c.kode) }, onske: ki0.tekst, vedlegg: ki0.vedlegg, filnavn: ki0.filnavn, ulest: ki0.ulest || [], hva: ki0.hva, navarende: endre ? { tittel: v.tittel, plan: v.plan, slides: v.slides } : null }, 150)
       .then(function (d) {
         v.forrige = JSON.parse(JSON.stringify({ tittel: v.tittel, plan: v.plan, slides: v.slides }));
         if (d.tittel && (!v.tittel || endre)) v.tittel = d.tittel;
@@ -1014,7 +1020,7 @@ function studieStart() {
           knapp('matPlanFlytt', i + ':-1', '↑', 'Flytt opp', !i) + knapp('matPlanSlett', i, '✕', 'Fjern punktet') + '</div>';
       }).join('') +
       '<div class="st-rad"><button type="button" class="st-btn g liten" data-h="matPlanNy">+ Punkt</button><span class="st-sm' + (lengde && sum > lengde ? ' st-feil' : '') + '" id="st-plansum">' + (v.plan.length ? 'Sum ' + sum + (lengde ? ' av ' + lengde : '') + ' min' : '') + '</span></div>' +
-      '<h4>Slides (' + v.slides.length + ')</h4><p class="st-sm">En linje som begynner med «- » blir et punkt. Formler: $F = ma$ i teksten eller $$…$$ på egen linje. Notatet og løsningsforslaget ser bare du (i undervisningsmodus), men løsningen kan vises på skjermen når du vil.</p>' +
+      '<h4>Slides (' + v.slides.length + ')</h4><p class="st-sm">En linje som begynner med «- » blir et punkt. Formler: $F = ma$ i teksten eller $$…$$ på egen linje. Skriv {{qr}} alene på en linje for QR-koden til kurset, og {{kode}} for kurskoden. Notatet og løsningsforslaget ser bare du (i undervisningsmodus), men løsningen kan vises på skjermen når du vil.</p>' +
       v.slides.map(function (x, i) {
         return '<div class="st-matslide"><div class="st-rad"><b class="st-sm">' + (i + 1) + '</b><input class="st-felt" data-matslide="' + i + '.tittel" maxlength="200" value="' + esc(x.tittel) + '" placeholder="Tittel">' +
           knapp('matSlideFlytt', i + ':-1', '↑', 'Flytt opp', !i) + knapp('matSlideFlytt', i + ':1', '↓', 'Flytt ned', i === v.slides.length - 1) + knapp('matSlideSlett', i, '✕', 'Slett sliden') + '</div>' +
