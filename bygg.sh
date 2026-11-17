@@ -15,6 +15,8 @@ python3 "$HER/verktoy/forside.py" "$HER"
 python3 "$HER/verktoy/tema.py" "$HER"
 python3 "$HER/verktoy/innhold.py" "$HER"
 python3 "$HER/verktoy/oppgaver.py" "$HER"
+# Kontroll av oppgavebanken (AGENTS.md). Gir bare en rapport i byggeloggen, stopper ikke byggingen.
+python3 "$HER/verktoy/sjekk_oppgaver.py" "$HER" | tail -25 || true
 
 cd "$HER"
 if [ "${1:-}" = "preview" ]; then
