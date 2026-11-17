@@ -2369,6 +2369,37 @@ function studieStart() {
         function (e) { dt.sender = false; tegn(); varsle(/row-level|policy/i.test(feilmelding(e)) ? 'Undervisningen er ikke åpen for innspill nå (eller du har sendt veldig mange). ' : 'Fikk ikke sendt: ' + feilmelding(e), true); });
   }
   // Hent «undervises nå» for kursene studenten er med i, hvert halve minutt mens appen er åpen.
+  // Synk mellom enheter: løser studenten arbeidskravet på mobilen mens fokusvisningen (eller appen) er åpen på Mac/PC,
+  // hentes nye og oppdaterte svar (også KI-godkjenningen av bildet) hvert 12. sekund, og prikkene og statusen oppdateres.
+  // Bare når siden er synlig og studenten er med i et kurs med arbeidskrav. Henter bare svar fra den siste timen.
+  function synkSvar() {
+    if (!k || !bruker || T.eksempel || document.hidden || !T.svar || !(T.ovelser || []).length || T.vis === 'undervis') return;
+    if (T.q && (T.q.venter || T.q.sporLagre)) return;
+    var fra = new Date(Date.now() - 3600000).toISOString();
+    k.from('studie_svar').select('*').eq('eier', bruker.id).gte('opprettet', fra).order('opprettet').limit(500).then(sjekk).then(function (l) {
+      var endret = false, ix = {};
+      T.svar.forEach(function (s, i) { if (s.dbid) ix[s.dbid] = i; });
+      (l || []).forEach(function (r) {
+        var ny = fraRad(r), i = ix[r.id];
+        if (i == null) {
+          // Svar fra denne enheten som ennå ikke har fått id fra databasen, skal ikke legges inn to ganger.
+          var lokal = T.svar.find(function (x) { return !x.dbid && x.id === r.sporsmal && Math.abs(Date.parse(x.dato) - Date.parse(r.opprettet)) < 120000; });
+          if (lokal) { lokal.dbid = r.id; return; }
+          T.svar.push(ny); endret = true;
+        }
+        else if (r.ki && JSON.stringify(T.svar[i].ki || null) !== JSON.stringify(r.ki)) { T.svar[i].ki = r.ki; endret = true; }
+      });
+      if (!endret) return;
+      T.svar.sort(function (a, b) { return String(a.dato || '').localeCompare(String(b.dato || '')); });
+      var skriver = document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+      if (T.vis === 'quiz' && T.q) {
+        // Midt i en quiz: bare prikkene oppdateres, så det man holder på med ikke forsvinner.
+        var ov = document.querySelector('.st-ovoversikt'); if (ov && T.q.ovelse) ov.outerHTML = ovOversiktHtml(T.q.ovelse, T.q.na && T.q.na.id);
+      } else if (!skriver) tegn();
+    }, function () {});
+  }
+  setInterval(synkSvar, 12000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) synkSvar(); });
   function sjekkLive() {
     if (!k || !T.deltar || !T.deltar.length || T.eksempel || document.hidden || T.vis === 'undervis') return;
     var ids = T.deltar.map(function (d) { return d.kurs; });
