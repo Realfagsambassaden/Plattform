@@ -32,15 +32,15 @@
     Array.prototype.forEach.call(sb.querySelectorAll('ul.collapse.show'), function (ul) { if (!ul.contains(mål)) vis(ul, false); });
     for (var e = mål.parentElement; e && e !== sb; e = e.parentElement) if (e.matches('ul.collapse')) vis(e, true);
     // Brødsmulene øverst følger samme vei: Løyper › TRES0312 › Elektrisitet › siden
-    var ol = document.querySelector('.quarto-page-breadcrumbs ol');
-    if (ol && ol.lastElementChild) {
-      var ledd = [];
-      for (var li = mål.closest('li'); li && li !== sb; li = li.parentElement) {
-        if (!li.matches || !li.matches('li.sidebar-item-section')) continue;
-        var c = li.querySelector(':scope > .sidebar-item-container'), a0 = c && c.querySelector('a.sidebar-link'), tx = c && c.querySelector('.menu-text, .sidebar-item-text');
-        ledd.unshift({ href: a0 && a0.getAttribute('href'), tekst: (tx || c || li).textContent.trim() });
-      }
-      var siste = ol.lastElementChild;
+    var ledd = [];
+    for (var li = mål.closest('li'); li && li !== sb; li = li.parentElement) {
+      if (!li.matches || !li.matches('li.sidebar-item-section')) continue;
+      var c = li.querySelector(':scope > .sidebar-item-container'), a0 = c && c.querySelector('a.sidebar-link'), tx = c && c.querySelector('.menu-text, .sidebar-item-text');
+      ledd.unshift({ href: a0 && a0.getAttribute('href'), tekst: (tx || c || li).textContent.trim() });
+    }
+    // Quarto har to sett brødsmuler (ett i toppfeltet på mobil og ett over tittelen); begge skal følge løypa.
+    Array.prototype.forEach.call(document.querySelectorAll('.quarto-page-breadcrumbs ol'), function (ol) {
+      var siste = ol.lastElementChild; if (!siste) return;
       ol.innerHTML = '';
       ledd.forEach(function (x) {
         var li2 = document.createElement('li'); li2.className = 'breadcrumb-item';
@@ -48,7 +48,7 @@
         ol.appendChild(li2);
       });
       ol.appendChild(siste);
-    }
+    });
     var r = mål.getBoundingClientRect(), s = sb.getBoundingClientRect();
     if (r.top < s.top || r.bottom > s.bottom) sb.scrollTop += r.top - s.top - sb.clientHeight / 2;
   }
