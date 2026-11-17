@@ -640,6 +640,8 @@ function studieStart() {
       varsle('Fikk ikke lagret endringene: ' + f.lagreFeil, true);
     });
   }
+  // Løypene med ukeplan (f.eks. TRES0312), så KI kan bruke nøyaktig undertemaene i en løype når underviseren viser til den.
+  function loypeListe() { return LOYPER.map(function (L) { return { id: L.id, tittel: L.tittel, uker: L.uker.map(function (k) { return { uke: k.uke, tittel: k.tittel, undertemaer: k.undertemaer.map(function (x) { return NETTSTED + '/' + x; }) }; }) }; }); }
   function katalogListe() { var l = []; Object.keys(K).forEach(function (t) { Object.keys(K[t].undertemaer).forEach(function (u) { l.push({ id: NETTSTED + '/' + t + '/' + u, tittel: K[t].tittel + ': ' + K[t].undertemaer[u] }); }); }); return l; }
   // KI-sparring om fagoppsettet: underviseren kan skrive ønsker eller lime inn/laste opp en tidligere plan (tekst, bilde, PDF).
   // «endre» = KI får det nåværende oppsettet og gjør bare endringene det blir bedt om. Forrige oppsett kan hentes tilbake.
@@ -649,7 +651,7 @@ function studieStart() {
     if (endre && !sp.tekst.trim() && !sp.vedlegg && !(sp.ulest || []).length) return varsle('Skriv hva KI skal endre.', true);
     if (!endre && u.moduler.length && f.bekreftKi !== true) { f.bekreftKi = true; return tegn(); }
     f.bekreftKi = false; f.kiVenter = endre ? 'endre' : 'nytt'; tegn();
-    ki('/fagforslag', { navn: u.navn, emnebeskrivelse: u.emnebeskrivelse, laringsutbytte: u.laringsutbytte, ramme: u.ramme, katalog: katalogListe(),
+    ki('/fagforslag', { navn: u.navn, emnebeskrivelse: u.emnebeskrivelse, laringsutbytte: u.laringsutbytte, ramme: u.ramme, katalog: katalogListe(), loyper: loypeListe(),
       onske: sp.tekst, vedlegg: sp.vedlegg, filnavn: sp.filnavn, ulest: sp.ulest || [], navarende: endre ? u.moduler : null }, 240)
       .then(function (d) { f.forrige = JSON.parse(JSON.stringify(u.moduler)); u.moduler = medId(d.moduler); f.kiKommentar = kiTekst(d, d.kommentar); f.steg = 'moduler'; sp.tekst = ''; sp.vedlegg = null; sp.filnavn = ''; sp.ulest = []; return lagreUtkast(); })
       .catch(function (e) { varsle(feilmelding(e), true); })

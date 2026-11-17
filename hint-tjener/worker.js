@@ -261,6 +261,8 @@ async function materiale(request, env, b, h) {
     `\nUndertemaer:\n${ut.map((x) => `- ${x.tittel}${x.niva ? ` (nivå ${x.niva})` : ""}`).join("\n") || "(ingen – repetisjon eller fritt)"}` +
     (b.notat ? `\nUkenotat: ${kort(b.notat, 300)}` : "") + (krav.length ? `\nArbeidskrav: ${krav.join("; ")}` : "") +
     `\nLag: ${hva === "begge" ? "plan og slides" : hva === "plan" ? "bare plan (slides kan være tom liste)" : "bare slides (plan kan være tom liste)"}` +
+    (Array.isArray(b.loyper) && b.loyper.length ? `\n\nLØYPER (ferdige ukeplaner på nettstedet). Viser underviseren til en løype (f.eks. «bare temaene i TRES0312»), skal du bruke NØYAKTIG undertemaene fra løypa, og ingen andre:\n` +
+      b.loyper.slice(0, 20).map((L) => `${kort(L.id, 40)} (${kort(L.tittel, 80)}):\n` + (Array.isArray(L.uker) ? L.uker.slice(0, 40) : []).map((k) => `  uke ${kort(String(k.uke), 10)} ${kort(k.tittel, 80)}: ${(Array.isArray(k.undertemaer) ? k.undertemaer.slice(0, 30) : []).map((x) => kort(x, 80)).join(", ")}`).join("\n")).join("\n") : "") +
     (b.onske ? `\n\nØNSKER FRA UNDERVISEREN:\n${kort(b.onske, 8000)}` : "") + (vedlegg ? "\n\nUnderviserens gamle opplegg er vedlagt." : "") +
     (b.navarende ? `\n\nNÅVÆRENDE MATERIALE:\n${kort(JSON.stringify(b.navarende), 20000)}` : "") +
     (stoff.length ? `\n\nLÆRESTOFF FRA NETTSTEDET:\n${stoff.join("\n\n")}` : "") + vi.ber;
