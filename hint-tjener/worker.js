@@ -801,9 +801,18 @@ async function dekning(request, env, b, h) {
   return json({ emnekode: kort(r.emnekode, 30), emnenavn: kort(r.emnenavn, 150), kilde, temaer, oppsummering: kort(r.oppsummering, 800), innlogget: !!bruker }, 200, h);
 }
 
+// Mange studenter samtidig: innloggingen sjekkes hos Supabase én gang per token og huskes i 5 minutter i workeren.
+const BRUKERE = new Map();
 async function innloggetBruker(request, env) {
   const token = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
   if (!token || !env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) return null;
+  const husket = BRUKERE.get(token);
+  if (husket && husket.til > Date.now()) return husket.u;
+  const u = await sjekkBruker(token, env);
+  if (u) { if (BRUKERE.size > 2000) BRUKERE.clear(); BRUKERE.set(token, { u, til: Date.now() + 5 * 60000 }); }
+  return u;
+}
+async function sjekkBruker(token, env) {
   // Ugyldig/utgått token gir 401/403 → ikke innlogget. Andre feil (429, 5xx, nettverk) prøves én gang til og gir ellers en
   // tydelig feilmelding i stedet for «du må være logget inn».
   let r;
@@ -890,26 +899,46 @@ async function sporSamtale(env, system, meldinger, maksTokens) {
   const modell = env.MODELL || STANDARD_MODELL[lev] || STANDARD_MODELL.claude;
   if (lev === "openai") {
     if (!env.KI_URL || !env.KI_API_KEY) throw feil("KI-tjenesten er ikke satt opp ennå.", 503);
-    const r = await fetch(env.KI_URL, {
+    const r = await kiFetch(env.KI_URL, {
       method: "POST",
       headers: { "Authorization": `Bearer ${env.KI_API_KEY}`, "content-type": "application/json" },
       body: JSON.stringify({ model: modell, max_tokens: maksTokens, messages: [{ role: "system", content: system }, ...meldinger] }),
     });
-    if (!r.ok) throw new Error("KI " + r.status);
+    if (!r.ok) throw kiFeil(r.status);
     const d = await r.json();
     const c = (d.choices || [])[0];
     const t = c?.message?.content ?? c?.text ?? "";
     return (typeof t === "string" ? t : JSON.stringify(t)).trim();
   }
   if (!env.ANTHROPIC_API_KEY) throw feil("KI-tjenesten er ikke satt opp ennå.", 503);
-  const r = await fetch("https://api.anthropic.com/v1/messages", {
+  const r = await kiFetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
     body: JSON.stringify({ model: modell, max_tokens: maksTokens, system, messages: meldinger }),
   });
-  if (!r.ok) throw new Error("KI " + r.status);
+  if (!r.ok) throw kiFeil(r.status);
   const d = await r.json();
   return (d.content || []).filter((c) => c.type === "text").map((c) => c.text).join("\n").trim();
+}
+
+// KI-kall tåler kø: ved 429 (for mange forespørsler) og 5xx/529 (overbelastet) ventes det litt og prøves igjen, inntil tre ganger.
+async function kiFetch(url, init) {
+  let r;
+  for (let i = 0; i < 4; i++) {
+    r = await fetch(url, init).catch(() => null);
+    if (r && r.ok) return r;
+    const st = r ? r.status : 0;
+    if (r && st !== 429 && st < 500) return r;
+    if (i === 3) break;
+    const ra = r ? parseFloat(r.headers.get("retry-after") || "") : NaN;
+    await new Promise((ok) => setTimeout(ok, Math.min(isFinite(ra) ? ra * 1000 : (1500 * (i + 1)), 8000) + Math.random() * 1000));
+  }
+  return r || new Response("", { status: 503 });
+}
+function kiFeil(status) {
+  console.log("KI-feil:", status);
+  if (status === 429 || status === 529 || status >= 500) return feil("Mange spør Dashman akkurat nå. Vent et halvt minutt og prøv igjen.", 503);
+  return new Error("KI " + status);
 }
 
 // Spør valgt KI-leverandør og returner teksten.
@@ -918,14 +947,14 @@ async function spor(env, system, melding, maksTokens, bilde) {
   const modell = (bilde && env.MODELL_BILDE) || env.MODELL || STANDARD_MODELL[lev] || STANDARD_MODELL.claude;
   if (lev === "openai") {
     if (!env.KI_URL || !env.KI_API_KEY) throw feil("KI-tjenesten er ikke satt opp ennå.", 503);
-    const r = await fetch(env.KI_URL, {
+    const r = await kiFetch(env.KI_URL, {
       method: "POST",
       headers: { "Authorization": `Bearer ${env.KI_API_KEY}`, "content-type": "application/json" },
       body: JSON.stringify({ model: modell, max_tokens: maksTokens, messages: [{ role: "system", content: system }, { role: "user", content: bilde
         ? [{ type: "image_url", image_url: { url: `data:${bilde.type};base64,${bilde.data}` } }, { type: "text", text: melding }]
         : melding }] }),
     });
-    if (!r.ok) throw new Error("KI " + r.status);
+    if (!r.ok) throw kiFeil(r.status);
     const d = await r.json();
     // OpenAI-format, med reserve for varianter (f.eks. NTNU sin chat-completion)
     const c = (d.choices || [])[0];
@@ -933,14 +962,14 @@ async function spor(env, system, melding, maksTokens, bilde) {
     return (typeof t === "string" ? t : JSON.stringify(t)).trim();
   }
   if (!env.ANTHROPIC_API_KEY) throw feil("KI-tjenesten er ikke satt opp ennå.", 503);
-  const r = await fetch("https://api.anthropic.com/v1/messages", {
+  const r = await kiFetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
     body: JSON.stringify({ model: modell, max_tokens: maksTokens, system, messages: [{ role: "user", content: bilde
       ? [{ type: bilde.type === "application/pdf" ? "document" : "image", source: { type: "base64", media_type: bilde.type, data: bilde.data } }, { type: "text", text: melding }]
       : melding }] }),
   });
-  if (!r.ok) throw new Error("KI " + r.status);
+  if (!r.ok) throw kiFeil(r.status);
   const d = await r.json();
   return (d.content || []).filter((c) => c.type === "text").map((c) => c.text).join("\n").trim();
 }
