@@ -488,9 +488,12 @@ function studieStart() {
     // Viser den håndskrevne utregningen riktig fysikk og riktig regning, er spørsmålet godkjent, også om det
     // innskrevne svaret ble vurdert som feil (f.eks. feil format). Bens regel 17. november 2026.
     if (d.vurdering === 'riktig' && q.bilde && q.res.length) {
-      q.res[q.res.length - 1] = 'riktig'; if (!q.na.rep && q.hovedRes.length) q.hovedRes[q.hovedRes.length - 1] = 'riktig'; q.kiGodkjent = true;
+      q.res[q.res.length - 1] = 'riktig'; if (!q.na.rep && q.hovedRes.length) q.hovedRes[q.hovedRes.length - 1] = 'riktig';
+      // Grønt = godkjent, oransje = kanskje (Dashman i tvil: lav sikkerhet eller usikker håndskrift), rødt = ikke godkjent.
+      q.kiGodkjent = gjs || d.sikkerhet === 'lav' ? 'kanskje' : 'ja'; q.kanskje = (q.kanskje || 0) + (q.kiGodkjent === 'kanskje' ? 1 : 0);
     }
     q.kiSvar = d; q.kiBilde = !!q.bilde; s.ki = { vurdering: d.vurdering, sikkerhet: d.sikkerhet, tilbakemelding: d.tilbakemelding, kilde: q.bilde ? 'bilde' : 'tekst' };
+    if (q.kiGodkjent) s.ki.status = q.kiGodkjent === 'kanskje' ? 'kanskje' : 'godkjent';
     if (gjs) s.ki.gjennomsyn = 'venter';
     return Promise.resolve(s.lagret).then(function (id) { if (id) return k.from('studie_svar').update({ ki: s.ki }).eq('id', id).then(sjekk); });
   }
@@ -1941,7 +1944,8 @@ function studieStart() {
         if (q.sporLagre) fb += samtykkeHtml('lagreSvar') + (q.bilde ? '<img class="st-forhand" alt="Bildet ditt" src="' + q.bilde + '">' : '');
         else if (kis && !kis.feil) {
           var kt = { riktig: 'KI: Riktig fysikk og riktig regning.', regnefeil: 'KI: Riktig tankegang, men en regnefeil.', begrep: 'KI: Her bør du se på fysikken igjen.', uklar: 'KI: Klarte ikke å lese besvarelsen.' }[kis.vurdering];
-          if (q.kiGodkjent && kis.vurdering === 'riktig') fb += '<div class="st-fb"><b>Godkjent ✓</b><p class="st-sm">Utregningen din viser riktig fysikk og riktig regning, så spørsmålet teller som riktig.</p></div>';
+          if (q.kiGodkjent === 'ja' && kis.vurdering === 'riktig') fb += '<div class="st-fb"><b>Godkjent ✓</b><p class="st-sm">Utregningen din viser riktig fysikk og riktig regning, så spørsmålet teller som riktig.</p></div>';
+          else if (q.kiGodkjent === 'kanskje') fb += '<div class="st-fb kanskje"><b>Kanskje godkjent</b><p class="st-sm">Dashman tror utregningen er riktig, men er ikke helt sikker. Spørsmålet teller som riktig inntil faglæreren eventuelt sier noe annet.</p></div>';
           fb += '<div class="st-fb ki"><b>' + kt + '</b><div class="st-avsnitt">' + tx(kis.tilbakemelding) + '</div>' + (kis.vurdering !== 'uklar' ? '<p class="st-sm">Denne vurderingen teller i kunnskapsprofilen din.</p>' : '') +
             (q.gjennomsyn && q.sist && q.sist.ki && q.sist.ki.gjennomsyn ? '<p class="st-sm">Bildet er sendt til gjennomsyn hos en lærer. Avvises det, teller ikke forsøket.</p>' : '') + '</div>';
         } else {
@@ -1979,6 +1983,7 @@ function studieStart() {
       var ov = q.ovelse, kravN = ov ? Math.min(ov.krav, q.hoved) : 0, ok = ov && q.hovedRes.filter(function (x) { return x === 'riktig'; }).length >= kravN;
       if (ov && ok && ov.frist && Date.now() > Date.parse(ov.frist)) ok = false;
       return '<h2 class="st-h1">Quizzen er ferdig</h2><p class="st-hand">' + c('riktig') + ' av ' + r.length + ' riktige</p>' +
+        (q.kanskje ? '<div class="st-fb kanskje"><b>' + q.kanskje + ' av dem er «kanskje»</b><p class="st-sm">Dashman var i tvil om utregningen. De teller som riktige, men faglæreren kan se på dem.</p></div>' : '') +
         (ov ? '<div class="st-fb ' + (ok ? '' : 'n') + '"><b>' + esc(ov.tittel) + ': ' + (ok ? 'Godkjent ✓' : 'Ikke godkjent') + '</b><p>' +
           (ok ? 'Bra jobbet! Øvingen er registrert som godkjent.' : 'Du trenger minst ' + kravN + ' av ' + q.hoved + ' riktige' + (ov.frist && Date.now() > Date.parse(ov.frist) ? ', og fristen har gått ut.' : '. Les på temaet og prøv igjen.')) + '</p></div>' : '') +
         '<div class="st-kort"><div class="st-rad"><span>Riktig</span><b>' + c('riktig') + '</b></div><div class="st-rad"><span>Riktig tanke, regnefeil</span><b>' + c('regnefeil') + '</b></div><div class="st-rad"><span>Må jobbes mer med</span><b>' + c('begrep') + '</b></div></div>' +
