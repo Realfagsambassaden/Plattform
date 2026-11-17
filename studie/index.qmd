@@ -446,7 +446,8 @@ body.st-app-modus .studie { max-width: 560px; margin: 0 auto; padding-bottom: ca
 .studie .st-oppgrad.annen { border: 1.5px dashed var(--bs-primary); border-radius: 14px; padding: .6rem .8rem; margin: .4rem 0 1rem; }
 .studie .st-dmhjelp { margin: .8rem 0; }
 .studie .st-dmhjelp .st-btn, .studie .st-knapperad .st-btn { display: inline-flex; align-items: center; gap: .35rem; }
-body.st-app-modus #fh-chat .fc-knapp { display: none; }
+/* I appen: tilbakemeldingsknappen vises liten over menylinja, så det er lett å sende et skjermbilde. */
+body.st-app-modus #fh-chat .fc-knapp { padding: .3rem .7rem; font-size: .8rem; opacity: .92; }
 body.st-app-modus #fh-chat { bottom: calc(96px + env(safe-area-inset-bottom)); }
 </style>
 <script src="../assets/js/xlsx-lite.js"></script>
