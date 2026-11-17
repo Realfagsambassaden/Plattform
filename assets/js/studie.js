@@ -1971,7 +1971,9 @@ function studieStart() {
       if (a) {
         var kl = a.type === 'riktig' ? '' : (a.type === 'regnefeil' ? 'r' : 'n');
         var ti = a.type === 'riktig' ? 'Riktig!' : (a.type === 'regnefeil' ? 'Riktig tanke, men regnefeil.' : 'Ikke riktig.');
-        fb = '<div class="st-fb ' + kl + '"><b>' + ti + '</b><div class="st-avsnitt">' + tx(x.forklaring) + '</div></div>';
+        // Feil svar med nye forsøk: verken fasit eller løsning vises. Studenten skal veiledes fram (Prøv igjen, Dashman).
+        var skjul = a.type !== 'riktig' && !x.rep && !(q.ovelse && q.ovelse.ettForsok) && !q.kiGodkjent;
+        fb = '<div class="st-fb ' + kl + '"><b>' + ti + '</b><div class="st-avsnitt">' + (skjul ? '<p>' + (a.type === 'regnefeil' ? 'Tanken ser riktig ut. Se over regningen: fortegn, enheter, tierpotenser og antall gjeldende siffer.' : 'Se på fysikken en gang til.') + ' Trykk «Prøv igjen», eller spør Dashman om et hint.</p>' : tx(x.forklaring)) + '</div></div>';
         var kis = q.kiSvar;
         if (q.sporLagre) fb += samtykkeHtml('lagreSvar') + (q.bilde ? '<img class="st-forhand" alt="Bildet ditt" src="' + q.bilde + '">' : '');
         else if (kis && !kis.feil) {
@@ -2000,11 +2002,11 @@ function studieStart() {
         '<div class="st-fram"><i style="width:' + (q.nr / q.antall * 100) + '%"></i></div>' + (q.ovelse ? ovOversiktHtml(q.ovelse, x.id) : '') +
         (q.ovelse && q.nr === 0 && q.ovelse.beskrivelse && sv == null ? '<div class="st-fb"><b>' + esc(q.ovelse.tittel) + '</b><p>' + esc(q.ovelse.beskrivelse) + '</p></div>' : '') +
         '<span class="st-mrk ' + x.vanskelighet + '">' + x.vanskelighet + '</span><p class="st-sporsmal">' + tx(x.tekst) + '</p>' +
-        (x.tall ? (a ? '<div class="st-alt ' + (x.alt[sv].type === 'riktig' ? 'ok' : 'nei') + '">Ditt svar: ' + esc(x.tallInn || '') + '</div>' + (x.alt[sv].type === 'riktig' ? '' : '<div class="st-alt ok">Riktig svar: ' + tx(x.riktig) + '</div>') + (x.tallMelding ? '<p class="st-sm">' + esc(x.tallMelding) + '</p>' : '')
+        (x.tall ? (a ? '<div class="st-alt ' + (x.alt[sv].type === 'riktig' ? 'ok' : 'nei') + '">Ditt svar: ' + esc(x.tallInn || '') + '</div>' + (x.alt[sv].type === 'riktig' || skjul ? '' : '<div class="st-alt ok">Riktig svar: ' + tx(x.riktig) + '</div>') + (x.tallMelding ? '<p class="st-sm">' + esc(x.tallMelding) + '</p>' : '')
             : '<div class="st-tallsvar"><input id="st-tallsvar" class="st-felt" inputmode="text" autocomplete="off" placeholder="Svaret ditt med enhet, f.eks. 4.5 mC" value="' + esc(x.tallInn || '') + '"><button type="button" class="st-btn" data-h="tallSvar">Svar</button></div>' +
               (x.tallMelding ? '<div class="st-fb st-tallmelding"><b>Sjekk svaret</b><p>' + esc(x.tallMelding) + '</p></div>' : '') +
               '<p class="st-sm">Desimaltegn: punktum eller komma. Tierpotens: 2.1e-3 eller 2.1*10^-3. Prefikser som m, µ (u), k og M går fint.</p>')
-          : x.alt.map(function (o, i) { var c = ''; if (a) { if (o.type === 'riktig') c = 'ok'; else if (i === sv) c = 'nei'; } return '<button type="button" class="st-alt ' + c + '"' + (a ? ' disabled' : '') + ' data-h="svar" data-i="' + i + '">' + tx(o.svar) + '</button>'; }).join('')) +
+          : x.alt.map(function (o, i) { var c = ''; if (a) { if (o.type === 'riktig' && !skjul) c = 'ok'; else if (i === sv) c = 'nei'; } return '<button type="button" class="st-alt ' + c + '"' + (a ? ' disabled' : '') + ' data-h="svar" data-i="' + i + '">' + tx(o.svar) + '</button>'; }).join('')) +
         '<p class="st-dmhjelp">' + (a ? '' : '<label class="st-btn g liten">' + ikon('kamera', 18) + ' ' + (q.bilde ? 'Skann på nytt' : 'Skann utregningen') + '<input type="file" accept="image/*" capture="environment" id="st-qskann" hidden></label> ') +
         (!a && !x.rep ? '<button type="button" class="st-btn g liten" data-h="hoppOver" title="Gå videre uten å svare. Spørsmålet kommer igjen til slutt.">Hopp over →</button> ' : '') +
         (appModus() || !a ? '<button type="button" class="st-btn g liten st-dmknapp" data-h="quizDashman"><img class="st-dmknapp-ikon" src="' + DMBILDER + 'ikon.webp" alt=""> ' + (a ? 'Snakk med Dashman om dette' : 'Spør Dashman om hjelp') + '</button>' : '') + '</p>' +

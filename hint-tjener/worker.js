@@ -87,6 +87,8 @@ Vurder hva besvarelsen viser:
 - "regnefeil": riktig tankegang og riktige formler, men feil i utregning, avrunding, enheter eller fortegn.
 - "begrep": feil eller manglende forståelse av fysikken (feil formel, feil modell, gjetting), selv om studenten kanskje valgte riktig alternativ.
 Er besvarelsen tom, uleselig eller handler om noe annet, bruk "uklar".
+OPPGI ALDRI riktig sluttsvar, riktig tall eller fasiten i tilbakemeldingen, heller ikke når studenten bare har en liten feil (fortegn, avrunding,
+antall siffer). Pek på hvor feilen er og hva studenten bør sjekke, så studenten finner svaret selv.
 Tydelighet (bilde): Vær streng. Sluttsvaret skal stå tydelig, med tall, enhet og riktig antall gjeldende siffer, og ha TO STREKER UNDER.
 Mangler de to strekene under sluttsvaret, eller er det uklart hva som er sluttsvaret, bruk "uklar" og be studenten sette to streker
 under sluttsvaret og ta et nytt bilde. Er det tydelig og riktig, bruk "riktig" – også om studenten skrev inn svaret i feil format i appen.
