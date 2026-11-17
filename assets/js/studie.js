@@ -1195,6 +1195,7 @@ function studieStart() {
       linje.insertBefore(T.uvTp.verktoy, linje.firstChild);
       T.uvTp.slide(v.valgt + ':' + v.i);
       if (v.pennPa) T.uvTp.penn(true);
+      var pe = v.pop && !v.pop.closed && v.pop.document.getElementById('uv-slide'); if (pe && T.uvTp.speil) T.uvTp.speil(pe);
     };
     if (window.Tavlepenn) lag();
     else if (!T.uvPennLaster) {
@@ -1219,7 +1220,8 @@ function studieStart() {
     var sl = l[v.i];
     settSlide(el, projisert(sl, v.visLos)); passInn(el);
     if (T.uvTp) T.uvTp.slide(v.valgt + ':' + v.i);
-    if (v.pop && !v.pop.closed) { var pe = v.pop.document.getElementById('uv-slide'); if (pe) { pe.innerHTML = projisert(sl, v.visLos); passInn(pe); } }
+    // Andre skjerm: sliden byttes uten å fjerne pennens lerret, og tegningene fra denne skjermen (iPad) speiles dit.
+    if (v.pop && !v.pop.closed) { var pe = v.pop.document.getElementById('uv-slide'); if (pe) { settSlide(pe, projisert(sl, v.visLos)); passInn(pe); if (T.uvTp && T.uvTp.speil) T.uvTp.speil(pe); } }
     var pt = planTrekk(); document.querySelectorAll('.uv-trekk-innhold').forEach(function (e) { e.innerHTML = pt; });
     if (v.pop && !v.pop.closed) v.pop.document.querySelectorAll('.uv-trekk-innhold').forEach(function (e) { e.innerHTML = pt; });
     var p = document.getElementById('uv-pos'); if (p) p.textContent = l.length ? (v.i + 1) + ' / ' + l.length : '';
