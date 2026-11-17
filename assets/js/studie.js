@@ -2502,12 +2502,14 @@ function studieStart() {
         var riktig = x.alt.filter(function (o) { return o.type === 'riktig'; })[0];
         window.dispatchEvent(new CustomEvent('dashman:oppgave', { detail: {
           kilde: 'quiz', tittel: 'Quizspørsmål om ' + tittel(x.tema),
-          oppgave: x.tekst + '\n\nAlternativer:\n' + x.alt.map(function (o, i) { return bokst[i] + ') ' + o.svar; }).join('\n'),
+          oppgave: x.tekst + (x.tall ? '' : '\n\nAlternativer:\n' + x.alt.map(function (o, i) { return bokst[i] + ') ' + o.svar; }).join('\n')),   // tallsvar: alternativet er fasiten, så det sendes ikke som «alternativ»
           losning: 'Riktig svar: ' + (riktig ? riktig.svar : x.riktig) + '\n' + (x.forklaring || ''),
           forsok: (a ? 'Studenten svarte: ' + a.svar + (a.type === 'riktig' ? ' (riktig)' : ' (feil)') + '. ' : 'Studenten har ikke svart ennå. ') + (q.tekst || ''),
           bilde: q.bilde || null,
           startmelding: !a && q.bilde ? 'Her er utregningen min så langt. Er jeg på rett vei? Ikke si svaret, gi meg heller et hint.' : a ? 'Jeg svarte «' + a.svar.slice(0, 120) + '» på dette spørsmålet. Kan du hjelpe meg å forstå det?' : 'Jeg står fast på dette quizspørsmålet. Kan du gi meg et hint uten å si svaret?'
         } }));
+        // Reserve: kom ikke Dashman-panelet opp (skriptet ikke lastet eller avvist), åpne Dashman direkte.
+        setTimeout(function () { var p = document.querySelector('.dm-panel'); if (!p || p.hidden) apneDashman(); }, 400);
       },
       skannDashman: function () {
         var sk = T.skann || {}, vo = sk.valgt;

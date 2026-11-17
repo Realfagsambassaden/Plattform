@@ -11,7 +11,13 @@
   var api = ((document.querySelector('meta[name="fysikkhjelp-hint-api"]') || {}).content || '').replace(/\/hint\/?$/, '/dashman');
   if (!URL_ || !api || !window.fhKonto) return;
   var lagringsnavn = 'sb-' + URL_.split('//')[1].split('.')[0] + '-auth-token';
-  function innlogget() { try { return !!localStorage.getItem(lagringsnavn); } catch (e) { return false; } }
+  // Innlogget: Supabase-økta ligger i localStorage. Sjekk både det forventede navnet og alle «sb-…-auth-token»,
+  // så knappen ikke forsvinner hvis navnet skulle avvike (f.eks. i appen på hjemskjermen).
+  function innlogget() {
+    try { if (lagringsnavn && localStorage.getItem(lagringsnavn)) return true;
+      for (var i = 0; i < localStorage.length; i++) if (/^sb-.+-auth-token$/.test(localStorage.key(i) || '')) return true;
+      return false; } catch (e) { return false; }
+  }
 
   // ------------------------------------------------------------ figuren (lærerens Dashman-rigg)
   var POSITUR = { noytral: 'noytral', glad: 'glad', ler: 'ler', irritert: 'irritert', trist: 'trist', tenker: 'tenker' };
@@ -300,7 +306,7 @@
 
   // Fra hint-knappen på en oppgave (assets/js/oppgaver.js): ny samtale om oppgaven.
   window.addEventListener('dashman:oppgave', function (e) {
-    var d = e.detail || {}; if (!d.oppgave || !innlogget()) return;
+    var d = e.detail || {}; if (!d.oppgave) return;   // innlogging sjekkes av tjenesten; Dashman svarer selv om økta mangler
     oppgave = { tittel: String(d.tittel || '').slice(0, 150), oppgave: String(d.oppgave).slice(0, 2000), losning: String(d.losning || '').slice(0, 2500),
                 forsok: String(d.forsok || '').slice(0, 1500), hint: (d.hint || []).slice(0, 3), kilde: d.kilde || 'hint' };
     lagreOppgave(); samtale = []; lagre();
