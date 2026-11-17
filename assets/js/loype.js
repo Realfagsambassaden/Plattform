@@ -11,6 +11,47 @@
   var hent = function (k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } };
   if (/\/(tema|emner)\//.test(sti)) lagre('bla', 'tema');
   if (/\/loyper\//.test(sti)) lagre('bla', 'loype');
+  // Sidemenyen: Quarto markerer første lenke til siden, og det er som regel læreboka (f.eks. «Forkurs i fysikk»).
+  // Går du i en løype, åpner vi heller løypas del av menyen og markerer siden der, også etter oppdatering av siden.
+  function visISidemenyen(L) {
+    var sb = document.getElementById('quarto-sidebar'); if (!sb) return;
+    var norm = function (h) { try { return new URL(h, location.href).pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, ''); } catch (e) { return ''; } };
+    var lenker = Array.prototype.slice.call(sb.querySelectorAll('a.sidebar-link'));
+    var topp = lenker.filter(function (a) { return norm(a.getAttribute('href')) === norm(L.url); })[0];
+    var del = topp && topp.closest('li.sidebar-item-section'); if (!del) return;
+    var her = norm(location.pathname);
+    var mål = Array.prototype.slice.call(del.querySelectorAll('a.sidebar-link')).filter(function (a) { return a !== topp && norm(a.getAttribute('href')) === her; })[0];
+    if (!mål) return;
+    lenker.forEach(function (a) { a.classList.remove('active'); });
+    mål.classList.add('active');
+    var vis = function (ul, apen) {
+      ul.classList.toggle('show', apen);
+      var k = ul.id && sb.querySelector('[data-bs-target="#' + ul.id + '"]');
+      if (k) { k.classList.toggle('collapsed', !apen); k.setAttribute('aria-expanded', apen ? 'true' : 'false'); }
+    };
+    Array.prototype.forEach.call(sb.querySelectorAll('ul.collapse.show'), function (ul) { if (!ul.contains(mål)) vis(ul, false); });
+    for (var e = mål.parentElement; e && e !== sb; e = e.parentElement) if (e.matches('ul.collapse')) vis(e, true);
+    // Brødsmulene øverst følger samme vei: Løyper › TRES0312 › Elektrisitet › siden
+    var ol = document.querySelector('.quarto-page-breadcrumbs ol');
+    if (ol && ol.lastElementChild) {
+      var ledd = [];
+      for (var li = mål.closest('li'); li && li !== sb; li = li.parentElement) {
+        if (!li.matches || !li.matches('li.sidebar-item-section')) continue;
+        var c = li.querySelector(':scope > .sidebar-item-container'), a0 = c && c.querySelector('a.sidebar-link'), tx = c && c.querySelector('.menu-text, .sidebar-item-text');
+        ledd.unshift({ href: a0 && a0.getAttribute('href'), tekst: (tx || c || li).textContent.trim() });
+      }
+      var siste = ol.lastElementChild;
+      ol.innerHTML = '';
+      ledd.forEach(function (x) {
+        var li2 = document.createElement('li'); li2.className = 'breadcrumb-item';
+        if (x.href) { var a2 = document.createElement('a'); a2.href = x.href; a2.textContent = x.tekst; li2.appendChild(a2); } else li2.textContent = x.tekst;
+        ol.appendChild(li2);
+      });
+      ol.appendChild(siste);
+    }
+    var r = mål.getBoundingClientRect(), s = sb.getBoundingClientRect();
+    if (r.top < s.top || r.bottom > s.bottom) sb.scrollTop += r.top - s.top - sb.clientHeight / 2;
+  }
   var root = (function () { var s = document.querySelector('script[src*="site_libs/"]'); return s ? s.getAttribute('src').split('site_libs/')[0] : ''; })();
   fetch(root + 'loyper.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
     if (!d) return;
@@ -32,6 +73,7 @@
     var modus = hent('bla') === 'emne' ? 'tema' : (hent('bla') || (L ? 'loype' : 'tema'));
     if (modus === 'loype' && !L) modus = 'tema';
     if (modus === 'tema' && !E) modus = 'loype';
+    if (modus === 'loype' && L) visISidemenyen(L);
 
     // Sammensatte oppgaver: en oppgave kan si hva den bygger på (krever="tema/undertema, …"). Går du i en løype, skjules
     // oppgaver som bygger på stoff som kommer senere i løypa (eller ikke er med), med en knapp for å vise dem likevel.

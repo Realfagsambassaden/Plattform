@@ -403,6 +403,8 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
   .dm-info { padding: 0 1rem 0 1.4rem; text-align: center; }
   .dm-kontur.bred { display: none; } .dm-kontur.smal { display: block; }
 }
+// På store skjermer står sidemenyen nede til venstre. Da står Dashman nede til høyre, over tilbakemeldingsknappen.
+@media (min-width: 992px) { .dm-knapp { left: auto; right: 1rem; bottom: calc(1rem + 62px); } }
 @media print { .dm-knapp, .dm-panel { display: none !important; } }
 
 // ---------- hero-scene og profiler ----------
