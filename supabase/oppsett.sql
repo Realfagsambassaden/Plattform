@@ -927,3 +927,7 @@ begin
 end $$;
 revoke all on function public.push_jobb(text), public.push_fjern(text, text) from public;
 grant execute on function public.push_jobb(text), public.push_fjern(text, text) to anon, authenticated;
+
+-- Arbeidskrav (17. nov. 2026): rekkefølge på egne spørsmål. Standard er delkapitlenes rekkefølge (som i undervisningen);
+-- tilfeldig = stokkes for hver student.
+alter table public.ovelser add column if not exists tilfeldig boolean not null default false;
