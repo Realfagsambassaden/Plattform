@@ -1166,6 +1166,7 @@ function studieStart() {
     var st = ''; try { st = localStorage.getItem('uv-start-' + id) || ''; } catch (e) {}
     T.uv = { c: c, u: u, valgt: nk || '', i: 0, laster: true, mat: {}, start: st, tid: true, plan: true, notat: false };
     T.vis = 'undervis'; document.documentElement.classList.add('st-uv-aktiv'); document.title = c.navn + ' – undervisning';
+    oppmoteHent();
     k.from('kurs_materiale').select('*').eq('kurs', id).then(sjekk)
       .then(function (d) { (d || []).forEach(function (x) { T.uv.mat[x.nokkel] = x; }); }, function (e) { T.uv.feil = feilmelding(e); })
       .then(function () {
@@ -1214,8 +1215,29 @@ function studieStart() {
   function projisert(sl, medLos) {
     return sl ? slideHtml(sl, medLos) : '<div class="uv-sinn"><p class="uv-tom">Ingen slides for denne samlingen ennå.</p></div>';
   }
+  // ---- Oppmøte med stikkprøver (supabase/oppsett.sql: oppmote_*). Koden står nede til venstre på sliden, også på projektoren.
+  function oppmoteHent() {
+    var v = T.uv; if (!v || T.vis !== 'undervis') return;
+    k.rpc('oppmote_kode', { k: v.c.id }).then(function (r) { v.opm = r.error ? null : r.data; v.opmFeil = r.error ? feilmelding(r.error) : ''; oppmoteTegn(); var b = document.querySelector('[data-h=oppmote]'); if (b && !!b.classList.contains('pa2') !== !!v.opm) tegn(); });
+  }
+  function oppmoteTegn() {
+    var v = T.uv; if (!v) return;
+    var dok = [document]; if (v.pop && !v.pop.closed) dok.push(v.pop.document);
+    dok.forEach(function (d) {
+      var r = d.getElementById('uv-ramme'); if (!r) return;
+      var el = r.querySelector('.uv-opm');
+      if (!v.opm) { if (el) el.remove(); return; }
+      if (!el) { el = d.createElement('div'); el.className = 'uv-opm'; el.style.cssText = 'position:absolute;left:1.2%;bottom:2%;z-index:6;background:rgba(10,10,10,.82);color:#eee462;border:2px solid #eee462;border-radius:12px;padding:.25em .6em;font:700 clamp(16px,2.6vw,44px)/1.15 ui-monospace,monospace;pointer-events:none'; r.appendChild(el); }
+      var s = Math.max(0, Math.round((Date.parse(v.opm.slutter) - Date.now()) / 1000));
+      el.innerHTML = '<span style="font:600 .45em system-ui;display:block;color:#f6f4e8">Oppmøtekode</span>' + v.opm.kode + '<span style="font:600 .45em system-ui;color:#f6f4e8"> ' + Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2) + '</span>';
+      if (s <= 0) oppmoteHent();
+    });
+  }
+  setInterval(function () { if (T.vis === 'undervis' && T.uv && T.uv.opm) oppmoteTegn(); }, 1000);
+  setInterval(function () { if (T.vis === 'undervis' && !document.hidden) oppmoteHent(); }, 30000);
   function visSlide() {
     var v = T.uv, l = uvSlides(), el = document.getElementById('uv-slide'); if (!el) return;
+    setTimeout(oppmoteTegn, 0);
     var ny = Math.max(0, Math.min(l.length - 1, v.i)); if (ny !== v.forrigeI) { v.visLos = false; v.forrigeI = ny; } v.i = ny;
     var sl = l[v.i];
     settSlide(el, projisert(sl, v.visLos)); passInn(el);
@@ -1271,6 +1293,7 @@ function studieStart() {
       '<span class="uv-her">' + (x ? 'Uke ' + x.uke + ' · ' + samlingNavn(r, el, x.s) + (mt && mt.tittel ? ': ' + esc(mt.tittel) : '') : '') + '</span>' +
       '<span class="uv-knapper"><button type="button" class="st-btn g liten' + (v.tid ? ' pa2' : '') + '" data-h="uvTid">☰ Tidslinje</button><button type="button" class="st-btn g liten' + (v.plan ? ' pa2' : '') + '" data-h="uvPlan">📋 Plan</button>' +
         '<button type="button" class="st-btn g liten' + (v.salen ? ' pa2' : '') + '" data-h="salen" title="Spørsmål fra studentene og hva klassen strever med">🙋 Salen' + (erLive(c) ? ' 🟢' : '') + '</button>' +
+        '<button type="button" class="st-btn g liten' + (v.opm ? ' pa2' : '') + '" data-h="oppmote" title="Oppmøte med stikkprøver: tilfeldige studenter må skrive inn koden på sliden (skifter hvert 10. minutt)">🧾 ' + (v.opm ? 'Stopp oppmøte' : 'Oppmøte') + '</button>' +
       (to ? '' : '<button type="button" class="st-btn g liten' + (v.notat ? ' pa2' : '') + '" data-h="uvNotat" title="Notater og løsningsforslag (N)">🗒 Notater</button>') +
       '<button type="button" class="st-btn g liten' + (to ? ' pa2' : '') + '" data-h="uvTo" title="Slides på den andre skjermen, notater og løsningsforslag her">🖥 ' + (to ? 'Lukk andre skjerm' : 'To skjermer') + '</button>' +
       (to ? '' : '<button type="button" class="st-btn liten" data-h="uvFull"' + (sl.length ? '' : ' disabled') + '>⛶ Fullskjerm</button>') + '</span></div>' +
@@ -1608,6 +1631,41 @@ function studieStart() {
       .catch(function (e) { varsle(feilmelding(e), true); });
   }
   // Excel-ark (.xlsx) med godkjenning: én rad per student (assets/js/xlsx-lite.js, ingen eksterne biblioteker).
+  // ---- Oppmøte-fanen: andel beståtte stikkprøver per student, med overstyring per økt og Excel.
+  var OPM_KRAV = 0.5;
+  function oppmoteLast() {
+    var f = T.fag; f.opm = { laster: true }; tegn();
+    k.rpc('oppmote_oversikt', { k: f.c.id }).then(sjekk).then(function (l) { f.opm = { liste: l || [] }; }, function (e) { f.opm = { feil: /oppmote_/.test(feilmelding(e)) ? 'SQL-en for oppmøte er ikke kjørt i Supabase ennå (supabase/oppsett.sql).' : feilmelding(e) }; }).then(tegn);
+  }
+  function oppmoteHtml() {
+    var f = T.fag, m = f.opm;
+    if (!m) { setTimeout(oppmoteLast, 0); return '<p class="st-ind">Laster …</p>'; }
+    if (m.laster) return '<p class="st-ind">Laster …</p>';
+    if (m.feil) return '<p class="st-feil">' + esc(m.feil) + '</p>';
+    var l = m.liste.slice().sort(function (a, b) { return studentNavn(a).localeCompare(studentNavn(b), 'nb'); });
+    var o = '<h3>Oppmøte</h3><p class="st-sm">Start oppmøte i undervisningsmodus (🧾 Oppmøte). Koden står på sliden og skifter hvert 10. minutt. I hver periode plukkes hver student ut med 50 % sannsynlighet og må skrive inn koden. ' +
+      'Oppmøtet er andelen beståtte sjekker over hele semesteret; kravet er ' + Math.round(OPM_KRAV * 100) + ' %. Du kan overstyre en hel økt for en student (f.eks. uten telefon).</p>';
+    if (!l.length) return o + '<p class="st-ind">Ingen økter med oppmøte ennå.</p>';
+    return o + '<p><button type="button" class="st-btn g liten" data-h="oppmoteExcel">Last ned Excel-ark</button> <button type="button" class="st-btn g liten" data-h="oppmoteLast">Oppdater</button></p><div class="st-tabell-ramme"><table class="st-tabell"><thead><tr><th>Student</th><th>Sjekker</th><th>Bestått</th><th>Oppmøte</th><th>Økter</th></tr></thead><tbody>' +
+      l.map(function (r) {
+        var a = r.sjekker ? r.bestatt / r.sjekker : null;
+        return '<tr><td>' + esc(studentNavn(r)) + (r.navn ? '<br><span class="st-sm">' + esc(r.epost) + '</span>' : '') + '</td><td>' + r.sjekker + '</td><td>' + r.bestatt + '</td>' +
+          '<td><span class="st-status ' + (a == null ? '' : a >= OPM_KRAV ? 'ok' : 'nei') + '">' + (a == null ? '–' : Math.round(a * 100) + ' %') + '</span></td><td><details><summary class="st-sm">' + (r.okter || []).length + ' økter</summary>' +
+          (r.okter || []).map(function (x) {
+            var knapp = function (v, t) { return '<button type="button" class="st-btn g liten' + (String(x.overstyrt) === v ? ' pa2' : '') + '" data-h="oppmoteOverstyr" data-o="' + x.okt + '" data-s="' + r.student + '" data-v="' + v + '">' + t + '</button>'; };
+            return '<div class="st-sm" style="margin:.3rem 0">' + new Date(x.start).toLocaleString('nb-NO', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) + ': ' + x.bestatt + ' av ' + x.sjekker + (x.overstyrt != null ? ' (overstyrt)' : '') +
+              '<br>' + knapp('true', 'Møtt') + ' ' + knapp('false', 'Ikke møtt') + ' ' + knapp('null', 'Automatisk') + '</div>';
+          }).join('') + '</details></td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+  function oppmoteExcel() {
+    var f = T.fag, l = ((f.opm && f.opm.liste) || []).slice().sort(function (a, b) { return studentNavn(a).localeCompare(studentNavn(b), 'nb'); });
+    if (!window.fhXlsx) return varsle('Fikk ikke laget Excel-arket. Last siden på nytt.', true);
+    var hode = ['Navn', 'E-post', 'Sjekker', 'Bestått', 'Oppmøte (%)', 'Krav oppfylt'];
+    fhXlsx.last_ned((f.c.navn.replace(/[^\wæøåÆØÅ -]+/g, '').trim() || 'fag') + ' – oppmøte ' + new Date().toISOString().slice(0, 10) + '.xlsx', [
+      { navn: 'Oppmøte', rader: [hode].concat(l.map(function (r) { var a = r.sjekker ? r.bestatt / r.sjekker : null; return [r.navn || '', r.epost || '', r.sjekker, r.bestatt, a == null ? '' : Math.round(a * 100), a == null ? '' : a >= OPM_KRAV ? 'Ja' : 'Nei']; })), bredder: [30, 34, 10, 10, 14, 14] },
+    ]);
+  }
   function lastNedExcel() {
     var c = T.fag.c, ol = T.ovelser.filter(function (x) { return x.kurs === c.id; }), g = T.fag.godkjenning || [], studenter = [];
     if (!window.fhXlsx) return varsle('Fikk ikke laget Excel-arket. Last siden på nytt.', true);
@@ -2156,7 +2214,7 @@ function studieStart() {
           (c.beskrivelse ? '<p>' + esc(c.beskrivelse) + '</p>' : '') + '<span class="st-sm">' +
           (d.samtykke_innsyn ? 'Faglærer ser kunnskapsprofilen din. Meld deg av for å trekke samtykket.' : 'Faglærer ser bare samletall for kurset.') + '</span>' +
           (tm.length && !folger ? '<p><button type="button" class="st-btn liten" data-h="brukLoype" data-id="' + d.kurs + '">Bruk kursets løype (' + tm.length + ' temaer)</button></p>' : '') +
-          ovelseListe(d.kurs) + studentFagTillegg(d) + '</div>';
+          oppmoteMittHtml(d.kurs) + ovelseListe(d.kurs) + studentFagTillegg(d) + '</div>';
       }).join('') : '<p class="st-ind">Du er ikke med i noe kurs.</p>';
       // Åpne kurs (underviseren har krysset av for «Åpent kurs») og løypene på nettstedet
       var apne = (T.apne || []).filter(function (c) { return !T.deltar.some(function (x) { return x.kurs === c.id; }); });
@@ -2204,11 +2262,12 @@ function studieStart() {
       var o = '<button type="button" class="st-tilbake" data-h="ga" data-v="kurs">← Kursene dine</button><h2 class="st-h1">' + esc(c.navn) + (c.status === 'pabegynt' ? ' <span class="st-pabegynt">(påbegynt)</span>' : '') + '</h2>' +
         '<div class="st-rad" style="flex-wrap:wrap"><p class="st-sm" style="margin:0">Kode til studentene: <b class="st-kode">' + esc(c.kode) + '</b> · ' + (c.krev_innsyn ? 'innsyn i studentenes profil' : 'bare samletall') + '</p>' +
         '<span><button type="button" class="st-btn liten" data-h="qr" data-id="' + c.id + '">📱 QR-kode</button> <a class="st-btn liten" href="index.html#undervis-' + encodeURIComponent(c.id) + '" target="_blank" rel="noopener" data-h="ingen">🎓 Undervisningsmodus</a> <button type="button" class="st-btn g liten" data-h="studentvisning" data-id="' + c.id + '">Se kurset som student</button></span></div>' +
-        '<nav class="st-underfaner">' + [['design', 'Utforming'], ['ovinger', 'Arbeidskrav'], ['studenter', 'Studenter'], ['statistikk', 'Statistikk']].filter(function (x) { return x[0] !== 'ovinger' || f.u.elementer.arbeidskrav; }).map(function (x) {
+        '<nav class="st-underfaner">' + [['design', 'Utforming'], ['ovinger', 'Arbeidskrav'], ['oppmote', 'Oppmøte'], ['studenter', 'Studenter'], ['statistikk', 'Statistikk']].filter(function (x) { return x[0] !== 'ovinger' || f.u.elementer.arbeidskrav; }).map(function (x) {
           return '<button type="button" aria-selected="' + (f.fane === x[0]) + '" data-h="fagFane" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</nav>';
       if (f.fane === 'design') return o + byggerHtml();
       if (f.laster) return o + '<p class="st-ind">Laster …</p>';
       if (f.feil) return o + '<p class="st-feil">' + esc(f.feil) + '</p>';
+      if (f.fane === 'oppmote') return o + oppmoteHtml();
       if (f.fane === 'ovinger') {
         var ol = (T.ovelser || []).filter(function (x) { return x.kurs === c.id; });
         o += '<h3>Arbeidskrav</h3>' + (ol.length ? ol.map(function (x) {
@@ -2490,6 +2549,16 @@ function studieStart() {
       if (apen) o += tidslinjeHtml(mods, c.ramme || {}, (T.ovelser || []).filter(function (x) { return x.kurs === d.kurs; }), null, Object.assign({}, STD_ELEM, c.elementer || {}));
     }
     return o;
+  }
+  // Studentens eget oppmøte i kurset (bare når det har vært økter med oppmøte).
+  function oppmoteMittHtml(kursId) {
+    T.opmMitt = T.opmMitt || {};
+    var m = T.opmMitt[kursId];
+    if (m === undefined) { T.opmMitt[kursId] = null; k.rpc('oppmote_mitt', { k: kursId }).then(function (r) { if (!r.error && r.data && r.data.okter) { T.opmMitt[kursId] = r.data; tegn(); } }); return ''; }
+    if (!m) return '';
+    var a = m.sjekker ? m.bestatt / m.sjekker : null;
+    return '<p class="st-sm" style="margin-top:.6rem"><b>Oppmøte:</b> ' + (a == null ? 'ingen sjekker ennå' : m.bestatt + ' av ' + m.sjekker + ' stikkprøver bestått (' + Math.round(a * 100) + ' %)') +
+      ' · krav ' + Math.round(OPM_KRAV * 100) + ' %' + (a != null ? ' · <span class="st-status ' + (a >= OPM_KRAV ? 'ok">Oppfylt' : 'nei">Ikke oppfylt ennå') + '</span>' : '') + '</p>';
   }
   function ovelseListe(kursId) {
     var l = (T.ovelser || []).filter(function (o) { return o.kurs === kursId; });
@@ -2788,11 +2857,15 @@ function studieStart() {
       slettKurs: function () { slettKurs(d.id); },
       visStudent: function () { visStudent(d.id, d.epost); },
       lukkStudent: function () { T.fag.student = null; tegn(); },
-      fagFane: function () { T.fag.fane = d.v; T.fag.student = null; tegn(); },
+      fagFane: function () { T.fag.fane = d.v; T.fag.student = null; if (d.v === 'oppmote') T.fag.opm = null; tegn(); },
       sorter: function () { T.fag.sorter = d.v; tegn(); },
       brukLoype: function () { var x = T.deltar.find(function (y) { return y.kurs === d.id; }); brukFagetsLoype(x.kursinfo.temaer).then(function () { varsle('Løypa di følger nå kurset.'); ga('hjem'); }); },
       ovelse: function () { startOvelse(d.id); },
-      excel: lastNedExcel,
+      excel: lastNedExcel, oppmoteExcel: oppmoteExcel, oppmoteLast: oppmoteLast,
+      oppmoteOverstyr: function () {
+        var v = d.v === 'null' ? null : d.v === 'true';
+        k.rpc('oppmote_overstyr', { o_id: +d.o, s: d.s, godkjent: v }).then(sjekk).then(oppmoteLast, function (e) { varsle(feilmelding(e), true); });
+      },
       nyttKrav: function () { nyttKrav(); }, redigerKrav: function () { nyttKrav(T.ovelser.find(function (x) { return x.id === d.id; })); },
       avbrytKrav: function () { T.fag.ov = null; tegn(); }, lagreKrav: lagreKrav, kiKviss: kiKviss,
       kkFjernFil: function () { T.fag.kiKviss.vedlegg = null; T.fag.kiKviss.filnavn = ''; tegn(); },
@@ -2823,6 +2896,13 @@ function studieStart() {
       penn: function () { if (T.uvTp) { T.uvTp.penn(); T.uv.pennPa = T.uvTp.erAktiv(); } }, tavle: function () { if (T.uvTp) { T.uvTp.tavle(); T.uv.pennPa = T.uvTp.erAktiv(); } },
       uvFull: function () { uvFull(); }, uvNotat: function () { T.uv.notat = !T.uv.notat; tegn(); }, uvTo: uvTo, uvLos: uvLos,
       salen: function () { var v = T.uv; v.salen = !v.salen; tegn(); if (v.salen) salenHent(); },
+      oppmote: function () {
+        var v = T.uv, pa = !v.opm;
+        k.rpc(pa ? 'oppmote_start' : 'oppmote_stopp', pa ? { k: v.c.id, minutter: 10 } : { k: v.c.id }).then(sjekk).then(function () {
+          varsle(pa ? 'Oppmøte er startet. Koden står nede til venstre på sliden og skifter hvert 10. minutt. Tilfeldige studenter får beskjed om å skrive den inn.' : 'Oppmøtet er stoppet.');
+          if (!pa) { v.opm = null; oppmoteTegn(); tegn(); } else oppmoteHent();
+        }, function (e) { varsle(/oppmote_/.test(feilmelding(e)) ? 'SQL-en for oppmøte er ikke kjørt i Supabase ennå (supabase/oppsett.sql).' : feilmelding(e), true); });
+      },
       salenLive: function () {
         var v = T.uv, pa = d.pa === '1', til = pa ? new Date(Date.now() + 2 * 3600e3).toISOString() : new Date().toISOString();
         k.from('kurs').update({ undervises_til: til }).eq('id', v.c.id).then(sjekk).then(function () { v.c.undervises_til = til; tegn(); varsle(pa ? 'Studentene i kurset ser nå «Delta på undervisning» (i 2 timer, eller til du stopper).' : 'Stengt for innspill.'); },

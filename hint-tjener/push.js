@@ -68,9 +68,14 @@ async function rpc(env, navn, args) {
 }
 
 // Kjøres av cron: hent nye varsler fra databasen og send dem. Døde abonnementer fjernes.
-export async function pushRunde(env) {
+// Kjøres hvert minutt: oppmøtesjekker hvert minutt, de vanlige varslene hvert kvarter.
+export async function pushRunde(env, tid) {
   if (!env.PUSH_HEMMELIG || !env.VAPID_PRIVATE_KEY) return { hoppet: "ikke satt opp" };
-  const jobb = (await rpc(env, "push_jobb", { h: env.PUSH_HEMMELIG })) || [];
+  const kvarter = new Date(tid || Date.now()).getUTCMinutes() % 15 === 0;
+  const jobb = [
+    ...((await rpc(env, "oppmote_push", { h: env.PUSH_HEMMELIG }).catch(() => [])) || []),
+    ...(kvarter ? (await rpc(env, "push_jobb", { h: env.PUSH_HEMMELIG })) || [] : []),
+  ];
   let sendt = 0, fjernet = 0;
   for (const j of jobb) {
     try {

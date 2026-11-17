@@ -466,7 +466,7 @@ const kort = (s, n) => String(s || "").slice(0, n);
 
 export default {
   // Push-varsler: cron (wrangler.toml) hvert kvarter
-  async scheduled(event, env, ctx) { ctx.waitUntil(pushRunde(env).catch(() => {})); },
+  async scheduled(event, env, ctx) { ctx.waitUntil(pushRunde(env, event.scheduledTime).catch(() => {})); },
   async fetch(request, env) {
     const origin = request.headers.get("Origin") || "";
     const h = cors(origin);

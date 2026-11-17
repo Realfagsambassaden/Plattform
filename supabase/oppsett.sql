@@ -931,3 +931,189 @@ grant execute on function public.push_jobb(text), public.push_fjern(text, text) 
 -- Arbeidskrav (17. nov. 2026): rekkefølge på egne spørsmål. Standard er delkapitlenes rekkefølge (som i undervisningen);
 -- tilfeldig = stokkes for hver student.
 alter table public.ovelser add column if not exists tilfeldig boolean not null default false;
+
+-- =====================================================================
+-- Oppmøte med stikkprøver (17. nov. 2026). Underviseren starter oppmøte i undervisningsmodus. Tiden deles i perioder
+-- (standard 10 min). I hver periode plukkes hver påmeldte student ut med sannsynlighet «andel» (standard 0.5), og må
+-- skrive inn koden som står på tavla før perioden er slutt. Koden skifter hver periode. Oppmøtet = beståtte sjekker /
+-- alle sjekker, summert over hele semesteret (det er totalen som teller). Utvalg og koder regnes ut av en hemmelighet
+-- per økt, så verken utvalget eller koden kan leses fra databasen av studentene. Underviseren kan overstyre per økt.
+-- =====================================================================
+create table if not exists public.oppmote_okt (
+  id          bigint generated always as identity primary key,
+  kurs        uuid not null references public.kurs (id) on delete cascade,
+  start       timestamptz not null default now(),
+  slutt       timestamptz,
+  periode_min int not null default 10 check (periode_min between 3 and 30),
+  andel       real not null default 0.5 check (andel > 0 and andel <= 1),
+  hemmelig    uuid not null default gen_random_uuid()
+);
+create index if not exists oppmote_okt_kurs on public.oppmote_okt (kurs, start);
+create table if not exists public.oppmote_svar (
+  okt     bigint not null references public.oppmote_okt (id) on delete cascade,
+  student uuid not null references auth.users (id) on delete cascade,
+  periode int not null,                         -- -1 = hele økta (overstyrt av underviseren)
+  ok      boolean not null default false,
+  forsok  int not null default 0,
+  manuelt boolean not null default false,
+  tid     timestamptz not null default now(),
+  primary key (okt, student, periode)
+);
+alter table public.oppmote_okt enable row level security;    -- ingen regler: bare funksjonene under kommer til
+alter table public.oppmote_svar enable row level security;
+revoke all on public.oppmote_okt, public.oppmote_svar from anon, authenticated;
+
+-- Slutten på en økt: satt slutt, ellers høyst 4 timer etter start.
+create or replace function public.oppmote_slutt(o public.oppmote_okt) returns timestamptz
+  language sql immutable as $$ select coalesce(o.slutt, o.start + interval '4 hours') $$;
+create or replace function public.oppmote_tall(s text) returns double precision
+  language sql immutable as $$ select (('x' || substr(md5(s), 1, 8))::bit(32)::bigint)::double precision / 4294967296.0 $$;
+create or replace function public.oppmote_kode_for(o public.oppmote_okt, p int) returns int
+  language sql immutable as $$ select 100 + floor(public.oppmote_tall(o.hemmelig::text || ':kode:' || p) * 900)::int $$;
+create or replace function public.oppmote_plukket(o public.oppmote_okt, s uuid, p int) returns boolean
+  language sql immutable as $$ select public.oppmote_tall(o.hemmelig::text || ':' || s::text || ':' || p) < o.andel $$;
+-- Perioder som teller: ferdige perioder mens økta pågår; når den er slutt, også den siste hvis den varte minst 2 minutter.
+create or replace function public.oppmote_perioder(o public.oppmote_okt) returns int
+  language sql stable as $$
+  select greatest(0, case when now() < public.oppmote_slutt(o)
+    then floor(extract(epoch from (now() - o.start)) / (o.periode_min * 60))
+    else ceil(extract(epoch from (public.oppmote_slutt(o) - interval '2 minutes' - o.start)) / (o.periode_min * 60)) end)::int $$;
+
+-- Underviseren starter og stopper oppmøte.
+create or replace function public.oppmote_start(k uuid, minutter int default 10) returns bigint
+  language plpgsql security definer set search_path = public as
+$$
+declare ny bigint;
+begin
+  if not public.er_kurseier(k) then raise exception 'ikke tillatt'; end if;
+  update oppmote_okt set slutt = now() where kurs = k and slutt is null;
+  insert into oppmote_okt (kurs, periode_min) values (k, greatest(3, least(30, coalesce(minutter, 10)))) returning id into ny;
+  return ny;
+end $$;
+create or replace function public.oppmote_stopp(k uuid) returns void
+  language sql security definer set search_path = public as
+$$ update oppmote_okt set slutt = now() where kurs = k and slutt is null and public.er_kurseier(k) $$;
+
+-- Koden som vises på tavla (bare for underviseren).
+create or replace function public.oppmote_kode(k uuid) returns jsonb
+  language sql stable security definer set search_path = public as
+$$
+  select jsonb_build_object('okt', o.id, 'kode', public.oppmote_kode_for(o, p), 'periode', p,
+           'slutter', o.start + make_interval(mins => (p + 1) * o.periode_min), 'start', o.start, 'periode_min', o.periode_min)
+    from oppmote_okt o, lateral (select floor(extract(epoch from (now() - o.start)) / (o.periode_min * 60))::int as p) x
+   where o.kurs = k and public.er_kurseier(k) and o.slutt is null and now() < public.oppmote_slutt(o)
+   order by o.start desc limit 1
+$$;
+
+-- Studenten: er jeg plukket ut akkurat nå (i noen av kursene mine)?
+create or replace function public.oppmote_mine() returns jsonb
+  language sql stable security definer set search_path = public as
+$$
+  select coalesce(jsonb_agg(jsonb_build_object('kurs', o.kurs, 'navn', c.navn, 'okt', o.id, 'periode', x.p,
+           'frist', o.start + make_interval(mins => (x.p + 1) * o.periode_min),
+           'registrert', coalesce((select s.ok from oppmote_svar s where s.okt = o.id and s.student = auth.uid() and s.periode in (x.p, -1) and s.ok limit 1), false))), '[]'::jsonb)
+    from oppmote_okt o join kurs c on c.id = o.kurs join kurs_deltaker d on d.kurs = o.kurs and d.student = auth.uid(),
+         lateral (select floor(extract(epoch from (now() - o.start)) / (o.periode_min * 60))::int as p) x
+   where o.slutt is null and now() < public.oppmote_slutt(o) and public.oppmote_plukket(o, auth.uid(), x.p)
+$$;
+
+-- Studenten skriver inn koden. Høyst 5 forsøk per periode.
+create or replace function public.oppmote_registrer(o_id bigint, kode int) returns text
+  language plpgsql security definer set search_path = public as
+$$
+declare o oppmote_okt; p int; f int;
+begin
+  select * into o from oppmote_okt where id = o_id;
+  if o.id is null or o.slutt is not null or now() >= public.oppmote_slutt(o) then return 'Oppmøtet er avsluttet.'; end if;
+  if not public.er_deltaker(o.kurs) then return 'Du er ikke med i kurset.'; end if;
+  p := floor(extract(epoch from (now() - o.start)) / (o.periode_min * 60))::int;
+  if not public.oppmote_plukket(o, auth.uid(), p) then return 'Du er ikke plukket ut akkurat nå.'; end if;
+  insert into oppmote_svar (okt, student, periode) values (o.id, auth.uid(), p) on conflict do nothing;
+  select forsok into f from oppmote_svar where okt = o.id and student = auth.uid() and periode = p;
+  if exists (select 1 from oppmote_svar where okt = o.id and student = auth.uid() and periode = p and ok) then return 'ok'; end if;
+  if f >= 5 then return 'For mange forsøk. Snakk med faglæreren.'; end if;
+  if kode = public.oppmote_kode_for(o, p) then
+    update oppmote_svar set ok = true, tid = now() where okt = o.id and student = auth.uid() and periode = p; return 'ok';
+  end if;
+  update oppmote_svar set forsok = forsok + 1 where okt = o.id and student = auth.uid() and periode = p;
+  return 'Feil kode. Sjekk tallet på tavla.';
+end $$;
+
+-- Sjekkene i alle øktene i et kurs: én rad per (student, økt) med antall sjekker og beståtte.
+create or replace function public.oppmote_rader(k uuid) returns table (student uuid, okt bigint, start timestamptz, sjekker int, bestatt int, overstyrt boolean)
+  language sql stable security definer set search_path = public as
+$$
+  select d.student, o.id, o.start,
+         -- Overstyrt økt teller som like mange sjekker som en student får i snitt (perioder × andel), alle bestått eller ikke.
+         (case when ov.ok is not null then greatest(1, round(n.np * o.andel)) else coalesce(c.sj, 0) end)::int,
+         (case when ov.ok then greatest(1, round(n.np * o.andel)) when ov.ok is not null then 0 else coalesce(c.be, 0) end)::int,
+         ov.ok
+    from oppmote_okt o
+         join kurs_deltaker d on d.kurs = o.kurs
+         cross join lateral (select public.oppmote_perioder(o) as np) n
+         left join lateral (
+           select count(*) filter (where q.pl) as sj, count(*) filter (where q.pl and s.ok) as be
+             from generate_series(0, n.np - 1) p(p)
+                  cross join lateral (select public.oppmote_plukket(o, d.student, p.p) as pl) q
+                  left join oppmote_svar s on s.okt = o.id and s.student = d.student and s.periode = p.p) c on true
+         left join oppmote_svar ov on ov.okt = o.id and ov.student = d.student and ov.periode = -1
+   where o.kurs = k and (public.er_kurseier(k) or d.student = auth.uid())
+$$;
+
+-- Oversikt for underviseren: navn, e-post, sjekker og beståtte totalt, og økter overstyrt.
+create or replace function public.oppmote_oversikt(k uuid)
+  returns table (student uuid, navn text, epost text, sjekker int, bestatt int, okter jsonb)
+  language sql stable security definer set search_path = public, auth as
+$$
+  select r.student, coalesce((select p.navn from profiler p where p.id = r.student), ''), (select u.email::text from auth.users u where u.id = r.student),
+         sum(r.sjekker)::int, sum(r.bestatt)::int,
+         jsonb_agg(jsonb_build_object('okt', r.okt, 'start', r.start, 'sjekker', r.sjekker, 'bestatt', r.bestatt, 'overstyrt', r.overstyrt) order by r.start)
+    from public.oppmote_rader(k) r where public.er_kurseier(k)
+   group by r.student
+$$;
+-- Studentens eget oppmøte i et kurs.
+create or replace function public.oppmote_mitt(k uuid) returns jsonb
+  language sql stable security definer set search_path = public as
+$$ select jsonb_build_object('sjekker', coalesce(sum(sjekker), 0), 'bestatt', coalesce(sum(bestatt), 0), 'okter', count(*))
+     from public.oppmote_rader(k) where student = auth.uid() $$;
+
+-- Underviseren overstyrer en hel økt for en student: true = møtt, false = ikke møtt, null = fjern overstyringen.
+create or replace function public.oppmote_overstyr(o_id bigint, s uuid, godkjent boolean) returns void
+  language plpgsql security definer set search_path = public as
+$$
+begin
+  if not exists (select 1 from oppmote_okt where id = o_id and public.er_kurseier(kurs)) then raise exception 'ikke tillatt'; end if;
+  delete from oppmote_svar where okt = o_id and student = s and periode = -1;
+  if godkjent is not null then insert into oppmote_svar (okt, student, periode, ok, manuelt) values (o_id, s, -1, godkjent, true); end if;
+end $$;
+
+-- Push-varsel når en student blir plukket ut (kalles hvert minutt av KI-tjeneren, samme hemmelighet som push_jobb).
+create or replace function public.oppmote_push(h text) returns jsonb
+  language plpgsql security definer set search_path = public as
+$$
+declare ut jsonb;
+begin
+  if encode(sha256(convert_to(coalesce(h, ''), 'UTF8')), 'hex') <> 'cc6df8546e2d5ec8b359c4675e6fa1c132ddd29066c3c65a0392e2ef1c0216ba' then raise exception 'ikke tillatt'; end if;
+  with m as (
+    select 'opm:' || o.id || ':' || x.p || ':' || d.student as nokkel, d.student as mottaker, 'Oppmøtesjekk i ' || c.navn as tittel,
+           'Skriv inn koden fra tavla innen kl. ' || to_char((o.start + make_interval(mins => (x.p + 1) * o.periode_min)) at time zone 'Europe/Oslo', 'HH24:MI') || '.' as tekst
+      from oppmote_okt o join kurs c on c.id = o.kurs join kurs_deltaker d on d.kurs = o.kurs,
+           lateral (select floor(extract(epoch from (now() - o.start)) / (o.periode_min * 60))::int as p) x
+     where o.slutt is null and now() < public.oppmote_slutt(o) and public.oppmote_plukket(o, d.student, x.p)
+  ), nye as (
+    insert into push_sendt (nokkel) select nokkel from m on conflict do nothing returning nokkel
+  )
+  select coalesce(jsonb_agg(jsonb_build_object('endpoint', a.endpoint, 'p256dh', a.p256dh, 'auth', a.auth,
+                                               'tittel', m.tittel, 'tekst', m.tekst, 'url', '/studie/index.html')), '[]'::jsonb)
+    into ut from m join nye using (nokkel) join push_abonnement a on a.bruker = m.mottaker;
+  return ut;
+end $$;
+
+revoke execute on function public.oppmote_start(uuid, int), public.oppmote_stopp(uuid), public.oppmote_kode(uuid), public.oppmote_mine(),
+  public.oppmote_registrer(bigint, int), public.oppmote_rader(uuid), public.oppmote_oversikt(uuid), public.oppmote_mitt(uuid),
+  public.oppmote_overstyr(bigint, uuid, boolean) from public, anon;
+grant execute on function public.oppmote_start(uuid, int), public.oppmote_stopp(uuid), public.oppmote_kode(uuid), public.oppmote_mine(),
+  public.oppmote_registrer(bigint, int), public.oppmote_rader(uuid), public.oppmote_oversikt(uuid), public.oppmote_mitt(uuid),
+  public.oppmote_overstyr(bigint, uuid, boolean) to authenticated;
+revoke all on function public.oppmote_push(text) from public;
+grant execute on function public.oppmote_push(text) to anon, authenticated;

@@ -200,3 +200,73 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();
+
+// ---------------------------------------------------------------- oppmøtesjekk
+// Underviseren har startet oppmøte (undervisningsmodus). Er studenten plukket ut i denne perioden, vises en tydelig
+// boks øverst på alle sider (også i appen og fokusvisningen): skriv inn koden fra tavla før fristen.
+// Sjekkes hvert 30. sekund når siden er synlig (supabase/oppsett.sql: oppmote_mine, oppmote_registrer).
+(function () {
+  try { if (window.self !== window.top) return; } catch (e) { return; }
+  var URL_ = (document.querySelector('meta[name="supabase-url"]') || {}).content || '';
+  var NOKKEL = (document.querySelector('meta[name="supabase-key"]') || {}).content || '';
+  if (!/^https:\/\/.+\.supabase\.co/.test(URL_) || NOKKEL.length < 20) return;
+  var lagringsnavn = 'sb-' + URL_.split('//')[1].split('.')[0] + '-auth-token', boks = null, aktiv = null, ok = {}, tikk = null;
+  function token() {
+    var s = null; try { s = JSON.parse(localStorage.getItem(lagringsnavn) || 'null'); } catch (e) {}
+    if (!s || !s.access_token) return Promise.resolve(null);
+    if (s.expires_at && s.expires_at * 1000 < Date.now() + 30000 && window.fhKonto)
+      return window.fhKonto().then(function (k) { return k.auth.getSession(); }).then(function (r) { return r.data.session && r.data.session.access_token; }, function () { return null; });
+    return Promise.resolve(s.access_token);
+  }
+  function rpc(navn, body) {
+    return token().then(function (t) {
+      if (!t) return null;
+      return fetch(URL_ + '/rest/v1/rpc/' + navn, { method: 'POST', headers: { apikey: NOKKEL, Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) })
+        .then(function (r) { return r.ok ? r.json() : null; });
+    }).catch(function () { return null; });
+  }
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  function stil() {
+    if (document.getElementById('fh-opm-stil')) return;
+    var st = document.createElement('style'); st.id = 'fh-opm-stil';
+    st.textContent = '#fh-opm{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:3000;width:min(560px,calc(100vw - 20px));background:#2a2a14;color:#f6f4e8;border:2px solid #eee462;border-radius:14px;padding:.9rem 1rem;box-shadow:0 10px 30px rgba(0,0,0,.5);font:500 1rem system-ui,sans-serif}' +
+      '#fh-opm b{color:#eee462}#fh-opm .rad{display:flex;gap:.5rem;margin-top:.6rem}#fh-opm input{flex:1;min-width:0;font:700 1.6rem ui-monospace,monospace;letter-spacing:.3em;text-align:center;padding:.35rem;border-radius:10px;border:1px solid #888;background:#111;color:#fff}' +
+      '#fh-opm button{font:700 1rem system-ui;padding:.5rem 1rem;border-radius:10px;border:0;background:#eee462;color:#111;cursor:pointer}#fh-opm .liten{font-size:.85rem;opacity:.85;margin-top:.45rem}#fh-opm.ok{border-color:#6ef04a}#fh-opm.ok b{color:#6ef04a}';
+    document.head.appendChild(st);
+  }
+  function fjern() { if (boks) boks.remove(); boks = null; clearInterval(tikk); tikk = null; }
+  function igjen() { var s = Math.max(0, Math.round((Date.parse(aktiv.frist) - Date.now()) / 1000)); return Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); }
+  function vis(a) {
+    var nokkel = a.okt + ':' + a.periode;
+    if (aktiv && aktiv.okt + ':' + aktiv.periode === nokkel && boks) return;
+    aktiv = a; stil(); fjern();
+    boks = document.createElement('div'); boks.id = 'fh-opm'; boks.setAttribute('role', 'alertdialog');
+    boks.innerHTML = '<div><b>Oppmøtesjekk</b> i ' + esc(a.navn) + '. Skriv inn koden som står på tavla. Tid igjen: <b class="igjen">' + igjen() + '</b></div>' +
+      '<form class="rad"><input inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" aria-label="Koden fra tavla" placeholder="···"><button type="submit">Registrer</button></form>' +
+      '<div class="liten melding">Du er plukket ut tilfeldig. Oppmøtet regnes ut fra alle sjekkene i semesteret.</div>';
+    document.body.appendChild(boks);
+    try { if (navigator.vibrate) navigator.vibrate([200, 100, 200]); } catch (e) {}
+    tikk = setInterval(function () { var el = boks && boks.querySelector('.igjen'); if (el) el.textContent = igjen(); if (Date.parse(a.frist) < Date.now()) fjern(); }, 1000);
+    boks.querySelector('form').onsubmit = function (ev) {
+      ev.preventDefault();
+      var inn = boks.querySelector('input'), m = boks.querySelector('.melding'), kode = parseInt(inn.value, 10);
+      if (!(kode >= 100 && kode <= 999)) { m.textContent = 'Koden har tre sifre.'; return; }
+      rpc('oppmote_registrer', { o_id: a.okt, kode: kode }).then(function (svar) {
+        if (svar === 'ok') { ok[nokkel] = true; boks.classList.add('ok'); boks.innerHTML = '<b>Registrert ✓</b> Takk! Du er med på oppmøtet i ' + esc(a.navn) + '.'; setTimeout(fjern, 4000); }
+        else { m.textContent = svar || 'Fikk ikke registrert. Sjekk nettet og prøv igjen.'; inn.select(); }
+      });
+    };
+  }
+  function sjekk() {
+    if (document.hidden) return;
+    var s = null; try { s = JSON.parse(localStorage.getItem(lagringsnavn) || 'null'); } catch (e) {}
+    if (!s || !s.access_token) return;
+    rpc('oppmote_mine').then(function (l) {
+      var a = (l || []).filter(function (x) { return !x.registrert && !ok[x.okt + ':' + x.periode] && Date.parse(x.frist) > Date.now(); })[0];
+      if (a) vis(a); else if (boks && !boks.classList.contains('ok')) fjern();
+    });
+  }
+  setInterval(sjekk, 30000);
+  document.addEventListener('visibilitychange', sjekk);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sjekk); else sjekk();
+})();
