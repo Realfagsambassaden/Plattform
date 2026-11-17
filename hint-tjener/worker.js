@@ -86,6 +86,9 @@ Vurder hva besvarelsen viser:
 - "regnefeil": riktig tankegang og riktige formler, men feil i utregning, avrunding, enheter eller fortegn.
 - "begrep": feil eller manglende forståelse av fysikken (feil formel, feil modell, gjetting), selv om studenten kanskje valgte riktig alternativ.
 Er besvarelsen tom, uleselig eller handler om noe annet, bruk "uklar".
+Tydelighet (bilde): Vær streng. Sluttsvaret skal stå tydelig, med tall, enhet og riktig antall gjeldende siffer, og ha TO STREKER UNDER.
+Mangler de to strekene under sluttsvaret, eller er det uklart hva som er sluttsvaret, bruk "uklar" og be studenten sette to streker
+under sluttsvaret og ta et nytt bilde. Er det tydelig og riktig, bruk "riktig" – også om studenten skrev inn svaret i feil format i appen.
 
 Tilbakemeldingen skal være kort: 1–3 korte setninger på norsk bokmål, i du-form. Si kort hva som var bra, og pek på den konkrete feilen eller neste steg. Ikke skriv hele løsningen på nytt. Bruk desimalpunktum (9.81).\nFormler står på egen linje med $$ ... $$ rundt, for eksempel\n$$v = v_0 + at$$\nBruk $ ... $ bare for et enkelt symbol i teksten, som $v_0$.
 
