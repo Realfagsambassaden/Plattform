@@ -238,7 +238,12 @@ function studieStart() {
     return null;
   }
   // Obligatorisk øving: godkjent når en quiz for øvingen har minst «krav» riktige innen fristen.
-  function godkjent(o) { return (T.quizer || []).some(function (q) { return q.ovelse === o.id && q.riktige >= Math.min(o.krav, q.antall || o.krav) && (!o.frist || Date.parse(q.fullfort) <= Date.parse(o.frist)); }); }
+  // Godkjent: én gjennomføring med nok riktige, eller (egne spørsmål) nok grønne/oransje spørsmål til sammen over flere forsøk.
+  function godkjentSamlet(o) {
+    if (o.kilde !== 'egne' || !(o.sporsmal || []).length || (o.frist && Date.now() > Date.parse(o.frist))) return false;
+    var l = ovStatus(o); return l.filter(function (x) { return x.status === 'ok' || x.status === 'kanskje'; }).length >= Math.min(o.krav, l.length);
+  }
+  function godkjent(o) { return godkjentSamlet(o) || (T.quizer || []).some(function (q) { return q.ovelse === o.id && q.riktige >= Math.min(o.krav, q.antall || o.krav) && (!o.frist || Date.parse(q.fullfort) <= Date.parse(o.frist)); }); }
   function mineOvelser() { var a = aktivtKurs(), mine = a ? (a === 'egen' ? [] : [a.kurs]) : T.deltar.map(function (d) { return d.kurs; }); return (T.ovelser || []).filter(function (o) { return mine.indexOf(o.kurs) >= 0; }); }
   // Spørsmål i arbeidskrav ordnes etter delkapitlenes rekkefølge (temaenes og undertemaenes rekkefølge på nettstedet),
   // så studentene jobber sekvensielt. Innenfor et delkapittel beholdes rekkefølgen underviseren har.
@@ -250,6 +255,33 @@ function studieStart() {
   function sorterDelkap(liste, tFall) {
     return liste.map(function (x, i) { return [delkapRang(x, tFall), i, x]; }).sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; }).map(function (a) { return a[2]; });
   }
+  // Arbeidskravets spørsmål med opprinnelig plass (_i), og automatisk gruppering av tilpasset-tripler uten «gruppe».
+  function ovRaa(o) {
+    var raw = (o.sporsmal || []).map(function (x, i) { return Object.assign({}, x, { _i: i }); });
+    if (raw.length >= 3 && raw.length % 3 === 0 && !raw.some(function (x) { return x.gruppe != null; }) && raw.every(function (x, j) {
+      var a = raw[j - j % 3], tre = raw.slice(j - j % 3, j - j % 3 + 3);
+      return x.undertema === a.undertema && tre.map(function (y) { return y.vanskelighet; }).sort().join() === 'lett,middels,vanskelig'; })) gjettGrupper(raw, 'auto');
+    return raw;
+  }
+  // Status per spørsmål i et arbeidskrav, ut fra alle svarene studenten har gitt (siste svar teller):
+  // ok (grønt), kanskje (oransje: Dashman i tvil), nei (rødt), ingen (ikke svart).
+  function ovStatus(o) {
+    var pre = 'ov-' + String(o.id).slice(0, 8) + '-';
+    return grupper(ovRaa(o)).map(function (g) {
+      var ider = g.map(function (x) { return pre + x._i; }), siste = null;
+      (T.svar || []).forEach(function (s) { if (ider.indexOf(s.id) >= 0 && !s.rep) siste = s; });
+      var st = !siste ? 'ingen' : siste.ki && siste.ki.status === 'kanskje' ? 'kanskje' : (siste.type === 'riktig' || (siste.ki && siste.ki.status === 'godkjent')) ? 'ok' : 'nei';
+      return { tekst: g[0].tekst, ider: ider, status: st };
+    });
+  }
+  var STATUSNAVN = { ok: 'Godkjent', kanskje: 'Kanskje', nei: 'Ikke godkjent', ingen: 'Ikke svart' };
+  function ovOversiktHtml(o, naId) {
+    var l = ovStatus(o), n = function (s) { return l.filter(function (x) { return x.status === s; }).length; }, krav = Math.min(o.krav, l.length);
+    var ok = n('ok') + n('kanskje') >= krav;
+    return '<div class="st-ovoversikt"><div class="st-ovprikker">' + l.map(function (x, i) {
+        return '<span class="st-ovprikk ' + x.status + (naId && x.ider.indexOf(naId) >= 0 ? ' na' : '') + '" title="' + (i + 1) + ': ' + STATUSNAVN[x.status] + '">' + (i + 1) + '</span>'; }).join('') + '</div>' +
+      '<p class="st-sm">' + (n('ok') + n('kanskje')) + ' av ' + l.length + ' riktige (' + n('kanskje') + ' kanskje) · krav ' + krav + ' · <b class="st-ovtotal ' + (ok ? 'ok' : 'nei') + '">' + (ok ? 'Godkjent' : 'Ikke godkjent ennå') + '</b></p></div>';
+  }
   function startOvelse(id) {
     var o = T.ovelser.find(function (x) { return x.id === id; }), t = o.tema.split('/')[1];
     if (!K[t] && !S[t]) return varsle('Temaet finnes ikke lenger.', true);
@@ -257,14 +289,14 @@ function studieStart() {
     // Egne spørsmål: i delkapitlenes rekkefølge (sekvensielt). Spørsmålsbanken: tilpasset nivået, eventuelt bare valgte undertemaer.
     // Arbeidskrav laget med «Tilpasset nivå» der KI-en glemte «gruppe»: ser spørsmålene ut som lett/middels/vanskelig-tripler
     // om samme undertema, slås de sammen her, så studenten får 12 spørsmål og ikke 36.
-    var raw = (o.sporsmal || []).map(function (x) { return Object.assign({}, x); });
+    var raw = ovRaa(o);
     if (raw.length >= 3 && raw.length % 3 === 0 && !raw.some(function (x) { return x.gruppe != null; }) && raw.every(function (x, j) {
       var a = raw[j - j % 3], tre = raw.slice(j - j % 3, j - j % 3 + 3);
       return x.undertema === a.undertema && tre.map(function (y) { return y.vanskelighet; }).sort().join() === 'lett,middels,vanskelig'; })) gjettGrupper(raw, 'auto');
     var liste = o.kilde === 'egne' ? (o.tilfeldig ? raw.map(function (x) { return [Math.random(), x]; }).sort(function (a, b) { return a[0] - b[0]; }).map(function (a) { return a[1]; }) : sorterDelkap(o.sporsmal || [], t)).map(function (x) { if (!erMal(x)) return x; try { return lagVariant(x); } catch (e) { return null; } }).map(function (x, i) {
       if (!x) return null;
       var tu = String(x.undertema || ut[0] || '').split('/'), tt = tu.length > 1 ? tu[0] : t, uu = tu.length > 1 ? tu[1] : tu[0];
-      return Object.assign({}, x, { id: 'ov-' + o.id.slice(0, 8) + '-' + i, tema: K[tt] || S[tt] ? tt : t, undertema: uu || '', vanskelighet: x.vanskelighet || 'middels', forventet_tid_s: x.forventet_tid_s || 90, forklaring: x.forklaring || '' });
+      return Object.assign({}, x, { id: 'ov-' + o.id.slice(0, 8) + '-' + (x._i != null ? x._i : i), tema: K[tt] || S[tt] ? tt : t, undertema: uu || '', vanskelighet: x.vanskelighet || 'middels', forventet_tid_s: x.forventet_tid_s || 90, forklaring: x.forklaring || '' });
     }).filter(Boolean) : null;
     if (liste) liste = grupper(liste);   // tilpasset nivå: varianter av samme spørsmål samles, nesteSp velger én
     var n = liste ? liste.length : o.antall;
@@ -1965,7 +1997,7 @@ function studieStart() {
         fb += '<p class="st-videre">' + (igjen ? '<button type="button" class="st-btn g" data-h="provIgjen">↻ Prøv igjen</button> ' : '') + '<button type="button" class="st-btn" data-h="videre"' + (mangler ? ' disabled title="Forklar svaret først"' : '') + '>' + (q.nr + 1 >= q.antall ? 'Se resultat' : 'Neste') + '</button>' + (mangler ? ' <span class="st-sm">' + (sfk === 'bilde' ? 'Last opp bilde av utregningen og trykk «Få tilbakemelding» først.' : 'Forklar svaret og trykk «Få tilbakemelding» først.') + '</span>' : '') + '</p>';
       }
       return '<div class="st-rad st-sm"><span>' + esc(tittel(x.tema)) + (function (n) { return n ? ' · ' + esc(n) : ''; })(((S[x.tema] || K[x.tema] || {}).undertemaer || {})[x.undertema]) + (x.rep ? ' · repetisjon' : '') + '</span><span>' + (q.nr + 1) + ' av ' + q.antall + '</span></div>' +
-        '<div class="st-fram"><i style="width:' + (q.nr / q.antall * 100) + '%"></i></div>' +
+        '<div class="st-fram"><i style="width:' + (q.nr / q.antall * 100) + '%"></i></div>' + (q.ovelse ? ovOversiktHtml(q.ovelse, x.id) : '') +
         (q.ovelse && q.nr === 0 && q.ovelse.beskrivelse && sv == null ? '<div class="st-fb"><b>' + esc(q.ovelse.tittel) + '</b><p>' + esc(q.ovelse.beskrivelse) + '</p></div>' : '') +
         '<span class="st-mrk ' + x.vanskelighet + '">' + x.vanskelighet + '</span><p class="st-sporsmal">' + tx(x.tekst) + '</p>' +
         (x.tall ? (a ? '<div class="st-alt ' + (x.alt[sv].type === 'riktig' ? 'ok' : 'nei') + '">Ditt svar: ' + esc(x.tallInn || '') + '</div>' + (x.alt[sv].type === 'riktig' ? '' : '<div class="st-alt ok">Riktig svar: ' + tx(x.riktig) + '</div>') + (x.tallMelding ? '<p class="st-sm">' + esc(x.tallMelding) + '</p>' : '')
@@ -1983,6 +2015,7 @@ function studieStart() {
       var ov = q.ovelse, kravN = ov ? Math.min(ov.krav, q.hoved) : 0, ok = ov && q.hovedRes.filter(function (x) { return x === 'riktig'; }).length >= kravN;
       if (ov && ok && ov.frist && Date.now() > Date.parse(ov.frist)) ok = false;
       return '<h2 class="st-h1">Quizzen er ferdig</h2><p class="st-hand">' + c('riktig') + ' av ' + r.length + ' riktige</p>' +
+        (ov ? '<h3>Oppgavene</h3>' + ovOversiktHtml(ov) + '<ol class="st-ovliste">' + ovStatus(ov).map(function (x) { return '<li class="' + x.status + '"><span class="st-ovprikk ' + x.status + '"></span> ' + txLinje(String(x.tekst || '').replace(/\{\{[^}]*\}\}/g, '…').slice(0, 140)) + ' <span class="st-sm">' + STATUSNAVN[x.status] + '</span></li>'; }).join('') + '</ol>' : '') +
         (q.kanskje ? '<div class="st-fb kanskje"><b>' + q.kanskje + ' av dem er «kanskje»</b><p class="st-sm">Dashman var i tvil om utregningen. De teller som riktige, men faglæreren kan se på dem.</p></div>' : '') +
         (ov ? '<div class="st-fb ' + (ok ? '' : 'n') + '"><b>' + esc(ov.tittel) + ': ' + (ok ? 'Godkjent ✓' : 'Ikke godkjent') + '</b><p>' +
           (ok ? 'Bra jobbet! Øvingen er registrert som godkjent.' : 'Du trenger minst ' + kravN + ' av ' + q.hoved + ' riktige' + (ov.frist && Date.now() > Date.parse(ov.frist) ? ', og fristen har gått ut.' : '. Les på temaet og prøv igjen.')) + '</p></div>' : '') +
@@ -2339,7 +2372,7 @@ function studieStart() {
       var ok = godkjent(o), ute = o.frist && Date.now() > Date.parse(o.frist);
       return '<div class="st-ovelse"><span class="st-status ' + (ok ? 'ok' : 'nei') + '">' + (ok ? '✓ Godkjent' : 'Ikke godkjent') + '</span><b>' + esc(o.tittel) + '</b>' +
         '<span class="st-sm">' + esc(dekkerTekst(o)) + ' · minst ' + o.krav + ' av ' + o.antall + ' riktige' + (SVARFORM_KORT[o.svarform] ? ' · krever ' + SVARFORM_KORT[o.svarform] : '') + (o.frist ? ' · frist ' + dato(o.frist) : '') + '</span>' +
-        (o.beskrivelse ? '<span class="st-sm">' + esc(o.beskrivelse) + '</span>' : '') +
+        (o.beskrivelse ? '<span class="st-sm">' + esc(o.beskrivelse) + '</span>' : '') + (o.kilde === 'egne' && (o.sporsmal || []).length ? ovOversiktHtml(o) : '') +
         (!ok && !ute ? '<button type="button" class="st-btn liten" data-h="ovelse" data-id="' + o.id + '">Ta quizen</button>' : '') + (!ok && ute ? '<span class="st-sm">Fristen har gått ut.</span>' : '') + '</div>';
     }).join('');
   }

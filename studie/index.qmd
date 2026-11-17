@@ -61,7 +61,15 @@ toc: false
 .studie .st-mrk.lett { color: var(--bs-info); } .studie .st-mrk.middels { color: var(--bs-warning); } .studie .st-mrk.vanskelig { color: var(--bs-danger); }
 .studie .st-fb { border-left: 4px solid var(--bs-primary); background: rgba(127,127,127,.06); border-radius: 0 8px 8px 0; padding: .55rem .8rem; margin: .7rem 0; }
 .studie .st-fb p, .studie .st-avsnitt { margin: .3rem 0; }
-.studie .st-fb.r { border-color: var(--bs-warning); } .studie .st-fb.kanskje { border-color: #e39d63; } .studie .st-fb.kanskje b { color: #e39d63; } .studie .st-fb.n { border-color: var(--bs-danger); } .studie .st-fb.ki { border-color: var(--bs-info); }
+.studie .st-fb.r { border-color: var(--bs-warning); }
+.studie .st-ovoversikt { margin: .5rem 0; } .studie .st-ovprikker { display: flex; flex-wrap: wrap; gap: .3rem; }
+.studie .st-ovprikk { display: inline-flex; align-items: center; justify-content: center; min-width: 1.6rem; height: 1.6rem; border-radius: 99px; font-size: .75rem; font-weight: 700; border: 2px solid #6b7276; color: #a3a9ad; }
+.studie .st-ovprikk.ok { border-color: #8fcf86; background: rgba(143,207,134,.25); color: #8fcf86; }
+.studie .st-ovprikk.kanskje { border-color: #e39d63; background: rgba(227,157,99,.25); color: #e39d63; }
+.studie .st-ovprikk.nei { border-color: #e06c6c; background: rgba(224,108,108,.22); color: #e06c6c; }
+.studie .st-ovprikk.na { outline: 2px solid var(--bs-body-color); outline-offset: 1px; }
+.studie .st-ovliste .st-ovprikk { min-width: .9rem; height: .9rem; vertical-align: middle; }
+.studie .st-ovtotal.ok { color: #8fcf86; } .studie .st-ovtotal.nei { color: #e06c6c; } .studie .st-fb.kanskje { border-color: #e39d63; } .studie .st-fb.kanskje b { color: #e39d63; } .studie .st-fb.n { border-color: var(--bs-danger); } .studie .st-fb.ki { border-color: var(--bs-info); }
 .studie .st-vedlegg { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0; }
 .studie .st-vedlegg input[type=file] { display: none; }
 .studie .st-forhand { max-width: 100%; max-height: 260px; border-radius: 8px; margin: .3rem 0; }
