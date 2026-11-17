@@ -374,6 +374,32 @@ async function erUnderviser(request, env) {
   return rolle === "underviser" || rolle === "admin";
 }
 
+// «Design din løype»: studenten limer inn en emnebeskrivelse (eller skriver hva hen vil lære), og får forslag til
+// hvilke temaer i læreboka som dekker det. Bare tema-id-er fra katalogen godtas.
+async function loypeforslag(request, env, b, h) {
+  const bruker = await innloggetBruker(request, env);
+  if (!bruker) return json({ feil: "Du må være logget inn." }, 401, h);
+  if (!(await innenforGrense(env, `loype:${bruker.id}:${new Date().toISOString().slice(0, 10)}`, 15, 90000)))
+    return json({ feil: "Du har bedt om mange forslag i dag. Prøv igjen i morgen." }, 429, h);
+  const tekst = kort(b.tekst, 6000).trim();
+  if (tekst.length < 15) return json({ feil: "Lim inn emnebeskrivelsen, eller skriv litt om hva du skal lære." }, 400, h);
+  const katalog = (Array.isArray(b.katalog) ? b.katalog.slice(0, 200) : [])
+    .filter((x) => x && typeof x.id === "string" && /^[a-z0-9-]+$/.test(x.id))
+    .map((x) => ({ id: x.id, tittel: kort(x.tittel, 120), omrade: kort(x.omrade, 80), undertemaer: (Array.isArray(x.undertemaer) ? x.undertemaer : []).slice(0, 30).map((u) => kort(u, 80)) }));
+  if (!katalog.length) return json({ feil: "Fant ingen temaer å velge fra." }, 400, h);
+  const system = `Du hjelper en student å sette sammen en studieløype i en norsk lærebok i realfag.
+Du får en emnebeskrivelse (eller studentens egne ord) og en katalog med temaer (id, tittel, område og undertemaer).
+Velg temaene som trengs for å dekke det beskrivelsen ber om, også grunnleggende temaer som de andre bygger på når det er tydelig nødvendig.
+Ta ikke med temaer som ikke trengs. Bruk BARE id-er fra katalogen.
+Svar KUN med gyldig JSON: {"temaer":["id", …],"kommentar":"én–to setninger på norsk om valget, og hva i beskrivelsen som ikke dekkes av læreboka"}`;
+  const melding = `Emnebeskrivelse / ønske:\n${tekst}\n\nKatalog:\n${JSON.stringify(katalog)}`;
+  const r = lesJson(await spor(env, system, melding, 1500)) || {};
+  const lovlige = new Set(katalog.map((x) => x.id));
+  const temaer = (Array.isArray(r.temaer) ? r.temaer : []).filter((x) => lovlige.has(x));
+  if (!temaer.length) return json({ feil: "Fant ingen temaer som passer. Prøv å lime inn mer av emnebeskrivelsen." }, 422, h);
+  return json({ temaer, kommentar: kort(r.kommentar, 600) }, 200, h);
+}
+
 async function fagforslag(request, env, b, h) {
   const bruker = await innloggetBruker(request, env);
   if (!bruker) return json({ feil: "Du må være logget inn." }, 401, h);
@@ -457,6 +483,7 @@ export default {
       if (sti.endsWith("/vurder")) return await vurder(request, env, b, h);
       if (sti.endsWith("/rad")) return await rad(request, env, b, h);
       if (sti.endsWith("/fagforslag")) return await fagforslag(request, env, b, h);
+      if (sti.endsWith("/loypeforslag")) return await loypeforslag(request, env, b, h);
       if (sti.endsWith("/kvisslag")) return await kvisslag(request, env, b, h);
       if (sti.endsWith("/materiale")) return await materiale(request, env, b, h);
       if (sti.endsWith("/salen")) return await salen(request, env, b, h);
