@@ -255,7 +255,7 @@ function studieStart() {
     if (!K[t] && !S[t]) return varsle('Temaet finnes ikke lenger.', true);
     var ut = kravIder(o).map(function (id) { return id.split('/').slice(1).join('/'); });
     // Egne spørsmål: i delkapitlenes rekkefølge (sekvensielt). Spørsmålsbanken: tilpasset nivået, eventuelt bare valgte undertemaer.
-    var liste = o.kilde === 'egne' ? sorterDelkap(o.sporsmal || [], t).map(function (x) { if (!erMal(x)) return x; try { return lagVariant(x); } catch (e) { return null; } }).map(function (x, i) {
+    var liste = o.kilde === 'egne' ? (o.tilfeldig ? (o.sporsmal || []).map(function (x) { return [Math.random(), x]; }).sort(function (a, b) { return a[0] - b[0]; }).map(function (a) { return a[1]; }) : sorterDelkap(o.sporsmal || [], t)).map(function (x) { if (!erMal(x)) return x; try { return lagVariant(x); } catch (e) { return null; } }).map(function (x, i) {
       if (!x) return null;
       var tu = String(x.undertema || ut[0] || '').split('/'), tt = tu.length > 1 ? tu[0] : t, uu = tu.length > 1 ? tu[1] : tu[0];
       return Object.assign({}, x, { id: 'ov-' + o.id.slice(0, 8) + '-' + i, tema: K[tt] || S[tt] ? tt : t, undertema: uu || '', vanskelighet: x.vanskelighet || 'middels', forventet_tid_s: x.forventet_tid_s || 90, forklaring: x.forklaring || '' });
@@ -1244,8 +1244,8 @@ function studieStart() {
   function tomtSp() { return { tekst: '', riktig: '', feil: [{ svar: '', type: 'regnefeil' }, { svar: '', type: 'begrep' }, { svar: '', type: 'begrep' }], forklaring: '', undertema: '', vanskelighet: 'middels' }; }
   function nyttKrav(o) {
     var f = T.fag, t = fagTemaer()[0] || '';
-    f.ov = o ? JSON.parse(JSON.stringify({ id: o.id, tittel: o.tittel, ut: kravIder(o), kilde: o.kilde || 'bank', sporsmal: o.sporsmal || [], svarform: o.svarform || 'valgfri', krav: o.krav, antall: o.antall, frist: o.frist ? o.frist.slice(0, 10) : '', beskrivelse: o.beskrivelse || '' }))
-      : { tittel: 'Arbeidskrav ' + ((T.ovelser || []).filter(function (x) { return x.kurs === f.c.id; }).length + 1), ut: [], kilde: 'egne', sporsmal: [], svarform: 'bilde', krav: 4, antall: 6, frist: '', beskrivelse: '' };
+    f.ov = o ? JSON.parse(JSON.stringify({ id: o.id, tittel: o.tittel, ut: kravIder(o), kilde: o.kilde || 'bank', sporsmal: o.sporsmal || [], svarform: o.svarform || 'valgfri', rekkefolge: o.tilfeldig ? 'tilfeldig' : 'kapittel', krav: o.krav, antall: o.antall, frist: o.frist ? o.frist.slice(0, 10) : '', beskrivelse: o.beskrivelse || '' }))
+      : { tittel: 'Arbeidskrav ' + ((T.ovelser || []).filter(function (x) { return x.kurs === f.c.id; }).length + 1), ut: [], kilde: 'egne', sporsmal: [], svarform: 'bilde', rekkefolge: 'kapittel', krav: 4, antall: 6, frist: '', beskrivelse: '' };
     f.kiKviss = { antall: 6, vanskelighet: 'blandet', grunnlag: '', vedlegg: null, filnavn: '' };
     tegn();
   }
@@ -1262,12 +1262,14 @@ function studieStart() {
         if (erMal(x)) { var pv = provVariant(x); if (pv.feil) return varsle('Spørsmål ' + (i + 1) + ': ' + pv.feil, true); continue; }
         if (!x.tekst.trim() || !x.riktig.trim() || x.feil.filter(function (y) { return y.svar.trim(); }).length < 2) return varsle('Spørsmål ' + (i + 1) + ' mangler tekst, riktig svar eller minst to gale svar.', true); }
     }
-    if (v.kilde === 'egne') v.sporsmal = sorterDelkap(v.sporsmal, (v.ut[0] || '').split('/')[1]);
+    if (v.kilde === 'egne' && v.rekkefolge !== 'tilfeldig') v.sporsmal = sorterDelkap(v.sporsmal, (v.ut[0] || '').split('/')[1]);
     var krav = Math.max(1, Math.min(n, +v.krav || 1));
     var rad = { kurs: f.c.id, tittel: v.tittel.trim(), tema: v.ut[0].split('/').slice(0, 2).join('/'), undertemaer: v.ut, kilde: v.kilde,
       sporsmal: v.kilde === 'egne' ? v.sporsmal.map(function (x) { var y = Object.assign({}, x, { feil: x.feil.filter(function (z) { return (z.svar || '').trim() || (erMal(x) && (z.uttrykk || '').trim()); }) }); if (!erMal(y)) { delete y.variabler; delete y.svar; } return y; }) : [],
-      svarform: v.svarform, antall: n, krav: krav, frist: v.frist ? new Date(v.frist + 'T23:59:59').toISOString() : null, beskrivelse: v.beskrivelse.trim() };
-    var sp = v.id ? k.from('ovelser').update(rad).eq('id', v.id).select('*').single() : k.from('ovelser').insert(rad).select('*').single();
+      svarform: v.svarform, tilfeldig: v.kilde === 'egne' && v.rekkefolge === 'tilfeldig', antall: n, krav: krav, frist: v.frist ? new Date(v.frist + 'T23:59:59').toISOString() : null, beskrivelse: v.beskrivelse.trim() };
+    var lagre = function (r) { return v.id ? k.from('ovelser').update(r).eq('id', v.id).select('*').single() : k.from('ovelser').insert(r).select('*').single(); };
+    // Mangler kolonnen «tilfeldig» i databasen ennå, lagres arbeidskravet uten den (rekkefølgen blir da delkapitlenes).
+    var sp = lagre(rad).then(function (r) { if (r.error && /tilfeldig/.test(r.error.message || '')) { delete rad.tilfeldig; return lagre(rad); } return r; });
     f.ovLagrer = true; tegn();
     sp.then(sjekk).then(function (o) {
       T.ovelser = (T.ovelser || []).filter(function (x) { return x.id !== o.id; }).concat([o]);
@@ -1296,7 +1298,7 @@ function studieStart() {
       .then(function (d) {
         var l = (d.sporsmal || []).map(function (x) { var y = Object.assign(tomtSp(), x); y.riktig = y.riktig || ''; while (y.feil.length < 3) y.feil.push({ svar: '', uttrykk: '', type: 'begrep' }); return y; });
         if (!l.length) throw new Error('Fikk ingen spørsmål fra KI denne gangen. Prøv igjen.');
-        v.sporsmal = sorterDelkap(v.sporsmal.concat(l), (v.ut[0] || '').split('/')[1]); v.kilde = 'egne'; if (v.krav > v.sporsmal.length) v.krav = v.sporsmal.length;
+        v.sporsmal = v.rekkefolge === 'tilfeldig' ? v.sporsmal.concat(l) : sorterDelkap(v.sporsmal.concat(l), (v.ut[0] || '').split('/')[1]); v.kilde = 'egne'; if (v.krav > v.sporsmal.length) v.krav = v.sporsmal.length;
         varsle(l.length + ' spørsmål lagt til. Sjekk fasiten før du lagrer.' + (d.vedlegg ? ' ' + d.vedlegg : '')); kk.ulest = [];
       })
       .catch(function (e) { varsle(feilmelding(e), true); })
@@ -1370,7 +1372,9 @@ function studieStart() {
           '<div id="st-eks-' + i + '">' + eksHtml(pv) + '</div></div>';
       }).join('') + '<p><button type="button" class="st-btn g liten" data-h="nyttSp">+ Skriv spørsmål selv</button></p>';
     }
-    o += '</fieldset><label class="st-sm" for="st-ov-form">Svarform</label><select id="st-ov-form" data-ovvalg="svarform">' + Object.keys(SVARFORM).map(function (x) { return opt(x, SVARFORM[x], v.svarform === x); }).join('') + '</select>' +
+    o += '</fieldset>' + (v.kilde === 'egne' ? '<label class="st-sm" for="st-ov-rekke">Rekkefølge på spørsmålene</label><select id="st-ov-rekke" data-ovvalg="rekkefolge">' +
+      opt('kapittel', 'Som i undervisningen (delkapittel for delkapittel)', v.rekkefolge !== 'tilfeldig') + opt('tilfeldig', 'Tilfeldig for hver student', v.rekkefolge === 'tilfeldig') + '</select>' : '') +
+      '<label class="st-sm" for="st-ov-form">Svarform</label><select id="st-ov-form" data-ovvalg="svarform">' + Object.keys(SVARFORM).map(function (x) { return opt(x, SVARFORM[x], v.svarform === x); }).join('') + '</select>' +
       (v.svarform !== 'valgfri' ? '<p class="st-sm">Studenten må forklare hvert svar og få det vurdert av KI før neste spørsmål. Lyd lagres aldri; tale blir tekst på studentens enhet.</p>' : '') +
       '<label class="st-sm" for="st-ov-besk">Beskjed til studentene (valgfri)</label><textarea id="st-ov-besk" class="st-felt" rows="2" data-ov="beskrivelse" maxlength="2000" placeholder="F.eks. «Bruk formelarket. Vis utregningen.»">' + esc(v.beskrivelse) + '</textarea>' +
       '<div class="st-rad" style="gap:1rem"><span style="flex:1"><label class="st-sm" for="st-ov-krav">Krav for godkjent</label><select id="st-ov-krav" data-ovvalg="krav">' +
