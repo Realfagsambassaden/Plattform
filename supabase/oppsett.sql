@@ -972,10 +972,12 @@ create or replace function public.oppmote_kode_for(o public.oppmote_okt, p int) 
   language sql immutable as $$ select 100 + floor(public.oppmote_tall(o.hemmelig::text || ':kode:' || p) * 900)::int $$;
 create or replace function public.oppmote_plukket(o public.oppmote_okt, s uuid, p int) returns boolean
   language sql immutable as $$ select public.oppmote_tall(o.hemmelig::text || ':' || s::text || ':' || p) < o.andel $$;
--- Perioder som teller: de som startet minst 2 minutter før økta sluttet.
+-- Perioder som teller: ferdige perioder mens økta pågår; når den er slutt, også den siste hvis den varte minst 2 minutter.
 create or replace function public.oppmote_perioder(o public.oppmote_okt) returns int
   language sql stable as $$
-  select greatest(0, ceil(extract(epoch from (least(public.oppmote_slutt(o), now()) - interval '2 minutes' - o.start)) / (o.periode_min * 60)))::int $$;
+  select greatest(0, case when now() < public.oppmote_slutt(o)
+    then floor(extract(epoch from (now() - o.start)) / (o.periode_min * 60))
+    else ceil(extract(epoch from (public.oppmote_slutt(o) - interval '2 minutes' - o.start)) / (o.periode_min * 60)) end)::int $$;
 
 -- Underviseren starter og stopper oppmøte.
 create or replace function public.oppmote_start(k uuid, minutter int default 10) returns bigint
@@ -1042,15 +1044,20 @@ create or replace function public.oppmote_rader(k uuid) returns table (student u
   language sql stable security definer set search_path = public as
 $$
   select d.student, o.id, o.start,
-         case when ov.ok is not null then 0 else count(p.p) filter (where public.oppmote_plukket(o, d.student, p.p)) end::int,
-         case when ov.ok is not null then 0 else count(s.periode) filter (where s.ok and public.oppmote_plukket(o, d.student, p.p)) end::int,
+         -- Overstyrt økt teller som like mange sjekker som en student får i snitt (perioder × andel), alle bestått eller ikke.
+         (case when ov.ok is not null then greatest(1, round(n.np * o.andel)) else coalesce(c.sj, 0) end)::int,
+         (case when ov.ok then greatest(1, round(n.np * o.andel)) when ov.ok is not null then 0 else coalesce(c.be, 0) end)::int,
          ov.ok
-    from oppmote_okt o join kurs_deltaker d on d.kurs = o.kurs
-         cross join lateral generate_series(0, public.oppmote_perioder(o) - 1) p(p)
-         left join oppmote_svar s on s.okt = o.id and s.student = d.student and s.periode = p.p
+    from oppmote_okt o
+         join kurs_deltaker d on d.kurs = o.kurs
+         cross join lateral (select public.oppmote_perioder(o) as np) n
+         left join lateral (
+           select count(*) filter (where q.pl) as sj, count(*) filter (where q.pl and s.ok) as be
+             from generate_series(0, n.np - 1) p(p)
+                  cross join lateral (select public.oppmote_plukket(o, d.student, p.p) as pl) q
+                  left join oppmote_svar s on s.okt = o.id and s.student = d.student and s.periode = p.p) c on true
          left join oppmote_svar ov on ov.okt = o.id and ov.student = d.student and ov.periode = -1
    where o.kurs = k and (public.er_kurseier(k) or d.student = auth.uid())
-   group by d.student, o.id, o.start, ov.ok
 $$;
 
 -- Oversikt for underviseren: navn, e-post, sjekker og beståtte totalt, og økter overstyrt.
@@ -1071,7 +1078,6 @@ $$ select jsonb_build_object('sjekker', coalesce(sum(sjekker), 0), 'bestatt', co
      from public.oppmote_rader(k) where student = auth.uid() $$;
 
 -- Underviseren overstyrer en hel økt for en student: true = møtt, false = ikke møtt, null = fjern overstyringen.
--- Overstyrt økt teller ikke som sjekker, men legges til som én bestått/ikke bestått «sjekk per periode» i oversikten (se appen).
 create or replace function public.oppmote_overstyr(o_id bigint, s uuid, godkjent boolean) returns void
   language plpgsql security definer set search_path = public as
 $$
