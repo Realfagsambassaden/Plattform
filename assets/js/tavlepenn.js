@@ -39,16 +39,17 @@ window.Tavlepenn = function (scene, flate, lagringsnokkel) {
     lerret.width = Math.round(B * dpr); lerret.height = Math.round(H * dpr); lerret.style.width = B + 'px'; lerret.style.height = H + 'px';
     tegnAlt();
   }
-  function bredde(s, p) { return (s.v ? 30 : (s.t === 2 ? 9 : 4.2)) * (0.45 + 1.1 * p) * Math.min(B, H) / 800; }
-  function strek(s, fra) {
+  function bredde(s, p, b, h) { return (s.v ? 30 : (s.t === 2 ? 9 : 4.2)) * (0.45 + 1.1 * p) * Math.min(b, h) / 800; }
+  function strek(s, fra) { strekPa(ctx, B, H, dpr, s, fra); planSpeil(); }
+  function strekPa(ctx, B, H, dpr, s, fra) {
     var p = s.p; if (!p.length) return;
     ctx.save(); ctx.scale(dpr, dpr);
     ctx.globalCompositeOperation = s.v ? 'destination-out' : 'source-over';
     ctx.strokeStyle = s.v ? '#000' : (s.c || (FARGER[s.f] || FARGER[0])[1]); ctx.fillStyle = ctx.strokeStyle; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    if (p.length === 1) { ctx.beginPath(); ctx.arc(p[0][0] * B, p[0][1] * H, bredde(s, p[0][2]) / 2, 0, 7); ctx.fill(); ctx.restore(); return; }
+    if (p.length === 1) { ctx.beginPath(); ctx.arc(p[0][0] * B, p[0][1] * H, bredde(s, p[0][2], B, H) / 2, 0, 7); ctx.fill(); ctx.restore(); return; }
     for (var i = Math.max(1, fra || 1); i < p.length; i++) {   // korte biter med trykkets tykkelse; myk kurve gjennom midtpunktene
       var a = p[i - 1], b = p[i], c = p[i - 2] || a;
-      ctx.lineWidth = bredde(s, (a[2] + b[2]) / 2);
+      ctx.lineWidth = bredde(s, (a[2] + b[2]) / 2, B, H);
       ctx.beginPath();
       ctx.moveTo((c[0] + a[0]) / 2 * B, (c[1] + a[1]) / 2 * H);
       ctx.quadraticCurveTo(a[0] * B, a[1] * H, (a[0] + b[0]) / 2 * B, (a[1] + b[1]) / 2 * H);
@@ -56,7 +57,30 @@ window.Tavlepenn = function (scene, flate, lagringsnokkel) {
     }
     ctx.restore();
   }
-  function tegnAlt() { ctx.clearRect(0, 0, lerret.width, lerret.height); streker().forEach(function (s) { strek(s); }); }
+  function tegnAlt() { ctx.clearRect(0, 0, lerret.width, lerret.height); streker().forEach(function (s) { strekPa(ctx, B, H, dpr, s); }); planSpeil(); }
+
+  // ---- speil: samme tegninger på slidene i vinduet på den andre skjermen (projektoren). Tegnes på nytt etter hver endring.
+  var speil = null, speilPlan = false;
+  function planSpeil() { if (!speil || speilPlan) return; speilPlan = true; (window.requestAnimationFrame || setTimeout)(function () { speilPlan = false; tegnSpeil(); }); }
+  function tegnSpeil() {
+    if (!speil || !speil.flate.isConnected) return;
+    var r = speil.flate.getBoundingClientRect(), d = (speil.flate.ownerDocument.defaultView || window).devicePixelRatio || 1, c = speil.lerret;
+    if (c.width !== Math.round(r.width * d) || c.height !== Math.round(r.height * d)) { c.width = Math.round(r.width * d); c.height = Math.round(r.height * d); c.style.width = r.width + 'px'; c.style.height = r.height + 'px'; }
+    var x = c.getContext('2d'); x.clearRect(0, 0, c.width, c.height);
+    streker().forEach(function (s) { strekPa(x, r.width, r.height, d, s); });
+    speil.tavle.hidden = !tavleVis;
+  }
+  function settSpeil(flate2) {
+    if (speil && speil.flate === flate2 && speil.lerret.isConnected) return planSpeil();
+    var dok = flate2.ownerDocument;
+    Array.prototype.slice.call(flate2.querySelectorAll('.tp-lerret, .tp-tavle')).forEach(function (e) { e.remove(); });
+    var c = dok.createElement('canvas'); c.className = 'tp-lerret';
+    var t = dok.createElement('div'); t.className = 'tp-tavle'; t.hidden = true; t.innerHTML = '<span class="tp-tavlenavn">Tavle</span>';
+    flate2.appendChild(t); flate2.appendChild(c);
+    speil = { flate: flate2, lerret: c, tavle: t };
+    var w = dok.defaultView; if (w) w.addEventListener('resize', planSpeil);
+    planSpeil();
+  }
 
   // ---- penn og finger. Har pennen vært brukt, tegner ikke fingeren (håndflaten på iPad).
   var naa = null, pennBrukt = false;
@@ -93,6 +117,7 @@ window.Tavlepenn = function (scene, flate, lagringsnokkel) {
     verktoy.querySelector('[data-tp="visk"]').classList.toggle('valgt', visk);
     verktoy.querySelector('[data-tp="tykk"]').textContent = tykk === 2 ? '⬤' : '●';
     tavle.hidden = !tavleVis; flate.classList.toggle('tp-tavlemodus', tavleVis);
+    planSpeil();
   }
   function penn(paa) { aktiv = paa == null ? !aktiv : paa; if (!aktiv) visk = false; oppdater(); }
   function angre() { var s = streker(); s.pop(); tegnAlt(); lagre(); }
@@ -134,6 +159,8 @@ window.Tavlepenn = function (scene, flate, lagringsnokkel) {
     verktoy: verktoy,
     penn: penn, tavle: visTavle,
     erAktiv: function () { return aktiv; },
+    // Viser de samme tegningene (skrivebeskyttet) på en annen flate, f.eks. sliden i vinduet på projektoren.
+    speil: settSpeil,
     // Kalles når sliden byttes: viser tegningene som hører til sliden (tavla lukkes)
     slide: function (k) { noekkel = String(k); tavleVis = false; oppdater(); storrelse(); }
   };
