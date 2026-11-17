@@ -191,6 +191,10 @@ Lag:
 Bruk samme notasjon og begreper som lærestoffet på nettstedet. Regn nøye. Tilpass nivået. Norsk bokmål.
 Har underviseren lagt ved et opplegg: følg det så tett som mulig. Får du NÅVÆRENDE MATERIALE: behold det og gjør bare endringene underviseren ber om.
 
+Studieappen er en NETTAPP – den finnes IKKE i App Store eller Google Play. Skal studentene komme i gang: skann QR-koden (eller åpne lenken),
+lag bruker med e-post, og bli med i kurset med kurskoden. Legg så appen på hjemskjermen: iPhone/iPad (Safari): Del-knappen → «Legg til på Hjem-skjerm»;
+Android (Chrome): menyen ⋮ → «Installer app». Skriv {{qr}} alene på en linje der QR-koden skal stå, og {{kode}} der kurskoden skal stå
+(appen setter dem inn). Skriv aldri «[sett inn kode]» eller lignende plassholdere.
 Svar KUN med gyldig JSON: {"tittel":"…","plan":[{"min":10,"tekst":"…"}],"slides":[{"tittel":"…","tekst":"- …","notat":"…","losning":""}],"kommentar":"…"}`;
 
 // «Fra salen»: KI går gjennom innspillene studentene har sendt i undervisningen (uten navn) og ukas innsikt
@@ -260,9 +264,8 @@ async function materiale(request, env, b, h) {
     (b.niva ? `\nNivå: ${kort(b.niva, 20)}` : "") + `\nUke ${parseInt(b.uke, 10) || 1}, modul: ${kort(b.modul, 60)}` +
     `\nUndertemaer:\n${ut.map((x) => `- ${x.tittel}${x.niva ? ` (nivå ${x.niva})` : ""}`).join("\n") || "(ingen – repetisjon eller fritt)"}` +
     (b.notat ? `\nUkenotat: ${kort(b.notat, 300)}` : "") + (krav.length ? `\nArbeidskrav: ${krav.join("; ")}` : "") +
+    (b.kurs && b.kurs.kode ? `\nKurskode (studentene bruker den for å bli med i kurset): ${kort(b.kurs.kode, 20)}. Lenke: ${kort(b.kurs.lenke, 200)}` : "") +
     `\nLag: ${hva === "begge" ? "plan og slides" : hva === "plan" ? "bare plan (slides kan være tom liste)" : "bare slides (plan kan være tom liste)"}` +
-    (Array.isArray(b.loyper) && b.loyper.length ? `\n\nLØYPER (ferdige ukeplaner på nettstedet). Viser underviseren til en løype (f.eks. «bare temaene i TRES0312»), skal du bruke NØYAKTIG undertemaene fra løypa, og ingen andre:\n` +
-      b.loyper.slice(0, 20).map((L) => `${kort(L.id, 40)} (${kort(L.tittel, 80)}):\n` + (Array.isArray(L.uker) ? L.uker.slice(0, 40) : []).map((k) => `  uke ${kort(String(k.uke), 10)} ${kort(k.tittel, 80)}: ${(Array.isArray(k.undertemaer) ? k.undertemaer.slice(0, 30) : []).map((x) => kort(x, 80)).join(", ")}`).join("\n")).join("\n") : "") +
     (b.onske ? `\n\nØNSKER FRA UNDERVISEREN:\n${kort(b.onske, 8000)}` : "") + (vedlegg ? "\n\nUnderviserens gamle opplegg er vedlagt." : "") +
     (b.navarende ? `\n\nNÅVÆRENDE MATERIALE:\n${kort(JSON.stringify(b.navarende), 20000)}` : "") +
     (stoff.length ? `\n\nLÆRESTOFF FRA NETTSTEDET:\n${stoff.join("\n\n")}` : "") + vi.ber;
@@ -367,6 +370,8 @@ async function fagforslag(request, env, b, h) {
     ({ forkurs: "\nNivå: forkurs", ingenior: "\nNivå: ingeniør", fordypning: "\nNivå: fordypning" }[ramme.niva] || "") +
     `\n\nEmnebeskrivelse:\n${kort(b.emnebeskrivelse, 8000) || "(ingen)"}\n\nLæringsutbytte:\n${kort(b.laringsutbytte, 3000) || "(ingen)"}\n\nKATALOG (id | tittel):\n` +
     katalog.map((x) => `${x.id} | ${x.tittel}`).join("\n") +
+    (Array.isArray(b.loyper) && b.loyper.length ? `\n\nLØYPER (ferdige ukeplaner på nettstedet). Viser underviseren til en løype (f.eks. «bare temaene i TRES0312»), skal du bruke NØYAKTIG undertemaene fra løypa, og ingen andre:\n` +
+      b.loyper.slice(0, 20).map((L) => `${kort(L.id, 40)} (${kort(L.tittel, 80)}):\n` + (Array.isArray(L.uker) ? L.uker.slice(0, 40) : []).map((k) => `  uke ${kort(String(k.uke), 10)} ${kort(k.tittel, 80)}: ${(Array.isArray(k.undertemaer) ? k.undertemaer.slice(0, 30) : []).map((x) => kort(x, 80)).join(", ")}`).join("\n")).join("\n") : "") +
     (b.onske ? `\n\nØNSKER FRA UNDERVISEREN:\n${kort(b.onske, 8000)}` : "") + (vedlegg ? "\n\nUnderviserens tidligere plan er vedlagt." : "") +
     (Array.isArray(b.navarende) && b.navarende.length ? `\n\nNÅVÆRENDE OPPSETT:\n${kort(JSON.stringify(b.navarende), 12000)}` : "") + vi.ber;
   // Svaret skal være JSON. Kommer det noe annet (prosa, avkuttet JSON), prøver vi én gang til med en tydeligere beskjed.
