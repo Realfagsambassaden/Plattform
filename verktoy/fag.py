@@ -55,6 +55,13 @@ for post in liste:
     for f in (ut / 'kapitler').rglob('*.qmd'):   # boksfarger ut fra tittelen: spørsmål → .sporsmal (gul), definisjon → .definisjon (grønn)
         t = f.read_text(encoding='utf-8'); u = merk_bokser(t)
         if u != t: f.write_text(u, encoding='utf-8')
+    # «✏️ Rediger siden» (for undervisere, se assets/js/forelesning-knapp.js): lenke til GitHub-redigering av kildefila.
+    # GitHub lager selv en gren og en PR når main er beskyttet.
+    if post.get('sti'): kilde_repo, prefiks = 'Realfagsambassaden/Plattform', (P.resolve().relative_to(Path(__file__).resolve().parents[1]) / post['sti']).as_posix().lstrip('./') + '/'
+    else: kilde_repo, prefiks = repo, ''
+    for f in (ut / 'kapitler').rglob('*.qmd'):
+        rel = f'{prefiks}kapitler/{f.relative_to(ut / "kapitler").as_posix()}'
+        f.write_text(f.read_text(encoding='utf-8').rstrip() + f'\n\n```{{=html}}\n<div id="kilde-fil" data-rediger="https://github.com/{kilde_repo}/edit/main/{rel}" hidden></div>\n```\n', encoding='utf-8')
     for f in (ut / 'kapitler').rglob('*.qmd'):   # sikkerhetsnett: løsningen i eksempler skjules bak «Vis løsning»
         t = f.read_text(encoding='utf-8'); u = skjul_eksempellosninger(t)
         if u != t: f.write_text(u, encoding='utf-8')

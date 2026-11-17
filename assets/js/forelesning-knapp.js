@@ -3,6 +3,7 @@
 //    og «+ Legg til i forelesning» legger siden i forelesningen man holder på med.
 //  - Kapittelside (…/index.html): «▶ Hele kapittelet i forelesningsmodus».
 //  - Løypeside (loyper/<id>.html): en ▶-knapp ved hvert kapittel, med de sidene løypa har valgt.
+//  - «✏️ Rediger siden» åpner kildefila på GitHub (lenken settes av verktoy/fag.py).
 // Vises når man har vært på lærersiden i denne nettleseren, eller er logget inn som underviser/administrator.
 (function () {
   function erLarer() {
@@ -45,6 +46,12 @@
       } else if (/\/index\.html$/.test(sti) && kapittel.length) {
         bar.innerHTML = '<a class="btn-chalk sekundar" href="' + lenke(kapittel) + '">▶ Hele kapittelet i forelesningsmodus</a>';
       } else return;
+      var kilde = document.getElementById('kilde-fil');
+      if (kilde && kilde.dataset.rediger) {
+        var r = document.createElement('a'); r.className = 'btn-chalk sekundar'; r.href = kilde.dataset.rediger; r.target = '_blank'; r.rel = 'noopener';
+        r.title = 'Åpner kildefila på GitHub. Endringen blir en egen gren og en PR som må merges før den vises her.';
+        r.textContent = '✏️ Rediger siden'; bar.appendChild(r);
+      }
       hode.appendChild(bar);
       var knapp = bar.querySelector('button'); if (!knapp) return;
       knapp.addEventListener('click', function () {
