@@ -804,7 +804,17 @@ async function dekning(request, env, b, h) {
 async function innloggetBruker(request, env) {
   const token = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
   if (!token || !env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) return null;
-  const r = await fetch(`${env.SUPABASE_URL}/auth/v1/user`, { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` } });
+  // Ugyldig/utgått token gir 401/403 → ikke innlogget. Andre feil (429, 5xx, nettverk) prøves én gang til og gir ellers en
+  // tydelig feilmelding i stedet for «du må være logget inn».
+  let r;
+  for (let i = 0; i < 2; i++) {
+    r = await fetch(`${env.SUPABASE_URL}/auth/v1/user`, { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` } }).catch(() => null);
+    if (r && (r.ok || r.status === 401 || r.status === 403)) break;
+  }
+  if (!r || (!r.ok && r.status !== 401 && r.status !== 403)) {
+    console.log("innloggetBruker:", r ? r.status : "nettverk");
+    throw feil("Klarte ikke å sjekke innloggingen akkurat nå. Prøv igjen om litt.", 503);
+  }
   if (!r.ok) return null;
   const u = await r.json();
   return u && u.id ? u : null;
