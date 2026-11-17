@@ -165,6 +165,10 @@ Bruk bare enkel LaTeX: \\frac{}{}, ^, _, \\cdot, \\sqrt{}, greske bokstaver, \\m
 Regn ut svarene nøye; et galt fasitsvar er det verste som kan skje. Norsk bokmål.
 
 Alle spørsmål har også "undertema" og "vanskelighet".
+
+Er vanskeligheten "tilpasset": Lag for HVER idé TRE varianter, én "lett", én "middels" og én "vanskelig", om samme fysikk og samme undertema.
+Varier vanskeligheten ved antall steg, hvor mye som er gitt direkte, og om studenten må velge formel selv – ikke bare ved tallene.
+Gi variantene samme "gruppe" (1, 2, 3, … for idé nr. 1, 2, 3, …). "Antall spørsmål" er da antall idéer, så du lager tre ganger så mange spørsmål.
 Svar KUN med gyldig JSON: {"sporsmal":[{"tekst":"…","variabler":[{"navn":"m","min":1,"maks":5,"steg":0.5}],"svar":"…","enhet":"…","siffer":3,"feil":[{"uttrykk":"…","type":"regnefeil"}],"forklaring":"…","undertema":"","vanskelighet":"middels"}, {"tekst":"…","riktig":"…","feil":[{"svar":"…","type":"begrep"}],"forklaring":"…","undertema":"","vanskelighet":"lett"}]}`;
 
 const SYSTEM_MAT = `Du er en erfaren realfagslærer og lager undervisningsmateriale til ÉN samling i et kurs på NETTSTED.
@@ -274,18 +278,19 @@ async function kvisslag(request, env, b, h) {
   if (!(await erUnderviser(request, env))) return json({ feil: "Bare godkjente undervisere kan lage spørsmål med KI." }, 403, h);
   if (!(await innenforGrense(env, `kviss:${bruker.id}:${new Date().toISOString().slice(0, 10)}`, 40, 90000)))
     return json({ feil: "Du har laget mange spørsmål i dag. Prøv igjen i morgen." }, 429, h);
-  const antall = Math.max(1, Math.min(10, parseInt(b.antall, 10) || 6));
-  const niva = ["lett", "middels", "vanskelig", "blandet"].includes(b.vanskelighet) ? b.vanskelighet : "blandet";
+  const antall = Math.max(1, Math.min(b.vanskelighet === "tilpasset" ? 7 : 10, parseInt(b.antall, 10) || 6));
+  const niva = ["lett", "middels", "vanskelig", "blandet", "tilpasset"].includes(b.vanskelighet) ? b.vanskelighet : "blandet";
+  const tilpasset = niva === "tilpasset";
   const ut = (Array.isArray(b.undertemaer) ? b.undertemaer.slice(0, 20) : []).filter((x) => x && typeof x.id === "string")
     .map((x) => ({ id: kort(x.id, 80), tittel: kort(x.tittel, 120) }));
   const vi = vedleggInfo(b), vedlegg = vi.vedlegg;
   const melding = `Tema: ${kort(b.tema, 120)}\nUndertemaer (id | tittel):\n${ut.map((x) => `${x.id} | ${x.tittel}`).join("\n") || "(hele temaet)"}\n` +
     `Antall spørsmål: ${antall}\nVanskelighet: ${niva}\n\nFra underviseren (ønsker og/eller egne oppgaver – ønskene er krav):\n${kort(b.grunnlag, 8000) || (vedlegg ? "(se vedlegget)" : "(ingen – lag egne)")}` + vi.ber +
     (kort(b.grunnlag, 8000).trim() ? `\n\nHusk: følg underviserens ønsker over nøyaktig. Ingen spørsmål om det underviseren har sagt at ikke skal være med.` : "");
-  const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_KVISS.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 8000, vedlegg));
+  const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_KVISS.replace("NETTSTED", NETTSTEDNAVN(request)), melding, tilpasset ? 16000 : 8000, vedlegg));
   const gyldigeUt = new Set(ut.map((x) => x.id));
   const tall = (v) => (Number.isFinite(+v) ? +v : null);
-  const sp = (r && Array.isArray(r.sporsmal) ? r.sporsmal : []).slice(0, antall).map((x) => {
+  const sp = (r && Array.isArray(r.sporsmal) ? r.sporsmal : []).slice(0, tilpasset ? antall * 3 : antall).map((x) => {
     x = x || {};
     const vars = (Array.isArray(x.variabler) ? x.variabler : []).slice(0, 8).map((a) => ({ navn: kort(a && a.navn, 20), min: tall(a && a.min), maks: tall(a && a.maks), steg: tall(a && a.steg) || 1 }))
       .filter((a) => /^[a-zA-Z_]\w*$/.test(a.navn) && a.min !== null && a.maks !== null && a.maks >= a.min);
@@ -294,7 +299,8 @@ async function kvisslag(request, env, b, h) {
       ? { uttrykk: kort(f && f.uttrykk, 200), svar: "", type: f && f.type === "regnefeil" ? "regnefeil" : "begrep" }
       : { svar: kort(f && f.svar, 200), type: f && f.type === "regnefeil" ? "regnefeil" : "begrep" }).filter((f) => f.uttrykk || f.svar);
     const felles = { tekst: kort(x.tekst, 1500), feil, forklaring: kort(x.forklaring, 1500),
-      undertema: gyldigeUt.has(x.undertema) ? x.undertema : "", vanskelighet: ["lett", "middels", "vanskelig"].includes(x.vanskelighet) ? x.vanskelighet : "middels" };
+      undertema: gyldigeUt.has(x.undertema) ? x.undertema : "", vanskelighet: ["lett", "middels", "vanskelig"].includes(x.vanskelighet) ? x.vanskelighet : "middels",
+      ...(tilpasset && Number.isFinite(+x.gruppe) ? { gruppe: +x.gruppe } : {}) };
     return mal ? { ...felles, riktig: "", variabler: vars, svar: kort(x.svar, 200), enhet: kort(x.enhet, 30), siffer: Math.max(2, Math.min(5, parseInt(x.siffer, 10) || 3)) }
       : { ...felles, riktig: kort(x.riktig, 200) };
   }).filter((x) => x.tekst && (x.variabler || x.riktig) && x.feil.length >= 2);
