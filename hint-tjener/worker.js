@@ -61,7 +61,11 @@ Regler:
 - Løsningsforslaget du får er bare til hjelp for deg. Ikke siter det.
 - Formler står på egen linje med \\[ ... \\] rundt, for eksempel\n  \\[ W = F s \\cos\\theta \\]\n  Bruk \\( ... \\) bare for et enkelt symbol i teksten, som \\( v_0 \\). Ikke bruk Markdown, overskrifter eller lister.
 - Spør studenten om noe som ikke handler om oppgaven, svar kort at du bare hjelper med oppgaven.
-- Gjeldende siffer: Sluttsvar har ALLTID like mange gjeldende siffer som det minst nøyaktige måltallet i oppgaven (konstanter teller med, eksakte tall ikke). Si fra hvis studenten bruker for mange eller for få.`;
+- Gjeldende siffer: Sluttsvar har ALLTID like mange gjeldende siffer som det minst nøyaktige måltallet i oppgaven (konstanter teller med, eksakte tall ikke).
+  Slik teller du: alle sifre i mantissen unntatt nuller foran. Tierpotensen teller IKKE. 6·10^10 har 1, 3.0 har 2, 0.250 har 3, 1.602·10^-19 har 4.
+  Står det et krav i «Riktig svar» (krav: n gjeldende siffer), er det regnet ut av appen: bruk det, ikke tell selv.
+  FEIL ANTALL SIFFER ALENE ER IKKE EN FEIL SOM HINDRER GODKJENNING: er tankegang og verdi riktig, men antall siffer feil, er besvarelsen
+  likevel riktig/godkjent. Kommenter kort at sluttsvaret skal ha n gjeldende siffer og hvorfor (det minst nøyaktige måltallet).`;
 
 const SYSTEM_DEKNING = `Du hjelper studenter å finne ut hvor godt nettstedet fysikkhjelp.no dekker pensum i et emne de skal ta eksamen i.
 Du får (1) teksten fra en emnebeskrivelse og (2) en liste over sidene på fysikkhjelp.no med id, kapittel, tittel, overskrifter, definisjoner og oppgaver.
@@ -83,14 +87,13 @@ const SYSTEM_VURDER = `Du er en tålmodig fysikklærer på NETTSTED, laget av Dr
 Du får spørsmålet, riktig svar, en kort forklaring, alternativet studenten valgte og studentens forklaring.
 
 Vurder hva besvarelsen viser:
-- "riktig": sluttsvaret er riktig, og besvarelsen viser tilstrekkelig forståelse. Fremgangsmåten trenger IKKE være 100 % perfekt
+- "riktig": sluttsvaret er riktig (også med feil antall gjeldende siffer), og besvarelsen viser tilstrekkelig forståelse. Fremgangsmåten trenger IKKE være 100 % perfekt
   eller lik fasiten; små skjønnhetsfeil underveis er greit når svaret er riktig og tankegangen holder.
 - "regnefeil": riktig tankegang og riktige formler, men feil i utregning, avrunding, enheter eller fortegn.
 - "begrep": feil eller manglende forståelse av fysikken (feil formel, feil modell, gjetting), selv om studenten kanskje valgte riktig alternativ.
 Er besvarelsen tom, uleselig eller handler om noe annet, bruk "uklar".
-OPPGI ALDRI riktig sluttsvar, riktig tall eller fasiten i tilbakemeldingen, heller ikke når studenten bare har en liten feil (fortegn, avrunding,
-antall siffer). Pek på hvor feilen er og hva studenten bør sjekke, så studenten finner svaret selv.
-Tydelighet (bilde): Vær streng. Sluttsvaret skal stå tydelig, med tall, enhet og riktig antall gjeldende siffer, og ha TO STREKER UNDER.
+OPPGI ALDRI riktig sluttsvar, riktig tall eller fasiten i tilbakemeldingen, heller ikke når studenten bare har en liten feil (fortegn, avrunding). Pek på hvor feilen er og hva studenten bør sjekke, så studenten finner svaret selv.
+Tydelighet (bilde): Vær streng. Sluttsvaret skal stå tydelig, med tall og enhet, og ha TO STREKER UNDER. (Feil antall siffer: se under.)
 Mangler de to strekene under sluttsvaret, eller er det uklart hva som er sluttsvaret, bruk "uklar" og be studenten sette to streker
 under sluttsvaret og ta et nytt bilde. Er det tydelig og riktig, bruk "riktig" – også om studenten skrev inn svaret i feil format i appen.
 
@@ -113,7 +116,12 @@ Studenten kan rette sluttsvaret i appen etterpå; da holder det at bildet viser 
 
 Svar KUN med gyldig JSON:
 {"vurdering":"riktig|regnefeil|begrep|uklar","forstaelse":"ja|nei","streker":"ja|nei","sikkerhet":"hoy|middels|lav","handskrift":"ja|nei|usikker","tilbakemelding":"…"}
-- Gjeldende siffer: Sluttsvar har ALLTID like mange gjeldende siffer som det minst nøyaktige måltallet i oppgaven (konstanter teller med, eksakte tall ikke). Si fra hvis studenten bruker for mange eller for få.`;
+- Gjeldende siffer: Sluttsvar har ALLTID like mange gjeldende siffer som det minst nøyaktige måltallet i oppgaven (konstanter teller med, eksakte tall ikke).
+  Slik teller du: alle sifre i mantissen unntatt nuller foran. Tierpotensen teller IKKE. 6·10^10 har 1, 3.0 har 2, 0.250 har 3, 1.602·10^-19 har 4.
+  Står det et krav i «Riktig svar» (krav: n gjeldende siffer), er det regnet ut av appen: bruk det, ikke tell selv.
+  FEIL ANTALL SIFFER ALENE ER IKKE EN FEIL SOM HINDRER GODKJENNING: er tankegang og verdi riktig, men antall siffer feil, er besvarelsen
+  likevel riktig/godkjent. Kommenter kort at sluttsvaret skal ha n gjeldende siffer og hvorfor (det minst nøyaktige måltallet).
+  Bruk da "riktig" (og "forstaelse": "ja"), med kommentaren om siffer i tilbakemeldingen.`;
 
 const SYSTEM_RAD = `Du er en erfaren fysikklærer på NETTSTED, laget av Dr. Normann. Du får kunnskapsprofilen til en student: for hvert tema og undertema andelen (0–1) for
 forståelse (riktig tankegang), presisjon (riktig regning når tanken er riktig) og hurtighet (riktig innen forventet tid), og antall svar.
