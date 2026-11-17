@@ -469,7 +469,9 @@ async function hint(request, env, b, h) {
       }
     } catch { /* hint fungerer som før hvis sjekken feiler */ }
   }
-  if (!(await innenforGrense(env, `hint:${ip}:${new Date().toISOString().slice(0, 13)}`, 30, 3700)))
+  // Grense per time: per innlogget student, ellers per IP. En hel klasse på skolens nett deler ofte én IP, så IP-grensen er høy.
+  const hintBruker = request.headers.get("Authorization") ? await innloggetBruker(request, env).catch(() => null) : null;
+  if (!(await innenforGrense(env, hintBruker ? `hint-u:${hintBruker.id}:${new Date().toISOString().slice(0, 13)}` : `hint:${ip}:${new Date().toISOString().slice(0, 13)}`, hintBruker ? 40 : 400, 3700)))
     return json({ feil: "Du har bedt om mange hint den siste timen. Prøv igjen litt senere." }, 429, h);
 
   const tidligere = Array.isArray(b.tidligereHint) ? b.tidligereHint.slice(-3).map((x) => kort(x, 600)) : [];
@@ -834,9 +836,12 @@ function feil(melding, status) { const e = new Error(melding); e.brukermelding =
 
 async function innenforGrense(env, nokkel, maks, ttl) {
   if (!env.HINT_KV) return true;
-  const n = parseInt((await env.HINT_KV.get(nokkel)) || "0", 10);
-  if (n >= maks) return false;
-  await env.HINT_KV.put(nokkel, String(n + 1), { expirationTtl: ttl });
+  // Feiler telleren (f.eks. KV-kvoten er brukt opp), slipper vi forespørselen gjennom i stedet for å stoppe studentene.
+  try {
+    const n = parseInt((await env.HINT_KV.get(nokkel)) || "0", 10);
+    if (n >= maks) return false;
+    await env.HINT_KV.put(nokkel, String(n + 1), { expirationTtl: ttl });
+  } catch (e) { console.log("innenforGrense:", nokkel, String(e).slice(0, 200)); }
   return true;
 }
 
