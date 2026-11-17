@@ -283,6 +283,18 @@ for o in omrader:
             for x in ss:
                 if x['undertema'] == did:
                     temarekke.append({'url': html(x['qmd']), 'tittel': x['tittel'], 'niva': x['niva'] or '', 'omrade': o['tittel'], 'tema': e['tittel']})
+# Kursbyggerens katalog (studie/sporsmal.json → katalog) lages på nytt fra tema.yml ved hver bygging, så nye og
+# omdøpte undertemaer (f.eks. «Kretser») og «Sammensatte oppgaver» alltid er med. Spørsmålene i fila røres ikke.
+_bank = P / 'studie' / 'sporsmal.json'
+if _bank.exists():
+    try:
+        _b = json.loads(_bank.read_text(encoding='utf-8'))
+        _b['katalog'] = {e['id']: {'omrade': o['id'], 'tittel': e['tittel'], 'undertemaer': {d['id']: d['tittel'] for d in e['undertemaer']}}
+                         for o in omrader for e in o['temaer'] if e.get('undertemaer')}
+        _bank.write_text(json.dumps(_b, ensure_ascii=False, indent=0), encoding='utf-8')
+    except Exception as _e:
+        print('ADVARSEL: fikk ikke oppdatert katalogen i studie/sporsmal.json:', _e)
+
 (P / 'loyper.json').write_text(json.dumps({
     'temarekke': temarekke, 'nivanavn': NIVA_NAVN,
     'loyper': [{'id': L['id'], 'tittel': L['tittel'], 'url': html(L['oversikt']),
