@@ -68,7 +68,13 @@ function studieStart() {
   // Forståelse, presisjon og hurtighet får hver sin faste farge (samme som stolpene), så studenten finner dem igjen.
   var ORD = { 'forståelse': 'f', 'presisjon': 'p', 'hurtighet': 'h' };
   function fargeOrd(h) { return h.replace(/(forståelse|presisjon|hurtighet)[a-zæøå]*/gi, function (m, rot) { return '<span class="st-ord ' + ORD[rot.toLowerCase()] + '">' + m + '</span>'; }); }
-  function txLinje(s) { return s.split('$').map(function (d, i) { return i % 2 ? '<span class="st-mat">' + mat(d) + '</span>' : fargeOrd(esc(d).replace(/\s*\n\s*/g, ' ')); }).join(''); }
+  // Tierpotenser skrevet uten formel (KI skriver av og til «1,602 · 10^-19») vises pent, med punktum som desimaltegn.
+  function tierpot(h) {
+    return h.replace(/(\d+)[,.](\d+)(?=\s*[·*×]\s*10\^)/g, '$1.$2')
+      .replace(/(\d)\s*[*×·]\s*10\^\(?([-−+]?\d+)\)?/g, '$1 · 10<sup>$2</sup>')
+      .replace(/(^|[^\w>])10\^\(?([-−+]?\d+)\)?/g, '$110<sup>$2</sup>');
+  }
+  function txLinje(s) { return s.split('$').map(function (d, i) { return i % 2 ? '<span class="st-mat">' + mat(d) + '</span>' : fargeOrd(tierpot(esc(d).replace(/\s*\n\s*/g, ' '))); }).join(''); }
   var tx = function (s) {
     return String(s || '').replace(/\\\[([\s\S]*?)\\\]/g, function (_, f) { return '$$' + f + '$$'; }).split('$$').map(function (d, i) {
       return i % 2 ? '<div class="st-formel">' + mat(d.trim()) + '</div>' : txLinje(d.trim());
@@ -1406,7 +1412,13 @@ function studieStart() {
   }
   function erMal(x) { return !!(x && x.variabler && x.variabler.length); }
   function settInn(tekst, v, n) {
-    return String(tekst || '').replace(/\{\{([^{}]+)\}\}/g, function (_, u) { u = u.trim(); if (Object.prototype.hasOwnProperty.call(v, u) && u !== 'svar') return String(+v[u].toPrecision(12)); return tallTekst(regn(u, v), n); });
+    // Står {{…}} allerede inne i en formel ($ … $), settes tallet inn uten egne $ (ellers blir formelen ødelagt).
+    var t = String(tekst || '');
+    return t.replace(/\{\{([^{}]+)\}\}/g, function (_, u, pos) {
+      u = u.trim(); var iFormel = (t.slice(0, pos).split('$').length - 1) % 2 === 1;
+      var ut = Object.prototype.hasOwnProperty.call(v, u) && u !== 'svar' ? String(+v[u].toPrecision(12)) : tallTekst(regn(u, v), n);
+      return iFormel ? ut.replace(/^\$|\$$/g, '') : ut;
+    });
   }
   function lagVariant(x) {
     var n = +x.siffer || 3, enh = x.enhet ? ' ' + String(x.enhet).replace(/\^-?\d/g, function (m) { return m.slice(1).split('').map(function (c) { return '⁻⁰¹²³⁴⁵⁶⁷⁸⁹'['-0123456789'.indexOf(c)]; }).join(''); }) : '';
