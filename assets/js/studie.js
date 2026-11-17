@@ -418,6 +418,18 @@ function studieStart() {
     }
     return { type: 'regnefeil' };
   }
+  // Retter et svar som ikke er godkjent: forrige forsøk tas ut av resultatet (det står igjen i statistikken), og det nye vurderes.
+  function nullstillSvar(q) {
+    var x = q.na; if (q.svart == null) return;
+    q.res.pop(); if (!x.rep) q.hovedRes.pop();
+    q.svart = null; q.kiSvar = null; q.kiBilde = false; q.kiGodkjent = false; q.sporLagre = false;
+  }
+  function oppdaterTall() {
+    var q = T.q, el = document.getElementById('st-tallsvar'), inn = el ? el.value.trim() : '';
+    if (!inn) return varsle('Skriv svaret ditt først.', true);
+    if (q.svart != null) nullstillSvar(q);
+    tallSvar();
+  }
   function tallSvar() {
     var q = T.q, x = q.na, el = document.getElementById('st-tallsvar'), inn = el ? el.value.trim() : '';
     if (!inn) return varsle('Skriv svaret ditt først.', true);
@@ -549,7 +561,7 @@ function studieStart() {
       return r.json().catch(function () { return {}; }).then(function (d) { if (!r.ok) throw new Error(r.status === 401 ? 'Innloggingen din er gått ut. Last siden på nytt og logg inn igjen.' : (d.feil || 'KI-tjenesten svarte ikke (' + r.status + ').')); return d; }); });
   }
   function vurder() {
-    var q = T.q, x = q.na, s = q.sist, tekst = document.getElementById('st-forklaring').value.trim();
+    var q = T.q, x = q.na, s = q.sist, fel = document.getElementById('st-forklaring'), tekst = (fel ? fel.value : q.tekst || '').trim();
     stoppTale();
     if (!tekst && !q.bilde) return varsle('Skriv, snakk eller last opp et bilde først.', true);
     if (q.ovelse && q.ovelse.svarform === 'bilde' && !q.bilde) return varsle('Ta bilde av utregningen først.', true);
@@ -2029,13 +2041,15 @@ function studieStart() {
     },
     quiz: function () {
       var q = T.q, x = q.na, sv = q.svart, a = sv == null ? null : x.alt[sv], fb = '';
+      // Ikke godkjent ennå: svaret kan rettes direkte (skriv nytt svar / velg annet alternativ / last opp nytt bilde) uten å starte på nytt.
+      var apen = a && a.type !== 'riktig' && !q.kiGodkjent && !x.rep && !(q.ovelse && q.ovelse.ettForsok) && !q.venter;
       if (a) {
         var kl = a.type === 'riktig' ? '' : (a.type === 'regnefeil' ? 'r' : 'n');
         var ti = a.type === 'riktig' ? 'Riktig!' : a.bilde ? 'Utregningen er levert.' : (a.type === 'regnefeil' ? 'Riktig tanke, men regnefeil.' : 'Ikke riktig.');
         if (a.bilde && q.kiGodkjent) { ti = 'Godkjent!'; kl = q.kiGodkjent === 'kanskje' ? 'kanskje' : ''; } else if (a.bilde) kl = 'kanskje';
         // Feil svar med nye forsøk: verken fasit eller løsning vises. Studenten skal veiledes fram (Prøv igjen, Dashman).
         var skjul = a.type !== 'riktig' && !x.rep && !(q.ovelse && q.ovelse.ettForsok) && !q.kiGodkjent;
-        var hjelp = a.bilde ? '<p>' + (q.venter ? 'Dashman ser på utregningen …' : 'Se tilbakemeldingen under.') + '</p>' : '<p>' + (a.type === 'regnefeil' ? 'Tanken ser riktig ut. Se over regningen: fortegn, enheter, tierpotenser og antall gjeldende siffer.' : 'Se på fysikken en gang til.') + ' Trykk «Prøv igjen», eller spør Dashman om et hint.</p>';
+        var hjelp = a.bilde ? '<p>' + (q.venter ? 'Dashman ser på utregningen …' : 'Se tilbakemeldingen under.') + '</p>' : '<p>' + (a.type === 'regnefeil' ? 'Tanken ser riktig ut. Se over regningen: fortegn, enheter, tierpotenser og antall gjeldende siffer.' : 'Se på fysikken en gang til.') + ' Rett svaret og trykk «Oppdater», last opp en ny utregning, eller spør Dashman om et hint.</p>';
         fb = '<div class="st-fb ' + kl + '"><b>' + ti + '</b><div class="st-avsnitt">' + (skjul ? hjelp : tx(x.forklaring)) + '</div></div>';
         var kis = q.kiSvar;
         if (q.sporLagre) fb += samtykkeHtml('lagreSvar') + (q.bilde ? '<img class="st-forhand" alt="Bildet ditt" src="' + q.bilde + '">' : '');
@@ -2046,7 +2060,8 @@ function studieStart() {
           else if (q.forstatt && q.forstatt.id === x.id && a.type !== 'riktig') fb += '<div class="st-fb kanskje"><b>Utregningen viser forståelse</b><p class="st-sm">Finn feilen, trykk «Prøv igjen» og skriv inn riktig svar. Da er spørsmålet godkjent, uten nytt bilde.</p></div>';
           else if (q.kiGodkjent === 'kanskje') fb += '<div class="st-fb kanskje"><b>Kanskje godkjent</b><p class="st-sm">Dashman tror utregningen er riktig, men er ikke helt sikker. Spørsmålet teller som riktig inntil faglæreren eventuelt sier noe annet.</p></div>';
           fb += '<div class="st-fb ki"><b>' + kt + '</b><div class="st-avsnitt">' + tx(kis.tilbakemelding) + '</div>' + 
-            (q.gjennomsyn && q.sist && q.sist.ki && q.sist.ki.gjennomsyn ? '<p class="st-sm">Bildet er sendt til gjennomsyn hos en lærer. Avvises det, teller ikke forsøket.</p>' : '') + '</div>';
+            (q.gjennomsyn && q.sist && q.sist.ki && q.sist.ki.gjennomsyn ? '<p class="st-sm">Bildet er sendt til gjennomsyn hos en lærer. Avvises det, teller ikke forsøket.</p>' : '') +
+            (!q.kiGodkjent && !q.venter ? '<p><label class="st-btn g liten">' + ikon('kamera', 18) + ' Last opp ny utregning<input type="file" accept="image/*" capture="environment" id="st-bilde" hidden></label></p>' : '') + '</div>';
         } else {
           var sf = q.ovelse && q.ovelse.svarform && q.ovelse.svarform !== 'valgfri' ? q.ovelse.svarform : '', kanTale = Tale && !taleNei, bareTale = sf === 'muntlig' && kanTale;
           fb += '<h3>Vis hvordan du tenkte' + (sf ? ' <span class="st-pakrevd">påkrevd</span>' : '') + '</h3><p class="st-sm">' +
@@ -2061,17 +2076,19 @@ function studieStart() {
         }
         var sfk = q.ovelse && q.ovelse.svarform, mangler = q.sporLagre || q.venter, uGodkj = sfk && sfk !== 'valgfri' && !q.kiGodkjent && (!q.kiSvar || q.kiSvar.feil || (sfk === 'bilde' && !q.kiBilde));
         var igjen = a.type !== 'riktig' && !x.rep && !(q.ovelse && q.ovelse.ettForsok);
-        fb += '<p class="st-videre">' + (igjen ? '<button type="button" class="st-btn g" data-h="provIgjen">↻ Prøv igjen</button> ' : '') + '<button type="button" class="st-btn" data-h="videre"' + (mangler ? ' disabled title="Forklar svaret først"' : '') + '>' + (q.nr + 1 >= q.antall ? 'Se resultat' : 'Neste') + '</button>' + (uGodkj && !mangler ? ' <span class="st-sm">' + (sfk === 'bilde' ? 'Ikke godkjent før utregningen er lastet opp. Du kan gå videre og ta spørsmålet igjen senere.' : 'Ikke godkjent før du har forklart svaret. Du kan gå videre og ta spørsmålet igjen senere.') + '</span>' : '') + '</p>';
+        fb += '<p class="st-videre">' + '<button type="button" class="st-btn" data-h="videre"' + (mangler ? ' disabled title="Forklar svaret først"' : '') + '>' + (q.nr + 1 >= q.antall ? 'Se resultat' : 'Neste') + '</button>' + (uGodkj && !mangler ? ' <span class="st-sm">' + (sfk === 'bilde' ? 'Ikke godkjent før utregningen er lastet opp. Du kan gå videre og ta spørsmålet igjen senere.' : 'Ikke godkjent før du har forklart svaret. Du kan gå videre og ta spørsmålet igjen senere.') + '</span>' : '') + '</p>';
       }
       return '<div class="st-rad st-sm"><span>' + esc(tittel(x.tema)) + (function (n) { return n ? ' · ' + esc(n) : ''; })(((S[x.tema] || K[x.tema] || {}).undertemaer || {})[x.undertema]) + (x.rep ? ' · repetisjon' : '') + '</span><span>' + (q.nr + 1) + ' av ' + q.antall + '</span></div>' +
         '<div class="st-fram"><i style="width:' + (q.nr / q.antall * 100) + '%"></i></div>' + (q.ovelse ? ovOversiktHtml(q.ovelse, x.id) : '') +
         (q.ovelse && q.nr === 0 && q.ovelse.beskrivelse && sv == null ? '<div class="st-fb"><b>' + esc(q.ovelse.tittel) + '</b><p>' + esc(q.ovelse.beskrivelse) + '</p></div>' : '') +
         '<span class="st-mrk ' + x.vanskelighet + '">' + x.vanskelighet + '</span><p class="st-sporsmal">' + tx(x.tekst) + '</p>' +
-        (x.tall ? (a ? '<div class="st-alt ' + (x.alt[sv].type === 'riktig' || q.kiGodkjent ? 'ok' : x.alt[sv].bilde ? '' : 'nei') + '">Ditt svar: ' + esc(x.tallInn || '') + '</div>' + (x.alt[sv].type === 'riktig' || skjul ? '' : '<div class="st-alt ok">Riktig svar: ' + tx(x.riktig) + '</div>') + (x.tallMelding ? '<p class="st-sm">' + esc(x.tallMelding) + '</p>' : '')
+        (x.tall ? (a && apen ? '<div class="st-tallsvar"><input id="st-tallsvar" class="st-felt" inputmode="text" autocomplete="off" placeholder="Rett svaret, f.eks. 4.5 mC" value="' + esc(x.tallInn && x.tallInn !== '(se bildet)' ? x.tallInn : '') + '"><button type="button" class="st-btn" data-h="oppdaterTall">Oppdater</button></div>' +
+              (x.tallMelding ? '<div class="st-fb st-tallmelding"><b>Sjekk svaret</b><p>' + esc(x.tallMelding) + '</p></div>' : '')
+          : a ? '<div class="st-alt ' + (x.alt[sv].type === 'riktig' || q.kiGodkjent ? 'ok' : x.alt[sv].bilde ? '' : 'nei') + '">Ditt svar: ' + esc(x.tallInn || '') + '</div>' + (x.alt[sv].type === 'riktig' || skjul ? '' : '<div class="st-alt ok">Riktig svar: ' + tx(x.riktig) + '</div>') + (x.tallMelding ? '<p class="st-sm">' + esc(x.tallMelding) + '</p>' : '')
             : '<div class="st-tallsvar"><input id="st-tallsvar" class="st-felt" inputmode="text" autocomplete="off" placeholder="Svaret ditt med enhet, f.eks. 4.5 mC" value="' + esc(x.tallInn || '') + '"><button type="button" class="st-btn" data-h="tallSvar">Svar</button></div>' +
               (x.tallMelding ? '<div class="st-fb st-tallmelding"><b>Sjekk svaret</b><p>' + esc(x.tallMelding) + '</p></div>' : '') +
               '<p class="st-sm">Desimaltegn: punktum eller komma. Tierpotens: 2.1e-3 eller 2.1*10^-3. Prefikser som m, µ (u), k og M går fint.</p>')
-          : x.alt.map(function (o, i) { var c = ''; if (a) { if (o.type === 'riktig' && !skjul) c = 'ok'; else if (i === sv) c = 'nei'; } return '<button type="button" class="st-alt ' + c + '"' + (a ? ' disabled' : '') + ' data-h="svar" data-i="' + i + '">' + tx(o.svar) + '</button>'; }).join('')) +
+          : x.alt.map(function (o, i) { var c = ''; if (a) { if (o.type === 'riktig' && !skjul) c = 'ok'; else if (i === sv) c = 'nei'; } return '<button type="button" class="st-alt ' + c + '"' + (a && !apen ? ' disabled' : '') + ' data-h="' + (a ? 'oppdaterValg' : 'svar') + '" data-i="' + i + '">' + tx(o.svar) + '</button>'; }).join('')) +
         // Levere utregningen er likestilt med å skrive inn svaret: ett trykk, og bildet vurderes med en gang.
         (!a ? '<p class="st-lever"><label class="st-btn">' + ikon('kamera', 18) + ' Lever utregningen (bilde)<input type="file" accept="image/*" capture="environment" id="st-lever" hidden></label>' +
           '<span class="st-sm"> Svaret med to streker under. Du trenger ikke skrive det inn.</span></p>' : '') +
@@ -2604,7 +2621,7 @@ function studieStart() {
   }
 
   // Alle klikk og endringer håndteres her (ingen inline-skript i HTML-en).
-  rot.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' && ev.target && ev.target.id === 'st-tallsvar') { ev.preventDefault(); tallSvar(); } });
+  rot.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' && ev.target && ev.target.id === 'st-tallsvar') { ev.preventDefault(); oppdaterTall(); } });
   rot.addEventListener('click', function (ev) {
     var b = ev.target.closest('[data-h]'); if (!b || b.disabled) return;
     var d = b.dataset;
@@ -2640,6 +2657,8 @@ function studieStart() {
         var q = T.q, x = q.na; if (q.svart != null || !q.bilde) return;
         if (x.tall) x.tallInn = '(se bildet)'; x.tallMelding = ''; x.alt.push({ svar: '(levert som bilde)', type: 'regnefeil', bilde: true }); svar(x.alt.length - 1); vurder();
       },
+      oppdaterTall: function () { oppdaterTall(); },
+      oppdaterValg: function () { var q = T.q; if (q.svart == null) return svar(+d.i); if (+d.i === q.svart) return; nullstillSvar(q); svar(+d.i); },
       provIgjen: function () {
         // Uendelig mange forsøk: siste svar tas bort fra resultatet (det lagrede svaret blir stående i statistikken).
         var q = T.q, x = q.na; if (q.svart == null) return;
