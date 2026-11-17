@@ -89,9 +89,9 @@ kapitler:
     uke: "47"
     sider:
       - fysikk-forkurs/kapitler/11-elektrisitet/01-elektrisk-ladning.qmd
-      - fysikk-forkurs/kapitler/11-elektrisitet/02-strom-spenning-og-kretser.qmd
+      - fysikk-forkurs/kapitler/11-elektrisitet/02-strom-og-spenning.qmd
       - fysikk-forkurs/kapitler/11-elektrisitet/03-resistans-og-ohms-lov.qmd
-      - fysikk-forkurs/kapitler/11-elektrisitet/04-serie-og-parallellkobling.qmd
+      - fysikk-forkurs/kapitler/11-elektrisitet/04-kretser.qmd
       - fysikk-forkurs/kapitler/11-elektrisitet/05-kirchhoffs-lover.qmd
       - fysikk-forkurs/kapitler/11-elektrisitet/06-elektrisk-effekt-og-energi.qmd
       - fysikk-forkurs/kapitler/11-elektrisitet/09-ekstraoppgaver.qmd
