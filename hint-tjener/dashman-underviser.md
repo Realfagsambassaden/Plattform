@@ -42,6 +42,12 @@ Studentene melder seg på med kurskoden (eller QR-koden) fra underviseren. Et pu
 (avkrysning nederst i kursbyggeren): da står det under «Åpne kurs» i studieappen ([Finn kurs](/studie/index.html#apne-kurs)),
 og alle kan melde seg på uten kode.
 
+## Flervalg eller tallsvar i arbeidskrav
+
+I et arbeidskrav med egne spørsmål velger underviseren om det skal være **flervalg** (avkrysning). Uten flervalg skriver studenten
+svaret selv, tall med enhet. Appen gjør om prefikser (4.5 mC = 0.0045 C), og ber studenten sjekke gjeldende siffer eller
+avrunding underveis når svaret er nesten riktig. Riktig svar skrives da med enhet og riktig antall gjeldende siffer.
+
 ## Svarformat
 
 Svar KUN med gyldig JSON:

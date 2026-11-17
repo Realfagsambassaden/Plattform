@@ -291,13 +291,68 @@ function studieStart() {
     nesteSp();
     ga('quiz');
   }
+  // ---------------------------------------------------------------- tallsvar (arbeidskrav uten flervalg)
+  // Studenten skriver tall med enhet. Appen gjør om dekadiske prefikser (mC ↔ C), sjekker verdien og antall gjeldende
+  // siffer. Riktig verdi med feil antall siffer, eller svar som er nesten riktige (avrundet underveis), gir et spørsmål om å
+  // sjekke svaret i stedet for «feil». Andre gang godtas sifferavvik; et avrundingsavvik teller da som feil.
+  var PREFIKS = { p: -12, n: -9, u: -6, m: -3, c: -2, d: -1, k: 3, M: 6, G: 9 };
+  function lesTall(r) {
+    var t = String(r == null ? '' : r).replace(/\$/g, '').replace(/\\(?:mathrm|text|mathit)\{([^}]*)\}/g, '$1').replace(/\\[,;: ]|~/g, ' ')
+      .replace(/\\cdot|\\times|·|×/g, '*').replace(/−/g, '-').replace(/\\mu\s*|μ|µ/g, 'u').replace(/\\Omega|Ω/g, 'ohm').replace(/[{}]/g, '');
+    if (t.lastIndexOf('=') >= 0) t = t.slice(t.lastIndexOf('=') + 1);
+    var m = /([-+]?\s*\d+(?:[.,]\d+)?|[-+]?\s*[.,]\d+)(?:\s*[eE]\s*([-+]?\d+)|\s*\*\s*10\s*\^\s*\(?\s*([-+]?\d+)\s*\)?)?/.exec(t);
+    if (!m) return null;
+    var mant = m[1].replace(/\s/g, '').replace(',', '.'), eks = +(m[2] || m[3] || 0);
+    var sifre = mant.replace(/^[-+]/, ''), harPunkt = sifre.indexOf('.') >= 0, d = sifre.replace('.', '').replace(/^0+/, '');
+    var sMax = Math.max(1, d.length), sMin = harPunkt ? sMax : Math.max(1, d.replace(/0+$/, '').length);
+    var enhet = t.slice(m.index + m[0].length).replace(/^\s*\*?\s*/, '').replace(/\s+/g, '').replace(/[.]$/, '');
+    return { v: parseFloat(mant) * Math.pow(10, eks), sMin: sMin, sMax: sMax, enhet: enhet };
+  }
+  function enhetFaktor(su, fu) {
+    if (su === fu) return 1;
+    var deler = function (u) { var l = [[0, u]]; if (u.length > 1 && PREFIKS[u[0]] != null) l.push([PREFIKS[u[0]], u.slice(1)]); return l; };
+    var a = deler(su), b = deler(fu);
+    for (var i = 0; i < a.length; i++) for (var j = 0; j < b.length; j++) if (a[i][1] === b[j][1]) return Math.pow(10, a[i][0] - b[j][0]);
+    return NaN;
+  }
+  function rundSig(x, n) { return x === 0 ? 0 : +x.toPrecision(n); }
+  function vurderTall(x, inn, gjentatt) {
+    var f = lesTall(x.riktig); if (!f) return { type: 'riktig' };   // fasit uten tall: kan ikke sjekkes, godtas
+    var fv = x.verdi != null ? x.verdi : f.v, fu = f.enhet, n = x.verdi != null ? (+x.siffer || 3) : f.sMax;
+    var st = lesTall(inn);
+    if (!st || !isFinite(st.v)) return { sporsmal: 'Skriv svaret som et tall, gjerne med enhet, f.eks. «4.5 mC» eller «2.1e-3 N».' };
+    var fak = 1;
+    if (fu && !st.enhet) { if (gjentatt !== 'enhet') return { sporsmal: 'Husk enheten! Skriv svaret med enhet (her: ' + fu.replace(/^u/, 'µ') + ' eller en annen med prefiks).', igjen: 'enhet' }; }
+    else if (st.enhet && fu) { fak = enhetFaktor(st.enhet, fu); if (!isFinite(fak)) return { type: 'begrep', melding: 'Enheten «' + st.enhet + '» passer ikke her.' }; }
+    var sv = st.v * fak;
+    if (Math.abs(rundSig(sv, n) - rundSig(fv, n)) <= Math.abs(rundSig(fv, n)) * 1e-9 + 1e-300) {
+      if (n >= st.sMin && n <= st.sMax) return { type: 'riktig' };
+      if (gjentatt === 'siffer') return { type: 'riktig', melding: 'Verdien er riktig, men svaret bør ha ' + n + ' gjeldende siffer.' };
+      return { sporsmal: 'Du har nesten helt sikkert regnet riktig! Men sjekk antall gjeldende siffer: svaret ditt har ' + (st.sMin === st.sMax ? st.sMax : st.sMin + '–' + st.sMax) + ', og her bør det ha ' + n + '. Rund av og svar på nytt.', igjen: 'siffer' };
+    }
+    if (fv !== 0 && Math.abs(sv - fv) / Math.abs(fv) < 0.03) {
+      if (gjentatt === 'avrunding') return { type: 'regnefeil', melding: 'Svaret er nær, men ikke riktig. Kanskje du rundet av for tidlig underveis?' };
+      return { sporsmal: 'Svaret ditt er veldig nær, men ikke helt riktig. Har du rundet av underveis i utregningen? Regn med flere siffer til slutt, og sjekk svaret.', igjen: 'avrunding' };
+    }
+    return { type: 'regnefeil' };
+  }
+  function tallSvar() {
+    var q = T.q, x = q.na, el = document.getElementById('st-tallsvar'), inn = el ? el.value.trim() : '';
+    if (!inn) return varsle('Skriv svaret ditt først.', true);
+    x.tallInn = inn;
+    var r = vurderTall(x, inn, x.tallSist);
+    if (r.sporsmal) { x.tallMelding = r.sporsmal; x.tallSist = r.igjen || x.tallSist; return tegn(); }
+    x.tallMelding = r.melding || null;
+    if (r.type === 'riktig') return svar(0);
+    x.alt.push({ svar: inn, type: r.type }); svar(x.alt.length - 1);
+  }
   function nesteSp() {
     var q = T.q, x = null, rep = false;
     if (q.nr >= q.hoved) { x = repSp(q); rep = !!x; }
     if (!x && q.nr < q.hoved) x = q.liste ? q.liste[q.nr] : velgNeste(q.tema, q.brukt, q.ut);
     if (!x) { q.ferdig = true; return; }
     q.brukt.push(x.id);
-    var alt = [{ svar: x.riktig, type: 'riktig' }].concat(x.feil).map(function (a) { return [Math.random(), a]; }).sort(function (a, b) { return a[0] - b[0]; }).map(function (a) { return a[1]; });
+    var alt = x.tall ? [{ svar: x.riktig, type: 'riktig' }] : [{ svar: x.riktig, type: 'riktig' }].concat(x.feil || []).map(function (a) { return [Math.random(), a]; }).sort(function (a, b) { return a[0] - b[0]; }).map(function (a) { return a[1]; });
     stoppTale();
     q.na = Object.assign({}, x, { alt: alt, rep: rep, start: performance.now() }); q.svart = null; q.kiSvar = null; q.kiBilde = false; q.bilde = null; q.tekst = '';
   }
@@ -1211,8 +1266,8 @@ function studieStart() {
       var riktig = tallTekst(svar, n) + enh, sett = [riktig];
       var feil = (x.feil || []).map(function (f) { var s2 = f.uttrykk ? (function () { try { var y = regn(f.uttrykk, v); return isFinite(y) ? tallTekst(y, n) + enh : ''; } catch (e) { return ''; } })() : settInn(f.svar, v, n); return { svar: s2, type: f.type }; })
         .filter(function (f) { if (!f.svar || sett.indexOf(f.svar) >= 0) return false; sett.push(f.svar); return true; });
-      if (feil.length < 2) continue;
-      return { tekst: settInn(x.tekst, v, n), riktig: riktig, feil: feil, forklaring: settInn(x.forklaring, v, n), undertema: x.undertema, vanskelighet: x.vanskelighet, forventet_tid_s: x.forventet_tid_s };
+      if (!x.tall && feil.length < 2) continue;
+      return { tall: !!x.tall, verdi: svar, siffer: n, tekst: settInn(x.tekst, v, n), riktig: riktig, feil: feil, forklaring: settInn(x.forklaring, v, n), undertema: x.undertema, vanskelighet: x.vanskelighet, forventet_tid_s: x.forventet_tid_s };
     }
     throw new Error('Fant ingen tall der fasit og gale svar blir forskjellige. Sjekk uttrykkene og variablene.');
   }
@@ -1244,8 +1299,8 @@ function studieStart() {
   function tomtSp() { return { tekst: '', riktig: '', feil: [{ svar: '', type: 'regnefeil' }, { svar: '', type: 'begrep' }, { svar: '', type: 'begrep' }], forklaring: '', undertema: '', vanskelighet: 'middels' }; }
   function nyttKrav(o) {
     var f = T.fag, t = fagTemaer()[0] || '';
-    f.ov = o ? JSON.parse(JSON.stringify({ id: o.id, tittel: o.tittel, ut: kravIder(o), kilde: o.kilde || 'bank', sporsmal: o.sporsmal || [], svarform: o.svarform || 'valgfri', rekkefolge: o.tilfeldig ? 'tilfeldig' : 'kapittel', krav: o.krav, antall: o.antall, frist: o.frist ? o.frist.slice(0, 10) : '', beskrivelse: o.beskrivelse || '' }))
-      : { tittel: 'Arbeidskrav ' + ((T.ovelser || []).filter(function (x) { return x.kurs === f.c.id; }).length + 1), ut: [], kilde: 'egne', sporsmal: [], svarform: 'bilde', rekkefolge: 'kapittel', krav: 4, antall: 6, frist: '', beskrivelse: '' };
+    f.ov = o ? JSON.parse(JSON.stringify({ id: o.id, tittel: o.tittel, ut: kravIder(o), kilde: o.kilde || 'bank', sporsmal: o.sporsmal || [], svarform: o.svarform || 'valgfri', rekkefolge: o.tilfeldig ? 'tilfeldig' : 'kapittel', flervalg: !((o.sporsmal || []).length && (o.sporsmal || []).every(function (x) { return x.tall; })), krav: o.krav, antall: o.antall, frist: o.frist ? o.frist.slice(0, 10) : '', beskrivelse: o.beskrivelse || '' }))
+      : { tittel: 'Arbeidskrav ' + ((T.ovelser || []).filter(function (x) { return x.kurs === f.c.id; }).length + 1), ut: [], kilde: 'egne', sporsmal: [], flervalg: false, svarform: 'bilde', rekkefolge: 'kapittel', krav: 4, antall: 6, frist: '', beskrivelse: '' };
     f.kiKviss = { antall: 6, vanskelighet: 'blandet', grunnlag: '', vedlegg: null, filnavn: '' };
     tegn();
   }
@@ -1259,7 +1314,9 @@ function studieStart() {
       if (!n) return varsle('Legg til minst ett spørsmål.', true);
       if (n > 20) return varsle('Et arbeidskrav kan ha høyst 20 spørsmål.', true);
       for (var i = 0; i < n; i++) { var x = v.sporsmal[i];
+        x.tall = !v.flervalg;
         if (erMal(x)) { var pv = provVariant(x); if (pv.feil) return varsle('Spørsmål ' + (i + 1) + ': ' + pv.feil, true); continue; }
+        if (x.tall) { if (!x.tekst.trim() || !lesTall(x.riktig)) return varsle('Spørsmål ' + (i + 1) + ' mangler tekst eller et riktig svar med tall (f.eks. «4.5 mC»).', true); continue; }
         if (!x.tekst.trim() || !x.riktig.trim() || x.feil.filter(function (y) { return y.svar.trim(); }).length < 2) return varsle('Spørsmål ' + (i + 1) + ' mangler tekst, riktig svar eller minst to gale svar.', true); }
     }
     if (v.kilde === 'egne' && v.rekkefolge !== 'tilfeldig') v.sporsmal = sorterDelkap(v.sporsmal, (v.ut[0] || '').split('/')[1]);
@@ -1335,7 +1392,7 @@ function studieStart() {
     if (v.kilde === 'bank') o += '<label class="st-sm">Antall spørsmål <select data-ovvalg="antall">' + [4, 5, 6, 8, 10, 12, 15, 20].map(function (x) { return opt(x, x, +v.antall === x); }).join('') + '</select></label>' +
       (iBank && iBank < n ? '<p class="st-sm st-feil">Bare ' + iBank + ' spørsmål å velge mellom. Studentene får da færre enn ' + n + ' spørsmål.</p>' : '');
     if (v.kilde === 'egne') {
-      o += '<div class="st-kibox"><b>La KI lage spørsmål</b><p class="st-sm">KI lager flervalgsspørsmål med fasit og typiske feilsvar. Har du egne oppgaver, kan du lime dem inn eller laste dem opp (bilde, PDF eller tekst), så lages spørsmålene ut fra dem. Filen sendes bare til KI og lagres ikke.</p>' +
+      o += '<div class="st-kibox"><b>La KI lage spørsmål</b><p class="st-sm">KI lager spørsmål med fasit (og typiske feilsvar, som brukes ved flervalg). Har du egne oppgaver, kan du lime dem inn eller laste dem opp (bilde, PDF eller tekst), så lages spørsmålene ut fra dem. Filen sendes bare til KI og lagres ikke.</p>' +
         '<div class="st-rad" style="gap:1rem;flex-wrap:wrap"><label class="st-sm">Antall <select data-kk="antall">' + [3, 4, 5, 6, 8, 10, 12, 15].map(function (x) { return opt(x, x, +kk.antall === x); }).join('') + '</select></label>' +
         '<label class="st-sm">Vanskelighet <select data-kk="vanskelighet">' + [['blandet', 'Blandet'], ['lett', 'Lett'], ['middels', 'Middels'], ['vanskelig', 'Vanskelig']].map(function (x) { return opt(x[0], x[1], kk.vanskelighet === x[0]); }).join('') + '</select></label></div>' +
         '<textarea class="st-felt" data-kk="grunnlag" rows="3" placeholder="Lim inn egne oppgaver (valgfritt) …">' + esc(kk.grunnlag) + '</textarea>' +
@@ -1344,7 +1401,7 @@ function studieStart() {
         '<button type="button" class="st-btn liten" data-h="kiKviss"' + (kk.venter ? ' disabled' : '') + '>' + (kk.venter ? 'KI lager spørsmål … (kan ta opptil et minutt)' : 'Lag spørsmål') + '</button></div></div>';
       o += v.sporsmal.map(function (x, i) {
         var mal = !!x.variabler;
-        var ff = function (j) { var y = x.feil[j] || { svar: '', type: 'begrep' };
+        var ff = function (j) { if (!v.flervalg) return ''; var y = x.feil[j] || { svar: '', type: 'begrep' };
           return '<div class="st-rad" style="gap:.5rem"><input class="st-felt" data-ovsp="' + i + '.feil.' + j + '.' + (mal ? 'uttrykk' : 'svar') + '" value="' + esc(mal ? (y.uttrykk || '') : y.svar) + '" placeholder="' + (mal ? 'Galt svar ' + (j + 1) + ' som uttrykk, f.eks. m+a' : 'Galt svar ' + (j + 1)) + '" style="flex:1">' +
             '<select data-ovspv="' + i + '.feil.' + j + '.type">' + opt('regnefeil', 'regnefeil', y.type === 'regnefeil') + opt('begrep', 'feil fysikk', y.type !== 'regnefeil') + '</select></div>'; };
         var hode = '<div class="st-rad"><b>Spørsmål ' + (i + 1) + '</b><span>' +
@@ -1354,7 +1411,7 @@ function studieStart() {
           '<label class="st-valg st-sm"><input type="checkbox" data-ovmal="' + i + '"' + (mal ? ' checked' : '') + '> Varierende tall (hver student får egne tall)</label>';
         if (!mal) return '<div class="st-spred">' + hode +
           '<textarea class="st-felt" rows="2" data-ovsp="' + i + '.tekst" placeholder="Oppgavetekst. Formler mellom $ … $">' + esc(x.tekst) + '</textarea>' +
-          '<input class="st-felt st-riktig" data-ovsp="' + i + '.riktig" value="' + esc(x.riktig) + '" placeholder="Riktig svar">' + ff(0) + ff(1) + ff(2) +
+          '<input class="st-felt st-riktig" data-ovsp="' + i + '.riktig" value="' + esc(x.riktig) + '" placeholder="' + (v.flervalg ? 'Riktig svar' : 'Riktig svar med enhet og riktig antall gjeldende siffer, f.eks. 4.5 mC') + '">' + ff(0) + ff(1) + ff(2) +
           '<textarea class="st-felt" rows="2" data-ovsp="' + i + '.forklaring" placeholder="Løsning som vises etter svaret (valgfritt)">' + esc(x.forklaring) + '</textarea>' +
           (x.tekst ? '<details><summary class="st-sm">Forhåndsvisning</summary><p class="st-sporsmal">' + tx(x.tekst) + '</p><p class="st-sm">Riktig: ' + tx(x.riktig) + '</p></details>' : '') + '</div>';
         var pv = provVariant(x);
@@ -1372,7 +1429,8 @@ function studieStart() {
           '<div id="st-eks-' + i + '">' + eksHtml(pv) + '</div></div>';
       }).join('') + '<p><button type="button" class="st-btn g liten" data-h="nyttSp">+ Skriv spørsmål selv</button></p>';
     }
-    o += '</fieldset>' + (v.kilde === 'egne' ? '<label class="st-sm" for="st-ov-rekke">Rekkefølge på spørsmålene</label><select id="st-ov-rekke" data-ovvalg="rekkefolge">' +
+    o += '</fieldset>' + (v.kilde === 'egne' ? '<label class="st-valg"><input type="checkbox" id="st-ov-flervalg"' + (v.flervalg ? ' checked' : '') + '> <b>Flervalg</b>: studenten velger blant alternativer. Uten flervalg skriver studenten svaret selv (tall med enhet), og appen sjekker verdi, enhet og gjeldende siffer.</label>' : '') +
+      (v.kilde === 'egne' ? '<label class="st-sm" for="st-ov-rekke">Rekkefølge på spørsmålene</label><select id="st-ov-rekke" data-ovvalg="rekkefolge">' +
       opt('kapittel', 'Som i undervisningen (delkapittel for delkapittel)', v.rekkefolge !== 'tilfeldig') + opt('tilfeldig', 'Tilfeldig for hver student', v.rekkefolge === 'tilfeldig') + '</select>' : '') +
       '<label class="st-sm" for="st-ov-form">Svarform</label><select id="st-ov-form" data-ovvalg="svarform">' + Object.keys(SVARFORM).map(function (x) { return opt(x, SVARFORM[x], v.svarform === x); }).join('') + '</select>' +
       (v.svarform !== 'valgfri' ? '<p class="st-sm">Studenten må forklare hvert svar og få det vurdert av KI før neste spørsmål. Lyd lagres aldri; tale blir tekst på studentens enhet.</p>' : '') +
@@ -1851,7 +1909,11 @@ function studieStart() {
         '<div class="st-fram"><i style="width:' + (q.nr / q.antall * 100) + '%"></i></div>' +
         (q.ovelse && q.nr === 0 && q.ovelse.beskrivelse && sv == null ? '<div class="st-fb"><b>' + esc(q.ovelse.tittel) + '</b><p>' + esc(q.ovelse.beskrivelse) + '</p></div>' : '') +
         '<span class="st-mrk ' + x.vanskelighet + '">' + x.vanskelighet + '</span><p class="st-sporsmal">' + tx(x.tekst) + '</p>' +
-        x.alt.map(function (o, i) { var c = ''; if (a) { if (o.type === 'riktig') c = 'ok'; else if (i === sv) c = 'nei'; } return '<button type="button" class="st-alt ' + c + '"' + (a ? ' disabled' : '') + ' data-h="svar" data-i="' + i + '">' + tx(o.svar) + '</button>'; }).join('') +
+        (x.tall ? (a ? '<div class="st-alt ' + (x.alt[sv].type === 'riktig' ? 'ok' : 'nei') + '">Ditt svar: ' + esc(x.tallInn || '') + '</div>' + (x.alt[sv].type === 'riktig' ? '' : '<div class="st-alt ok">Riktig svar: ' + tx(x.riktig) + '</div>') + (x.tallMelding ? '<p class="st-sm">' + esc(x.tallMelding) + '</p>' : '')
+            : '<div class="st-tallsvar"><input id="st-tallsvar" class="st-felt" inputmode="text" autocomplete="off" placeholder="Svaret ditt med enhet, f.eks. 4.5 mC" value="' + esc(x.tallInn || '') + '"><button type="button" class="st-btn" data-h="tallSvar">Svar</button></div>' +
+              (x.tallMelding ? '<div class="st-fb st-tallmelding"><b>Sjekk svaret</b><p>' + esc(x.tallMelding) + '</p></div>' : '') +
+              '<p class="st-sm">Desimaltegn: punktum eller komma. Tierpotens: 2.1e-3 eller 2.1*10^-3. Prefikser som m, µ (u), k og M går fint.</p>')
+          : x.alt.map(function (o, i) { var c = ''; if (a) { if (o.type === 'riktig') c = 'ok'; else if (i === sv) c = 'nei'; } return '<button type="button" class="st-alt ' + c + '"' + (a ? ' disabled' : '') + ' data-h="svar" data-i="' + i + '">' + tx(o.svar) + '</button>'; }).join('')) +
         '<p class="st-dmhjelp">' + (a ? '' : '<label class="st-btn g liten">' + ikon('kamera', 18) + ' ' + (q.bilde ? 'Skann på nytt' : 'Skann utregningen') + '<input type="file" accept="image/*" capture="environment" id="st-qskann" hidden></label> ') +
         (appModus() || !a ? '<button type="button" class="st-btn g liten" data-h="quizDashman">' + ikon('prat', 18) + ' ' + (a ? 'Snakk med Dashman om dette' : 'Spør Dashman om hjelp') + '</button>' : '') + '</p>' +
         (!a && q.bilde ? '<img class="st-forhand" alt="Utregningen din" src="' + q.bilde + '"><p class="st-sm">Dashman ser på utregningen og gir hint uten å si svaret. Bildet blir med når du har valgt svar.</p>' : '') + fb;
@@ -2360,6 +2422,7 @@ function studieStart() {
   }
 
   // Alle klikk og endringer håndteres her (ingen inline-skript i HTML-en).
+  rot.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' && ev.target && ev.target.id === 'st-tallsvar') { ev.preventDefault(); tallSvar(); } });
   rot.addEventListener('click', function (ev) {
     var b = ev.target.closest('[data-h]'); if (!b || b.disabled) return;
     var d = b.dataset;
@@ -2416,6 +2479,7 @@ function studieStart() {
       quiz: function () { startQuiz(d.t); },
       quizFlere: function () { startQuiz(d.t, true); },
       svar: function () { svar(+d.i); },
+      tallSvar: tallSvar,
       videre: videre,
       vurder: vurder,
       tale: function () { tale(b); },
@@ -2546,6 +2610,7 @@ function studieStart() {
     }
     else if (el.dataset.felt && el.dataset.felt.indexOf('ramme.') === 0 && T.fag) { tegn(); }
     else if (el.dataset.elem) { T.fag.u.elementer[el.dataset.elem] = el.checked; planlagreFag(); tegn(); }
+    else if (el.id === 'st-ov-flervalg' && T.fag && T.fag.ov) { T.fag.ov.flervalg = el.checked; tegn(); }
     else if (el.dataset.ovvalg && T.fag && T.fag.ov) { T.fag.ov[el.dataset.ovvalg] = el.value; tegn(); }
     else if ((el.dataset.dekk || el.dataset.dekkmod) && T.fag && T.fag.ov) {
       var v = T.fag.ov, ids = el.dataset.dekk ? [el.dataset.dekk] : [];

@@ -78,7 +78,7 @@ Svar KUN med gyldig JSON, uten forklaring rundt, på formen:
 {"emnekode":"…","emnenavn":"…","temaer":[{"tema":"…","dekning":"god|delvis|ingen","sider":[1,2],"kommentar":"én kort setning på norsk"}],"oppsummering":"2–3 setninger på norsk om hva siden dekker godt og hva studenten må finne andre steder"}
 Er teksten ikke en emnebeskrivelse for et emne, svar {"feil":"kort forklaring på norsk"}.`;
 
-const SYSTEM_VURDER = `Du er en tålmodig fysikklærer på NETTSTED, laget av Dr. Normann. En student har svart på et flervalgsspørsmål og vist hvordan hen tenkte, som tekst eller som bilde av en håndskrevet besvarelse.
+const SYSTEM_VURDER = `Du er en tålmodig fysikklærer på NETTSTED, laget av Dr. Normann. En student har svart på et spørsmål (flervalg, eller et tallsvar hen har skrevet selv) og vist hvordan hen tenkte, som tekst eller som bilde av en håndskrevet besvarelse.
 Du får spørsmålet, riktig svar, en kort forklaring, alternativet studenten valgte og studentens forklaring.
 
 Vurder hva besvarelsen viser:
