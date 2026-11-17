@@ -6,6 +6,10 @@ fag:
     niva: forkurs
     tegning: matte-scene
     kort: "Matematikk fra grunnen av for deg som skal begynne på ingeniør- eller realfag: algebra, funksjoner, derivasjon, trigonometri, vektorer og integrasjon, med eksempler og oppgaver med hint."
+  - repo: Realfagsambassaden/kalkulus
+    niva: ingenior
+    tegning: flate-normal
+    kort: "Kalkulus i én variabel: grenseverdier, derivasjon og integrasjon med anvendelser, rekker, Taylorpolynomer og differensiallikninger, med figurer, kjørbar Python og oppgaver med løsning."
   - repo: Realfagsambassaden/flervariabel-kalkulus
     niva: ingenior
     tegning: flate-normal
