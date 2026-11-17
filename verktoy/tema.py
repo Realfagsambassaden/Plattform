@@ -387,6 +387,7 @@ if indeks.exists() and nv_f.exists() and '<!-- >>> nivakort' in indeks.read_text
 gyldige_ut = {f"{eid}/{d['id']}" for eid, (o, e) in tema_info.items() for d in e['undertemaer']}
 krever_re = re.compile(r'^:::\s*\{\.oppgave\b[^}]*?krever="([^"]*)"', re.M)
 krever_per_side = {}
+tema_rang = {eid: i for i, eid in enumerate(tema_info)}
 for sti in side_tema:
     f = P / sti
     if not f.exists(): continue
@@ -395,6 +396,8 @@ for sti in side_tema:
     for kl in l:
         for k in kl:
             if k not in gyldige_ut: print(f'  ADVARSEL: krever="{k}" i {sti} finnes ikke i tema.yml')
+            elif side_tema.get(sti) in tema_rang and tema_rang[k.split('/')[0]] > tema_rang[side_tema[sti]]:
+                print(f'  ADVARSEL: {sti} (tema {side_tema[sti]}) har en oppgave som krever {k}, som kommer senere i tema.yml')
 for L in loyper:
     dekket, skjules = set(), []
     for s in L['sider']:
