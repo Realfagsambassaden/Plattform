@@ -1569,7 +1569,9 @@ function studieStart() {
     klokke: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>'
   };
   function ikon(n, st) { return '<svg class="st-svg" width="' + (st || 22) + '" height="' + (st || 22) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IKON[n] + '</svg>'; }
-  function appModus() { return !erUnderviser() || T.eksempel; }
+  // Appvisningen er for studenter. En underviser som eier kurs, får alltid underviservisningen, også om rollen
+  // ikke ble hentet (nettverksfeil), ellers forsvinner tilbakemeldingsknappen og kursbyggeren blir smal og skjev.
+  function appModus() { return !!T.eksempel || (!erUnderviser() && !(T.mine || []).length); }
   // Ukens tema i løypa: det første som ikke er vurdert ennå (én uke per tema, i valgt rekkefølge).
   // Flere kurs: studenten velger først et kurs (fag) på I dag. Quiz, ukens tema og arbeidskrav gjelder så bare det kurset.
   // Med null eller ett kurs er det som før. Valget huskes på enheten. 'egen' = egen løype uten kurs.
@@ -2762,7 +2764,7 @@ function studieStart() {
       return;
     }
     bruker = sesjon.user;
-    return k.rpc('min_rolle').then(function (r) { T.rolle = r.data || 'student'; }).then(function () {
+    return k.rpc('min_rolle').then(function (r) { var lagret = null; try { lagret = JSON.parse(localStorage.getItem('fh-rolle') || 'null'); } catch (e) {} T.rolle = r.data || (r.error && lagret && lagret.rolle) || 'student'; }).then(function () {
       var ex = /^#eksempel(?:-(.+))?$/.exec(location.hash);
       if (!ex || !erUnderviser()) return;
       var ekte = k;
