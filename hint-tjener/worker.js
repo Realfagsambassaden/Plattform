@@ -289,7 +289,13 @@ async function kvisslag(request, env, b, h) {
   const melding = `Tema: ${kort(b.tema, 120)}\nUndertemaer (id | tittel):\n${ut.map((x) => `${x.id} | ${x.tittel}`).join("\n") || "(hele temaet)"}\n` +
     `Antall spørsmål: ${antall}\nVanskelighet: ${niva}\n\nFra underviseren (ønsker og/eller egne oppgaver – ønskene er krav):\n${kort(b.grunnlag, 8000) || (vedlegg ? "(se vedlegget)" : "(ingen – lag egne)")}` + vi.ber +
     (kort(b.grunnlag, 8000).trim() ? `\n\nHusk: følg underviserens ønsker over nøyaktig. Ingen spørsmål om det underviseren har sagt at ikke skal være med.` : "");
-  const r = lesJson(await spor({ ...env, MODELL: env.MODELL_FAG || env.MODELL }, SYSTEM_KVISS.replace("NETTSTED", NETTSTEDNAVN(request)), melding, tilpasset ? 16000 : 8000, vedlegg));
+  const kenv = { ...env, MODELL: env.MODELL_FAG || env.MODELL }, ksys = SYSTEM_KVISS.replace("NETTSTED", NETTSTEDNAVN(request));
+  let r = lesJson(await spor(kenv, ksys, melding, tilpasset ? 32000 : 8000, vedlegg));
+  // Uleselig svar (avkuttet eller ugyldig JSON): prøv én gang til med tydeligere beskjed.
+  if (!r || !Array.isArray(r.sporsmal) || !r.sporsmal.length)
+    r = lesJson(await spor(kenv, ksys, melding + "\n\nVIKTIG: Svar KUN med ett gyldig JSON-objekt {\"sporsmal\":[…]} uten tekst rundt. Doble alle backslash i LaTeX (\\\\frac). Hold forklaringene korte.", tilpasset ? 32000 : 8000, vedlegg));
+  // Noen ganger kommer variantene samlet under én idé: {"gruppe":1,"varianter":[…]}. Flat ut.
+  if (r && Array.isArray(r.sporsmal)) r.sporsmal = r.sporsmal.flatMap((x, i) => x && Array.isArray(x.varianter) ? x.varianter.map((v) => ({ undertema: x.undertema, ...v, gruppe: x.gruppe ?? i + 1 })) : [x]);
   const gyldigeUt = new Set(ut.map((x) => x.id));
   const tall = (v) => (Number.isFinite(+v) ? +v : null);
   const sp = (r && Array.isArray(r.sporsmal) ? r.sporsmal : []).slice(0, tilpasset ? antall * 3 : antall).map((x) => {
@@ -828,7 +834,9 @@ function lesJson(s) {
   if (a < 0 || z <= a) return null;
   const t = s.slice(a, z + 1);
   try { return JSON.parse(t); } catch {}
-  try { return JSON.parse(t.replace(/,\s*([}\]])/g, "$1")); } catch { return null; }   // komma før } eller ]
+  try { return JSON.parse(t.replace(/,\s*([}\]])/g, "$1")); } catch {}   // komma før } eller ]
+  // LaTeX med enkel backslash (\cdot, \sqrt …) er ugyldig JSON. Dobler backslash som ikke starter en gyldig JSON-escape.
+  try { return JSON.parse(t.replace(/\\(?!["\\/bfnrtu])/g, "\\\\").replace(/,\s*([}\]])/g, "$1")); } catch { return null; }
 }
 
 // ---------------------------------------------------------------- felles

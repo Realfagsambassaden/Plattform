@@ -1366,7 +1366,7 @@ function studieStart() {
     if (!v.ut.length) return varsle('Velg først hvilke undertemaer arbeidskravet dekker.', true);
     var temaNavn = [], ut = v.ut.map(function (id) { var p = id.split('/'), kt = K[p[1]] || { tittel: p[1], undertemaer: {} }; if (temaNavn.indexOf(kt.tittel) < 0) temaNavn.push(kt.tittel); return { id: p[1] + '/' + p[2], tittel: kt.tittel + ': ' + (kt.undertemaer[p[2]] || p[2]) }; });
     kk.venter = true; tegn();
-    ki('/kvisslag', { tema: temaNavn.join(', '), undertemaer: ut, antall: Math.min(+kk.antall || 6, 20 - spAntall(v.sporsmal), kk.vanskelighet === 'tilpasset' ? 7 : 20), vanskelighet: kk.vanskelighet, grunnlag: kk.grunnlag, vedlegg: kk.vedlegg, filnavn: kk.filnavn, ulest: kk.ulest || [] }, 120)
+    ki('/kvisslag', { tema: temaNavn.join(', '), undertemaer: ut, antall: Math.min(+kk.antall || 6, 20 - spAntall(v.sporsmal), kk.vanskelighet === 'tilpasset' ? 7 : 20), vanskelighet: kk.vanskelighet, grunnlag: kk.grunnlag, vedlegg: kk.vedlegg, filnavn: kk.filnavn, ulest: kk.ulest || [] }, kk.vanskelighet === 'tilpasset' ? 300 : 120)
       .then(function (d) {
         var l = (d.sporsmal || []).map(function (x) { var y = Object.assign(tomtSp(), x); y.riktig = y.riktig || ''; while (y.feil.length < 3) y.feil.push({ svar: '', uttrykk: '', type: 'begrep' }); return y; });
         if (!l.length) throw new Error('Fikk ingen spørsmål fra KI denne gangen. Prøv igjen.');
@@ -1416,7 +1416,7 @@ function studieStart() {
         '<textarea class="st-felt" data-kk="grunnlag" rows="3" placeholder="Lim inn egne oppgaver (valgfritt) …">' + esc(kk.grunnlag) + '</textarea>' +
         '<div class="st-vedlegg"><label class="st-btn g liten">📎 ' + (kk.filnavn ? esc(kk.filnavn) : 'Last opp oppgaver') + '<input type="file" id="st-kk-fil" accept="image/*,application/pdf,.txt,.md,.tex"></label>' +
         (kk.filnavn ? '<button type="button" class="st-btn g liten" data-h="kkFjernFil">Fjern fil</button>' : '') +
-        '<button type="button" class="st-btn liten" data-h="kiKviss"' + (kk.venter ? ' disabled' : '') + '>' + (kk.venter ? 'KI lager spørsmål … (kan ta opptil et minutt)' : 'Lag spørsmål') + '</button></div></div>';
+        '<button type="button" class="st-btn liten" data-h="kiKviss"' + (kk.venter ? ' disabled' : '') + '>' + (kk.venter ? 'KI lager spørsmål … (kan ta ' + (kk.vanskelighet === 'tilpasset' ? 'et par minutter' : 'opptil et minutt') + ')' : 'Lag spørsmål') + '</button></div></div>';
       var gnr = {}, gn = 0; v.sporsmal.forEach(function (x, i) { var k0 = x.gruppe != null ? 'g' + x.gruppe : 'i' + i; if (!gnr[k0]) gnr[k0] = ++gn; });
       o += v.sporsmal.map(function (x, i) {
         var mal = !!x.variabler, nr = gnr[x.gruppe != null ? 'g' + x.gruppe : 'i' + i];
