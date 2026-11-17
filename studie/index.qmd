@@ -119,7 +119,8 @@ toc: false
 .studie .st-var .st-felt { padding: .2rem .4rem; }
 .studie .st-eks { border-left: 3px solid var(--st-f); padding: .2rem .7rem; }
 html.fh-innebygd .studie .st-faner { display: none; }   /* i fokusvisningens arbeidskrav-kort */
-.studie.st-bred, .studie:has(#st-lerret) { max-width: none; width: min(1240px, 96vw); position: relative; left: 50%; transform: translateX(-50%); }
+/* Sentreres uten transform: en transform gjør at faste paneler (Mitt materiale) blir like høye som hele siden i stedet for skjermen. */
+.studie.st-bred, .studie:has(#st-lerret) { max-width: none; width: min(1240px, 96vw); position: relative; left: 50%; margin-left: calc(min(1240px, 96vw) / -2); }
 .studie .st-visning { align-items: center; gap: 1rem; margin: .6rem 0; }
 .studie .st-lerret { display: flex; gap: .6rem; position: relative; align-items: flex-start; }
 .studie .st-kravkol { position: relative; flex: none; align-self: stretch; }
@@ -233,7 +234,7 @@ html.fh-innebygd .studie .st-faner { display: none; }   /* i fokusvisningens arb
   box-shadow: -8px 0 30px rgba(0,0,0,.45); display: flex; flex-direction: column; }
 .studie .st-matpanel-hode, .studie .st-matpanel-fot { display: flex; justify-content: space-between; align-items: center; gap: .6rem; padding: .7rem 1rem; border-bottom: 1px solid var(--bs-border-color); flex-wrap: wrap; }
 .studie .st-matpanel-fot { border-bottom: 0; border-top: 1px solid var(--bs-border-color); }
-.studie .st-matrull { flex: 1; overflow-y: auto; padding: .6rem 1rem 1rem; }
+.studie .st-matrull { flex: 1; min-height: 0; overflow-y: auto; padding: .6rem 1rem 1rem; }
 .studie .st-matrull h4 { font-size: 1rem; margin: 1rem 0 .4rem; }
 .studie .st-matrull > label.st-sm { display: block; margin: .6rem 0; }
 .studie .st-matut { margin: .2rem 0 .4rem; }
