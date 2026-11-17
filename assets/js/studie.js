@@ -526,14 +526,19 @@ function studieStart() {
       r.onerror = nei; r.readAsDataURL(fil);
     });
   }
-  function ki(sti, body, sek) {
+  function ki(sti, body, sek, igjen) {
     if (!API) return Promise.reject(new Error('KI-tjenesten er ikke satt opp ennå.'));
     // Svarer ikke KI innen rimelig tid, avbrytes forespørselen med en tydelig melding.
     var styr = window.AbortController ? new AbortController() : null, tid = styr && setTimeout(function () { styr.abort(); }, (sek || 60) * 1000);
-    return k.auth.getSession().then(function (r) {
+    // 401 betyr som regel at innloggingen (tokenet) er gått ut, f.eks. når mobilen har ligget i lomma. Da fornyes den, og
+    // forespørselen sendes én gang til.
+    var hent = igjen ? k.auth.refreshSession().then(function (r) { return r.data && r.data.session ? r : k.auth.getSession(); }) : k.auth.getSession();
+    return hent.then(function (r) {
       var tok = r.data.session && r.data.session.access_token;
       return fetch(API + sti, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: JSON.stringify(body), signal: styr ? styr.signal : undefined });
-    }).then(function (r) { clearTimeout(tid); return r; }, function (e) { clearTimeout(tid); throw e && e.name === 'AbortError' ? new Error('KI brukte for lang tid på å svare. Prøv igjen om litt.') : e; }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (d) { if (!r.ok) throw new Error(d.feil || 'KI-tjenesten svarte ikke (' + r.status + ').'); return d; }); });
+    }).then(function (r) { clearTimeout(tid); return r; }, function (e) { clearTimeout(tid); throw e && e.name === 'AbortError' ? new Error('KI brukte for lang tid på å svare. Prøv igjen om litt.') : e; }).then(function (r) {
+      if (r.status === 401 && !igjen) return ki(sti, body, sek, true);
+      return r.json().catch(function () { return {}; }).then(function (d) { if (!r.ok) throw new Error(r.status === 401 ? 'Innloggingen din er gått ut. Last siden på nytt og logg inn igjen.' : (d.feil || 'KI-tjenesten svarte ikke (' + r.status + ').')); return d; }); });
   }
   function vurder() {
     var q = T.q, x = q.na, s = q.sist, tekst = document.getElementById('st-forklaring').value.trim();
