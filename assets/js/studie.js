@@ -376,6 +376,7 @@ function studieStart() {
       var mant = m[2].replace(',', '.'), eks = !!m[3], ord = m[5], punkt = mant.indexOf('.') >= 0;
       if (!eks && !ord) continue;                                         // tall uten enhet: ikke et måltall
       if (!eks && !punkt && mant.length === 1 && ord.length > 3) continue; // «2 ladninger», «3 elektroner»: telletall
+      if (+mant === 0) continue;                                          // «x = 0», «0 V»: nullpunkt, ikke måltall
       var d = mant.replace('.', '').replace(/^0+/, ''), n = Math.max(1, d.length);   // 300 m regnes som 3 (tvetydig, rund ikke unødig hardt)
       if (!best || n < best) best = n;
     }

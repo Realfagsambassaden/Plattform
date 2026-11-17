@@ -343,6 +343,7 @@
 "undertemaer": {
 "strom-spenning": "Strøm og spenning",
 "motstand": "Motstand og Ohms lov",
+"serie-parallell": "Kretser",
 "kirchhoff": "Kirchhoffs lover",
 "emf": "Elektromotorisk spenning og indre resistans",
 "effekt": "Elektrisk effekt"
@@ -7477,6 +7478,1518 @@
 }
 ],
 "forklaring": "$T = 2\\pi\\sqrt{2L/(3\\mathrm{g})}$."
+},
+{
+"id": "elektrisk-felt-298",
+"tema": "elektrisk-felt",
+"undertema": "ladning",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvor stor er elementærladningen, altså ladningen til ett proton?",
+"riktig": "1.602·10⁻¹⁹ C",
+"feil": [
+{
+"svar": "9.11·10⁻³¹ C",
+"type": "begrep"
+},
+{
+"svar": "1.0 C",
+"type": "begrep"
+},
+{
+"svar": "6.24·10¹⁸ C",
+"type": "regnefeil"
+}
+],
+"forklaring": "Elementærladningen er $\\mathrm{e} = 1.602\\cdot10^{-19}\\ \\mathrm{C}$. Et elektron har ladningen $-\\mathrm{e}$."
+},
+{
+"id": "elektrisk-felt-299",
+"tema": "elektrisk-felt",
+"undertema": "ladning",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Et legeme har 5.0·10¹² flere elektroner enn protoner. Hvilken ladning har det?",
+"riktig": "−0.80 µC",
+"feil": [
+{
+"svar": "+0.80 µC",
+"type": "begrep"
+},
+{
+"svar": "−8.0 µC",
+"type": "regnefeil"
+},
+{
+"svar": "−3.1·10³¹ C",
+"type": "regnefeil"
+}
+],
+"forklaring": "$Q = -n\\mathrm{e} = -5.0\\cdot10^{12}\\cdot1.602\\cdot10^{-19}\\ \\mathrm{C}$. Overskudd av elektroner gir negativ ladning."
+},
+{
+"id": "elektrisk-felt-300",
+"tema": "elektrisk-felt",
+"undertema": "ladning",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En nøytral ballong gnis mot håret og får ladningen −3.2 nC. Hvor mange elektroner har den fått?",
+"riktig": "2.0·10¹⁰",
+"feil": [
+{
+"svar": "2.0·10¹⁹",
+"type": "regnefeil"
+},
+{
+"svar": "5.1·10⁻²⁸",
+"type": "regnefeil"
+},
+{
+"svar": "Ingen, den har mistet elektroner",
+"type": "begrep"
+}
+],
+"forklaring": "$n = |Q|/\\mathrm{e} = 3.2\\cdot10^{-9}\\ \\mathrm{C} / 1.602\\cdot10^{-19}\\ \\mathrm{C}$. Negativ ladning betyr at den har fått elektroner."
+},
+{
+"id": "elektrisk-felt-301",
+"tema": "elektrisk-felt",
+"undertema": "coulomb",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva skjer med kraften mellom to ladninger når avstanden mellom dem dobles?",
+"riktig": "Den blir en firedel så stor",
+"feil": [
+{
+"svar": "Den halveres",
+"type": "begrep"
+},
+{
+"svar": "Den dobles",
+"type": "begrep"
+},
+{
+"svar": "Den blir fire ganger så stor",
+"type": "begrep"
+}
+],
+"forklaring": "Coulombs lov: $F = \\mathrm{k_e}q_1q_2/r^2$. Dobbel $r$ gir $r^2$ fire ganger så stor."
+},
+{
+"id": "elektrisk-felt-302",
+"tema": "elektrisk-felt",
+"undertema": "coulomb",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "To ladninger på 1.0 µC hver ligger 1.0 m fra hverandre. Hvor stor er kraften mellom dem?",
+"riktig": "9.0 mN",
+"feil": [
+{
+"svar": "9.0·10⁹ N",
+"type": "regnefeil"
+},
+{
+"svar": "9.0 µN",
+"type": "regnefeil"
+},
+{
+"svar": "0 N",
+"type": "begrep"
+}
+],
+"forklaring": "$F = \\mathrm{k_e}q_1q_2/r^2 = 8.99\\cdot10^{9}\\cdot(1.0\\cdot10^{-6})^2/1.0^2\\ \\mathrm{N}$."
+},
+{
+"id": "elektrisk-felt-303",
+"tema": "elektrisk-felt",
+"undertema": "felt",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva er enheten for elektrisk feltstyrke?",
+"riktig": "N/C (det samme som V/m)",
+"feil": [
+{
+"svar": "C/N",
+"type": "begrep"
+},
+{
+"svar": "N·C",
+"type": "begrep"
+},
+{
+"svar": "J/C",
+"type": "begrep"
+}
+],
+"forklaring": "$E = F/q$ gir newton per coulomb. Det er det samme som volt per meter."
+},
+{
+"id": "elektrisk-felt-304",
+"tema": "elektrisk-felt",
+"undertema": "homogent-felt",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Mellom to parallelle, ladde plater er feltet homogent. Hva betyr det?",
+"riktig": "Feltet har samme størrelse og retning overalt mellom platene",
+"feil": [
+{
+"svar": "Feltet er null mellom platene",
+"type": "begrep"
+},
+{
+"svar": "Feltet er sterkest midt mellom platene",
+"type": "begrep"
+},
+{
+"svar": "Feltet peker mot den positive plata",
+"type": "begrep"
+}
+],
+"forklaring": "Homogent betyr likt overalt. Feltet peker fra den positive mot den negative plata."
+},
+{
+"id": "elektrisk-felt-305",
+"tema": "elektrisk-felt",
+"undertema": "ladning",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "Kule A har ladningen +6.0 nC og kule B har −2.0 nC. Kulene er like store, berøres og skilles. Hvor mye ladning har A etterpå?",
+"riktig": "+2.0 nC",
+"feil": [
+{
+"svar": "+4.0 nC",
+"type": "regnefeil"
+},
+{
+"svar": "+3.0 nC",
+"type": "regnefeil"
+},
+{
+"svar": "+6.0 nC",
+"type": "begrep"
+}
+],
+"forklaring": "Ladningen bevares: $(6.0 - 2.0)\\ \\mathrm{nC}$ fordeles likt på to like kuler."
+},
+{
+"id": "elektrisk-felt-306",
+"tema": "elektrisk-felt",
+"undertema": "coulomb",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Ladninger på +3.0 nC og −5.0 nC ligger 4.0 cm fra hverandre. Hvor stor er kraften, og er den tiltrekkende eller frastøtende?",
+"riktig": "84 µN, tiltrekkende",
+"feil": [
+{
+"svar": "84 µN, frastøtende",
+"type": "begrep"
+},
+{
+"svar": "3.4 µN, tiltrekkende",
+"type": "regnefeil"
+},
+{
+"svar": "8.4 nN, tiltrekkende",
+"type": "regnefeil"
+}
+],
+"forklaring": "$F = \\mathrm{k_e}|q_1q_2|/r^2$ med $r = 0.040\\ \\mathrm{m}$. Motsatte fortegn tiltrekker hverandre."
+},
+{
+"id": "elektrisk-felt-307",
+"tema": "elektrisk-felt",
+"undertema": "coulomb",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "Kraften mellom to ladninger er 12 mN. Hva blir kraften hvis begge ladningene dobles og avstanden også dobles?",
+"riktig": "12 mN",
+"feil": [
+{
+"svar": "48 mN",
+"type": "regnefeil"
+},
+{
+"svar": "24 mN",
+"type": "regnefeil"
+},
+{
+"svar": "3.0 mN",
+"type": "regnefeil"
+}
+],
+"forklaring": "Telleren blir $2\\cdot2 = 4$ ganger større, og $r^2$ blir 4 ganger større. Kraften er uendret."
+},
+{
+"id": "elektrisk-felt-308",
+"tema": "elektrisk-felt",
+"undertema": "felt",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Hvor sterkt er det elektriske feltet 0.50 m fra en punktladning på 4.0 nC?",
+"riktig": "1.4·10² N/C",
+"feil": [
+{
+"svar": "72 N/C",
+"type": "regnefeil"
+},
+{
+"svar": "1.4·10¹¹ N/C",
+"type": "regnefeil"
+},
+{
+"svar": "0 N/C",
+"type": "begrep"
+}
+],
+"forklaring": "$E = \\mathrm{k_e}q/r^2 = 8.99\\cdot10^{9}\\cdot4.0\\cdot10^{-9}/0.50^2\\ \\mathrm{N/C}$."
+},
+{
+"id": "elektrisk-felt-309",
+"tema": "elektrisk-felt",
+"undertema": "felt",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Et elektron befinner seg i et elektrisk felt på 2.0 kN/C. Hvor stor akselerasjon får det?",
+"riktig": "3.5·10¹⁴ m/s²",
+"feil": [
+{
+"svar": "1.9·10¹¹ m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "3.5·10¹¹ m/s²",
+"type": "regnefeil"
+},
+{
+"svar": "3.2·10⁻¹⁶ m/s²",
+"type": "begrep"
+}
+],
+"forklaring": "$a = F/m = \\mathrm{e}E/\\mathrm{m_e} = 1.602\\cdot10^{-19}\\cdot2.0\\cdot10^{3}/9.11\\cdot10^{-31}\\ \\mathrm{m/s^2}$."
+},
+{
+"id": "elektrisk-felt-310",
+"tema": "elektrisk-felt",
+"undertema": "homogent-felt",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "To plater står 5.0 mm fra hverandre, og feltet mellom dem er 8.0 kV/m. Hva er spenningen mellom platene?",
+"riktig": "40 V",
+"feil": [
+{
+"svar": "40 kV",
+"type": "regnefeil"
+},
+{
+"svar": "1.6 MV",
+"type": "regnefeil"
+},
+{
+"svar": "8.0 kV",
+"type": "begrep"
+}
+],
+"forklaring": "$U = Ed = 8.0\\cdot10^{3}\\ \\mathrm{V/m}\\cdot5.0\\cdot10^{-3}\\ \\mathrm{m}$."
+},
+{
+"id": "elektrisk-felt-311",
+"tema": "elektrisk-felt",
+"undertema": "homogent-felt",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "Et proton ligger i ro i et homogent felt på 3.0 kN/C. Hvor stor elektrisk kraft virker på det?",
+"riktig": "4.8·10⁻¹⁶ N",
+"feil": [
+{
+"svar": "4.8·10⁻¹⁹ N",
+"type": "regnefeil"
+},
+{
+"svar": "5.3·10⁻²³ N",
+"type": "regnefeil"
+},
+{
+"svar": "0 N, fordi protonet ligger i ro",
+"type": "begrep"
+}
+],
+"forklaring": "$F = \\mathrm{e}E$. Kraften virker uansett om ladningen ligger i ro."
+},
+{
+"id": "elektrisk-felt-312",
+"tema": "elektrisk-felt",
+"undertema": "coulomb",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "Ladningen +2.0 µC ligger i x = 0, +2.0 µC i x = 0.20 m og −1.0 µC i x = 0.10 m. Hvor stor er den samlede kraften på −1.0 µC-ladningen?",
+"riktig": "0 N",
+"feil": [
+{
+"svar": "1.8 N",
+"type": "regnefeil"
+},
+{
+"svar": "0.90 N",
+"type": "regnefeil"
+},
+{
+"svar": "3.6 N",
+"type": "begrep"
+}
+],
+"forklaring": "Hver av de positive ladningene drar med $1.8\\ \\mathrm{N}$, men i hver sin retning. Kreftene er vektorer og opphever hverandre."
+},
+{
+"id": "elektrisk-felt-313",
+"tema": "elektrisk-felt",
+"undertema": "coulomb",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "To like ladninger ligger 30 cm fra hverandre, og kraften mellom dem er 0.10 N. Hvor stor er hver ladning?",
+"riktig": "1.0 µC",
+"feil": [
+{
+"svar": "3.3 µC",
+"type": "regnefeil"
+},
+{
+"svar": "1.0·10⁻¹² C",
+"type": "regnefeil"
+},
+{
+"svar": "0.50 µC",
+"type": "begrep"
+}
+],
+"forklaring": "$F = \\mathrm{k_e}q^2/r^2$ gir $q = r\\sqrt{F/\\mathrm{k_e}} = 0.30\\sqrt{0.10/8.99\\cdot10^{9}}\\ \\mathrm{C}$."
+},
+{
+"id": "elektrisk-felt-314",
+"tema": "elektrisk-felt",
+"undertema": "felt",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En ladning på +3.0 nC ligger i x = 0 og en ladning på +3.0 nC i x = 0.40 m. Hvor sterkt er feltet i x = 0.10 m?",
+"riktig": "2.4 kN/C",
+"feil": [
+{
+"svar": "3.0 kN/C",
+"type": "begrep"
+},
+{
+"svar": "2.7 kN/C",
+"type": "regnefeil"
+},
+{
+"svar": "0 N/C",
+"type": "begrep"
+}
+],
+"forklaring": "Feltene peker hver sin vei: $E = \\mathrm{k_e}q(1/0.10^2 - 1/0.30^2) = 2.70\\ \\mathrm{kN/C} - 0.30\\ \\mathrm{kN/C}$."
+},
+{
+"id": "elektrisk-felt-315",
+"tema": "elektrisk-felt",
+"undertema": "felt",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "Hvor stor må en punktladning være for at feltet 2.0 m unna skal være 450 N/C?",
+"riktig": "0.20 µC",
+"feil": [
+{
+"svar": "0.10 µC",
+"type": "regnefeil"
+},
+{
+"svar": "1.8·10³ C",
+"type": "regnefeil"
+},
+{
+"svar": "Det kan ikke regnes ut uten en testladning",
+"type": "begrep"
+}
+],
+"forklaring": "$q = Er^2/\\mathrm{k_e} = 450\\cdot2.0^2/8.99\\cdot10^{9}\\ \\mathrm{C}$."
+},
+{
+"id": "elektrisk-felt-316",
+"tema": "elektrisk-felt",
+"undertema": "homogent-felt",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "Et elektron skytes inn mellom to plater med farten 2.0·10⁶ m/s parallelt med platene. Feltet er 200 N/C, og platene er 5.0 cm lange. Hvor langt bøyes elektronet av før det kommer ut?",
+"riktig": "1.1 cm",
+"feil": [
+{
+"svar": "2.2 cm",
+"type": "regnefeil"
+},
+{
+"svar": "6.0·10⁻⁶ m",
+"type": "regnefeil"
+},
+{
+"svar": "0 cm, fordi farten er parallell med platene",
+"type": "begrep"
+}
+],
+"forklaring": "Tiden er $t = 0.050/2.0\\cdot10^{6}\\ \\mathrm{s}$, akselerasjonen $a = \\mathrm{e}E/\\mathrm{m_e}$, og avbøyningen $y = \\frac{1}{2}at^2$."
+},
+{
+"id": "elektrisk-felt-317",
+"tema": "elektrisk-felt",
+"undertema": "homogent-felt",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "En oljedråpe med masse 4.9·10⁻¹⁵ kg svever i ro mellom to plater. Feltet er 1.0·10⁵ N/C og peker oppover. Hvor mange elementærladninger har dråpen, og hvilket fortegn?",
+"riktig": "3, positivt",
+"feil": [
+{
+"svar": "3, negativt",
+"type": "begrep"
+},
+{
+"svar": "30, positivt",
+"type": "regnefeil"
+},
+{
+"svar": "0.33, positivt",
+"type": "regnefeil"
+}
+],
+"forklaring": "$qE = mg$ gir $q = mg/E = 4.8\\cdot10^{-19}\\ \\mathrm{C} = 3\\mathrm{e}$. Kraften må peke oppover, med feltet, så ladningen er positiv."
+},
+{
+"id": "elektrisk-felt-318",
+"tema": "elektrisk-felt",
+"undertema": "ladning",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "Kule A har +8.0 nC. Den berøres med en lik, nøytral kule B, og de skilles. Så berøres B med en lik, nøytral kule C. Hvor mye ladning har C til slutt?",
+"riktig": "+2.0 nC",
+"feil": [
+{
+"svar": "+4.0 nC",
+"type": "regnefeil"
+},
+{
+"svar": "+2.7 nC",
+"type": "begrep"
+},
+{
+"svar": "+8.0 nC",
+"type": "begrep"
+}
+],
+"forklaring": "Første berøring: A og B får $4.0\\ \\mathrm{nC}$ hver. Andre berøring: B og C deler $4.0\\ \\mathrm{nC}$."
+},
+{
+"id": "elektrisk-potensial-319",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva er enheten for elektrisk potensial?",
+"riktig": "volt (V = J/C)",
+"feil": [
+{
+"svar": "N/C",
+"type": "begrep"
+},
+{
+"svar": "C/J",
+"type": "begrep"
+},
+{
+"svar": "J",
+"type": "begrep"
+}
+],
+"forklaring": "Potensial er potensiell energi per ladning: joule per coulomb, som kalles volt."
+},
+{
+"id": "elektrisk-potensial-320",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Et batteri har spenningen 9.0 V. Hvor mye energi får 1.0 C ladning når den går gjennom batteriet?",
+"riktig": "9.0 J",
+"feil": [
+{
+"svar": "0.11 J",
+"type": "regnefeil"
+},
+{
+"svar": "9.0 W",
+"type": "begrep"
+},
+{
+"svar": "1.0 J",
+"type": "begrep"
+}
+],
+"forklaring": "$W = qU = 1.0\\ \\mathrm{C}\\cdot9.0\\ \\mathrm{V}$."
+},
+{
+"id": "elektrisk-potensial-321",
+"tema": "elektrisk-potensial",
+"undertema": "potensiell-energi",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva skjer med den elektriske potensielle energien til et elektron som beveger seg mot en positiv ladning?",
+"riktig": "Den minker",
+"feil": [
+{
+"svar": "Den øker",
+"type": "begrep"
+},
+{
+"svar": "Den er uendret",
+"type": "begrep"
+},
+{
+"svar": "Den blir null",
+"type": "begrep"
+}
+],
+"forklaring": "Elektronet trekkes mot den positive ladningen, og feltet gjør positivt arbeid. Da minker den potensielle energien."
+},
+{
+"id": "elektrisk-potensial-322",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Punkt A har potensialet 12 V og punkt B har 4.0 V. Hva er spenningen mellom A og B?",
+"riktig": "8.0 V",
+"feil": [
+{
+"svar": "16 V",
+"type": "regnefeil"
+},
+{
+"svar": "3.0 V",
+"type": "regnefeil"
+},
+{
+"svar": "4.0 V",
+"type": "begrep"
+}
+],
+"forklaring": "Spenning er potensialforskjell: $U_{AB} = V_A - V_B$."
+},
+{
+"id": "elektrisk-potensial-323",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvor mye er 1 eV i joule?",
+"riktig": "1.602·10⁻¹⁹ J",
+"feil": [
+{
+"svar": "1.0 J",
+"type": "begrep"
+},
+{
+"svar": "6.24·10¹⁸ J",
+"type": "regnefeil"
+},
+{
+"svar": "9.11·10⁻³¹ J",
+"type": "begrep"
+}
+],
+"forklaring": "1 eV er energien én elementærladning får gjennom 1 V: $1.602\\cdot10^{-19}\\ \\mathrm{C}\\cdot1\\ \\mathrm{V}$."
+},
+{
+"id": "elektrisk-potensial-324",
+"tema": "elektrisk-potensial",
+"undertema": "potensiell-energi",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En ladning på 3.0 µC flyttes fra et punkt med potensialet 0 V til et punkt med potensialet 50 V. Hvor mye øker den potensielle energien?",
+"riktig": "0.15 mJ",
+"feil": [
+{
+"svar": "0.15 J",
+"type": "regnefeil"
+},
+{
+"svar": "17 MJ",
+"type": "regnefeil"
+},
+{
+"svar": "50 J",
+"type": "begrep"
+}
+],
+"forklaring": "$\\Delta E_p = q\\Delta V = 3.0\\cdot10^{-6}\\ \\mathrm{C}\\cdot50\\ \\mathrm{V}$."
+},
+{
+"id": "elektrisk-potensial-325",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvordan står ekvipotensialflatene i forhold til feltlinjene?",
+"riktig": "Vinkelrett på feltlinjene",
+"feil": [
+{
+"svar": "Parallelt med feltlinjene",
+"type": "begrep"
+},
+{
+"svar": "I 45° med feltlinjene",
+"type": "begrep"
+},
+{
+"svar": "Det er ingen sammenheng",
+"type": "begrep"
+}
+],
+"forklaring": "Langs en ekvipotensialflate endres ikke potensialet, så feltet har ingen komponent langs flata."
+},
+{
+"id": "elektrisk-potensial-326",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Hva er potensialet 20 cm fra en punktladning på −5.0 nC?",
+"riktig": "−0.22 kV",
+"feil": [
+{
+"svar": "+0.22 kV",
+"type": "begrep"
+},
+{
+"svar": "−1.1 kV",
+"type": "regnefeil"
+},
+{
+"svar": "−2.2 V",
+"type": "regnefeil"
+}
+],
+"forklaring": "$V = \\mathrm{k_e}q/r = 8.99\\cdot10^{9}\\cdot(-5.0\\cdot10^{-9})/0.20\\ \\mathrm{V}$."
+},
+{
+"id": "elektrisk-potensial-327",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Ladninger på +4.0 nC og +2.0 nC ligger 0.40 m fra hverandre. Hva er potensialet midt mellom dem?",
+"riktig": "0.27 kV",
+"feil": [
+{
+"svar": "90 V",
+"type": "begrep"
+},
+{
+"svar": "0.13 kV",
+"type": "regnefeil"
+},
+{
+"svar": "1.3 kV",
+"type": "regnefeil"
+}
+],
+"forklaring": "Potensialene adderes som tall: $V = \\mathrm{k_e}(4.0 + 2.0)\\cdot10^{-9}/0.20\\ \\mathrm{V}$."
+},
+{
+"id": "elektrisk-potensial-328",
+"tema": "elektrisk-potensial",
+"undertema": "potensiell-energi",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "Hvor mye arbeid må til for å flytte en ladning på 2.0 nC fra et punkt med potensialet 100 V til et punkt med potensialet 300 V?",
+"riktig": "0.40 µJ",
+"feil": [
+{
+"svar": "0.60 µJ",
+"type": "regnefeil"
+},
+{
+"svar": "0.80 µJ",
+"type": "regnefeil"
+},
+{
+"svar": "−0.40 µJ",
+"type": "begrep"
+}
+],
+"forklaring": "$W = q(V_2 - V_1) = 2.0\\cdot10^{-9}\\cdot200\\ \\mathrm{J}$."
+},
+{
+"id": "elektrisk-potensial-329",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Et elektron akselereres fra ro gjennom 100 V. Hva er farten etterpå?",
+"riktig": "5.93 Mm/s",
+"feil": [
+{
+"svar": "3.52·10¹³ m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0.138 Mm/s",
+"type": "regnefeil"
+},
+{
+"svar": "100 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$\\mathrm{e}U = \\frac{1}{2}\\mathrm{m_e}v^2$ gir $v = \\sqrt{2\\mathrm{e}U/\\mathrm{m_e}}$."
+},
+{
+"id": "elektrisk-potensial-330",
+"tema": "elektrisk-potensial",
+"undertema": "potensiell-energi",
+"vanskelighet": "middels",
+"forventet_tid_s": 120,
+"tekst": "Et proton og et elektron er 0.053 nm fra hverandre, som i et hydrogenatom. Hva er den elektriske potensielle energien?",
+"riktig": "−4.4·10⁻¹⁸ J",
+"feil": [
+{
+"svar": "+4.4·10⁻¹⁸ J",
+"type": "begrep"
+},
+{
+"svar": "−8.2·10⁻⁸ J",
+"type": "regnefeil"
+},
+{
+"svar": "−4.4·10⁻²⁷ J",
+"type": "regnefeil"
+}
+],
+"forklaring": "$E_p = \\mathrm{k_e}q_1q_2/r = -8.99\\cdot10^{9}\\cdot(1.602\\cdot10^{-19})^2/5.3\\cdot10^{-11}\\ \\mathrm{J}$. Motsatte fortegn gir negativ energi."
+},
+{
+"id": "elektrisk-potensial-331",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "Feltet mellom to plater er 2.5 kV/m. Hvor stor er potensialforskjellen mellom to punkter som ligger 4.0 cm fra hverandre langs feltet?",
+"riktig": "0.10 kV",
+"feil": [
+{
+"svar": "10 kV",
+"type": "regnefeil"
+},
+{
+"svar": "63 kV",
+"type": "regnefeil"
+},
+{
+"svar": "0 V",
+"type": "begrep"
+}
+],
+"forklaring": "$U = Ed = 2.5\\cdot10^{3}\\ \\mathrm{V/m}\\cdot0.040\\ \\mathrm{m}$."
+},
+{
+"id": "elektrisk-potensial-332",
+"tema": "elektrisk-potensial",
+"undertema": "potensiell-energi",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En ladning på −4.0 nC flyttes fra et punkt med potensialet 200 V til et punkt med 50 V. Hvordan endres den potensielle energien?",
+"riktig": "Den øker med 0.60 µJ",
+"feil": [
+{
+"svar": "Den minker med 0.60 µJ",
+"type": "begrep"
+},
+{
+"svar": "Den øker med 1.0 µJ",
+"type": "regnefeil"
+},
+{
+"svar": "Den minker med 0.20 µJ",
+"type": "regnefeil"
+}
+],
+"forklaring": "$\\Delta E_p = q(V_2 - V_1) = (-4.0\\cdot10^{-9})\\cdot(50 - 200)\\ \\mathrm{J} = +0.60\\ \\mathrm{\\mu J}$. Negativ ladning får høyere energi ved lavere potensial."
+},
+{
+"id": "elektrisk-potensial-333",
+"tema": "elektrisk-potensial",
+"undertema": "potensiell-energi",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Tre like ladninger på 2.0 nC skal plasseres i hjørnene av en likesidet trekant med sider 10 cm. Hvor mye arbeid kreves når de starter uendelig langt fra hverandre?",
+"riktig": "1.1 µJ",
+"feil": [
+{
+"svar": "0.36 µJ",
+"type": "regnefeil"
+},
+{
+"svar": "11 µJ",
+"type": "regnefeil"
+},
+{
+"svar": "0 J",
+"type": "begrep"
+}
+],
+"forklaring": "Tre par: $W = 3\\mathrm{k_e}q^2/a = 3\\cdot8.99\\cdot10^{9}\\cdot(2.0\\cdot10^{-9})^2/0.10\\ \\mathrm{J}$."
+},
+{
+"id": "elektrisk-potensial-334",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Ladningen +3.0 nC ligger i x = 0 og −1.0 nC i x = 0.40 m. Hvor mellom dem er potensialet null?",
+"riktig": "x = 0.30 m",
+"feil": [
+{
+"svar": "x = 0.10 m",
+"type": "regnefeil"
+},
+{
+"svar": "x = 0.25 m",
+"type": "regnefeil"
+},
+{
+"svar": "x = 0.20 m",
+"type": "begrep"
+}
+],
+"forklaring": "$\\mathrm{k_e}\\cdot3.0/x = \\mathrm{k_e}\\cdot1.0/(0.40 - x)$ gir $3(0.40 - x) = x$."
+},
+{
+"id": "elektrisk-potensial-335",
+"tema": "elektrisk-potensial",
+"undertema": "potensiell-energi",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "Et proton med kinetisk energi 5.0 MeV skytes rett mot en gullkjerne med ladning +79e, som holdes i ro. Hvor nær kjernen kommer protonet?",
+"riktig": "2.3·10⁻¹⁴ m",
+"feil": [
+{
+"svar": "2.9·10⁻¹⁶ m",
+"type": "regnefeil"
+},
+{
+"svar": "4.6·10⁻¹⁴ m",
+"type": "regnefeil"
+},
+{
+"svar": "Det treffer alltid kjernen",
+"type": "begrep"
+}
+],
+"forklaring": "All kinetisk energi blir potensiell energi: $E_k = \\mathrm{k_e}\\cdot79\\mathrm{e}^2/r$, med $E_k = 5.0\\cdot10^{6}\\cdot1.602\\cdot10^{-19}\\ \\mathrm{J}$."
+},
+{
+"id": "elektrisk-potensial-336",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Et elektron akselereres fra ro og får farten 4.0·10⁶ m/s. Hvor stor spenning har det gått gjennom?",
+"riktig": "45 V",
+"feil": [
+{
+"svar": "91 V",
+"type": "regnefeil"
+},
+{
+"svar": "84 kV",
+"type": "regnefeil"
+},
+{
+"svar": "4.0 MV",
+"type": "begrep"
+}
+],
+"forklaring": "$U = \\mathrm{m_e}v^2/(2\\mathrm{e}) = 9.11\\cdot10^{-31}\\cdot(4.0\\cdot10^{6})^2/(2\\cdot1.602\\cdot10^{-19})\\ \\mathrm{V}$."
+},
+{
+"id": "elektrisk-potensial-337",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "En alfapartikkel har dobbelt så stor ladning som et proton og massen 6.64·10⁻²⁷ kg. Den akselereres fra ro gjennom 1.0 kV. Hva er farten etterpå?",
+"riktig": "0.31 Mm/s",
+"feil": [
+{
+"svar": "0.22 Mm/s",
+"type": "regnefeil"
+},
+{
+"svar": "9.7·10¹⁰ m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0 m/s, fordi alfapartikler ikke påvirkes av elektriske felt",
+"type": "begrep"
+}
+],
+"forklaring": "$2\\mathrm{e}U = \\frac{1}{2}mv^2$ gir $v = \\sqrt{4\\mathrm{e}U/m}$."
+},
+{
+"id": "elektrisk-potensial-338",
+"tema": "elektrisk-potensial",
+"undertema": "potensial",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "Den negative plata i en platekondensator har potensialet 0 V og den positive 600 V. Avstanden er 3.0 cm. Hva er potensialet 1.0 cm fra den negative plata?",
+"riktig": "0.20 kV",
+"feil": [
+{
+"svar": "0.40 kV",
+"type": "begrep"
+},
+{
+"svar": "0.30 kV",
+"type": "regnefeil"
+},
+{
+"svar": "20 kV",
+"type": "regnefeil"
+}
+],
+"forklaring": "Feltet er homogent, så potensialet øker jevnt: $V = 600\\ \\mathrm{V}\\cdot1.0/3.0$."
+},
+{
+"id": "elektrisk-potensial-339",
+"tema": "elektrisk-potensial",
+"undertema": "potensiell-energi",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "To protoner holdes 1.0·10⁻¹⁵ m fra hverandre og slippes. Hvor stor fart har hvert av dem når de er langt fra hverandre?",
+"riktig": "12 Mm/s",
+"feil": [
+{
+"svar": "17 Mm/s",
+"type": "regnefeil"
+},
+{
+"svar": "1.4·10¹⁴ m/s",
+"type": "regnefeil"
+},
+{
+"svar": "0 m/s",
+"type": "begrep"
+}
+],
+"forklaring": "$E_p = \\mathrm{k_e}\\mathrm{e}^2/r$ deles likt: $2\\cdot\\frac{1}{2}\\mathrm{m_p}v^2 = E_p$ gir $v = \\sqrt{E_p/\\mathrm{m_p}}$."
+},
+{
+"id": "kretser-340",
+"tema": "kretser",
+"undertema": "strom-spenning",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hvilken retning har strømmen i den ytre kretsen, etter vanlig avtale?",
+"riktig": "Fra pluss til minus",
+"feil": [
+{
+"svar": "Fra minus til pluss",
+"type": "begrep"
+},
+{
+"svar": "Samme retning som elektronene",
+"type": "begrep"
+},
+{
+"svar": "Strømmen har ingen retning",
+"type": "begrep"
+}
+],
+"forklaring": "Strømretningen er definert som retningen positive ladninger ville gått. Elektronene går motsatt vei."
+},
+{
+"id": "kretser-341",
+"tema": "kretser",
+"undertema": "strom-spenning",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Strømmen i en leder er 0.50 A. Hvor mye ladning passerer på 1.0 min?",
+"riktig": "30 C",
+"feil": [
+{
+"svar": "0.50 C",
+"type": "regnefeil"
+},
+{
+"svar": "8.3 mC",
+"type": "regnefeil"
+},
+{
+"svar": "30 A",
+"type": "begrep"
+}
+],
+"forklaring": "$Q = It = 0.50\\ \\mathrm{A}\\cdot60\\ \\mathrm{s}$."
+},
+{
+"id": "kretser-342",
+"tema": "kretser",
+"undertema": "motstand",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva skjer med strømmen gjennom en ohmsk motstand når spenningen over den dobles?",
+"riktig": "Den dobles",
+"feil": [
+{
+"svar": "Den halveres",
+"type": "begrep"
+},
+{
+"svar": "Den firedobles",
+"type": "begrep"
+},
+{
+"svar": "Den er uendret",
+"type": "begrep"
+}
+],
+"forklaring": "Ohms lov: $I = U/R$ med konstant $R$."
+},
+{
+"id": "kretser-343",
+"tema": "kretser",
+"undertema": "serie-parallell",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "Motstander på 2.0 Ω, 3.0 Ω og 5.0 Ω er seriekoblet. Hva er resultantresistansen?",
+"riktig": "10 Ω",
+"feil": [
+{
+"svar": "0.97 Ω",
+"type": "begrep"
+},
+{
+"svar": "30 Ω",
+"type": "regnefeil"
+},
+{
+"svar": "3.3 Ω",
+"type": "regnefeil"
+}
+],
+"forklaring": "I serie legges resistansene sammen: $R = R_1 + R_2 + R_3$."
+},
+{
+"id": "kretser-344",
+"tema": "kretser",
+"undertema": "kirchhoff",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Hva sier Kirchhoffs spenningslov?",
+"riktig": "Summen av spenningene rundt en lukket sløyfe er null",
+"feil": [
+{
+"svar": "Summen av strømmene inn i et knutepunkt er null",
+"type": "begrep"
+},
+{
+"svar": "Spenningen er lik over alle komponentene",
+"type": "begrep"
+},
+{
+"svar": "Spenningen er alltid lik ems",
+"type": "begrep"
+}
+],
+"forklaring": "Spenningsloven er energibevaring: en ladning som går rundt sløyfen, kommer tilbake til samme potensial."
+},
+{
+"id": "kretser-345",
+"tema": "kretser",
+"undertema": "emf",
+"vanskelighet": "lett",
+"forventet_tid_s": 20,
+"tekst": "Et batteri har ems 1.5 V. Hva er klemmespenningen når det ikke går strøm gjennom batteriet?",
+"riktig": "1.5 V",
+"feil": [
+{
+"svar": "0 V",
+"type": "begrep"
+},
+{
+"svar": "0.75 V",
+"type": "begrep"
+},
+{
+"svar": "Den avhenger av den indre resistansen",
+"type": "begrep"
+}
+],
+"forklaring": "$U = \\varepsilon - rI$, og med $I = 0$ blir $U = \\varepsilon$."
+},
+{
+"id": "kretser-346",
+"tema": "kretser",
+"undertema": "effekt",
+"vanskelighet": "lett",
+"forventet_tid_s": 30,
+"tekst": "En lampe på 60 W står på i 5.0 h. Hvor mye energi bruker den?",
+"riktig": "0.30 kWh",
+"feil": [
+{
+"svar": "300 kWh",
+"type": "regnefeil"
+},
+{
+"svar": "12 Wh",
+"type": "regnefeil"
+},
+{
+"svar": "60 W",
+"type": "begrep"
+}
+],
+"forklaring": "$E = Pt = 0.060\\ \\mathrm{kW}\\cdot5.0\\ \\mathrm{h}$."
+},
+{
+"id": "kretser-347",
+"tema": "kretser",
+"undertema": "strom-spenning",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "Hvor mange elektroner passerer et tverrsnitt av en leder hvert sekund når strømmen er 1.0 mA?",
+"riktig": "6.2·10¹⁵",
+"feil": [
+{
+"svar": "6.2·10¹⁸",
+"type": "regnefeil"
+},
+{
+"svar": "1.6·10⁻²²",
+"type": "regnefeil"
+},
+{
+"svar": "1.0·10⁻³",
+"type": "begrep"
+}
+],
+"forklaring": "$n = It/\\mathrm{e} = 1.0\\cdot10^{-3}\\ \\mathrm{A}\\cdot1\\ \\mathrm{s}/1.602\\cdot10^{-19}\\ \\mathrm{C}$."
+},
+{
+"id": "kretser-348",
+"tema": "kretser",
+"undertema": "motstand",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En kobbertråd er 10 m lang og har tverrsnittet 1.0 mm². Resistiviteten er 1.7·10⁻⁸ Ωm. Hva er resistansen?",
+"riktig": "0.17 Ω",
+"feil": [
+{
+"svar": "1.7·10⁻⁷ Ω",
+"type": "regnefeil"
+},
+{
+"svar": "1.7·10⁵ Ω",
+"type": "regnefeil"
+},
+{
+"svar": "0 Ω, fordi kobber leder perfekt",
+"type": "begrep"
+}
+],
+"forklaring": "$R = \\rho L/A$ med $A = 1.0\\cdot10^{-6}\\ \\mathrm{m^2}$."
+},
+{
+"id": "kretser-349",
+"tema": "kretser",
+"undertema": "serie-parallell",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "Tre like motstander på 12 Ω er parallellkoblet. Hva er resultantresistansen?",
+"riktig": "4.0 Ω",
+"feil": [
+{
+"svar": "36 Ω",
+"type": "begrep"
+},
+{
+"svar": "0.25 Ω",
+"type": "regnefeil"
+},
+{
+"svar": "6.0 Ω",
+"type": "regnefeil"
+}
+],
+"forklaring": "$1/R = 3/12\\ \\mathrm{\\Omega^{-1}}$, så $R = 12\\ \\mathrm{\\Omega}/3$."
+},
+{
+"id": "kretser-350",
+"tema": "kretser",
+"undertema": "serie-parallell",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "En motstand på 4.0 Ω er seriekoblet med to parallellkoblede motstander på 6.0 Ω og 3.0 Ω. Hva er resultantresistansen?",
+"riktig": "6.0 Ω",
+"feil": [
+{
+"svar": "13 Ω",
+"type": "begrep"
+},
+{
+"svar": "1.3 Ω",
+"type": "begrep"
+},
+{
+"svar": "8.5 Ω",
+"type": "regnefeil"
+}
+],
+"forklaring": "Parallelldelen: $1/R_p = 1/6.0 + 1/3.0$ gir $R_p = 2.0\\ \\mathrm{\\Omega}$. I serie: $4.0 + 2.0$."
+},
+{
+"id": "kretser-351",
+"tema": "kretser",
+"undertema": "kirchhoff",
+"vanskelighet": "middels",
+"forventet_tid_s": 90,
+"tekst": "Motstander på 10 Ω og 20 Ω er seriekoblet til 12 V. Hva er spenningen over 20 Ω-motstanden?",
+"riktig": "8.0 V",
+"feil": [
+{
+"svar": "4.0 V",
+"type": "regnefeil"
+},
+{
+"svar": "6.0 V",
+"type": "begrep"
+},
+{
+"svar": "12 V",
+"type": "begrep"
+}
+],
+"forklaring": "$I = 12\\ \\mathrm{V}/30\\ \\mathrm{\\Omega} = 0.40\\ \\mathrm{A}$, og $U = RI = 20\\cdot0.40\\ \\mathrm{V}$."
+},
+{
+"id": "kretser-352",
+"tema": "kretser",
+"undertema": "emf",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "Et batteri har ems 9.0 V og indre resistans 1.0 Ω. Hvor stor blir strømmen hvis polene kortsluttes med en ledning uten resistans?",
+"riktig": "9.0 A",
+"feil": [
+{
+"svar": "0.11 A",
+"type": "regnefeil"
+},
+{
+"svar": "0 A",
+"type": "begrep"
+},
+{
+"svar": "Uendelig stor",
+"type": "begrep"
+}
+],
+"forklaring": "Bare den indre resistansen begrenser strømmen: $I = \\varepsilon/r$."
+},
+{
+"id": "kretser-353",
+"tema": "kretser",
+"undertema": "effekt",
+"vanskelighet": "middels",
+"forventet_tid_s": 60,
+"tekst": "Strømmen gjennom en motstand på 50 Ω er 0.20 A. Hva er effekten?",
+"riktig": "2.0 W",
+"feil": [
+{
+"svar": "10 W",
+"type": "regnefeil"
+},
+{
+"svar": "0.80 mW",
+"type": "regnefeil"
+},
+{
+"svar": "0.25 kW",
+"type": "begrep"
+}
+],
+"forklaring": "$P = RI^2 = 50\\cdot0.20^2\\ \\mathrm{W}$."
+},
+{
+"id": "kretser-354",
+"tema": "kretser",
+"undertema": "motstand",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "En ledning med resistans 2.0 Ω trekkes ut til dobbel lengde uten at volumet endres. Hva blir resistansen?",
+"riktig": "8.0 Ω",
+"feil": [
+{
+"svar": "4.0 Ω",
+"type": "begrep"
+},
+{
+"svar": "2.0 Ω",
+"type": "begrep"
+},
+{
+"svar": "1.0 Ω",
+"type": "regnefeil"
+}
+],
+"forklaring": "$R = \\rho L/A$. Dobbel lengde med samme volum gir halvt tverrsnitt, så $R$ blir $2\\cdot2 = 4$ ganger så stor."
+},
+{
+"id": "kretser-355",
+"tema": "kretser",
+"undertema": "serie-parallell",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "Tre like lyspærer er koblet til et batteri: A er seriekoblet med parallellkoblingen av B og C. Hva skjer med lysstyrken til A hvis C skrus ut?",
+"riktig": "A lyser svakere",
+"feil": [
+{
+"svar": "A lyser sterkere",
+"type": "begrep"
+},
+{
+"svar": "A lyser like sterkt",
+"type": "begrep"
+},
+{
+"svar": "A slukner",
+"type": "begrep"
+}
+],
+"forklaring": "Uten C øker resistansen fra $1.5R$ til $2R$, så strømmen gjennom A blir mindre."
+},
+{
+"id": "kretser-356",
+"tema": "kretser",
+"undertema": "kirchhoff",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "Batterier på 12 V og 6.0 V er seriekoblet med motsatt polaritet sammen med en motstand på 3.0 Ω. Hva er strømmen?",
+"riktig": "2.0 A",
+"feil": [
+{
+"svar": "6.0 A",
+"type": "begrep"
+},
+{
+"svar": "4.0 A",
+"type": "regnefeil"
+},
+{
+"svar": "0.50 A",
+"type": "regnefeil"
+}
+],
+"forklaring": "Batteriene virker mot hverandre: $I = (12 - 6.0)\\ \\mathrm{V}/3.0\\ \\mathrm{\\Omega}$."
+},
+{
+"id": "kretser-357",
+"tema": "kretser",
+"undertema": "kirchhoff",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 180,
+"tekst": "Et batteri på 12 V er koblet til to parallelle grener. Den ene har en motstand på 4.0 Ω, den andre to seriekoblede motstander på 6.0 Ω. Hvor stor strøm leverer batteriet?",
+"riktig": "4.0 A",
+"feil": [
+{
+"svar": "0.86 A",
+"type": "begrep"
+},
+{
+"svar": "3.0 A",
+"type": "regnefeil"
+},
+{
+"svar": "5.0 A",
+"type": "regnefeil"
+}
+],
+"forklaring": "Begge grenene har 12 V over seg: $12/4.0 + 12/12\\ \\mathrm{A}$."
+},
+{
+"id": "kretser-358",
+"tema": "kretser",
+"undertema": "emf",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 240,
+"tekst": "Når et batteri leverer 2.0 A, er klemmespenningen 11 V. Når det leverer 4.0 A, er den 10 V. Hva er den indre resistansen og emsen?",
+"riktig": "r = 0.50 Ω og ε = 12 V",
+"feil": [
+{
+"svar": "r = 0.25 Ω og ε = 11.5 V",
+"type": "regnefeil"
+},
+{
+"svar": "r = 0.50 Ω og ε = 11 V",
+"type": "regnefeil"
+},
+{
+"svar": "r = 5.5 Ω og ε = 11 V",
+"type": "begrep"
+}
+],
+"forklaring": "$U = \\varepsilon - rI$: $11 = \\varepsilon - 2.0r$ og $10 = \\varepsilon - 4.0r$ gir $r = 0.50\\ \\mathrm{\\Omega}$."
+},
+{
+"id": "kretser-359",
+"tema": "kretser",
+"undertema": "effekt",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "To lyspærer merket 60 W og 100 W (begge for 230 V) seriekobles til 230 V. Hvilken lyser sterkest?",
+"riktig": "60 W-pæra",
+"feil": [
+{
+"svar": "100 W-pæra",
+"type": "begrep"
+},
+{
+"svar": "De lyser like sterkt",
+"type": "begrep"
+},
+{
+"svar": "Ingen av dem lyser",
+"type": "begrep"
+}
+],
+"forklaring": "$R = U^2/P$, så 60 W-pæra har størst resistans. I serie er strømmen lik, og $P = RI^2$ blir størst der $R$ er størst."
+},
+{
+"id": "kretser-360",
+"tema": "kretser",
+"undertema": "effekt",
+"vanskelighet": "vanskelig",
+"forventet_tid_s": 120,
+"tekst": "Strømmen gjennom en motstand øker med 20 %. Hvor mange prosent øker effekten?",
+"riktig": "44 %",
+"feil": [
+{
+"svar": "20 %",
+"type": "begrep"
+},
+{
+"svar": "40 %",
+"type": "regnefeil"
+},
+{
+"svar": "4.0 %",
+"type": "regnefeil"
+}
+],
+"forklaring": "$P = RI^2$, og $1.20^2 = 1.44$."
 }
 ]
 }

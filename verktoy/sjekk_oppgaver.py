@@ -89,6 +89,8 @@ def min_siffer(tekst):
             continue
         if not eks and not punkt and len(mant) == 1 and len(ord_) > 3:
             continue
+        if float(mant) == 0:   # «x = 0», «0 V»: et nullpunkt, ikke et måltall
+            continue
         n = max(1, len(mant.replace('.', '').lstrip('0')))
         best = n if best is None else min(best, n)
     return best
