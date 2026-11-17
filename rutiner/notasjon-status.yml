@@ -126,20 +126,20 @@ filer:
     dato: '2026-11-16'
     versjon: 2
   flervariabel-kalkulus/kapitler/04-vektorfelt/03-linjeintegraler-av-vektorfelt.qmd:
-    blob: 48d43c35836f54551525ef8349c806a5b0b2644f
-    dato: '2026-11-11'
+    blob: 72c944d3e1924855e57a8713d7993d9223dd2832
+    dato: '2026-11-17'
     versjon: 2
   flervariabel-kalkulus/kapitler/04-vektorfelt/04-konservative-felt.qmd:
-    blob: 6f1a7f595d78697606ab08c333b2d45632d0e04e
-    dato: '2026-11-11'
+    blob: e5af376c89354b4461ba1c430b99f30f88e97e0c
+    dato: '2026-11-17'
     versjon: 2
   flervariabel-kalkulus/kapitler/04-vektorfelt/05-oppgaver.qmd:
-    blob: 22f27bfdbd68f39e408a0ba14defeada1d179090
-    dato: '2026-11-11'
+    blob: d069dea006514e1a216677ff4b17c4b536fe34ed
+    dato: '2026-11-17'
     versjon: 2
   flervariabel-kalkulus/kapitler/04-vektorfelt/index.qmd:
-    blob: 43d528d58c81b999c402984815da1e4d837df5d0
-    dato: '2026-11-11'
+    blob: 2f89a23eaf2b11ff25c81b22bdf486c0cb6599ab
+    dato: '2026-11-17'
     versjon: 2
   flervariabel-kalkulus/kapitler/05-integralsetninger/01-fluks-i-planet.qmd:
     blob: 610657c15b808934f6aba64bb8db4edebea10c3f
@@ -441,6 +441,66 @@ filer:
     blob: af155d593e70176364324caeeb1ec76c47adb7c9
     dato: '2026-11-16'
     versjon: 2
+  fysikk-forkurs/kapitler/06-statikk/01-kraftlikevekt-f-0.qmd:
+    blob: 3b88d64c394b61fda1534e9dcb8376dcfcdf5030
+    dato: '2026-11-17'
+    versjon: 2
+  fysikk-forkurs/kapitler/06-statikk/02-kraftmoment.qmd:
+    blob: 6061ad40d06ff3df104054a125a397bbe3044e0d
+    dato: '2026-11-17'
+    versjon: 2
+  fysikk-forkurs/kapitler/06-statikk/03-rotasjonslikevekt-og-fullstendig-likevekt.qmd:
+    blob: df2083675d4167ba6fe0e066bd8d97fa6511c70a
+    dato: '2026-11-17'
+    versjon: 2
+  fysikk-forkurs/kapitler/06-statikk/04-massesenter.qmd:
+    blob: f7e3fed0ad15a212538ed7060ca87ca4b1411b94
+    dato: '2026-11-17'
+    versjon: 2
+  fysikk-forkurs/kapitler/06-statikk/05-ekstraoppgaver.qmd:
+    blob: 750c8cefda7c0379130bcf81a47f49a63fd2e38d
+    dato: '2026-11-17'
+    versjon: 2
+  fysikk-forkurs/kapitler/06-statikk/index.qmd:
+    blob: f15049ae52f706548c4e2a8e385418af195f5148
+    dato: '2026-11-17'
+    versjon: 2
+  fysikk-forkurs/kapitler/07-svingninger/01-harmoniske-svingninger.qmd:
+    blob: 5cf497ca30b1eb90447653636477bfbbebde3a1a
+    dato: '2026-11-17'
+    versjon: 2
+  fysikk-forkurs/kapitler/07-svingninger/02-fjaer-og-pendel.qmd:
+    blob: e2d55ed025c8d3d1fd0a279f817da64b06ef9442
+    dato: '2026-11-17'
+    versjon: 2
+  fysikk-forkurs/kapitler/07-svingninger/index.qmd:
+    blob: 6baf8cb63f99bac121d0669c3b1319e4533381c1
+    dato: '2026-11-17'
+    versjon: 2
+  fysikk-forkurs/kapitler/08-fluider/01-introduksjon-til-fluidfysikk.qmd:
+    blob: 102bd9c507c1067992fab8044fd512765a16d966
+    dato: '2026-11-17'
+    versjon: 2
+  fysikk-forkurs/kapitler/08-fluider/02-trykk-i-vaesker.qmd:
+    blob: 694b2ca585d23eb4c1d5ed3e8c013378c1283bfe
+    dato: '2026-11-17'
+    versjon: 2
+  fysikk-forkurs/kapitler/08-fluider/03-pascals-lov.qmd:
+    blob: 487e0557c9c8befc8ca1a0dbebeab9e326d6b96f
+    dato: '2026-11-17'
+    versjon: 2
+  fysikk-forkurs/kapitler/08-fluider/04-oppdrift-og-arkimedes-lov.qmd:
+    blob: e08fc5bdbbf5f63caaa962d4c24956c41fef4c75
+    dato: '2026-11-17'
+    versjon: 2
+  fysikk-forkurs/kapitler/08-fluider/05-ekstraoppgaver.qmd:
+    blob: e15cbd048ae55c6c69f04dc899657f8d62ef7648
+    dato: '2026-11-17'
+    versjon: 2
+  fysikk-forkurs/kapitler/08-fluider/index.qmd:
+    blob: 3af122eded2e34687a36c869353007aed47fc6d5
+    dato: '2026-11-17'
+    versjon: 2
   fysikk-forkurs/kapitler/09-termofysikk/04-termodynamikkens-1-lov.qmd:
     blob: 1ef877ce6a3262acc15a7e20e4c620ab376413c6
     dato: '2026-11-12'
@@ -697,9 +757,17 @@ filer:
     blob: 18d1a33f838ed426d6368bf594591718134d08ff
     dato: '2026-11-16'
     versjon: 2
+  plattform/tema-tekster/bevegelsesmengde.md:
+    blob: dcb429033ecb794b7547fea7cdafe4f8e85b9d00
+    dato: '2026-11-17'
+    versjon: 2
   plattform/tema-tekster/hva-er-fysikk.md:
     blob: 2c83ba9bf784e6f162912073c7c300bbf1490d2d
     dato: '2026-11-09'
+    versjon: 2
+  plattform/tema-tekster/hydrostatikk.md:
+    blob: 85a8eeef8318a47220f6078c96fa70876b0ad1f2
+    dato: '2026-11-17'
     versjon: 2
   plattform/tema-tekster/kinematikk.md:
     blob: 247dc4fdd20df018041078666fa8fa1203d316a3
@@ -709,8 +777,20 @@ filer:
     blob: f34c0b2bf0c3ac23dd4518a05850b74273845657
     dato: '2026-11-16'
     versjon: 2
+  plattform/tema-tekster/sirkelbevegelse.md:
+    blob: 8f58b88acb5a0f28d09bcb8800b4c9e725d75b30
+    dato: '2026-11-17'
+    versjon: 2
+  plattform/tema-tekster/statikk.md:
+    blob: 88edd1be0033ef4430e2523916a26ecf96b4f4e1
+    dato: '2026-11-17'
+    versjon: 2
   plattform/tema-tekster/straling.md:
     blob: 0f123d9fc0101e496ade42e85a3a722293c131f3
     dato: '2026-11-16'
+    versjon: 2
+  plattform/tema-tekster/svingninger.md:
+    blob: 61a65da65941c8b6cce183afd6fb15a863834015
+    dato: '2026-11-17'
     versjon: 2
 versjon: 2
