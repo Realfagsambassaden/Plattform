@@ -48,6 +48,7 @@ Forkurset ble tidligere skrevet i LaTeX (`kosmoben/TRES0312`). Fra november 2026
 ## 3. Innholdsmodell: tema → undertema → nivå
 
 - Alt stoff er ordnet etter **tema** og **undertema** (i `tema.yml`), ikke etter kurs. Undertemaet `oppgaver` (blandede oppgaver) finnes i alle temaer.
+- **Blandede oppgaver (ekstraoppgaver) holder seg innenfor temaet** (besluttet 17. nov. 2026). Oppgavene på en slik side skal bare bruke stoff fra undertemaene i det samme temaet, og sidene står sist i temaet. I en løype skal ingen oppgave kreve stoff som ikke er gjennomgått tidligere i løypa. Sjekk dette når en løype lages eller endres.
 - **Si «tema», ikke «emne».** «Emne» betyr også et kurs (emnekode, emnebeskrivelse), så ordet brukes bare om kurs. De gamle feltnavnene `emne:` og `delemne:` godtas fortsatt av byggeverktøyet, men nye sider skal bruke `tema:` og `undertema:`.
 - Hver side har nivå **Forkurs**, **Ingeniør** eller **Fordypning** (`forkurs`, `ingenior`, `fordypning`). Nivået arves fra læreboka (`niva:` i `fag.yml` her i Plattform) og kan overstyres med `niva:` øverst på siden.
 - Hver side starter slik:
