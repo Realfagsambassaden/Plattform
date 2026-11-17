@@ -1753,7 +1753,7 @@ function studieStart() {
   }
   function besteForsok(o) { return (T.quizer || []).filter(function (q) { return q.ovelse === o.id; }).reduce(function (m, q) { return Math.max(m, q.riktige || 0); }, 0); }
   function fristTekst(f) { if (!f) return ''; return new Date(f).toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'short' }); }
-  function appTittel() { if (T.vis === 'hjem') { var a = aktivtKurs(); return T.loypeApen && mineLoyper().length > 1 ? (a && a !== 'egen' ? fagnavn(a) : 'Min egen løype') : 'Ukeplanen min'; } return { skann: 'Skann svaret ditt', uke: 'Ukeplanen min', profil: 'Kunnskapsprofil', kurs: 'Finn kurs', fag: 'Kursene mine', pamelding: 'Finn kurs', innstillinger: 'Innstillinger', resultat: 'Resultat' }[T.vis] || ''; }
+  function appTittel() { if (T.vis === 'hjem') { var a = aktivtKurs(); return T.loypeApen && mineLoyper().length > 1 ? (a && a !== 'egen' ? fagnavn(a) : 'Min egen løype') : 'Ukeplanen min'; } return { skann: 'Skann svaret ditt', uke: 'Ukeplanen min', profil: 'Kunnskapsprofil', kurs: 'Kurstilbud', fag: 'Kursene mine', pamelding: 'Kurstilbud', innstillinger: 'Design din løype', resultat: 'Resultat' }[T.vis] || ''; }
   function menyHtml() {
     var rad = function (ik, t, u, v, href) {
       var inni = '<span class="st-mikon">' + ikon(ik) + '</span><span class="st-mtekst">' + t + (u ? '<span class="st-sm">' + u + '</span>' : '') + '</span>' + ikon('pil', 18);
@@ -1766,9 +1766,9 @@ function studieStart() {
       rad('rute', 'Ukeplanen min', 'Uker, temaer og quiz i kursene dine', 'hjem') +
       rad('bok', 'Les og øv', 'Lærestoff, videoer og oppgaver', '', '../index.html') +
       rad('graf', 'Kunnskapsprofil', 'Forståelse, presisjon og hurtighet', 'profil') +
-      rad('kurs', 'Finn kurs', 'Meld deg på eller av, og se løypene på nettstedet', 'kurs') +
+      rad('kurs', 'Kurstilbud', 'Kurs som undervisere tilbyr. Meld deg på eller av', 'kurs') +
       rad('bruker', 'Min side', '', '', '../konto/index.html') +
-      rad('tannhjul', 'Innstillinger', 'Temaer, quiz og påminnelser', 'innstillinger') +
+      rad('tannhjul', 'Design din løype', 'Temaer (også fra en emnebeskrivelse), quiz og påminnelser', 'innstillinger') +
       '<button type="button" class="st-mrad" data-h="tilbakemelding"><span class="st-mikon">' + ikon('prat') + '</span><span class="st-mtekst">Gi tilbakemelding<span class="st-sm">Fant du en feil? Har du et forslag?</span></span>' + ikon('pil', 18) + '</button></nav>';
   }
   function bunnlinje() {
@@ -1992,7 +1992,12 @@ function studieStart() {
       return o;
     },
     innstillinger: function () {
-      return '<h2>Temaer du studerer</h2><p class="st-sm">Rekkefølgen her blir rekkefølgen i løypa, med én uke per tema.</p>' + temavalg() +
+      // «Design din løype»: velg temaene selv, eller la Dashman foreslå dem ut fra en emnebeskrivelse.
+      return '<h2>Design din løype</h2><div class="st-kort"><label class="st-sm" for="st-emnetekst"><b>Har du en emnebeskrivelse?</b> Lim den inn (eller skriv hva du skal lære), så foreslår Dashman temaene.</label>' +
+        '<textarea id="st-emnetekst" class="st-felt" rows="4" maxlength="6000" placeholder="F.eks. læringsutbyttet fra emnesiden, eller «Jeg skal ta eksamen i fysikk 1 og trenger mekanikk og energi»">' + esc(T.emnetekst || '') + '</textarea>' +
+        '<p><button type="button" class="st-btn" data-h="loypeforslag"' + (T.loypeVenter ? ' disabled' : '') + '>' + (T.loypeVenter ? 'Dashman tenker …' : 'Foreslå temaer') + '</button></p>' +
+        (T.loypeKommentar ? '<p class="st-sm">' + esc(T.loypeKommentar) + '</p>' : '') + '</div>' +
+        '<h3>Temaer du studerer</h3><p class="st-sm">Kryss av selv, eller juster forslaget. Rekkefølgen her blir rekkefølgen i løypa, med én uke per tema.</p>' + temavalg() +
         '<h2>Quiz</h2>' +
         '<label class="st-valg"><input type="radio" name="st-modus" value="alle"' + (T.inn.modus === 'alle' ? ' checked' : '') + '> Alle spørsmålene på én gang</label>' +
         '<label class="st-valg"><input type="radio" name="st-modus" value="dag"' + (T.inn.modus === 'dag' ? ' checked' : '') + '> Noen spørsmål hver dag (' + PER_DAG + ' per tema)</label>' +
@@ -2155,7 +2160,7 @@ function studieStart() {
       }).join('') : '<p class="st-ind">Du er ikke med i noe kurs.</p>';
       // Åpne kurs (underviseren har krysset av for «Åpent kurs») og løypene på nettstedet
       var apne = (T.apne || []).filter(function (c) { return !T.deltar.some(function (x) { return x.kurs === c.id; }); });
-      o += '<h3 id="st-apne-kurs">Åpne kurs</h3>' + (apne.length ? apne.map(function (c) {
+      o += '<h3 id="st-apne-kurs">Kurstilbud</h3>' + (apne.length ? apne.map(function (c) {
         return '<div class="st-kort"><div class="st-rad"><b>' + esc(c.navn) + '</b><button type="button" class="st-btn liten" data-h="apentKurs" data-id="' + c.id + '">Meld på</button></div>' +
           (c.underviser ? '<span class="st-sm">Faglærer: ' + esc(c.underviser) + (c.temaer ? ' · ' + c.temaer + ' temaer' : '') + '</span>' : '') +
           (c.beskrivelse ? '<p>' + esc(c.beskrivelse) + '</p>' : '') + (c.krev_innsyn ? '<span class="st-sm">Faglærer får innsyn i kunnskapsprofilen din (du må godta ved påmelding).</span>' : '') + '</div>';
@@ -2692,6 +2697,18 @@ function studieStart() {
       },
       oppdaterTall: function () { oppdaterTall(); },
       oppdaterValg: function () { var q = T.q; if (q.svart == null) return svar(+d.i); if (+d.i === q.svart) return; nullstillSvar(q); svar(+d.i); },
+      loypeforslag: function () {
+        var el = document.getElementById('st-emnetekst'), tekst = el ? el.value.trim() : '';
+        T.emnetekst = tekst; if (tekst.length < 15) return varsle('Lim inn emnebeskrivelsen, eller skriv litt om hva du skal lære.', true);
+        var kat = Object.keys(S).map(function (id) { return { id: id, tittel: S[id].tittel, omrade: T.omrader[S[id].omrade] || S[id].omrade, undertemaer: Object.keys(S[id].undertemaer || {}).map(function (u) { return String(S[id].undertemaer[u] || u); }) }; });
+        T.loypeVenter = true; T.loypeKommentar = ''; tegn();
+        ki('/loypeforslag', { tekst: tekst, katalog: kat }, 90).then(function (d) {
+          var andre = (T.inn.valgt || []).filter(function (x) { return x.indexOf(NETTSTED + '/') !== 0; });
+          var ny = Object.keys(S).filter(function (t) { return d.temaer.indexOf(t) >= 0; });
+          T.inn.valgt = andre.concat(ny.map(nokkel)); lagreInn();
+          T.loypeKommentar = (d.kommentar ? d.kommentar + ' ' : '') + 'Løypa har nå ' + ny.length + ' temaer. Juster gjerne under.';
+        }).catch(function (e) { varsle(feilmelding(e), true); }).then(function () { T.loypeVenter = false; tegn(); });
+      },
       provIgjen: function () {
         // Uendelig mange forsøk: siste svar tas bort fra resultatet (det lagrede svaret blir stående i statistikken).
         var q = T.q, x = q.na; if (q.svart == null) return;
