@@ -240,16 +240,26 @@ function studieStart() {
   // Obligatorisk øving: godkjent når en quiz for øvingen har minst «krav» riktige innen fristen.
   function godkjent(o) { return (T.quizer || []).some(function (q) { return q.ovelse === o.id && q.riktige >= o.krav && (!o.frist || Date.parse(q.fullfort) <= Date.parse(o.frist)); }); }
   function mineOvelser() { var a = aktivtKurs(), mine = a ? (a === 'egen' ? [] : [a.kurs]) : T.deltar.map(function (d) { return d.kurs; }); return (T.ovelser || []).filter(function (o) { return mine.indexOf(o.kurs) >= 0; }); }
+  // Spørsmål i arbeidskrav ordnes etter delkapitlenes rekkefølge (temaenes og undertemaenes rekkefølge på nettstedet),
+  // så studentene jobber sekvensielt. Innenfor et delkapittel beholdes rekkefølgen underviseren har.
+  function delkapRang(x, tFall) {
+    var tu = String(x.undertema || '').split('/'), tt = tu.length > 1 ? tu[0] : tFall, uu = tu.length > 1 ? tu[1] : tu[0];
+    var kt = K[tt] || S[tt] || {}, ti = Object.keys(K).indexOf(tt), ui = Object.keys(kt.undertemaer || {}).indexOf(uu);
+    return (ti < 0 ? 999 : ti) * 1000 + (ui < 0 ? 999 : ui);
+  }
+  function sorterDelkap(liste, tFall) {
+    return liste.map(function (x, i) { return [delkapRang(x, tFall), i, x]; }).sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; }).map(function (a) { return a[2]; });
+  }
   function startOvelse(id) {
     var o = T.ovelser.find(function (x) { return x.id === id; }), t = o.tema.split('/')[1];
     if (!K[t] && !S[t]) return varsle('Temaet finnes ikke lenger.', true);
     var ut = kravIder(o).map(function (id) { return id.split('/').slice(1).join('/'); });
-    // Egne spørsmål: i tilfeldig rekkefølge. Spørsmålsbanken: tilpasset nivået, eventuelt bare valgte undertemaer.
-    var liste = o.kilde === 'egne' ? (o.sporsmal || []).map(function (x) { if (!erMal(x)) return x; try { return lagVariant(x); } catch (e) { return null; } }).map(function (x, i) {
+    // Egne spørsmål: i delkapitlenes rekkefølge (sekvensielt). Spørsmålsbanken: tilpasset nivået, eventuelt bare valgte undertemaer.
+    var liste = o.kilde === 'egne' ? sorterDelkap(o.sporsmal || [], t).map(function (x) { if (!erMal(x)) return x; try { return lagVariant(x); } catch (e) { return null; } }).map(function (x, i) {
       if (!x) return null;
       var tu = String(x.undertema || ut[0] || '').split('/'), tt = tu.length > 1 ? tu[0] : t, uu = tu.length > 1 ? tu[1] : tu[0];
       return Object.assign({}, x, { id: 'ov-' + o.id.slice(0, 8) + '-' + i, tema: K[tt] || S[tt] ? tt : t, undertema: uu || '', vanskelighet: x.vanskelighet || 'middels', forventet_tid_s: x.forventet_tid_s || 90, forklaring: x.forklaring || '' });
-    }).filter(Boolean).map(function (x) { return [Math.random(), x]; }).sort(function (a, b) { return a[0] - b[0]; }).map(function (a) { return a[1]; }) : null;
+    }).filter(Boolean) : null;
     var n = liste ? liste.length : o.antall;
     if (!n) return varsle('Arbeidskravet har ingen spørsmål ennå.', true);
     T.q = { tema: t, nr: 0, hoved: n, antall: n, brukt: [], res: [], hovedRes: [], rekke: 0, ovelse: o, liste: liste, ut: ut, forsok: nyId() };
@@ -1252,6 +1262,7 @@ function studieStart() {
         if (erMal(x)) { var pv = provVariant(x); if (pv.feil) return varsle('Spørsmål ' + (i + 1) + ': ' + pv.feil, true); continue; }
         if (!x.tekst.trim() || !x.riktig.trim() || x.feil.filter(function (y) { return y.svar.trim(); }).length < 2) return varsle('Spørsmål ' + (i + 1) + ' mangler tekst, riktig svar eller minst to gale svar.', true); }
     }
+    if (v.kilde === 'egne') v.sporsmal = sorterDelkap(v.sporsmal, (v.ut[0] || '').split('/')[1]);
     var krav = Math.max(1, Math.min(n, +v.krav || 1));
     var rad = { kurs: f.c.id, tittel: v.tittel.trim(), tema: v.ut[0].split('/').slice(0, 2).join('/'), undertemaer: v.ut, kilde: v.kilde,
       sporsmal: v.kilde === 'egne' ? v.sporsmal.map(function (x) { var y = Object.assign({}, x, { feil: x.feil.filter(function (z) { return (z.svar || '').trim() || (erMal(x) && (z.uttrykk || '').trim()); }) }); if (!erMal(y)) { delete y.variabler; delete y.svar; } return y; }) : [],
@@ -1285,7 +1296,7 @@ function studieStart() {
       .then(function (d) {
         var l = (d.sporsmal || []).map(function (x) { var y = Object.assign(tomtSp(), x); y.riktig = y.riktig || ''; while (y.feil.length < 3) y.feil.push({ svar: '', uttrykk: '', type: 'begrep' }); return y; });
         if (!l.length) throw new Error('Fikk ingen spørsmål fra KI denne gangen. Prøv igjen.');
-        v.sporsmal = v.sporsmal.concat(l); v.kilde = 'egne'; if (v.krav > v.sporsmal.length) v.krav = v.sporsmal.length;
+        v.sporsmal = sorterDelkap(v.sporsmal.concat(l), (v.ut[0] || '').split('/')[1]); v.kilde = 'egne'; if (v.krav > v.sporsmal.length) v.krav = v.sporsmal.length;
         varsle(l.length + ' spørsmål lagt til. Sjekk fasiten før du lagrer.' + (d.vedlegg ? ' ' + d.vedlegg : '')); kk.ulest = [];
       })
       .catch(function (e) { varsle(feilmelding(e), true); })
