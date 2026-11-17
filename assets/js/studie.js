@@ -362,7 +362,7 @@ function studieStart() {
     q.brukt.push(x.id);
     var alt = x.tall ? [{ svar: x.riktig, type: 'riktig' }] : [{ svar: x.riktig, type: 'riktig' }].concat(x.feil || []).map(function (a) { return [Math.random(), a]; }).sort(function (a, b) { return a[0] - b[0]; }).map(function (a) { return a[1]; });
     stoppTale();
-    q.na = Object.assign({}, x, { alt: alt, rep: rep, start: performance.now() }); q.svart = null; q.kiSvar = null; q.kiBilde = false; q.bilde = null; q.tekst = '';
+    q.na = Object.assign({}, x, { alt: alt, rep: rep, start: performance.now() }); q.svart = null; q.kiGodkjent = false; q.kiSvar = null; q.kiBilde = false; q.bilde = null; q.tekst = '';
   }
   function svar(i) {
     var q = T.q, x = q.na, a = x.alt[i], tid = (performance.now() - x.start) / 1000;
@@ -467,7 +467,7 @@ function studieStart() {
     if (!tekst && !q.bilde) return varsle('Skriv, snakk eller last opp et bilde først.', true);
     if (q.ovelse && q.ovelse.svarform === 'bilde' && !q.bilde) return varsle('Ta bilde av utregningen først.', true);
     q.venter = true; tegn();
-    ki('/vurder', { sporsmal: { tekst: x.tekst, riktig: x.riktig, forklaring: x.forklaring }, valgt: x.alt[q.svart].svar, forklaring: tekst, bilde: q.bilde })
+    ki('/vurder', { sporsmal: { tekst: x.tekst, riktig: x.riktig, forklaring: x.forklaring }, valgt: x.tall ? (x.tallInn || '') : x.alt[q.svart].svar, forklaring: tekst, bilde: q.bilde })
       .then(function (d) {
         // Bildet må være studentens egen håndskrevne løsning. Nei: godkjennes ikke. Usikker: spør om bildet kan lagres for gjennomsyn.
         if (q.bilde && d.handskrift === 'nei') { q.kiSvar = { feil: IKKE_HAND }; q.kiBilde = false; return; }
@@ -485,6 +485,11 @@ function studieStart() {
     return 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, function () { return (Math.random() * 16 | 0).toString(16); });
   }
   function godtaKi(q, s, d, gjs) {
+    // Viser den håndskrevne utregningen riktig fysikk og riktig regning, er spørsmålet godkjent, også om det
+    // innskrevne svaret ble vurdert som feil (f.eks. feil format). Bens regel 17. november 2026.
+    if (d.vurdering === 'riktig' && q.bilde && q.res.length) {
+      q.res[q.res.length - 1] = 'riktig'; if (!q.na.rep && q.hovedRes.length) q.hovedRes[q.hovedRes.length - 1] = 'riktig'; q.kiGodkjent = true;
+    }
     q.kiSvar = d; q.kiBilde = !!q.bilde; s.ki = { vurdering: d.vurdering, sikkerhet: d.sikkerhet, tilbakemelding: d.tilbakemelding, kilde: q.bilde ? 'bilde' : 'tekst' };
     if (gjs) s.ki.gjennomsyn = 'venter';
     return Promise.resolve(s.lagret).then(function (id) { if (id) return k.from('studie_svar').update({ ki: s.ki }).eq('id', id).then(sjekk); });
@@ -1936,6 +1941,7 @@ function studieStart() {
         if (q.sporLagre) fb += samtykkeHtml('lagreSvar') + (q.bilde ? '<img class="st-forhand" alt="Bildet ditt" src="' + q.bilde + '">' : '');
         else if (kis && !kis.feil) {
           var kt = { riktig: 'KI: Riktig fysikk og riktig regning.', regnefeil: 'KI: Riktig tankegang, men en regnefeil.', begrep: 'KI: Her bør du se på fysikken igjen.', uklar: 'KI: Klarte ikke å lese besvarelsen.' }[kis.vurdering];
+          if (q.kiGodkjent && kis.vurdering === 'riktig') fb += '<div class="st-fb"><b>Godkjent ✓</b><p class="st-sm">Utregningen din viser riktig fysikk og riktig regning, så spørsmålet teller som riktig.</p></div>';
           fb += '<div class="st-fb ki"><b>' + kt + '</b><div class="st-avsnitt">' + tx(kis.tilbakemelding) + '</div>' + (kis.vurdering !== 'uklar' ? '<p class="st-sm">Denne vurderingen teller i kunnskapsprofilen din.</p>' : '') +
             (q.gjennomsyn && q.sist && q.sist.ki && q.sist.ki.gjennomsyn ? '<p class="st-sm">Bildet er sendt til gjennomsyn hos en lærer. Avvises det, teller ikke forsøket.</p>' : '') + '</div>';
         } else {
@@ -2517,7 +2523,7 @@ function studieStart() {
         // Uendelig mange forsøk: siste svar tas bort fra resultatet (det lagrede svaret blir stående i statistikken).
         var q = T.q, x = q.na; if (q.svart == null) return;
         q.res.pop(); if (!x.rep) q.hovedRes.pop();
-        q.svart = null; q.kiSvar = null; q.kiBilde = false; q.sporLagre = false; q.tekst = ''; x.tallInn = ''; x.tallMelding = '';
+        q.svart = null; q.kiSvar = null; q.kiBilde = false; q.kiGodkjent = false; q.sporLagre = false; q.tekst = ''; x.tallInn = ''; x.tallMelding = '';
         x.start = performance.now(); tegn();
       },
       hoppOver: function () {
