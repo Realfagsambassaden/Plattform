@@ -44,6 +44,7 @@ function start() {
         visBrukernavn(k, sesjon);
         visDashman(k, sesjon);
         fyllMinSide(k, sesjon);
+        visFokus(k, sesjon);
         rot.querySelector('[data-handling="ut"]').onclick = function () { k.auth.signOut().then(function () { tegn(null); }); };
       } else tegnUte(k);
     }
@@ -181,6 +182,20 @@ function start() {
       k.rpc('sett_navn', { n: navn }).then(function (r) { if (r.error) throw r.error; m.textContent = ''; sett(navn); })
         .catch(function (e) { m.textContent = 'Fikk ikke lagret: ' + (e.message || e); });
     };
+  }
+  // Snarvei øverst på Min side: rett inn i fokusvisningen for faget man holder på med (sist valgte kurs først).
+  function visFokus(k, sesjon) {
+    var el = rot.querySelector('.profil-fokus'); if (!el) return;
+    k.from('kurs_deltaker').select('kurs, kursinfo:kurs ( id, navn )').eq('student', sesjon.user.id).then(function (r) {
+      var l = ((r && r.data) || []).filter(function (d) { return d.kursinfo; }), aktiv = null;
+      try { aktiv = localStorage.getItem('fh-aktivt-kurs'); } catch (e) {}
+      l.sort(function (a, b) { return (b.kurs === aktiv) - (a.kurs === aktiv); });
+      var lenke = function (href, navn, hoved) { return '<a class="btn-chalk' + (hoved ? '' : ' ghost') + '" href="' + href + '">' + esc(navn) + '</a>'; };
+      el.innerHTML = '<p class="profil-fokustittel"><b>Fortsett i fokusvisning</b></p><p class="profil-fokusknapper">' +
+        (l.length ? l.map(function (d, i) { return lenke('../studie/fokus.html#' + encodeURIComponent(d.kurs), '▶ ' + d.kursinfo.navn, i === 0); }).join(' ') + ' ' + lenke('../studie/fokus.html#min', 'Min egen løype', false)
+          : lenke('../studie/fokus.html#min', '▶ Min løype', true)) + '</p>';
+      el.hidden = false;
+    }, function () {});
   }
   // Min side er todelt: studentdel for alle, underviserdel for godkjente undervisere, og administrasjon for administratoren.
   function fyllMinSide(k, sesjon) {
