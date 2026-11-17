@@ -217,6 +217,12 @@ html.fh-innebygd .studie .st-faner { display: none; }   /* i fokusvisningens arb
 .studie .st-pil { text-align: center; color: var(--bs-secondary-color); font-size: 1.2rem; line-height: 1.8; }
 .studie .st-nymodul { width: 100%; background: none; border: 2px dashed var(--bs-border-color); border-radius: 14px; padding: .9rem; color: var(--bs-primary); font-weight: 700; font-size: 1.05rem; }
 .studie .st-bygg-bunn { margin: 1.2rem 0 .6rem; padding-top: .8rem; border-top: 1px solid var(--bs-border-color); }
+.studie .st-ovkort { padding: .7rem 0; border-top: 1px solid var(--bs-border-color); }
+.studie .st-ovtopp { display: flex; justify-content: space-between; align-items: flex-start; gap: .6rem; margin-bottom: .2rem; }
+.studie .st-ovtopp .st-status { flex: none; }
+.studie .st-ovkort > .st-sm { margin: 0 0 .45rem; }
+.studie .st-ovkort .st-ovprikker { margin: .2rem 0 .5rem; }
+.studie .st-ovbunn { display: flex; justify-content: space-between; align-items: center; gap: .6rem; flex-wrap: wrap; }
 .studie .st-ovelse { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .6rem; padding: .45rem 0; border-top: 1px solid var(--bs-border-color); }
 .studie .st-ovelse .st-sm { flex-basis: 100%; }
 .studie .st-status { font-size: .8rem; font-weight: 700; border-radius: 20px; padding: .05rem .55rem; border: 1px solid currentColor; white-space: nowrap; }

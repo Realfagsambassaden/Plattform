@@ -2428,12 +2428,19 @@ function studieStart() {
   function ovelseListe(kursId) {
     var l = (T.ovelser || []).filter(function (o) { return o.kurs === kursId; });
     if (!l.length) return '';
+    // Ryddig kort: tittel + status øverst, så hva øvingen dekker, prikkene, og til slutt fremdrift og knapp på én linje.
     return '<p class="st-sm" style="margin-top:.6rem"><b>Obligatoriske øvinger</b></p>' + l.map(function (o) {
-      var ok = godkjent(o), ute = o.frist && Date.now() > Date.parse(o.frist);
-      return '<div class="st-ovelse"><span class="st-status ' + (ok ? 'ok' : 'nei') + '">' + (ok ? '✓ Godkjent' : 'Ikke godkjent') + '</span><b>' + esc(o.tittel) + '</b>' +
-        '<span class="st-sm">' + esc(dekkerTekst(o)) + ' · minst ' + o.krav + ' av ' + o.antall + ' riktige' + (SVARFORM_KORT[o.svarform] ? ' · krever ' + SVARFORM_KORT[o.svarform] : '') + (o.frist ? ' · frist ' + dato(o.frist) : '') + '</span>' +
-        (o.beskrivelse ? '<span class="st-sm">' + esc(o.beskrivelse) + '</span>' : '') + (o.kilde === 'egne' && (o.sporsmal || []).length ? ovOversiktHtml(o) : '') +
-        (!ok && !ute ? '<button type="button" class="st-btn liten" data-h="ovelse" data-id="' + o.id + '">Ta quizen</button>' : '') + (!ok && ute ? '<span class="st-sm">Fristen har gått ut.</span>' : '') + '</div>';
+      var ok = godkjent(o), ute = o.frist && Date.now() > Date.parse(o.frist), egne = o.kilde === 'egne' && (o.sporsmal || []).length;
+      var st = egne ? ovStatus(o) : null, nOk = st ? st.filter(function (x) { return x.status === 'ok' || x.status === 'kanskje'; }).length : 0;
+      var nK = st ? st.filter(function (x) { return x.status === 'kanskje'; }).length : 0, begynt = st && st.some(function (x) { return x.status !== 'ingen'; });
+      if (st) ok = nOk >= Math.min(o.krav, st.length);
+      var knapp = !ok && !ute ? '<button type="button" class="st-btn liten" data-h="ovelse" data-id="' + o.id + '">' + (begynt ? 'Fortsett' : 'Start') + '</button>' : '';
+      return '<div class="st-ovkort"><div class="st-ovtopp"><b>' + esc(o.tittel) + '</b><span class="st-status ' + (ok ? 'ok' : 'nei') + '">' + (ok ? '✓ Godkjent' : 'Ikke godkjent') + '</span></div>' +
+        '<p class="st-sm">' + esc(dekkerTekst(o)) + ' · minst ' + o.krav + ' av ' + o.antall + ' riktige' + (SVARFORM_KORT[o.svarform] ? ' · krever ' + SVARFORM_KORT[o.svarform] : '') + (o.frist ? ' · frist ' + dato(o.frist) : '') + '</p>' +
+        (o.beskrivelse ? '<p class="st-sm">' + esc(o.beskrivelse) + '</p>' : '') +
+        (st ? '<div class="st-ovprikker">' + st.map(function (x, i) { return '<span class="st-ovprikk ' + x.status + '" title="' + (i + 1) + ': ' + STATUSNAVN[x.status] + '">' + (i + 1) + '</span>'; }).join('') + '</div>' : '') +
+        '<div class="st-ovbunn"><span class="st-sm">' + (st ? nOk + ' av ' + st.length + ' godkjent' + (nK ? ' (' + nK + ' kanskje)' : '') + ' · krav ' + Math.min(o.krav, st.length) : '') +
+        (!ok && ute ? (st ? ' · ' : '') + 'Fristen har gått ut.' : '') + '</span>' + knapp + '</div></div>';
     }).join('');
   }
   function temavalg() {
