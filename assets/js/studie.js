@@ -270,7 +270,9 @@ function studieStart() {
     return grupper(ovRaa(o)).map(function (g) {
       var ider = g.map(function (x) { return pre + x._i; }), siste = null;
       (T.svar || []).forEach(function (s) { if (ider.indexOf(s.id) >= 0 && !s.rep) siste = s; });
-      var st = !siste ? 'ingen' : siste.ki && siste.ki.status === 'kanskje' ? 'kanskje' : (siste.type === 'riktig' || (siste.ki && siste.ki.status === 'godkjent')) ? 'ok' : 'nei';
+      // Krever øvingen bilde, er et innskrevet riktig svar ikke nok: utregningen må også være godkjent (rekkefølgen er fri).
+      var kiOk = siste && siste.ki && (siste.ki.status === 'godkjent' || siste.ki.status === 'kanskje');
+      var st = !siste ? 'ingen' : siste.ki && siste.ki.status === 'kanskje' ? 'kanskje' : (siste.ki && siste.ki.status === 'godkjent') || (siste.type === 'riktig' && (o.svarform !== 'bilde' || kiOk)) ? 'ok' : 'nei';
       return { tekst: g[0].tekst, ider: ider, status: st };
     });
   }
@@ -310,6 +312,7 @@ function studieStart() {
     // Arbeidskrav: antallet er det planlagte (overhoppede spørsmål teller som ikke riktige), så kravet ikke kan omgås.
     var antall = q.ovelse ? Math.max(q.hoved, q.hovedRes.length) : q.hovedRes.length; if (!q.hovedRes.length) return;
     var riktige = q.hovedRes.filter(function (x) { return x === 'riktig'; }).length;
+    if (q.ovelse && q.ovelse.kilde === 'egne' && (q.ovelse.sporsmal || []).length) riktige = ovStatus(q.ovelse).filter(function (x) { return x.status === 'ok' || x.status === 'kanskje'; }).length;
     var rad = { nettsted: NETTSTED, tema: q.tema, ovelse: q.ovelse ? q.ovelse.id : null, antall: antall, riktige: riktige };
     if (q.gjennomsyn) rad.forsok = q.forsok;   // et bilde i forsøket venter på gjennomsyn: avvises det, slettes forsøket
     T.quizer.push(Object.assign({ fullfort: new Date().toISOString() }, rad));
@@ -2056,9 +2059,9 @@ function studieStart() {
             (q.bilde ? '<img class="st-forhand" alt="Bildet ditt" src="' + q.bilde + '">' : '') +
             (kis && kis.feil ? '<p class="st-feil">' + esc(kis.feil) + '</p>' : '');
         }
-        var sfk = q.ovelse && q.ovelse.svarform, mangler = q.sporLagre || (sfk && sfk !== 'valgfri' && (!q.kiSvar || q.kiSvar.feil || (sfk === 'bilde' && !q.kiBilde)));
+        var sfk = q.ovelse && q.ovelse.svarform, mangler = q.sporLagre || q.venter, uGodkj = sfk && sfk !== 'valgfri' && !q.kiGodkjent && (!q.kiSvar || q.kiSvar.feil || (sfk === 'bilde' && !q.kiBilde));
         var igjen = a.type !== 'riktig' && !x.rep && !(q.ovelse && q.ovelse.ettForsok);
-        fb += '<p class="st-videre">' + (igjen ? '<button type="button" class="st-btn g" data-h="provIgjen">↻ Prøv igjen</button> ' : '') + '<button type="button" class="st-btn" data-h="videre"' + (mangler ? ' disabled title="Forklar svaret først"' : '') + '>' + (q.nr + 1 >= q.antall ? 'Se resultat' : 'Neste') + '</button>' + (mangler ? ' <span class="st-sm">' + (sfk === 'bilde' ? 'Last opp bilde av utregningen og trykk «Få tilbakemelding» først.' : 'Forklar svaret og trykk «Få tilbakemelding» først.') + '</span>' : '') + '</p>';
+        fb += '<p class="st-videre">' + (igjen ? '<button type="button" class="st-btn g" data-h="provIgjen">↻ Prøv igjen</button> ' : '') + '<button type="button" class="st-btn" data-h="videre"' + (mangler ? ' disabled title="Forklar svaret først"' : '') + '>' + (q.nr + 1 >= q.antall ? 'Se resultat' : 'Neste') + '</button>' + (uGodkj && !mangler ? ' <span class="st-sm">' + (sfk === 'bilde' ? 'Ikke godkjent før utregningen er lastet opp. Du kan gå videre og ta spørsmålet igjen senere.' : 'Ikke godkjent før du har forklart svaret. Du kan gå videre og ta spørsmålet igjen senere.') + '</span>' : '') + '</p>';
       }
       return '<div class="st-rad st-sm"><span>' + esc(tittel(x.tema)) + (function (n) { return n ? ' · ' + esc(n) : ''; })(((S[x.tema] || K[x.tema] || {}).undertemaer || {})[x.undertema]) + (x.rep ? ' · repetisjon' : '') + '</span><span>' + (q.nr + 1) + ' av ' + q.antall + '</span></div>' +
         '<div class="st-fram"><i style="width:' + (q.nr / q.antall * 100) + '%"></i></div>' + (q.ovelse ? ovOversiktHtml(q.ovelse, x.id) : '') +
@@ -2069,11 +2072,14 @@ function studieStart() {
               (x.tallMelding ? '<div class="st-fb st-tallmelding"><b>Sjekk svaret</b><p>' + esc(x.tallMelding) + '</p></div>' : '') +
               '<p class="st-sm">Desimaltegn: punktum eller komma. Tierpotens: 2.1e-3 eller 2.1*10^-3. Prefikser som m, µ (u), k og M går fint.</p>')
           : x.alt.map(function (o, i) { var c = ''; if (a) { if (o.type === 'riktig' && !skjul) c = 'ok'; else if (i === sv) c = 'nei'; } return '<button type="button" class="st-alt ' + c + '"' + (a ? ' disabled' : '') + ' data-h="svar" data-i="' + i + '">' + tx(o.svar) + '</button>'; }).join('')) +
-        '<p class="st-dmhjelp">' + (a ? '' : '<label class="st-btn g liten">' + ikon('kamera', 18) + ' ' + (q.bilde ? 'Skann på nytt' : 'Skann utregningen') + '<input type="file" accept="image/*" capture="environment" id="st-qskann" hidden></label> ') +
+        // Levere utregningen er likestilt med å skrive inn svaret: ett trykk, og bildet vurderes med en gang.
+        (!a ? '<p class="st-lever"><label class="st-btn">' + ikon('kamera', 18) + ' Lever utregningen (bilde)<input type="file" accept="image/*" capture="environment" id="st-lever" hidden></label>' +
+          '<span class="st-sm"> Svaret med to streker under. Du trenger ikke skrive det inn.</span></p>' : '') +
+        '<p class="st-dmhjelp">' + (a ? '' : '<label class="st-btn g liten">' + ikon('kamera', 18) + ' ' + (q.bilde ? 'Vis Dashman nytt bilde' : 'Vis Dashman utregningen') + '<input type="file" accept="image/*" capture="environment" id="st-qskann" hidden></label> ') +
         (!a && !x.rep ? '<button type="button" class="st-btn g liten" data-h="hoppOver" title="Gå videre uten å svare. Spørsmålet kommer igjen til slutt.">Hopp over →</button> ' : '') +
         (appModus() || !a ? '<button type="button" class="st-btn g liten st-dmknapp" data-h="quizDashman"><img class="st-dmknapp-ikon" src="' + DMBILDER + 'ikon.webp" alt=""> ' + (a ? 'Snakk med Dashman om dette' : 'Spør Dashman om hjelp') + '</button>' : '') + '</p>' +
         (!a && q.bilde ? '<img class="st-forhand" alt="Utregningen din" src="' + q.bilde + '"><p class="st-sm">Dashman ser på utregningen og gir hint uten å si svaret. Bildet blir med når du har valgt svar.' +
-          (x.tall ? ' Står svaret med to streker under, kan du også levere bildet som svar.</p><p><button type="button" class="st-btn" data-h="leverBilde">Lever utregningen som svar</button>' : '') + '</p>' : '') + fb;
+          ' Står svaret med to streker under, kan du også levere bildet som svar.</p><p><button type="button" class="st-btn" data-h="leverBilde">Lever dette bildet som svar</button></p>' : '') + fb;
     },
     resultat: function () {
       var q = T.q, r = q.res, c = function (t) { return r.filter(function (x) { return x === t; }).length; };
@@ -2631,8 +2637,8 @@ function studieStart() {
       velgOppg: function () { var b = (T.skann || {}).bilde; T.skann = { valgt: (T.oppg || []).filter(function (o) { return o.id === d.id; })[0] || null, bilde: b }; tegn(); rot.scrollIntoView(); },
       leverBilde: function () {
         // Tallsvar levert som bilde: utregningen vurderes, og er svaret riktig med to streker under, er spørsmålet godkjent.
-        var q = T.q, x = q.na; if (q.svart != null || !q.bilde || !x.tall) return;
-        x.tallInn = '(se bildet)'; x.tallMelding = ''; x.alt.push({ svar: '(levert som bilde)', type: 'regnefeil', bilde: true }); svar(x.alt.length - 1); vurder();
+        var q = T.q, x = q.na; if (q.svart != null || !q.bilde) return;
+        if (x.tall) x.tallInn = '(se bildet)'; x.tallMelding = ''; x.alt.push({ svar: '(levert som bilde)', type: 'regnefeil', bilde: true }); svar(x.alt.length - 1); vurder();
       },
       provIgjen: function () {
         // Uendelig mange forsøk: siste svar tas bort fra resultatet (det lagrede svaret blir stående i statistikken).
@@ -2842,6 +2848,9 @@ function studieStart() {
     else if (el.id === 'st-qskann' && el.files[0] && T.q) {
       // Skann i quizen før man svarer: bildet går til Dashman som sparring (hint, ikke svar) og blir med i «Vis hvordan du tenkte».
       lesBilde(el.files[0]).then(function (url) { T.q.bilde = url; tegn(); var kb = rot.querySelector('[data-h=quizDashman]'); if (kb) kb.click(); }).catch(function (e) { varsle(e.message, true); });
+    }
+    else if (el.id === 'st-lever' && el.files[0] && T.q) {
+      lesBilde(el.files[0]).then(function (url) { T.q.bilde = url; tegn(); var kb = rot.querySelector('[data-h=leverBilde]'); if (kb) kb.click(); }).catch(function (e) { varsle(e.message, true); });
     }
     else if (el.id === 'st-bilde' && el.files[0]) {
       var tekst = (document.getElementById('st-forklaring') || {}).value || '';
