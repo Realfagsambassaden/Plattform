@@ -387,6 +387,7 @@ function studieStart() {
   function sifferFasit(x) {
     var f = lesTall(x.riktig); if (!f) return;
     var n = sifferKrav(x, f), v = x.verdi != null ? x.verdi : f.v;
+    x.fasitSiffer = x.verdi != null ? 12 : f.sMax;
     if (x.verdi == null && n >= f.sMax) return;
     x.verdi = v; x.siffer = n; x.riktig = sifTekst(v, n) + (f.enhet ? ' ' + f.enhet.replace(/^u/, 'µ').replace(/ohm/, 'Ω') : '');
   }
@@ -398,11 +399,15 @@ function studieStart() {
     var fak = 1;
     if (fu && !st.enhet) { if (gjentatt !== 'enhet') return { sporsmal: 'Husk enheten! Skriv svaret med enhet (her: ' + fu.replace(/^u/, 'µ') + ' eller en annen med prefiks).', igjen: 'enhet' }; }
     else if (st.enhet && fu) { fak = enhetFaktor(st.enhet, fu); if (!isFinite(fak)) return { type: 'begrep', melding: 'Enheten «' + st.enhet + '» passer ikke her.' }; }
-    var sv = st.v * fak;
-    if (Math.abs(rundSig(sv, n) - rundSig(fv, n)) <= Math.abs(rundSig(fv, n)) * 1e-9 + 1e-300) {
-      if (n >= st.sMin && n <= st.sMax) return { type: 'riktig' };
-      if (gjentatt === 'siffer') return { type: 'riktig', melding: 'Verdien er riktig, men svaret bør ha ' + n + ' gjeldende siffer.' };
-      return { sporsmal: 'Du har nesten helt sikkert regnet riktig! Men sjekk antall gjeldende siffer: svaret ditt har ' + (st.sMin === st.sMax ? st.sMax : st.sMin + '–' + st.sMax) + ', og her bør det ha ' + n + '. Rund av og svar på nytt.', igjen: 'siffer' };
+    var sv = st.v * fak, lik = function (m) { return Math.abs(rundSig(sv, m) - rundSig(fv, m)) <= Math.abs(rundSig(fv, m)) * 1e-9 + 1e-300; };
+    if (lik(n) && n >= st.sMin && n <= st.sMax) return { type: 'riktig' };
+    // Riktig verdi med feil antall gjeldende siffer: godkjent, men med en kommentar (Bens regel 17. november 2026).
+    // Verdien sjekkes med studentens egne siffer (men ikke flere enn fasiten er kjent med).
+    var m = Math.min(st.sMax, x.fasitSiffer || (x.verdi != null ? 12 : f.sMax));
+    if (lik(m) || (lik(n) && Math.abs(rundSig(sv, n) - sv) <= Math.abs(sv) * 1e-9 + 1e-300)) {   // «-1.0e-8» når 1 siffer er riktig
+      var har = st.sMin === st.sMax ? st.sMax : st.sMin + '–' + st.sMax;
+      return { type: 'riktig', melding: 'Godkjent, men feil antall gjeldende siffer: svaret ditt har ' + har + ', og her skal det ha ' + n +
+        ' (like mange som det minst nøyaktige måltallet i oppgaven).' };
     }
     if (fv !== 0 && Math.abs(sv - fv) / Math.abs(fv) < 0.03) {
       if (gjentatt === 'avrunding') return { type: 'regnefeil', melding: 'Svaret er nær, men ikke riktig. Kanskje du rundet av for tidlig underveis?' };
@@ -546,7 +551,7 @@ function studieStart() {
     if (!tekst && !q.bilde) return varsle('Skriv, snakk eller last opp et bilde først.', true);
     if (q.ovelse && q.ovelse.svarform === 'bilde' && !q.bilde) return varsle('Ta bilde av utregningen først.', true);
     q.venter = true; tegn();
-    ki('/vurder', { sporsmal: { tekst: x.tekst, riktig: x.riktig, forklaring: x.forklaring }, valgt: x.tall ? (x.tallInn || '') : x.alt[q.svart].svar, forklaring: tekst, bilde: q.bilde })
+    ki('/vurder', { sporsmal: { tekst: x.tekst, riktig: x.riktig + (x.tall && x.siffer ? ' (krav: ' + x.siffer + ' gjeldende siffer, regnet ut av appen)' : ''), forklaring: x.forklaring }, valgt: x.tall ? (x.tallInn || '') : x.alt[q.svart].svar, forklaring: tekst, bilde: q.bilde })
       .then(function (d) {
         // Bildet må være studentens egen håndskrevne løsning. Nei: godkjennes ikke. Usikker: spør om bildet kan lagres for gjennomsyn.
         if (q.bilde && d.handskrift === 'nei') { q.kiSvar = { feil: IKKE_HAND }; q.kiBilde = false; return; }
@@ -2642,7 +2647,7 @@ function studieStart() {
         window.dispatchEvent(new CustomEvent('dashman:oppgave', { detail: {
           kilde: 'quiz', tittel: 'Quizspørsmål om ' + tittel(x.tema),
           oppgave: x.tekst + (x.tall ? '' : '\n\nAlternativer:\n' + x.alt.map(function (o, i) { return bokst[i] + ') ' + o.svar; }).join('\n')),   // tallsvar: alternativet er fasiten, så det sendes ikke som «alternativ»
-          losning: 'Riktig svar: ' + (riktig ? riktig.svar : x.riktig) + '\n' + (x.forklaring || ''),
+          losning: 'Riktig svar: ' + (riktig ? riktig.svar : x.riktig) + (x.tall && x.siffer ? ' (sluttsvaret skal ha ' + x.siffer + ' gjeldende siffer, regnet ut av appen fra det minst nøyaktige måltallet i oppgaven; stol på dette tallet)' : '') + '\n' + (x.forklaring || ''),
           forsok: (a ? 'Studenten svarte: ' + a.svar + (a.type === 'riktig' ? ' (riktig)' : ' (feil)') + '. ' : 'Studenten har ikke svart ennå. ') + (q.tekst || ''),
           bilde: q.bilde || null,
           startmelding: !a && q.bilde ? 'Her er utregningen min så langt. Er jeg på rett vei? Ikke si svaret, gi meg heller et hint.' : a ? 'Jeg svarte «' + a.svar.slice(0, 120) + '» på dette spørsmålet. Kan du hjelpe meg å forstå det?' : 'Jeg står fast på dette quizspørsmålet. Kan du gi meg et hint uten å si svaret?'
