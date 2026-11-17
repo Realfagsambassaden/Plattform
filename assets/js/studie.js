@@ -2219,6 +2219,13 @@ function studieStart() {
   setInterval(sjekkLive, 30000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) sjekkLive(); });
 
+  // Spørsmål fra banken, eller fra et arbeidskrav (id «ov-<8 tegn av øvingens id>-<nr>», se startOvelse).
+  function finnSporsmal(id) {
+    var q = Q.find(function (y) { return y.id === id; }); if (q) return q;
+    var m = /^ov-([0-9a-f-]{8})-(\d+)$/.exec(String(id || '')); if (!m) return null;
+    var o = (T.ovelser || []).find(function (x) { return String(x.id).slice(0, 8) === m[1]; }), x = o && (o.sporsmal || [])[+m[2]];
+    return x ? { id: id, tekst: x.tekst, riktig: x.riktig || (x.svar ? x.svar + (x.enhet ? ' ' + x.enhet : '') : '') } : null;
+  }
   // Underviseren: panelet «Fra salen» i undervisningsmodus.
   function salenUker() {
     var v = T.uv, l = samlingListe(v.u), x = l.find(function (y) { return y.nokkel === v.valgt; });
@@ -2233,7 +2240,7 @@ function studieStart() {
     if (deler.join() !== sa.deler || !sa.innsikt || Date.now() - (sa.innsiktTid || 0) > 120000) {
       sa.deler = deler.join(); sa.innsiktTid = Date.now();
       k.rpc('kurs_innsikt', { k: v.c.id, deler: deler, siden: new Date(Date.now() - 28 * 864e5).toISOString() }).then(sjekk)
-        .then(function (l) { sa.innsikt = (l || []).map(function (r) { var q = Q.find(function (y) { return y.id === r.sporsmal; }); return Object.assign({ q: q, andel: r.svar ? r.riktige / r.svar : 1 }, r); }).sort(function (a, b) { return a.andel - b.andel; }); salenTegn(); }, function () { sa.innsikt = []; salenTegn(); });
+        .then(function (l) { sa.innsikt = (l || []).map(function (r) { var q = finnSporsmal(r.sporsmal); return Object.assign({ q: q, andel: r.svar ? r.riktige / r.svar : 1 }, r); }).sort(function (a, b) { return a.andel - b.andel; }); salenTegn(); }, function () { sa.innsikt = []; salenTegn(); });
     }
   }
   function salenHtml() {
