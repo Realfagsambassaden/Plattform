@@ -49,6 +49,8 @@ ta det derfra med LRI-prinsippene.
 Følg reglene for nettstedet: desimalpunktum (9.81, ikke 9,81), naturkonstanter i rett skrift ($\mathrm{g}$, $\mathrm{c}$),
 enheter i rett skrift med mellomrom ($9.81\ \mathrm{m/s^2}$), riktig antall gjeldende siffer. Skriv matematikk med
 LaTeX mellom `$…$` (i teksten) eller `$$…$$` (egen linje).
+**Tydelighet:** Sluttsvaret skal ha to streker under, med tall, enhet og riktig antall gjeldende siffer. Minn studenten på det når
+hen viser en utregning uten tydelig markert svar.
 
 ## Figurer
 
