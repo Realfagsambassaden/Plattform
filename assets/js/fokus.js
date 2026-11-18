@@ -228,7 +228,16 @@ function fokusStart() {
     rekke = lagRekke();
     var start = parseInt(hent(), 10);
     if (lm && lm[2]) { var ii = rekke.findIndex(function (x) { return x.url === decodeURIComponent(lm[2]); }); if (ii >= 0) start = ii; }
-    if (hopp) { var ih = rekke.findIndex(function (x) { return x.id === hopp || x.url === hopp; }); if (ih >= 0) start = ih; }
+    // «@~<id>» (fra Fokusmodus-knappen i appen): gå til ukens tema, men bli der du var hvis du allerede er inne i det temaet.
+    var myk = hopp && hopp.charAt(0) === '~'; if (myk) hopp = hopp.slice(1);
+    if (hopp) {
+      var ih = rekke.findIndex(function (x) { return x.id === hopp || x.url === hopp; });
+      if (ih >= 0) {
+        var tm = hopp.split('/')[1], slutt = rekke.length;
+        for (var j = ih + 1; j < rekke.length; j++) if (rekke[j].type === 'ut' && String(rekke[j].id).split('/')[1] !== tm) { slutt = j; break; }
+        if (!(myk && start >= ih && start < slutt)) start = ih;
+      }
+    }
     if (!(start >= 0 && start < rekke.length)) start = rekke.findIndex(function (x) { return x.type === 'ut'; });
     if (start < 0) start = 0;
     var x = rekke[start];

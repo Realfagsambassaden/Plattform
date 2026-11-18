@@ -2091,7 +2091,10 @@ function studieStart() {
       if (ak && flereKurs()) o += '<div class="st-kursmerke"><span>' + ikon('bok', 18) + ' <b>' + esc(ak === 'egen' ? 'Min egen løype' : fagnavn(ak)) + '</b></span><button type="button" class="st-btn g liten" data-h="byttKurs">Bytt fag</button></div>';
       o += '<div class="st-hilsen"><span class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</span><span class="st-sm">' + esc(dato.charAt(0).toUpperCase() + dato.slice(1)) + '</span></div>' + gjsHtml + appKort();
       // Fokusmodus øverst: ett trykk inn i faget man holder på med (studentene ville ha dette lett tilgjengelig).
-      if (!T.eksempel && (ak || v.length)) o += '<a class="st-dkort st-fokusknapp" href="fokus.html#' + (ak && ak !== 'egen' ? encodeURIComponent(ak.kurs) : 'min') + '"><span class="st-merke">Fokusmodus</span><b class="st-dtittel">▶ ' + esc(ak && ak !== 'egen' ? fagnavn(ak) : 'Min løype') + '</b><span class="st-sm">Les sidene, se videoene og gjør oppgavene i rekkefølge, uten noe annet på skjermen.</span></a>';
+      // Fokusmodus åpner på ukens tema (ikke på starten av faget).
+      var fkU = ak && ak !== 'egen' ? kursUke(ak) : null, fkHopp = fkU && fkU.ut[0];
+      if (!fkHopp && t && (S[t] || K[t])) { var fkUt = Object.keys((S[t] || K[t]).undertemaer || {})[0]; if (fkUt) fkHopp = NETTSTED + '/' + t + '/' + fkUt; }
+      if (!T.eksempel && (ak || v.length)) o += '<a class="st-dkort st-fokusknapp" href="fokus.html#' + (ak && ak !== 'egen' ? encodeURIComponent(ak.kurs) : 'min') + (fkHopp ? '@~' + encodeURIComponent(fkHopp) : '') + '"><span class="st-merke">Fokusmodus</span><b class="st-dtittel">▶ ' + esc(ak && ak !== 'egen' ? fagnavn(ak) : 'Min løype') + '</b><span class="st-sm">Les sidene, se videoene og gjør oppgavene i rekkefølge, uten noe annet på skjermen.</span></a>';
       if (!v.length) o += '<div class="st-dkort g"><span class="st-merke">Kom i gang</span><b class="st-dtittel">Velg hva du skal studere</b><span class="st-sm">Velg temaer, så får du en løype med én uke per tema og en liten quiz hver dag.</span><div><button type="button" class="st-btn" data-h="ga" data-v="innstillinger">Velg temaer</button></div></div>';
       else {
         // Min quiz: studenten har valgt selv (eller ikke ennå). Uten valg spør vi én gang.
