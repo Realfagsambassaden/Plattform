@@ -25,6 +25,11 @@ anchor-sections: false
       <p class="kritt-formel"><span class="t">Video + lærebok + KI =</span> <span class="hjerte" aria-label="kjærlighet">♥</span></p>
       <p class="kritt-av">GRATIS, av EKTE fysikere!</p>
     </div>
+    <div class="last-ned">
+      <span class="last-ned-tekst">Last ned appen</span>
+      <svg class="last-ned-pil" viewBox="0 0 100 44" aria-hidden="true"><path d="M5 27 C 22 10, 40 38, 62 24 S 84 16, 90 20"/><path d="M78 9 L91 20 L77 31"/></svg>
+      <a class="last-ned-knapp" href="app.html">Last ned</a>
+    </div>
     <div class="velg-niva">
       <p class="velg-niva-tittel">Velg nivå!</p>
       <div class="bryter" data-pos="av">
@@ -54,6 +59,7 @@ anchor-sections: false
     </div>
   </div>
   <img class="hero-dashman-v" src="assets/img/dashman/glad.webp" alt="">
+  <p class="hero-dm-boble"><b>Dashman her!</b> Jeg er din personlige KI-assistent</p>
   <div class="hero-scene">
     <img src="assets/img/tegninger/hero-dashman.webp" alt="Dashman får en aha-opplevelse, med F = ma og E = mc² tegnet i kritt rundt seg på en tavle full av formler">
   </div>

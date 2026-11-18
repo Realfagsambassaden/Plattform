@@ -1,0 +1,69 @@
+---
+title: "Last ned appen"
+subtitle: "Gratis studieapp: dagens quiz, arbeidskrav, skann løsningen din og spør Dashman. Ingen appbutikk, den legges rett på hjemskjermen."
+toc: false
+page-layout: article
+---
+
+```{=html}
+<div class="app-side" id="app-side">
+  <p class="app-ferdig" hidden>Appen er allerede installert på denne enheten. <a href="studie/index.html">Åpne appen</a></p>
+
+  <div class="app-installer" hidden>
+    <button type="button" class="app-knapp" id="app-installer">Installer appen</button>
+  </div>
+
+  <div class="app-veiledning">
+    <section class="app-boks" data-os="ios">
+      <h2>iPhone og iPad</h2>
+      <ol>
+        <li>Åpne denne siden i <b>Safari</b>.</li>
+        <li>Trykk <b>Del</b>-knappen (firkant med pil opp): nederst på iPhone, øverst på iPad.</li>
+        <li>Bla ned og velg <b>«Legg til på Hjem-skjerm»</b>, og trykk <b>«Legg til»</b>.</li>
+      </ol>
+      <p class="app-sm">Bruker du Chrome: Del-knappen i adressefeltet, så «Legg til på Hjem-skjerm».</p>
+    </section>
+    <section class="app-boks" data-os="android">
+      <h2>Android</h2>
+      <ol>
+        <li>Åpne denne siden i <b>Chrome</b>.</li>
+        <li>Trykk menyen <b>⋮</b> øverst til høyre.</li>
+        <li>Velg <b>«Installer app»</b> eller <b>«Legg til på startskjermen»</b>, og trykk <b>«Installer»</b>.</li>
+      </ol>
+      <p class="app-sm">Samsung Internett: menyen ☰, så «Legg til side på» → «Startskjerm».</p>
+    </section>
+    <section class="app-boks" data-os="pc">
+      <h2>På PC eller Mac?</h2>
+      <p>Skann koden med mobilkameraet, så åpnes denne siden på telefonen.</p>
+      <div class="app-qr" id="app-qr" aria-label="QR-kode til denne siden"></div>
+      <p class="app-sm">Du kan også <a href="studie/index.html">bruke appen i nettleseren</a>.</p>
+    </section>
+  </div>
+</div>
+
+<script src="assets/js/qrcode.js"></script>
+<script>
+(function () {
+  var ua = navigator.userAgent || '';
+  var ios = /iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
+  var android = /android/i.test(ua), os = ios ? 'ios' : android ? 'android' : 'pc';
+  // Vis veiledningen for enheten først (de andre står under).
+  var v = document.querySelector('.app-veiledning'), egen = v.querySelector('[data-os="' + os + '"]');
+  if (egen) { v.insertBefore(egen, v.firstChild); egen.classList.add('din'); }
+  function oppdater() {
+    var a = window.fhApp || {};
+    document.querySelector('.app-ferdig').hidden = !a.installert;
+    document.querySelector('.app-installer').hidden = !a.kanInstallere;
+  }
+  document.getElementById('app-installer').addEventListener('click', function () {
+    var h = window.fhApp && window.fhApp.hendelse; if (!h) return;
+    h.prompt(); if (h.userChoice) h.userChoice.then(function () { window.fhApp.kanInstallere = false; oppdater(); });
+  });
+  document.addEventListener('fh-app', oppdater); oppdater();
+  try {
+    var q = window.qrcode(0, 'M'); q.addData(location.origin + location.pathname); q.make();
+    document.getElementById('app-qr').innerHTML = q.createSvgTag({ cellSize: 5, margin: 2, scalable: true });
+  } catch (e) {}
+})();
+</script>
+```
