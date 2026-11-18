@@ -384,6 +384,8 @@ body.st-app-modus .studie { max-width: 560px; margin: 0 auto; padding-bottom: ca
 .studie .st-hilsen { display: flex; flex-direction: column; margin: -.4rem 0 .9rem; }
 .studie .st-hilsen .st-hand { font-size: 2rem; line-height: 1.1; color: var(--bs-body-color); }
 .studie .st-dkort { --k: var(--bs-primary); display: flex; flex-direction: column; gap: .45rem; border: 1.5px solid var(--k); border-radius: 18px; padding: .9rem 1rem; margin: 0 0 .9rem; background: color-mix(in srgb, var(--bs-body-bg) 90%, white); }
+.studie a.st-fokusknapp { text-decoration: none; color: inherit; border-width: 2.5px; background: color-mix(in srgb, var(--bs-primary) 16%, transparent); }
+.studie a.st-fokusknapp .st-dtittel { font-size: 1.35rem; }
 .studie .st-dkort.o { --k: var(--bs-warning); }
 .studie .st-dkort .st-rad { margin: 0; }
 .studie .st-merke { font-weight: 700; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--k); }

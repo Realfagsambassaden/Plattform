@@ -360,7 +360,7 @@ if indeks.exists() and nv_f.exists() and '<!-- >>> nivakort' in indeks.read_text
         def n_sider(o): return sum(1 for e in o['temaer'] for x in sider_per_tema[e['id']] if x['niva'] == k)
         valgt = [o for o in omrader if n_sider(o)] if nv.get('omrader', 'auto') == 'auto' else [omr_id[i] for i in nv['omrader'] if i in omr_id]
         h.append(f'  <section class="niva-panel" id="niva-{k}" data-niva="{k}" data-nv="{k}">')
-        h.append(f'    <div class="niva-hode"><h2>{escape(nv["navn"])}</h2><p>{escape(nv.get("tekst", ""))}</p></div>')
+        h.append(f'    <div class="niva-hode"><h2>{escape(nv.get("overskrift") or nv["navn"])}</h2><p>{escape(nv.get("tekst", ""))}</p></div>')
         h.append('    <div class="niva-innhold">')
         h.append('      <div class="niva-temaer"><h3 class="niva-del">Temaer</h3>')
         if valgt:
@@ -379,8 +379,8 @@ if indeks.exists() and nv_f.exists() and '<!-- >>> nivakort' in indeks.read_text
         # løype i studieappen (gjerne ut fra en emnebeskrivelse), eller finner et kurs en underviser tilbyr.
         h.append('      <div class="niva-loyper"><h3 class="niva-del">Din vei</h3><p class="niva-forkl">Les fritt i temaene, eller følg en plan uke for uke.</p>')
         h.append('        <ul>')
-        h.append('          <li><a href="studie/index.html#innstillinger"><span class="nl-navn">Design din løype</span><span class="nl-kode">Velg temaene selv, eller lim inn en emnebeskrivelse, så foreslår Dashman dem.</span></a></li>')
-        h.append('          <li><a href="studie/index.html#apne-kurs"><span class="nl-navn">Kurstilbud</span><span class="nl-kode">Kurs som undervisere tilbyr. Meld deg på med kode eller velg et åpent kurs.</span></a></li>')
+        h.append(f'          <li><a href="studie/index.html#innstillinger"><span class="nl-navn">{escape(nv.get("design") or "Design din løype")}</span><span class="nl-kode">Velg temaene selv, eller lim inn en emnebeskrivelse, så foreslår Dashman dem.</span></a></li>')
+        h.append(f'          <li><a href="studie/index.html#apne-kurs"><span class="nl-navn">{escape(nv.get("kurs") or "Kurstilbud")}</span><span class="nl-kode">Kurs som undervisere tilbyr. Meld deg på med kode eller velg et åpent kurs.</span></a></li>')
         h.append('        </ul>')
         h.append('      </div>')
         h.append('    </div>')
