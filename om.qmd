@@ -7,10 +7,9 @@ page-layout: full
 ```{=html}
 <section class="om-oss">
   <p class="eyebrow">Om fysikkhjelp.no</p>
-  <h2>Fysikk forklart av fagfolk, gratis</h2>
-  <p>fysikkhjelp.no er laget av fysikere som underviser selv. Her finner du lærebøker i forkursfysikk og ingeniørfysikk, korte videoer og håndskrevne tavlenotater, oppgaver med løsningsforslag og Dashman, KI-assistenten som gir deg ett hint om gangen i stedet for hele svaret.</p>
-  <p>Studenter kan designe sin egen løype gjennom temaene, eller følge en kursløype som underviseren deres har laget. Undervisere kan bygge kurs, lage arbeidskrav og bruke stoffet som forelesningsmateriale.</p>
-  <p>fysikkhjelp.no er en del av <a href="https://realfagsambassaden.no">Realfagsambassaden</a>, sammen med søstersiden <a href="https://matematikkhjelp.no">matematikkhjelp.no</a>.</p>
+  <h2>Fysikk forklart av fagfolk</h2>
+  <p>Fysikkhjelp.no er et tilbud drevet av ildsjeler ved norske universiteter og høyskoler. Vi brenner for å tilgjengeliggjøre verktøy som hjelper deg til å forstå fysikk. Vi håper å kunne drive dette som et gratisprosjekt.</p>
+  <p>I tillegg kan du booke privatundervisning med våre profiler, eller invitere dem til skolebesøk, hvor de kan arrangere show eller andre events. Dette gjøres gjennom paraplysiden vår: <a href="https://realfagsambassaden.no">Realfagsambassaden</a>.</p>
 </section>
 
 <section class="profiler">
