@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="960" viewBox="0 0 960 960">
+  <!-- Diffus bakgrunn for realfagsambassaden.no: krittegninger fra alle realfagene (formler, begerglass, celler, DNA, atom …).
+       Flislegges. Lav opasitet og litt uskarphet er bakt inn, så den kan brukes direkte som background-image. -->
+  <defs>
+    <filter id="uskarp" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="0.9"/></filter>
+  </defs>
+  <g filter="url(#uskarp)" fill="none" stroke="#eceeea" stroke-opacity="0.15" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+     font-family="'Architects Daughter','Comic Sans MS','Chalkboard SE',cursive" font-size="30">
+    <!-- Erlenmeyerkolbe med bobler -->
+    <g transform="translate(70 60) rotate(-8)">
+      <path d="M38 0h44M48 0v52L8 132c-4 9 2 16 11 16h82c9 0 15-7 11-16L72 52V0"/>
+      <path d="M22 104c14-7 26 6 40 0s24-5 36 0" stroke-dasharray="3 10"/>
+      <circle cx="52" cy="118" r="5"/><circle cx="72" cy="110" r="4"/><circle cx="62" cy="90" r="3"/>
+    </g>
+    <!-- E = mc² -->
+    <text x="300" y="80" fill="#eceeea" fill-opacity="0.16" stroke="none" transform="rotate(-6 300 80)">E = mc²</text>
+    <!-- Celle med kjerne og organeller -->
+    <g transform="translate(560 40) rotate(10)">
+      <path d="M10 70c0-45 60-70 120-62s110 40 100 85-70 70-130 64S10 115 10 70z"/>
+      <ellipse cx="118" cy="72" rx="34" ry="26"/><circle cx="124" cy="68" r="9"/>
+      <path d="M40 60c10-8 22 8 32 0M48 104c12-6 20 6 30-2" />
+      <ellipse cx="190" cy="96" rx="16" ry="8" transform="rotate(25 190 96)"/><path d="M180 92c6 4 14 4 20 8"/>
+      <circle cx="70" cy="40" r="4"/><circle cx="168" cy="40" r="3"/><circle cx="96" cy="120" r="3"/>
+    </g>
+    <!-- F = ma og pil -->
+    <text x="820" y="70" fill="#eceeea" fill-opacity="0.16" stroke="none" transform="rotate(5 820 70)">F = ma</text>
+    <!-- DNA -->
+    <g transform="translate(40 250) rotate(-14)">
+      <path d="M0 0c40 30 40 60 0 90s-40 60 0 90M60 0c-40 30-40 60 0 90s40 60 0 90"/>
+      <path d="M10 15h40M18 32h24M18 58h24M10 76h40M10 105h40M18 122h24M18 148h24M10 166h40" stroke-width="2.4"/>
+    </g>
+    <!-- Atom -->
+    <g transform="translate(250 190)">
+      <ellipse cx="80" cy="80" rx="78" ry="26"/><ellipse cx="80" cy="80" rx="78" ry="26" transform="rotate(60 80 80)"/>
+      <ellipse cx="80" cy="80" rx="78" ry="26" transform="rotate(-60 80 80)"/><circle cx="80" cy="80" r="8"/>
+      <circle cx="156" cy="74" r="4"/><circle cx="40" cy="20" r="4"/>
+    </g>
+    <!-- Integral -->
+    <text x="470" y="260" fill="#eceeea" fill-opacity="0.15" stroke="none" font-size="34" transform="rotate(-3 470 260)">∫₀¹ x² dx = ⅓</text>
+    <!-- Benzenring -->
+    <g transform="translate(780 170) rotate(12)">
+      <path d="M50 0l43 25v50l-43 25-43-25V25z"/><circle cx="50" cy="50" r="24"/>
+      <path d="M50 0v-22M93 75l19 11M7 75l-19 11"/>
+    </g>
+    <!-- Pendel -->
+    <g transform="translate(120 470)">
+      <path d="M0 0h90M45 0l40 110"/><circle cx="89" cy="122" r="14"/>
+      <path d="M45 0v120" stroke-dasharray="4 9"/><path d="M45 50a50 50 0 0 0 20 -4"/>
+      <text x="62" y="60" fill="#eceeea" fill-opacity="0.15" stroke="none" font-size="22">θ</text>
+    </g>
+    <!-- PV = nRT -->
+    <text x="320" y="430" fill="#eceeea" fill-opacity="0.15" stroke="none" transform="rotate(4 320 430)">pV = nRT</text>
+    <!-- Graf med parabel -->
+    <g transform="translate(560 350) rotate(-5)">
+      <path d="M0 150h220M20 170V0"/><path d="M14 10l6-12 6 12M212 144l12 6-12 6"/>
+      <path d="M40 20c30 160 110 160 150 0"/><path d="M115 150v-8" />
+      <text x="190" y="140" fill="#eceeea" fill-opacity="0.15" stroke="none" font-size="22">x</text>
+    </g>
+    <!-- Reagensrør i stativ -->
+    <g transform="translate(830 400) rotate(8)">
+      <path d="M0 40h110M0 40v50h110V40"/>
+      <path d="M20 0v80a10 10 0 0 0 20 0V0M70 0v80a10 10 0 0 0 20 0V0"/>
+      <path d="M20 50h20M70 36h20" stroke-dasharray="2 6"/>
+    </g>
+    <!-- Pytagoras -->
+    <g transform="translate(60 690) rotate(-7)">
+      <path d="M0 120h160V0z"/><path d="M140 120v-20h20"/>
+      <text x="20" y="160" fill="#eceeea" fill-opacity="0.15" stroke="none">a² + b² = c²</text>
+    </g>
+    <!-- Bølge -->
+    <g transform="translate(330 560)">
+      <path d="M0 40c25-50 50-50 75 0s50 50 75 0 50-50 75 0"/>
+      <path d="M0 40h230" stroke-dasharray="4 10"/>
+      <text x="80" y="-6" fill="#eceeea" fill-opacity="0.15" stroke="none" font-size="24">λ</text>
+    </g>
+    <!-- Molekyl (vann) -->
+    <g transform="translate(640 600) rotate(-10)">
+      <circle cx="60" cy="40" r="26"/><circle cx="14" cy="88" r="16"/><circle cx="108" cy="88" r="16"/>
+      <path d="M42 60L26 76M78 60l16 16"/>
+      <text x="40" y="150" fill="#eceeea" fill-opacity="0.15" stroke="none">H₂O</text>
+    </g>
+    <!-- Maxwell -->
+    <text x="610" y="560" fill="#eceeea" fill-opacity="0.14" stroke="none" font-size="28" transform="rotate(3 610 560)">∇ · E = ρ/ε₀</text>
+    <!-- Lyspære / krets -->
+    <g transform="translate(820 700) rotate(6)">
+      <path d="M0 0h50M80 0h50v80H0V0"/><path d="M50-14v28M60-8v16"/>
+      <circle cx="65" cy="80" r="14"/><path d="M55 70l20 20M75 70L55 90"/>
+    </g>
+    <!-- Euler -->
+    <text x="300" y="770" fill="#eceeea" fill-opacity="0.15" stroke="none" transform="rotate(-4 300 770)">e^(iπ) + 1 = 0</text>
+    <!-- Mikroskop -->
+    <g transform="translate(520 720) rotate(-6)">
+      <path d="M30 0l30 10-10 60-30-10z"/><path d="M35 70l-5 30h70M60 40c40 10 50 50 30 70"/>
+      <path d="M10 130h110M40 100v30"/>
+    </g>
+    <!-- Planet med bane -->
+    <g transform="translate(110 860)">
+      <circle cx="40" cy="40" r="22"/><ellipse cx="40" cy="40" rx="50" ry="12" transform="rotate(-15 40 40)"/>
+      <path d="M140 20c40 30 90 30 130 0" stroke-dasharray="4 10"/><circle cx="270" cy="20" r="6"/>
+    </g>
+    <!-- λ = h/p -->
+    <text x="700" y="880" fill="#eceeea" fill-opacity="0.15" stroke="none" transform="rotate(5 700 880)">λ = h / p</text>
+    <!-- sin²+cos² -->
+    <text x="430" y="930" fill="#eceeea" fill-opacity="0.13" stroke="none" font-size="24" transform="rotate(-2 430 930)">sin²θ + cos²θ = 1</text>
+  </g>
+</svg>

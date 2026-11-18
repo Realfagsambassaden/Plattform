@@ -153,3 +153,71 @@ a.plattform{color:var(--kritt);text-decoration:none}a.plattform:hover{border-col
 .stott-side h1{font:400 clamp(2rem,4.5vw,3rem)/1.15 "Kritt","Architects Daughter",cursive;margin-bottom:1rem}
 .stott-kommer{color:var(--oransje);font-size:1.5rem}
 @media (max-width:900px){.topp nav{display:flex}.topp nav a:not(.stott-knapp){display:none}}
+
+/* ---------- forsiden (18. nov. 2026): midtstilt tekst, samlekortene rundt og nedover hele siden ---------- */
+/* Diffus bakgrunn med krittegninger fra alle realfagene (formler, begerglass, celler, DNA, atom …) */
+body{background:var(--tavle) url(img/realfag-tegninger.svg) 0 0/960px repeat}
+.hero{min-height:clamp(520px,74vh,760px);padding:3.5rem 0 2.5rem}
+.hero::before{opacity:.08}
+.hero-tekst{max-width:780px;text-shadow:0 2px 18px rgba(13,17,16,.95)}
+.hero-tittel{margin:0}
+.hero-tittel .hero-logo{width:min(600px,92%);margin:0 auto 1.4rem;filter:drop-shadow(0 4px 24px rgba(0,0,0,.6))}
+.hero-sak{margin:0;font:400 clamp(1.9rem,4.6vw,3.5rem)/1.1 "Kritt","Architects Daughter",cursive;-webkit-text-stroke:1px currentColor;text-shadow:0 0 10px rgba(236,238,234,.3)}
+.hero-sak .kamp{display:block;font:400 1.5em/.95 "Nanum Brush Script","Comic Neue",cursive;color:var(--neon);transform:rotate(-3deg);transform-origin:center;-webkit-text-stroke:1.5px var(--neon);margin-top:.25em;text-shadow:0 0 18px rgba(143,207,134,.55),0 0 2px rgba(143,207,134,.9)}
+.hero-sak .kamp svg{display:block;width:min(480px,85%);height:22px;margin:-.15em auto 0}
+.hero .knapper{margin-top:2.2rem;gap:1rem}
+.hero .knapp{font-size:1.3rem;padding:.9rem 1.6rem}
+.hero .ingress{font-size:1.08rem;color:var(--stov);margin-top:2rem}
+
+/* Kortlaget. Smale skjermer: kortene i en rad rett under forsideteksten. */
+.side{display:flex;flex-direction:column;max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
+.side>main{display:contents}
+.side>main>*{order:2}
+.side>main>.hero{order:0}
+.kortlag{order:1;padding:1rem 0 2rem;scroll-margin-top:70px}
+.kortlag-tittel{font:400 clamp(1.8rem,3.6vw,2.5rem)/1.1 "Kritt","Architects Daughter",cursive;text-align:center;margin:0 0 1rem;transform:rotate(-1deg);filter:url(#kritt)}
+.kortlag .samlekort{transition:transform .35s cubic-bezier(.2,.8,.2,1);transform:rotate(var(--vri,0deg))}
+.kortlag .samlekort:nth-of-type(1){--vri:-4deg}.kortlag .samlekort:nth-of-type(2){--vri:3deg}.kortlag .samlekort:nth-of-type(3){--vri:-2deg}
+.kortlag .samlekort:nth-of-type(4){--vri:5deg}.kortlag .samlekort:nth-of-type(5){--vri:-5deg}.kortlag .samlekort:nth-of-type(6){--vri:2.5deg}
+.kortlag .samlekort:hover{transform:rotate(0deg);z-index:3}
+
+/* Brede skjermer: innholdet i midten, tre kort på hver side spredt nedover hele siden, litt på skrå. */
+@media (min-width:1240px){
+  .side{display:grid;grid-template-columns:minmax(260px,1fr) minmax(0,760px) minmax(260px,1fr);grid-template-rows:auto auto auto;max-width:1680px;padding:0 1.5vw;column-gap:1rem}
+  .side>main{display:block;grid-column:2;grid-row:1/span 3;min-width:0}
+  .kortlag,.kortlag .samlekort-rad{display:contents}
+  .kortlag-tittel{display:none}
+  .kortlag .samlekort{position:relative;justify-self:center;margin:2.5rem 0;transform:rotate(var(--vri)) scale(.84)}
+  .kortlag .samlekort:hover{transform:rotate(0deg) scale(.9)}
+  .kortlag .samlekort:nth-of-type(odd){grid-column:1}
+  .kortlag .samlekort:nth-of-type(even){grid-column:3}
+  .kortlag .samlekort:nth-of-type(1),.kortlag .samlekort:nth-of-type(2){grid-row:1;align-self:start}
+  .kortlag .samlekort:nth-of-type(3),.kortlag .samlekort:nth-of-type(4){grid-row:2;align-self:center}
+  .kortlag .samlekort:nth-of-type(5),.kortlag .samlekort:nth-of-type(6){grid-row:3;align-self:end}
+  .kortlag .samlekort:nth-of-type(1){margin-top:4rem;justify-self:end}
+  .kortlag .samlekort:nth-of-type(2){margin-top:7rem;justify-self:start}
+  .kortlag .samlekort:nth-of-type(3){justify-self:start}
+  .kortlag .samlekort:nth-of-type(4){justify-self:end}
+  .kortlag .samlekort:nth-of-type(6){justify-self:start;margin-bottom:6rem}
+  .side>main>.hero{min-height:clamp(560px,80vh,820px)}
+  .side .fag{grid-template-columns:1fr 1fr}
+  .side .podkast{grid-template-columns:1fr}
+}
+@media (max-width:560px){.kortlag .samlekort{flex-basis:280px;width:280px}.hero .knapp{font-size:1.1rem}}
+
+/* Book / Våre opplegg */
+.enkel-side{max-width:820px;margin:0 auto}
+.enkel-side h1{font:400 clamp(2rem,4.5vw,3rem)/1.15 "Kritt","Architects Daughter",cursive;margin-bottom:1rem;filter:url(#kritt)}
+.book-liste{display:grid;gap:1rem;margin-top:1.6rem}
+.book-kort{display:grid;grid-template-columns:72px 1fr;gap:1rem;align-items:center;padding:1rem 1.2rem;border:1px solid var(--linje);border-radius:14px;background:rgba(44,48,51,.82)}
+.book-kort img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--neon)}
+.book-kort h2{font:400 1.4rem/1.2 "Kritt","Architects Daughter",cursive;margin:0 0 .2rem}
+.book-kort p{margin:.2rem 0}
+.hero .hero-tittel{filter:none;-webkit-text-stroke:0;text-shadow:none}
+/* Mobil: kortene i en rad man sveiper gjennom, så resten av forsiden ikke havner langt nede */
+@media (max-width:700px){
+  .kortlag .samlekort-rad{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;scroll-snap-type:x mandatory;gap:1rem;padding:1.2rem 1.2rem 1.6rem;margin:0 calc(-1 * clamp(16px,4vw,48px));-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .kortlag .samlekort-rad::-webkit-scrollbar{display:none}
+  .kortlag .samlekort{scroll-snap-align:center;flex:0 0 270px;width:270px}
+  .kortlag-tittel::after{content:" → sveip";font-size:.5em;color:var(--stov)}
+}
