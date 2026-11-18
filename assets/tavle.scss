@@ -918,3 +918,7 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .krever-melding { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; padding: .6rem .9rem; border: 1px dashed $line; border-radius: 10px; color: $dust; font-size: .92rem; }
 .krever-melding button { border: 1px solid $line; border-radius: 8px; background: none; color: $chalk; padding: .2rem .7rem; cursor: pointer; }
 .krever-melding button:hover { border-color: $neon; color: $neon; }
+
+// Om oss (om.qmd)
+.om-oss { max-width: 760px; margin: 0 auto 2.5rem; }
+.om-oss h2 { margin-top: .3rem; }

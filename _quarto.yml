@@ -61,6 +61,8 @@ website:
           - href: larer/index.qmd
             text: "For lærere: design din forelesning"
     right:
+      - href: om.qmd
+        text: Om oss
       - href: dekning.qmd
         text: Dekker vi emnet ditt?
       - href: konto/index.qmd
