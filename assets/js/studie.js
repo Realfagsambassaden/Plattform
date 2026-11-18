@@ -1056,7 +1056,9 @@ function studieStart() {
           DMFASER.map(function (x) { return '<label class="st-valg st-pille" title="' + esc(x[2]) + '" style="border-color:' + x[3] + '"><input type="radio" name="st-dmfase" value="' + x[0] + '"' + (+u.dashman_fase === x[0] ? ' checked' : '') + '> ' + x[1] + '</label>'; }).join('') + '</div>' +
           '<ul class="st-sm st-faseliste">' + DMFASER.map(function (x) { return '<li><b style="color:' + x[3] + '">' + x[1] + ':</b> ' + esc(x[2]) + '</li>'; }).join('') + '</ul>' +
           '<label class="st-sm">Dine instrukser til Dashman (valgfritt): fokus nå, vanlige misoppfatninger, hva han ikke skal hjelpe med<textarea data-felt="dashman_instruks" maxlength="2000" placeholder="F.eks. «Denne uka: kraftdiagram. Mange glemmer normalkraften på skråplan. Ikke hjelp med arbeidskrav 2 før fristen.»">' + esc(u.dashman_instruks) + '</textarea></label></fieldset>' : '') +
-        '<fieldset class="st-feltsett"><legend>Dette skal kurset ha</legend><div class="st-to">' + boks('moduler', 'Moduler') + boks('arbeidskrav', 'Arbeidskrav') + boks('samlinger', 'Samlinger og slides') + boks('tidslinje', 'Tidslinje') + '</div></fieldset>' +
+        '<fieldset class="st-feltsett"><legend>Dette skal kurset ha</legend><div class="st-to">' + boks('moduler', 'Moduler') + boks('arbeidskrav', 'Arbeidskrav') + boks('samlinger', 'Samlinger og slides') + boks('tidslinje', 'Tidslinje') + '</div>' +
+          '<label class="st-sm">Formelark (det studentene har med på eksamen, vises i fokusmodus) <select class="st-felt" data-elemvalg="formelhefte" style="width:auto">' +
+          [['', 'Ingen'], ['tres0312', 'TRES0312']].map(function (x) { var v = el.formelhefte === undefined ? (/tres0312/i.test(u.navn || '') ? 'tres0312' : '') : el.formelhefte; return '<option value="' + x[0] + '"' + (v === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select></label></fieldset>' +
         forMangeUker() +
         (f.bekreftKi ? '<div class="st-fb r"><b>Erstatte oppsettet?</b><p>Kurset har allerede ' + u.moduler.length + ' moduler. Et nytt forslag fra KI erstatter dem.</p><p><button type="button" class="st-btn" data-h="kiOppsett">Ja, lag nytt forslag</button> <button type="button" class="st-btn g" data-h="avbrytKi">Avbryt</button></p></div>' : '') +
         sparBoks(false) +
@@ -3197,6 +3199,7 @@ function studieStart() {
     }
     else if (el.dataset.felt && el.dataset.felt.indexOf('ramme.') === 0 && T.fag) { tegn(); }
     else if (el.dataset.elem) { T.fag.u.elementer[el.dataset.elem] = el.checked; planlagreFag(); tegn(); }
+    else if (el.dataset.elemvalg && T.fag) { T.fag.u.elementer[el.dataset.elemvalg] = el.value; planlagreFag(); }
     else if (el.id === 'st-ov-flervalg' && T.fag && T.fag.ov) { T.fag.ov.flervalg = el.checked; tegn(); }
     else if (el.dataset.ovvalg && T.fag && T.fag.ov) { T.fag.ov[el.dataset.ovvalg] = el.value; tegn(); }
     else if ((el.dataset.dekk || el.dataset.dekkmod) && T.fag && T.fag.ov) {

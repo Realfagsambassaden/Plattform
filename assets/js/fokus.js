@@ -63,7 +63,7 @@ function fokusStart() {
   function skjelett() {
     rot.innerHTML =
       '<div class="fk-topp"><a class="fk-ut" href="index.html" title="Avslutt fokusmodus">✕</a><b class="fk-fag"></b><span class="fk-her"></span>' +
-      '<button type="button" class="fk-knapp" data-h="tid">☰ Tidslinje</button><button type="button" class="fk-knapp" data-h="kravkort">📝 Arbeidskrav</button></div>' +
+      '<button type="button" class="fk-knapp" data-h="tid">☰ Tidslinje</button><button type="button" class="fk-knapp" data-h="kravkort">📝 Arbeidskrav</button><button type="button" class="fk-knapp" data-h="formel" hidden>📐 Formelark</button></div>' +
       '<iframe class="fk-hoved" title="Lærestoff"></iframe>' +
       '<div class="fk-bunn"><button type="button" class="fk-knapp" data-h="forrige">← Forrige</button><span class="fk-pos"></span><button type="button" class="fk-knapp" data-h="neste">Neste →</button></div>' +
       '<aside class="fk-skuff fk-tid" aria-label="Tidslinje"><button type="button" class="fk-fane" data-h="tid">Tidslinje</button><div class="fk-panel"><div class="fk-panelhode"><b>Tidslinje</b><button type="button" class="fk-knapp liten" data-h="festTid" title="Fest tidslinjen">📌</button></div><div class="fk-rull"></div></div></aside>' +
@@ -161,14 +161,41 @@ function fokusStart() {
     }
   }
 
+  // Formelarket (det studentene får på eksamen) åpnes i høyre skuff, der arbeidskravet ellers står.
+  // Kurset velger det i kursbyggeren (elementer.formelhefte); kurs og løyper med kjent fagkode får det automatisk.
+  var FORMELARK = { tres0312: 'TRES0312' };
+  function formelId() {
+    var e = (kurs && kurs.elementer) || {};
+    if (e.formelhefte === '') return null;
+    if (e.formelhefte && FORMELARK[e.formelhefte]) return e.formelhefte;
+    if (kilde === 'loype' && lm && FORMELARK[lm[1]]) return lm[1];
+    var navn = ((kurs && kurs.navn) || '').toLowerCase();
+    return Object.keys(FORMELARK).find(function (k) { return navn.indexOf(k) >= 0; }) || null;
+  }
+  function apneFormel() {
+    var id = formelId(); if (!id) return;
+    var skuff = rot.querySelector('.fk-krav');
+    skuff.hidden = false; skuff.classList.add('apen'); document.documentElement.classList.add('fk-delt');
+    if (aktivKrav !== 'formel') {
+      aktivKrav = 'formel';
+      rot.querySelector('.fk-kravtittel').textContent = 'Formelark ' + FORMELARK[id];
+      rot.querySelector('.fk-kravinn').innerHTML = '<iframe class="fk-kravramme" title="Formelark ' + FORMELARK[id] + '" src="../assets/formelhefter/' + id + '.html"></iframe>';
+    }
+  }
+
   rot.addEventListener('click', function (ev) {
     var b = ev.target.closest('[data-h]'); if (!b || b.disabled) return;
     var h = b.dataset.h, tid = rot.querySelector('.fk-tid'), kk = rot.querySelector('.fk-krav');
     if (h === 'tid') tid.classList.toggle('apen');
     else if (h === 'festTid') { tid.classList.toggle('festet'); tid.classList.add('apen'); document.documentElement.classList.toggle('fk-tidfast', tid.classList.contains('festet')); }
     else if (h === 'kravkort') {
+      if (aktivKrav === 'formel') { aktivKrav = null; kk.classList.remove('apen'); rot.querySelector('.fk-kravtittel').textContent = 'Arbeidskrav'; rot.querySelector('.fk-kravinn').innerHTML = '<p class="fk-tom">Velg et arbeidskrav i tidslinjen.</p>'; }
       var apen = kk.classList.toggle('apen'); document.documentElement.classList.toggle('fk-delt', apen);
       if (apen && !aktivKrav) { var ny = rekke.find(function (x) { return x.type === 'krav' && !godkjent(x.o); }); if (ny) apneKrav(ny.o); }
+    }
+    else if (h === 'formel') {
+      if (kk.classList.contains('apen') && aktivKrav === 'formel') { kk.classList.remove('apen'); document.documentElement.classList.remove('fk-delt'); }
+      else apneFormel();
     }
     else if (h === 'lukkKrav') { kk.classList.remove('apen'); document.documentElement.classList.remove('fk-delt'); }
     else if (h === 'ga') { ga(+b.dataset.i); if (!tid.classList.contains('festet')) tid.classList.remove('apen'); }
@@ -223,6 +250,7 @@ function fokusStart() {
     kurs = r[0] && r[0].data; if (!kurs) throw new Error('Fant ikke kurset. Er du påmeldt?');
     if (kilde !== 'fag') rot.querySelector('[data-h=kravkort]').hidden = true, rot.querySelector('.fk-krav').hidden = true;
     krav = ((r[1] && r[1].data) || []).filter(function () { return (kurs.elementer || {}).arbeidskrav !== false; });
+    rot.querySelector('[data-h=formel]').hidden = !formelId();
     rot.querySelector('.fk-fag').textContent = kurs.navn;
     document.title = kurs.navn + ' – fokus';
     rekke = lagRekke();
