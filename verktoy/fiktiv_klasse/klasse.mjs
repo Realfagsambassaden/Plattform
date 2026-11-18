@@ -279,8 +279,9 @@ async function svarPa(side, elev, o, tekst, r, p) {
 async function snakkMedDashman(side, elev, r) {
   try {
     await side.goto(`${NETTSTED}/studie/index.html`, { waitUntil: 'domcontentloaded' });
-    await side.waitForSelector('.dm-knapp', { timeout: 20000 });
-    if (await side.$('.dm-panel[hidden]')) await side.click('.dm-knapp');
+    // På mobil (appmodus) er den runde knappen skjult og Dashman åpnes fra menyen; Dashman.apne() gjør det samme.
+    await side.waitForFunction(() => window.Dashman && window.Dashman.apne, null, { timeout: 20000 });
+    if (await side.isVisible('.dm-knapp')) await side.click('.dm-knapp'); else await side.evaluate(() => window.Dashman.apne());
     await side.waitForSelector('.dm-panel:not([hidden]) textarea', { timeout: 20000 });
     const sporsmal = (await ki(`Du er ${elev.navn}, elev på forkurs i fysikk (nivå ${elev.niva} av 10). Skriv ETT kort, naturlig spørsmål til KI-læringsassistenten Dashman om elektrisitet eller noe du lurer på i fysikken. Bare spørsmålet, på norsk, som en ekte elev ville skrevet det (gjerne med skrivefeil hvis nivået er lavt).`, 'Spørsmål:', 120)).trim() || 'Hva er forskjellen på strøm og spenning?';
     const SVAR = '.dm-m.dm-fra:not(.dm-tenker):not(.dm-niva):not(.dm-husker)';
