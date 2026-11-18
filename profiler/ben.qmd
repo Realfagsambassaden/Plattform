@@ -17,6 +17,10 @@ toc: false
 
 Jeg heter Ben, har doktorgrad i matematisk kosmologi og har formidlet og undervist realfag i ti år. I 2018 vant jeg den nasjonale finalen i Forsker Grand Prix.
 
+## Utdanning og bakgrunn
+
+Kommer snart.
+
 ## Hva jeg brenner for
 
 Forklaringene jeg selv skulle ønske jeg hadde som student: én idé om gangen, tegnet ut på tavla, med regning du kan følge linje for linje. Jeg vil at du skal skjønne *hvorfor* fysikken er som den er, ikke bare hvilken formel du skal bruke.
@@ -35,3 +39,24 @@ Forklaringene jeg selv skulle ønske jeg hadde som student: én idé om gangen, 
 - [Ingeniørfysikk](../ingeniorfysikk/index.html)
 - [Forkurs i matematikk](https://matematikkhjelp.no/matte-forkurs/index.html) (matematikkhjelp.no)
 - [Flervariabel kalkulus](https://matematikkhjelp.no/flervariabel-kalkulus/index.html) (matematikkhjelp.no)
+
+## Følg meg
+
+<!-- Fyll inn lenkene. Tomme lenker vises ikke. -->
+
+```{=html}
+<div class="sosiale">
+  <a class="sosial" data-p="youtube" href="">YouTube</a>
+  <a class="sosial" data-p="instagram" href="">Instagram</a>
+  <a class="sosial" data-p="tiktok" href="">TikTok</a>
+  <a class="sosial" data-p="facebook" href="">Facebook</a>
+  <a class="sosial" data-p="linkedin" href="">LinkedIn</a>
+  <a class="sosial" data-p="nettside" href="">Nettside</a>
+  <a class="sosial" data-p="epost" href="">E-post</a>
+  <p class="sosiale-tom">Lenker kommer.</p>
+</div>
+```
+
+## Foredrag, skolebesøk og privatundervisning
+
+Du kan booke privatundervisning, eller invitere meg til skolebesøk, show og andre arrangementer, gjennom [Realfagsambassaden](https://realfagsambassaden.no).
