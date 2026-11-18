@@ -465,6 +465,25 @@ function lesVedlegg(d) {
   return { type: m[1], data: m[2] };
 }
 
+// Fiktiv klasse: admin starter GitHub-jobben «Fiktiv klasse» (.github/workflows/fiktiv-klasse.yml) for et kurs.
+// Nøkkelen GH_DISPATCH (GitHub-hemmeligheten FIKTIV_TOKEN eller PLATTFORM_TOKEN) settes på workeren ved publisering.
+async function fiktivStart(request, env, b, h) {
+  const token = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
+  const rolle = token ? await supabaseRpc(env, token, "min_rolle", {}).catch(() => "") : "";
+  if (rolle !== "admin") return json({ feil: "Bare administrator kan starte den fiktive klassen." }, 403, h);
+  if (!env.GH_DISPATCH) return json({ feil: "Hint-tjeneren mangler nøkkelen til GitHub (GH_DISPATCH). Se .github/workflows/bygg.yml." }, 501, h);
+  const kurs = String(b.kurs || "");
+  if (!/^[0-9a-f-]{36}$/.test(kurs)) return json({ feil: "Ugyldig kurs." }, 400, h);
+  const runder = String(Math.max(1, Math.min(10, +b.runder || 1)));
+  const r = await fetch("https://api.github.com/repos/Realfagsambassaden/Plattform/actions/workflows/fiktiv-klasse.yml/dispatches", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${env.GH_DISPATCH}`, Accept: "application/vnd.github+json", "User-Agent": "fysikkhjelp-hint", "Content-Type": "application/json" },
+    body: JSON.stringify({ ref: "main", inputs: { kurs, runder, elever: "", nullstill: !!b.nullstill } }),
+  });
+  if (!r.ok) return json({ feil: `GitHub sa nei (${r.status}). Har nøkkelen tilgang til Actions i Plattform?` }, 502, h);
+  return json({ ok: true, url: "https://github.com/Realfagsambassaden/Plattform/actions/workflows/fiktiv-klasse.yml" }, 200, h);
+}
+
 async function erUnderviser(request, env) {
   const token = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
   if (!token || !env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) return false;
@@ -593,6 +612,7 @@ export default {
       if (sti.endsWith("/eksamen/svar")) return await eksamenSvar(request, env, b, h, EKS(request));
       if (sti.endsWith("/eksamen/anslag")) return await eksamenAnslag(request, env, b, h, EKS(request));
       if (sti.endsWith("/dashman")) return await dashman(request, env, b, h);
+      if (sti.endsWith("/fiktiv/start")) return await fiktivStart(request, env, b, h);
       if (sti.endsWith("/gjennomsyn")) return await gjennomsynVarsel(request, env, b, h);
       if (sti.endsWith("/push-test")) return await pushTest(request, env, b, h);
       return await hint(request, env, b, h);

@@ -1176,6 +1176,11 @@ function studieStart() {
       : '<button type="button" class="st-btn" data-h="publiser">Publiser for studentene</button><p class="st-sm">Til da er kurset et utkast, og studentene finner det ikke med koden.</p>') + '</div>';
     o += '<div class="st-kort"><label class="st-valg"><input type="checkbox" data-h="apenKursValg"' + (c.apen ? ' checked' : '') + (c.status === 'publisert' ? '' : ' disabled') + '> <b>Åpent kurs</b>: vises i lista over åpne kurs i studieappen, og alle kan melde seg på uten kode</label>' +
       (c.status === 'publisert' ? '' : '<p class="st-sm">Publiser kurset først.</p>') + '</div>';
+    // Fiktiv klasse (bare admin): ti robot-elever bruker en kopi av kurset og lager en feilrapport (verktoy/fiktiv_klasse).
+    if (T.rolle === 'admin' && !(c.ramme || {}).fiktivFra) o += '<div class="st-kort"><b>Fiktiv klasse</b><p class="st-sm">Ti robot-elever (Arnt, svakest … Julie, sterkest) svarer på arbeidskravene, laster opp utregninger, laster siden på nytt, snakker med Dashman og skriver tilbakemeldinger – i en kopi av kurset, så studentene ikke ser dem. Alt som går galt, havner i en feilrapport (issue i Plattform). Tar 20–60 minutter per runde.</p>' +
+      '<div class="st-rad"><label class="st-sm">Runder <select class="st-felt" id="st-fiktiv-runder" style="width:auto">' + [1, 2, 3, 5, 10].map(function (n) { return '<option>' + n + '</option>'; }).join('') + '</select></label>' +
+      '<label class="st-valg st-sm"><input type="checkbox" id="st-fiktiv-null"> Start robotene på nytt (slett svarene deres)</label>' +
+      '<button type="button" class="st-btn g" data-h="fiktivKlasse" data-id="' + c.id + '"' + (T.fiktivVenter ? ' disabled' : '') + '>' + (T.fiktivVenter ? 'Starter …' : 'Kjør fiktiv klasse') + '</button></div></div>';
     o += '<p><button type="button" class="st-btn g liten" data-h="slettKurs" data-id="' + c.id + '">' + (T.slett === c.id ? 'Bekreft: slett kurset for godt' : 'Slett kurset') + '</button></p>';
     if (f.matRed) o += matRedigerer();
     return o;
@@ -3106,6 +3111,14 @@ function studieStart() {
       svar: function () { svar(+d.i); },
       tallSvar: tallSvar,
       videre: videre,
+      fiktivKlasse: function () {
+        var rn = document.getElementById('st-fiktiv-runder'), nl = document.getElementById('st-fiktiv-null');
+        T.fiktivVenter = true; tegn();
+        ki('/fiktiv/start', { kurs: d.id, runder: rn ? +rn.value : 1, nullstill: !!(nl && nl.checked) }, 30)
+          .then(function (r) { varsle('Den fiktive klassen er startet. Rapporten kommer som et issue i Plattform når den er ferdig.' + (r && r.url ? ' Følg med: ' + r.url : '')); })
+          .catch(function (e) { varsle(feilmelding(e), true); })
+          .then(function () { T.fiktivVenter = false; tegn(); });
+      },
       ovGa: function () { gaTilSp(+d.i); },
       vurder: vurder,
       tale: function () { tale(b); },
