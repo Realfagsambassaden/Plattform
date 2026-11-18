@@ -40,6 +40,7 @@ function stopp(grunn) {
   console.error(grunn); process.exit(1);
 }
 process.on('unhandledRejection', (e) => stopp('Roboten krasjet: ' + (e && e.stack || e)));
+process.on('uncaughtException', (e) => stopp('Roboten krasjet: ' + (e && e.stack || e)));
 if (!SERVICE) stopp('Mangler SUPABASE_SERVICE_ROLE_KEY (GitHub-hemmelighet).');
 if (!KILDE) stopp('Mangler KURS (kurs-id).');
 const admin = createClient(SUPA_URL, SERVICE, { auth: { persistSession: false, autoRefreshToken: false } });
