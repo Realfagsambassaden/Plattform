@@ -23,13 +23,17 @@ def e(x):
     return html.escape(str(x), quote=True)
 
 
-def kopper(n):
+def kopper(n, te=False):
     try:
         n = float(n)
     except (TypeError, ValueError):
         return f'<em class="sk-ukjent">{UKJENT}</em>'
+    if n >= 10:   # sprenger skalaen: koppene renner ut av kortet
+        return '<em class="sk-kopper sk-sprenger">' + '☕' * 16 + '</em>'
     tall = int(n) if n == int(n) else n
-    return f'<em>{"☕" * min(int(round(n)), 6) or "0"} <small>{tall} {"kopp" if n == 1 else "kopper"}/dag</small></em>'
+    tekst = f'{tall} {"kopp" if n == 1 else "kopper"}' + (' + masse te' if te else '')
+    return (f'<em class="sk-kopper">{"☕" * min(int(round(n)), 6)}{"🍵🍵" if te else ""}</em>'
+            f'<small>{tekst}</small>')
 
 
 def soyle(verdi, maks, tekst):
@@ -51,11 +55,12 @@ def kort(p, nr, bilder, href, h='h3'):
         ('Erfaring', soyle(ar, 20, f'{ar} år' if ar not in (None, '') else '')),
         ('Kvalitet', ord_(p.get('kvalitet'))),
         ('Fun fact', ord_(p.get('funfact'))),
-        ('Koffein', kopper(p.get('koffein'))),
+        ('Koffein', kopper(p.get('koffein'), p.get('te'))),
     ]
     rader = ''.join(f'<span class="sk-stat"><b>{n}</b><span class="sk-verdi">{v}</span></span>' for n, v in stats)
     ikon = f'<img class="sk-ikon" src="{bilder}{e(p["ikon"])}" alt="">' if p.get('ikon') else ''
-    return (f'<article class="samlekort" data-farge="{e(p.get("farge", "gronn"))}" id="{e(p["id"])}">'
+    spr = ' data-sprenger' if isinstance(p.get('koffein'), (int, float)) and p['koffein'] >= 10 else ''
+    return (f'<article class="samlekort" data-farge="{e(p.get("farge", "gronn"))}" id="{e(p["id"])}"{spr}>'
             f'<{tag} class="sk-inni"{lenke}><span class="sk-flate">'
             f'<span class="sk-topp"><{h} class="sk-navn">{e(p["navn"])}</{h}>{ikon}</span>'
             f'<span class="sk-bilde"><img src="{bilder}{e(p["foto"])}" alt="Portrett av {e(p.get("fullt_navn") or p["navn"])}"></span>'
