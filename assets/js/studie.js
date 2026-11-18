@@ -517,6 +517,10 @@ function studieStart() {
     if (fu && !st.enhet) { if (gjentatt !== 'enhet') return { sporsmal: 'Husk enheten! Skriv svaret med enhet (her: ' + fu.replace(/^u/, 'µ') + ' eller en annen med prefiks).', igjen: 'enhet' }; }
     else if (st.enhet && fu) { fak = enhetFaktor(st.enhet, fu); if (!isFinite(fak)) return { type: 'begrep', melding: 'Enheten «' + st.enhet + '» passer ikke her.' }; }
     var sv = st.v * fak, lik = function (m) { return Math.abs(rundSig(sv, m) - rundSig(fv, m)) <= Math.abs(rundSig(fv, m)) * 1e-9 + 1e-300; };
+    // Brøk: eksakt svar. Har oppgaven måltall (endelig antall gjeldende siffer), skal svaret skrives som desimaltall:
+    // riktig verdi godkjennes da med en kommentar, som for feil antall siffer.
+    if (st.brok && lik(n)) return minSiffer(x.tekst) ? { type: 'riktig', melding: 'Godkjent, men skriv svaret som desimaltall med ' + n +
+      ' gjeldende siffer (like mange som det minst nøyaktige måltallet i oppgaven), ikke som brøk.' } : { type: 'riktig' };
     if (lik(n) && n >= st.sMin && n <= st.sMax) return { type: 'riktig' };
     // Riktig verdi med feil antall gjeldende siffer: godkjent, men med en kommentar (Bens regel 17. november 2026).
     // Verdien sjekkes med studentens egne siffer (men ikke flere enn fasiten er kjent med).
