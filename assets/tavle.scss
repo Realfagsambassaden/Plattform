@@ -197,6 +197,8 @@ $ikon-definisjon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" vi
 .graa { background: rgba($chalk, .07); border: 1px solid $line; border-radius: 10px; padding: .4rem 1.2rem; margin: 1rem auto; width: fit-content; max-width: 100%; overflow-x: auto; }
 .figurtekst { display: block; text-align: center; font-size: .92rem; color: $dust; margin: -.3rem auto 1.2rem; max-width: 60ch; }
 img.tikz-fig { display: block; margin: 1.2rem auto .6rem; max-width: 100%; height: auto; filter: invert(1) hue-rotate(180deg) brightness(1.05); }
+// Figurene i forstørret visning (lightbox): samme lyse streker på tavla som på siden, og stort nok til at teksten er skarp.
+.glightbox-container .gslide-image img[src*="/figurer/"][src$=".svg"] { filter: invert(1) hue-rotate(180deg) brightness(1.05); width: min(92vw, 1000px) !important; max-width: none !important; height: auto; max-height: calc(100vh - 220px) !important; object-fit: contain; }
 img.kompendium-bilde { display: block; margin: 1.2rem auto .6rem; max-width: min(100%, 640px); height: auto; border-radius: 10px; }
 div.center { text-align: center; }
 .quarto-video { margin: 1rem 0 1.4rem; border-radius: 10px; overflow: hidden; border: 1px solid $line; }
