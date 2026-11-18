@@ -17,7 +17,7 @@ function fokusStart() {
   // Kilde: «#<fag-id>» (et fag), «#loype-<id>[@<side>]» (en ferdig løype på nettstedet) eller «#min» (studentens egen løype).
   var kursId = decodeURIComponent((location.hash || '').slice(1));
   var lm = /^loype-([^@]+)(?:@(.*))?$/.exec(kursId), kilde = lm ? 'loype' : /^min(@|$)/.test(kursId) ? 'min' : 'fag';
-  // «#<fag>@<undertema-id>» / «#min@<undertema-id>»: åpne på en bestemt side (fra «Les om ukens tema» i appen).
+  // «#<fag>@<undertema-id>» / «#min@<undertema-id>»: åpne på en bestemt side (fra lenker i appen).
   var hopp = null; if (!lm && kursId.indexOf('@') > 0) { hopp = kursId.slice(kursId.indexOf('@') + 1); kursId = kursId.slice(0, kursId.indexOf('@')); }
   var MODFARGE = ['var(--bs-primary)', 'var(--bs-info)', '#eee462', 'var(--bs-warning)', '#c792ea', '#ff8a8f'];
   var LJ = null, K = {}, FINNES = null, kurs = null, krav = [], quizer = [], rekke = [], her = -1, aktivKrav = null, k = null, bruker = null;

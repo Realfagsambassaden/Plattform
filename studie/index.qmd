@@ -403,8 +403,6 @@ body.st-app-modus .studie { max-width: 560px; margin: 0 auto; padding-bottom: ca
 .studie .st-kritt path { fill: color-mix(in srgb, var(--bs-body-bg) 90%, white); stroke: var(--bs-primary); stroke-width: 2.2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
 .studie .st-kritt:not(.hale) { padding-left: 1.1rem; }
 .studie .st-kt { display: block; font-size: 1.3rem; color: var(--bs-primary); margin-bottom: .2rem; }
-.studie .st-lesrad { display: flex; align-items: center; gap: .6rem; padding: .7rem 0; border-top: 1px dashed var(--bs-border-color); color: var(--bs-secondary-color); text-decoration: none; }
-.studie .st-lesrad span { flex: 1; } .studie .st-lesrad b { color: var(--bs-body-color); }
 .studie .st-kamera { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .6rem; min-height: 220px; margin: .8rem 0 1.2rem; border: 2px dashed var(--bs-primary); border-radius: 22px; color: var(--bs-primary); font-weight: 800; font-size: 1.15rem; cursor: pointer; }
 .studie .st-kamera input, .studie label.st-btn input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .studie label.st-btn { position: relative; cursor: pointer; }

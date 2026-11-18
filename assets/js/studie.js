@@ -1912,7 +1912,7 @@ function studieStart() {
       '<button type="button" class="st-ikonknapp" data-h="lukkMeny" aria-label="Lukk menyen">' + ikon('x') + '</button></div>' +
       rad('hjem', 'I dag', 'Quiz, arbeidskrav og Dashman', 'idag') +
       rad('rute', 'Ukeplanen min', 'Uker, temaer og quiz i kursene dine', 'hjem') +
-      rad('bok', 'Les og øv', 'Lærestoff, videoer og oppgaver', '', '../index.html') +
+      rad('bok', 'Gå til ' + NETTSTED + '.no', 'Hele nettstedet. Åpnes utenfor appen', '', '../index.html') +
       rad('graf', 'Kunnskapsprofil', 'Forståelse, presisjon og hurtighet', 'profil') +
       rad('kurs', 'Kurstilbud', 'Kurs som undervisere tilbyr. Meld deg på eller av', 'kurs') +
       rad('bruker', 'Min side', '', '', '../konto/index.html') +
@@ -2097,11 +2097,6 @@ function studieStart() {
       });
       o += '<button type="button" class="st-dmrad" data-h="dashman"><img src="' + DMBILDER + 'noytral.webp" alt="" class="st-dmfigur">' +
         krittboble('Står du fast på noe? Spør meg, så finner vi ut av det sammen.', true) + '</button>';
-      if (t && (S[t] || K[t])) {
-        var ut0 = (S[t] || K[t]).undertemaer, u = Object.keys(ut0).filter(function (x) { return temaUrl(t, x); })[0];
-        var akL = aktivtKurs(), kuL = akL && akL !== 'egen' ? kursUke(akL) : null, utL = kuL && kuL.tema === t && kuL.ut[0] ? kuL.ut[0] : NETTSTED + '/' + t + '/' + u;
-        if (u) o += '<a class="st-lesrad" href="fokus.html#' + (akL && akL !== 'egen' ? encodeURIComponent(akL.kurs) : 'min') + '@' + encodeURIComponent(utL) + '">' + ikon('bok', 18) + '<span>Les om ukens tema: <b>' + esc(ut0[u]) + '</b></span>' + ikon('pil', 18) + '</a>';
-      }
       return o;
     },
     skann: function () {
