@@ -1,5 +1,5 @@
 ---
-title: "Fokusvisning"
+title: "Fokusmodus"
 toc: false
 page-layout: full
 ---
