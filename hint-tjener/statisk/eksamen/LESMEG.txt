@@ -1,0 +1,1 @@
+Figurer til eksamenstreningen (lages av verktoy/eksamener.py ved publisering).

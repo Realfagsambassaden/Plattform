@@ -84,6 +84,11 @@ toc: false
 .studie .st-bar { height: 10px; background: var(--bs-border-color); border-radius: 5px; overflow: hidden; margin: .3rem 0; }
 .studie .st-stolpe .st-bar { margin: 0; }
 .studie .st-bar i { display: block; height: 100%; }
+.studie .st-anslag-tall { font-family: "Architects Daughter", cursive; font-size: 2rem; color: #e39d63; margin: 0; }
+.studie .st-anslag-bar { position: relative; height: 12px; background: var(--bs-border-color); border-radius: 6px; margin: .4rem 0 .6rem; }
+.studie .st-anslag-bar i { position: absolute; top: 0; bottom: 0; background: rgba(227,157,99,.55); border-radius: 6px; }
+.studie .st-anslag-bar s { position: absolute; top: -4px; bottom: -4px; width: 3px; margin-left: -1.5px; background: #e39d63; border-radius: 2px; }
+.studie .st-forbehold { font-size: .82rem; border-left: 3px solid #e39d63; padding-left: .6rem; color: var(--bs-secondary-color); }
 .studie .st-trekant-ramme { display: flex; justify-content: center; margin: .4rem 0; }
 .studie .st-trekant { width: 100%; max-width: 300px; height: auto; overflow: visible; }
 .studie .st-trekant.liten { max-width: 200px; }

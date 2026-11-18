@@ -213,6 +213,22 @@ function studieStart() {
           (x.formel ? '<div class="st-formel">' + mat(x.formel) + '</div>' : '')) + '</div>';
     }).join('<div class="st-rad-pil" aria-hidden="true">↓</div>') + '</div>';
   }
+  // Anslått prosent av poengene på eksamen (hint-tjener/eksamen.js: /eksamen/anslag). Regnes ut fra svarene, ikke av KI,
+  // og vises alltid med usikkerhetsintervall og forbehold.
+  function eksamenAnslagHtml() {
+    var a = T.anslag, o = '<h2>Eksamenstrening</h2><div class="st-kort st-anslag">';
+    if (a && a.prosent != null) {
+      o += '<p class="st-sm">Anslått resultat på eksamen</p><p class="st-anslag-tall">' + a.lav + '–' + a.hoy + ' %</p>' +
+        '<div class="st-anslag-bar"><i style="left:' + a.lav + '%;width:' + Math.max(2, a.hoy - a.lav) + '%"></i><s style="left:' + a.prosent + '%"></s></div>' +
+        '<p class="st-sm">Mest sannsynlig rundt ' + a.prosent + ' % av poengene. Bygger på ' + a.grunnlag + ' svar (' + a.eksamenssvar + ' på eksamensoppgaver)' + (a.nok ? '' : '. Det er for lite til et sikkert anslag, så intervallet er bredt') + '.</p>' +
+        '<p class="st-forbehold">Dette er en KI-vurdering ut fra svarene dine, ikke en fasit. Eksamen kan gå både bedre og dårligere.</p>' +
+        (a.temaer && a.temaer.length ? '<details><summary class="st-sm">Per tema</summary>' + a.temaer.map(function (t) {
+          return '<div class="st-rad st-sm"><span>' + esc(tittel(t.tema)) + ' <i>(' + t.vekt + ' % av eksamen)</i></span><span>' + t.andel + ' % · ' + t.svar + ' svar</span></div>'; }).join('') + '</details>' : '');
+    } else if (a && a.feil) o += '<p class="st-feil">' + esc(a.feil) + '</p>';
+    else o += '<p class="st-sm">Tren på tidligere eksamensoppgaver med Dashman i eksamensmodus. Ut fra svarene dine kan du få et anslag på hvor mange prosent av poengene du kan regne med på eksamen.</p>';
+    return o + '<div class="st-knapperad"><button type="button" class="st-btn o" data-h="eksamenstrening">Tren med Dashman</button>' +
+      '<button type="button" class="st-btn g" data-h="anslag"' + (a && a.venter ? ' disabled' : '') + '>' + (a && a.venter ? 'Regner …' : a && a.prosent != null ? 'Regn ut på nytt' : 'Anslå eksamensresultat') + '</button></div></div>';
+  }
   function regelRad() {
     var r = profilRader();
     if (!r.length) return '<p class="st-ind">Ta en quiz, så får du råd her.</p>';
@@ -1091,7 +1107,7 @@ function studieStart() {
         '<div class="st-rad"><span class="st-sm st-notstatus' + (f.notStatus && f.notStatus.feil ? ' st-feil' : '') + '">' + (f.notStatus ? f.notStatus.t : 'Lagres automatisk') + '</span><button type="button" class="st-btn g liten" data-h="lagreNotat">Lagre</button></div></div></div>' + matKolonne(m, mi, fra) + '</div>' +
         '<div class="st-pil" aria-hidden="true">↓</div>';
     }).join('');
-    o += '<button type="button" class="st-nymodul" data-h="nyModul">+ Ny modul</button></div></div>';
+    o += '<button type="button" class="st-nymodul" data-h="nyModul">+ Ny modul</button> <button type="button" class="st-nymodul" data-h="nyEksamenModul" title="To uker på slutten der Dashman er i fase 4 (selvstendig) og studentene trener på tidligere eksamensoppgaver i eksamensmodus">+ Eksamenstrening (nivå 4)</button></div></div>';
     o += '<div class="st-bygg-bunn">' + (c.status === 'publisert' ? '<p class="st-sm">Kurset er publisert. Endringer lagres og vises for studentene med en gang. Løypa oppdateres når du trykker «Publiser» på nytt.</p><button type="button" class="st-btn g" data-h="publiser">Oppdater løypa</button>'
       : '<button type="button" class="st-btn" data-h="publiser">Publiser for studentene</button><p class="st-sm">Til da er kurset et utkast, og studentene finner det ikke med koden.</p>') + '</div>';
     o += '<div class="st-kort"><label class="st-valg"><input type="checkbox" data-h="apenKursValg"' + (c.apen ? ' checked' : '') + (c.status === 'publisert' ? '' : ' disabled') + '> <b>Åpent kurs</b>: vises i lista over åpne kurs i studieappen, og alle kan melde seg på uten kode</label>' +
@@ -1898,18 +1914,22 @@ function studieStart() {
     return d ? fagnavn(d) : ((T.deltar || []).length ? 'Min egen løype' : '');
   }
   function fagForKrav(x) { var d = (T.deltar || []).find(function (y) { return y.kurs === x.kurs; }); return d ? fagnavn(d) : ''; }
+  // Eksamensmodus hos Dashman (assets/js/dashman.js) henter oppgaver fra temaene studenten jobber med. Huskes på enheten,
+  // så Dashman på nettsidene også vet det.
+  window.fhEksamenTemaer = function () { try { var t = loypeTemaer(); try { localStorage.setItem('fh-eksamen-temaer', JSON.stringify(t)); } catch (e) {} return t; } catch (e) { return []; } };
   function loypeTemaer() { var a = aktivtKurs(); if (a && a !== 'egen') { var kt = kursTemaer(a); if (kt.length) return kt; } return valgt(); }
   // Ukens tema: i et kurs med tidslinje (startuke og moduler) er det temaet faglæreren har satt opp for denne kalenderuka.
   // Ellers (egen løype, kurs uten datoer) neste tema studenten ikke er ferdig med.
   function kursUke(d) {
     var c = d && d.kursinfo, start = c && +((c.ramme || {}).startuke) || 0, uker = [];
     if (!start || !c.moduler) return null;
-    c.moduler.forEach(function (m) { (m.uker || []).forEach(function (w) { uker.push(w); }); });
+    c.moduler.forEach(function (m) { (m.uker || []).forEach(function (w) { uker.push(Object.assign({ _modul: m.navn || '' }, w)); }); });
     if (!uker.length) return null;
     var nr = isoUke(new Date()) - start + 1; if (nr < -26) nr += 52;
     nr = Math.max(1, Math.min(uker.length, nr));
     var w = uker[nr - 1], ut = (w.undertemaer || []).filter(function (id) { return id.indexOf(NETTSTED + '/') === 0; });
-    return { nr: nr, ut: ut, tema: ut.length ? ut[0].split('/')[1] : null };
+    return { nr: nr, ut: ut, tema: ut.length ? ut[0].split('/')[1] : null, fase: w.fase, modul: w._modul,
+      eksamen: w.fase === 4 || /eksamen/i.test(w._modul || '') };
   }
   // I appen åpnes lærestoff i fokusmodus (✕ øverst fører tilbake til appen), ikke på nettsidene med nettstedets meny.
   function lesUrl(t, u) {
@@ -2131,6 +2151,11 @@ function studieStart() {
             '<div>' + (ferdig ? '<button type="button" class="st-btn g" data-h="dagensQuiz" data-v="flere">Ta flere likevel</button>' : '<button type="button" class="st-btn" data-h="dagensQuiz">Start</button>') + ' <button type="button" class="st-btn g liten" data-h="ga" data-v="innstillinger">Endre</button></div></div>';
         }
       }
+      // Eksamenstrening (modulen «Eksamenstrening» / nivå 4 selvstendig i kurset): Dashman i eksamensmodus.
+      var ekU = ak && ak !== 'egen' ? kursUke(ak) : null;
+      if (!T.eksempel && ekU && ekU.eksamen) o += '<div class="st-dkort o"><span class="st-merke">Eksamenstrening</span><b class="st-dtittel">Tren på tidligere eksamensoppgaver</b>' +
+        '<span class="st-sm">Dashman gir deg oppgaver fra tidligere eksamener. Du løser dem selv, og får tilbakemelding og forklaring etterpå.</span>' +
+        '<div><button type="button" class="st-btn o" data-h="eksamenstrening">Start eksamenstrening</button></div></div>';
       apneKrav().slice(0, 2).forEach(function (x) {
         var beste = besteForsok(x), and = Math.min(1, beste / (x.krav || 1));
         o += '<div class="st-dkort o"><div class="st-rad"><span class="st-merke">Arbeidskrav' + (fagForKrav(x) ? ' · ' + esc(fagForKrav(x)) : '') + '</span>' + (x.frist ? '<span class="st-sm st-frist">' + ikon('klokke', 16) + ' ' + esc(fristTekst(x.frist)) + '</span>' : '') + '</div>' +
@@ -2331,7 +2356,7 @@ function studieStart() {
         : regelRad() + (!profilRader().length ? '' : kr && kr.venter ? '<p class="st-ind">KI lager rådene dine …</p>'
           : (kr && kr.feil ? '<p class="st-feil">' + esc(kr.feil) + '</p>' : '') + '<p><button type="button" class="st-btn g" data-h="rad">Få personlige råd fra KI</button></p>');
       return '<h2 class="st-h1">Kunnskapsprofil</h2><p class="st-sm"><b>Forståelse</b> er viktigst. <b>Presisjon</b> viser om du regner riktig når tanken er riktig. <b>Hurtighet</b> er minst viktig, men kan gi deg bedre tid på eksamen.</p>' +
-        bl + '<h2>Slik forbereder du deg til eksamen</h2>' + radDel;
+        bl + eksamenAnslagHtml() + '<h2>Slik forbereder du deg til eksamen</h2>' + radDel;
     },
     kurs: function () {
       var o = '<h2 class="st-h1">Kurs</h2>';
@@ -2909,6 +2934,12 @@ function studieStart() {
       ga: function () { ga(d.v, { meny: false }); },
       meny: function () { T.meny = true; tegn(); var f = document.querySelector('.st-meny .st-mrad'); if (f) f.focus(); },
       lukkMeny: function () { T.meny = false; tegn(); },
+      eksamenstrening: function () { if (window.Dashman && window.Dashman.eksamen) window.Dashman.eksamen(); },
+      anslag: function () {
+        T.anslag = { venter: true }; tegn();
+        ki('/eksamen/anslag', { temaer: loypeTemaer() }, 30)
+          .then(function (d) { T.anslag = d; }, function (e) { T.anslag = { feil: (e && e.message) || 'Fikk ikke regnet ut anslaget nå.' }; }).then(tegn);
+      },
       ovInfo: function () { var v = b.closest('.st-ovoversikt'); if (v) v.classList.toggle('vis-info'); },
       tilbakemelding: function () { T.meny = false; tegn(); if (window.fhTilbakemelding) window.fhTilbakemelding(); },
       dashman: function () { apneDashman(); },
@@ -3022,6 +3053,7 @@ function studieStart() {
       tidStudent: function () { T.tid = T.tid || {}; T.tid[d.id] = !T.tid[d.id]; tegn(); },
       sparFjernFil: function () { var sp = kiSpar(); sp.vedlegg = null; sp.filnavn = ''; tegn(); },
       tilStart: function () { T.fag.steg = 'start'; tegn(); },
+      nyEksamenModul: function () { var m = T.fag.u.moduler; m.push({ id: nyId(), navn: 'Eksamenstrening', uker: [1, 2].map(function () { return { undertemaer: [], notat: 'Eksamenstrening: tidligere eksamensoppgaver med Dashman i eksamensmodus.', fase: 4 }; }) }); planlagreFag(); tegn(); },
       nyModul: function () { var m = T.fag.u.moduler; m.push({ id: nyId(), navn: 'Modul ' + (m.length + 1), uker: [{ undertemaer: [], notat: '' }] }); planlagreFag(); tegn(); },
       flyttModul: function () { var l = T.fag.u.moduler, i = +d.m, j = i + (+d.r), x = l[i]; l[i] = l[j]; l[j] = x; planlagreFag(); tegn(); },
       slettModul: function () { var f = T.fag, i = +d.m; if (f.slettMod !== i) { f.slettMod = i; return tegn(); } f.slettMod = null; f.u.moduler.splice(i, 1); planlagreFag(); tegn(); },

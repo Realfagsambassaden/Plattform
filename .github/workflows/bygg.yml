@@ -106,6 +106,18 @@ jobs:
       VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
     steps:
       - uses: actions/checkout@v4
+      # Eksamensoppgavene til eksamenstreningen ligger i det private repoet Realfagsambassaden/eksamener. Krever en
+      # nøkkel med lesetilgang (GitHub-hemmeligheten EKSAMEN_TOKEN, ellers PLATTFORM_TOKEN). Uten tilgang publiseres
+      # tjeneren uten eksamensoppgaver.
+      - name: Hent eksamensoppgavene (privat repo)
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          repository: Realfagsambassaden/eksamener
+          path: eksamener-repo
+          token: ${{ secrets.EKSAMEN_TOKEN || secrets.PLATTFORM_TOKEN }}
+      - name: Bygg eksamenstreningen inn i KI-tjeneren
+        run: pip install -q pyyaml && python3 verktoy/eksamener.py eksamener-repo .
       - name: Publiser KI-tjeneren
         uses: cloudflare/wrangler-action@v3
         with:

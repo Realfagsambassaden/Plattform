@@ -33,6 +33,11 @@
   function lagre() { try { sessionStorage.setItem(LAGER, JSON.stringify(samtale.slice(-40))); } catch (e) {} }
   var humor = 'noytral', opptatt = false, profil = null;
   var oppgave = null; try { oppgave = JSON.parse(sessionStorage.getItem('dashman-oppgave') || 'null'); } catch (e) {}
+  // Eksamensmodus (hint-tjener/eksamen.js): { pa, opp: oppgaven nå, svar: resultatet når den er besvart, diskuter: {eid,nr} }
+  var EKS = 'dashman-eksamen', eks = { pa: false };
+  try { eks = JSON.parse(sessionStorage.getItem(EKS) || 'null') || { pa: false }; } catch (e) {}
+  function lagreEks() { try { sessionStorage.setItem(EKS, JSON.stringify(eks)); } catch (e) {} }
+  var eksApi = api.replace(/\/dashman$/, '/eksamen');
   function lagreOppgave() { try { if (oppgave) sessionStorage.setItem('dashman-oppgave', JSON.stringify(oppgave)); else sessionStorage.removeItem('dashman-oppgave'); } catch (e) {} }
 
   // ------------------------------------------------------------ DOM
@@ -51,7 +56,7 @@
       '<svg class="dm-kontur smal" viewBox="0 0 600 300" preserveAspectRatio="none" aria-hidden="true">' +
         '<path d="M40 30 L 52 2 L 96 22 C 220 10, 430 8, 552 20 C 596 28, 598 92, 594 160 C 590 236, 570 284, 470 288 C 340 296, 180 294, 92 284 C 40 278, 20 250, 16 200 C 10 140, 8 70, 40 30 Z"/>' +
         '<path class="dm-kontur-2" d="M100 28 C 222 16, 428 14, 548 26 C 588 36, 590 96, 588 160"/></svg>' +
-      '<div class="dm-topp"><b>Dashman</b><span class="dm-verktoy">' +
+      '<div class="dm-topp"><b>Dashman</b><label class="dm-bryter" title="Eksamensmodus: Dashman gir deg tidligere eksamensoppgaver. Du løser dem selv, og får tilbakemelding og forklaring etter at du har svart."><input type="checkbox" class="dm-eksamen"><span class="dm-spor" aria-hidden="true"></span><span>Eksamensmodus</span></label><span class="dm-verktoy">' +
         '<button type="button" data-h="husker" title="Hva Dashman husker om deg">Hva husker du?</button>' +
         '<button type="button" data-h="ny" title="Start en ny samtale">Ny samtale</button>' +
         '<button type="button" data-h="lukk" aria-label="Lukk">×</button></span></div>' +
@@ -186,7 +191,73 @@
     if (!samtale.length && !oppgave) visMelding({ rolle: 'dashman', tekst: 'Hei! Jeg er Dashman. Jeg gir deg ikke fasiten, men jeg hjelper deg å finne den selv. Hva jobber du med?' });
     samtale.forEach(function (m) { visMelding(m); });
     visNivavalg();
+    bryter.checked = !!eks.pa; panel.classList.toggle("dm-eksmodus", !!eks.pa);
+    if (eks.pa) { if (eks.opp) visEksOppgave(); else nesteEks(); }
   }
+
+  // ------------------------------------------------------------ eksamensmodus
+  var bryter = panel.querySelector('.dm-eksamen');
+  var BOKST = ['A', 'B', 'C', 'D', 'E', 'F'];
+  function eksTemaer() { try { return window.fhEksamenTemaer ? window.fhEksamenTemaer() : JSON.parse(localStorage.getItem('fh-eksamen-temaer') || '[]'); } catch (e) { return []; } }
+  function eksPost(sti, data) {
+    return token().then(function (t) {
+      if (!t) throw { melding: 'Du må logge inn på nytt.' };
+      return fetch(eksApi + sti, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t }, body: JSON.stringify(data) });
+    }).then(function (r) { return r.json().then(function (d) { if (!r.ok) throw { melding: d.feil }; return d; }); });
+  }
+  function eksPa(pa) {
+    eks.pa = pa; if (!pa) { if (eks.opp && eks.svar) eks.diskuter = { eid: eks.opp.eid, nr: eks.opp.nr }; eks.opp = null; eks.svar = null; }
+    lagreEks(); bryter.checked = pa; panel.classList.toggle('dm-eksmodus', pa);
+    var m = { rolle: 'dashman', tekst: pa
+      ? '**Eksamensmodus er på.** Jeg gir deg oppgaver fra tidligere eksamener. Løs dem helt selv, uten hjelp. Velg svaret ditt (ta gjerne bilde av utregningen med kameraet først), så gir jeg deg tilbakemelding og forklarer etterpå. Slå av eksamensmodus når du vil diskutere.'
+      : 'Eksamensmodus er av. Nå kan vi diskutere' + (eks.diskuter ? ' oppgaven du nettopp gjorde, eller' : '') + ' hva du vil.' };
+    samtale.push(m); lagre(); visMelding(m);
+    if (pa) nesteEks();
+  }
+  function nesteEks() {
+    var vent = document.createElement('div'); vent.className = 'dm-m dm-fra dm-tenker'; vent.innerHTML = '<p><span></span><span></span><span></span></p>'; logg.appendChild(vent);
+    eksPost('/neste', { temaer: eksTemaer(), hoppOver: eks.hoppOver || [] }).then(function (d) {
+      vent.remove();
+      if (d.ferdig || !d.oppgave) { visMelding({ rolle: 'dashman', tekst: 'Du har vært gjennom alle eksamensoppgavene jeg har i temaene dine. Sterkt! Slå av eksamensmodus for å se på kunnskapsprofilen, eller prøv igjen senere.' }); return; }
+      eks.opp = d.oppgave; eks.svar = null; eks.start = Date.now(); lagreEks(); visEksOppgave();
+    }).catch(function (e) { vent.remove(); settHumor('trist'); visMelding({ rolle: 'dashman', tekst: (e && e.melding) || 'Fikk ikke hentet en eksamensoppgave nå. Prøv igjen om litt.' }); });
+  }
+  function visEksOppgave() {
+    var o = eks.opp, d = document.createElement('div'); d.className = 'dm-m dm-fra dm-eksoppg';
+    d.innerHTML = '<p class="dm-eksmerke">Eksamensoppgave · ' + esc(o.eksamen) + ', oppgave ' + o.nr + '</p>' +
+      (o.kontekst ? '<details class="dm-ekskontekst"><summary>Bakgrunn fra oppgaven før</summary>' + md(o.kontekst) + '</details>' : '') +
+      md(o.tekst) + (o.figur ? '<img class="dm-eksfig" alt="Figur til oppgaven" src="' + esc(o.figur) + '">' : '') +
+      '<div class="dm-eksalt">' + o.alternativer.map(function (a, i) {
+        var kl = eks.svar ? (i + 1 === eks.svar.fasit ? ' riktig' : i + 1 === eks.svar.valgt ? ' feil' : '') : '';
+        return '<button type="button" class="dm-alt' + kl + '" data-alt="' + (i + 1) + '"' + (eks.svar ? ' disabled' : '') + '><b>' + BOKST[i] + '</b> <span>' + md(a).replace(/^<p>|<\/p>$/g, '') + '</span></button>';
+      }).join('') + '</div>' +
+      (eks.svar ? '<p class="dm-eksvidere"><button type="button" data-h="eksneste">Neste oppgave →</button> <button type="button" data-h="eksdiskuter">Diskuter denne</button></p>' : '<p class="dm-sm">Velg svaret ditt. Vil du ha tilbakemelding på utregningen også, ta bilde av den med kameraet før du velger.</p>');
+    logg.appendChild(d); matte(d); logg.scrollTop = logg.scrollHeight;
+    return d;
+  }
+  function svarEks(valgt, boks) {
+    if (opptatt || !eks.opp || eks.svar) return;
+    opptatt = true; panel.classList.add('dm-venter');
+    var o = eks.opp, bildeNa = vedlegg; settVedlegg(null);
+    boks.querySelectorAll('.dm-alt').forEach(function (b) { b.disabled = true; if (+b.getAttribute('data-alt') === valgt) b.classList.add('valgt'); });
+    settHumor('tenker');
+    var tenk = document.createElement('div'); tenk.className = 'dm-m dm-fra dm-tenker'; tenk.innerHTML = '<p><span></span><span></span><span></span></p>'; logg.appendChild(tenk); logg.scrollTop = logg.scrollHeight;
+    eksPost('/svar', { eid: o.eid, nr: o.nr, valgt: valgt, bilde: bildeNa || undefined, tid_s: eks.start ? Math.round((Date.now() - eks.start) / 1000) : undefined }).then(function (d) {
+      tenk.remove(); eks.svar = { valgt: valgt, fasit: d.fasit, riktig: d.riktig }; lagreEks();
+      boks.remove(); visEksOppgave();
+      settHumor(d.humor || (d.riktig ? 'glad' : 'tenker'));
+      var m = { rolle: 'dashman', tekst: d.svar }; samtale.push(m); lagre();
+      return visMelding(m, true);
+    }).catch(function (e) {
+      tenk.remove(); settHumor('trist'); if (bildeNa) settVedlegg(bildeNa);
+      boks.querySelectorAll('.dm-alt').forEach(function (b) { b.disabled = false; b.classList.remove('valgt'); });
+      visMelding({ rolle: 'dashman', tekst: (e && e.melding) || 'Fikk ikke sjekket svaret nå. Prøv igjen.' });
+    }).then(function () { opptatt = false; panel.classList.remove('dm-venter'); });
+  }
+  logg.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('.dm-alt'); if (a && !a.disabled) svarEks(+a.getAttribute('data-alt'), a.closest('.dm-eksoppg'));
+  });
+  bryter.addEventListener('change', function () { eksPa(bryter.checked); });
 
   // Nivå: spør én gang hvis det mangler i profilen.
   function visNivavalg() {
@@ -245,6 +316,11 @@
 
   function send(tekst) {
     if (opptatt || (!tekst.trim() && !vedlegg)) return;
+    if (eks.pa && eks.opp && !eks.svar) {
+      visMelding({ rolle: 'student', tekst: tekst });
+      visMelding({ rolle: 'dashman', tekst: 'Du er i eksamensmodus, så jeg hjelper ikke før du har svart. Velg et alternativ (ta gjerne bilde av utregningen først), eller slå av eksamensmodus øverst for å diskutere.' });
+      return;
+    }
     opptatt = true; panel.classList.add('dm-venter');
     var bildeNa = vedlegg; settVedlegg(null);
     var m = { rolle: 'student', tekst: (tekst.trim() || 'Her er løsningen min så langt. Hva synes du?').slice(0, 2000) + (bildeNa ? ' [bilde av løsningen]' : '') };
@@ -253,7 +329,7 @@
     var tenk = document.createElement('div'); tenk.className = 'dm-m dm-fra dm-tenker'; tenk.innerHTML = '<p><span></span><span></span><span></span></p>'; logg.appendChild(tenk); logg.scrollTop = logg.scrollHeight;
     token().then(function (t) {
       if (!t) throw { melding: 'Du må logge inn på nytt for å snakke med Dashman.' };
-      return fetch(api, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t }, body: JSON.stringify({ meldinger: samtale, side: sideInfo(), oppgave: oppgave, bilde: bildeNa || undefined, fag: window.fhDashmanFag ? window.fhDashmanFag() : null }) });
+      return fetch(api, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t }, body: JSON.stringify({ meldinger: samtale, side: sideInfo(), oppgave: oppgave, eksamen: eks.diskuter || undefined, bilde: bildeNa || undefined, fag: window.fhDashmanFag ? window.fhDashmanFag() : null }) });
     }).then(function (r) { return r.json().then(function (d) { if (!r.ok) throw { melding: d.feil }; return d; }); })
       .then(function (d) {
         tenk.remove(); settHumor(d.humor || 'noytral');
@@ -278,14 +354,16 @@
     setTimeout(function () { felt.focus(); }, 50);
   });
   // Studieappen åpner Dashman fra bunnlinja, eventuelt med et forslag til melding i feltet.
-  window.Dashman = { apne: function (forslag, bilde) { if (panel.hidden) knapp.click(); if (forslag) { felt.value = forslag; } if (bilde) settVedlegg(bilde); setTimeout(function () { felt.focus(); }, 60); } };
+  window.Dashman = { eksamen: function () { if (panel.hidden) knapp.click(); if (!eks.pa) eksPa(true); }, apne: function (forslag, bilde) { if (panel.hidden) knapp.click(); if (forslag) { felt.value = forslag; } if (bilde) settVedlegg(bilde); setTimeout(function () { felt.focus(); }, 60); } };
   panel.querySelector('.dm-skriv').addEventListener('submit', function (e) { e.preventDefault(); var t = felt.value; felt.value = ''; send(t); });
   felt.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); panel.querySelector('.dm-skriv').requestSubmit(); } });
   panel.addEventListener('click', function (e) {
     var h = e.target.getAttribute && e.target.getAttribute('data-h');
     if (h === 'fjernbilde') { settVedlegg(null); return; }
+    if (h === 'eksneste') { e.target.closest('.dm-eksvidere').remove(); eks.opp = null; eks.svar = null; lagreEks(); nesteEks(); return; }
+    if (h === 'eksdiskuter') { e.target.closest('.dm-eksvidere').remove(); eksPa(false); felt.focus(); return; }
     if (h === 'lukk') { panel.hidden = true; knapp.hidden = false; knapp.focus(); }
-    if (h === 'ny') { samtale = []; lagre(); oppgave = null; lagreOppgave(); settHumor('glad'); visAlt(); }
+    if (h === 'ny') { samtale = []; lagre(); oppgave = null; lagreOppgave(); eks = { pa: eks.pa }; lagreEks(); settHumor('glad'); visAlt(); }
     if (h === 'husker') {
       hentProfil().then(function (p) {
         profil = p || profil;

@@ -30,3 +30,7 @@ __pycache__/
 /matematikkhjelp/kalkulus/
 /oppgaver.json
 /matematikkhjelp/oppgaver.json
+
+# Lages av verktoy/eksamener.py ved publisering
+hint-tjener/statisk/eksamen/*/
+eksamener-repo/

@@ -20,6 +20,10 @@ SUPABASE_ANON_KEY = "sb_publishable_mapCEnSSxrSSwTbBKao6hw_qMOClLSS"
 # binding = "HINT_KV"
 # id = "LIM-INN-ID-HER"
 
+# Figurene til eksamenstreningen (verktoy/eksamener.py legger dem i statisk/eksamen/ ved publisering).
+[assets]
+directory = "./statisk"
+
 # Instruksen til Dashman (dashman-instruks.md) bygges inn i workeren som tekst.
 [[rules]]
 type = "Text"
