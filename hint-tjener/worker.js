@@ -34,6 +34,7 @@
 import DASHMAN_INSTRUKS from "./dashman-instruks.md";
 import DASHMAN_UNDERVISER from "./dashman-underviser.md";
 import { pushRunde, sendPush } from "./push.js";
+import { eksamenNeste, eksamenSvar, eksamenAnslag, eksamenKontekst } from "./eksamen.js";
 
 const STANDARD_MODELL = { claude: "claude-haiku-5-5", openai: "gpt-4o-mini" };
 const NETTSTED = "https://fysikkhjelp.no";
@@ -588,6 +589,9 @@ export default {
       if (sti.endsWith("/kvisslag")) return await kvisslag(request, env, b, h);
       if (sti.endsWith("/materiale")) return await materiale(request, env, b, h);
       if (sti.endsWith("/salen")) return await salen(request, env, b, h);
+      if (sti.endsWith("/eksamen/neste")) return await eksamenNeste(request, env, b, h, EKS(request));
+      if (sti.endsWith("/eksamen/svar")) return await eksamenSvar(request, env, b, h, EKS(request));
+      if (sti.endsWith("/eksamen/anslag")) return await eksamenAnslag(request, env, b, h, EKS(request));
       if (sti.endsWith("/dashman")) return await dashman(request, env, b, h);
       if (sti.endsWith("/gjennomsyn")) return await gjennomsynVarsel(request, env, b, h);
       if (sti.endsWith("/push-test")) return await pushTest(request, env, b, h);
@@ -597,6 +601,9 @@ export default {
     }
   },
 };
+
+// Verktøyene eksamen.js trenger fra denne fila.
+const EKS = (request) => ({ innloggetBruker, json, lesBilde, lesJson, spor, innenforGrense, nettstedsnavn: NETTSTEDNAVN(request) });
 
 // ---------------------------------------------------------------- push-varsler
 // Når studenten slår på varsler, sender appen /push-test: et bekreftelsesvarsel til den innloggedes egne abonnementer.
@@ -829,6 +836,9 @@ async function dashman(request, env, b, h) {
       `Dette har studenten prøvd: ${kort(b.oppgave.forsok, 1500) || "(ingenting skrevet)"}`,
       ...((Array.isArray(b.oppgave.hint) ? b.oppgave.hint : []).slice(0, 3).map((x, i) => `Hint ${i + 1} studenten allerede har fått: ${kort(x, 600)}`)),
     ] : []),
+    ...((() => { const ek = b.eksamen && eksamenKontekst(b.eksamen.eid, b.eksamen.nr); return ek ? [
+      "Studenten trente i eksamensmodus og har allerede svart på denne eksamensoppgaven og fått fasit og forklaring. Nå har hen slått av eksamensmodus for å diskutere den. Her kan du gjerne gå gjennom løsningen, men la studenten tenke selv der det hjelper læringen.",
+      `Eksamensoppgaven: ${kort(ek.oppgave, 2500)}`, `Løsningsforslag: ${kort(ek.losning, 2500)}`] : []; })()),
     ...(side.tekst ? [`Utdrag av siden:\n${kort(side.tekst, 3000)}`] : []),
     ...(bilde ? ["Studenten har lagt ved et bilde av sin egen løsning i siste melding. Les utregningen nøye, finn det første stedet det faktisk går galt (eller bekreft det som er riktig, også når det ikke er forenklet eller ferdig ennå – si «riktig» og spør om det kan skrives enklere), og veiled derfra med et spørsmål eller hint – ikke regn ut svaret for studenten. Ikke kommenter håndskrift, navn eller annet personlig på bildet."] : []),
   ];
