@@ -45,6 +45,7 @@ function start() {
         visDashman(k, sesjon);
         fyllMinSide(k, sesjon);
         visFokus(k, sesjon);
+        visFlagget(k, sesjon);
         rot.querySelector('[data-handling="ut"]').onclick = function () { k.auth.signOut().then(function () { tegn(null); }); };
       } else tegnUte(k);
     }
@@ -183,6 +184,22 @@ function start() {
         .catch(function (e) { m.textContent = 'Fikk ikke lagret: ' + (e.message || e); });
     };
   }
+  // For undervisere: spørsmål i egne arbeidskrav som KI-kontrollen er uenig i, og som ikke er godtatt ennå.
+  function visFlagget(k, sesjon) {
+    var el = rot.querySelector('.profil-flagget'); if (!el) return;
+    k.from('ovelser').select('id, tittel, sporsmal, kursinfo:kurs ( id, navn, eier )').then(function (r) {
+      var l = ((r && r.data) || []).filter(function (o) { return o.kursinfo && o.kursinfo.eier === sesjon.user.id; }).map(function (o) {
+        return { o: o, f: (o.sporsmal || []).filter(function (x) { return x && x.kontroll && x.kontroll.ok === false; }) };
+      }).filter(function (x) { return x.f.length; });
+      if (!l.length) { el.hidden = true; return; }
+      el.hidden = false;
+      el.innerHTML = '<h3>⚠ Flaggede spørsmål i arbeidskravene dine</h3><p class="konto-ingress">KI-kontrollen er uenig med fasiten eller fant problemer. Åpne arbeidskravet, se over spørsmålene merket ⚠, og rett dem eller trykk «Godta».</p>' +
+        l.map(function (x) {
+          return '<div class="spg"><b>' + esc(x.o.tittel) + '</b> <span class="spg-meta">(' + esc(x.o.kursinfo.navn) + ')</span><ul>' + x.f.map(function (q) { return '<li>' + esc(String(q.tekst || '').slice(0, 140)) + ' <span class="spg-flagg">– ' + esc(q.kontroll.merknad || '') + '</span></li>'; }).join('') +
+            '</ul><a class="btn-chalk ghost" href="../studie/index.html#fag">Åpne kursene</a></div>';
+        }).join('');
+    }, function () {});
+  }
   // Snarvei øverst på Min side: rett inn i fokusvisningen for faget man holder på med (sist valgte kurs først).
   function visFokus(k, sesjon) {
     var el = rot.querySelector('.profil-fokus'); if (!el) return;
@@ -303,7 +320,39 @@ function start() {
       v.innerHTML = '<b>' + n + (n === 1 ? ' bilde venter' : ' bilder venter') + ' på gjennomsyn.</b> <a href="#" data-til-gjs="1">Se på ' + (n === 1 ? 'det' : 'dem') + '</a>';
       v.querySelector('a').onclick = function (e) { e.preventDefault(); boks.querySelector('.admin-gjennomsyn-boks').scrollIntoView({ behavior: 'smooth' }); };
     }
+    // ---- Spørsmål til godkjenning (studie/sporsmal.json: «godkjenning»: «kreves»; status i sporsmal_status)
+    var spgAvviste = false;
+    function spgMatte(el) { try { if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([el]); else if (window.renderMathInElement) renderMathInElement(el, { delimiters: [{ left: '$', right: '$', display: false }] }); } catch (e) {} }
+    function tegnSpg() {
+      var el = boks.querySelector('.admin-spg'); if (!el) return;
+      fetch('../studie/sporsmal.json', { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (d) {
+        var l = (d.sporsmal || []).filter(function (x) { return x.godkjenning === 'kreves'; });
+        if (!l.length) { el.innerHTML = '<p class="konto-ingress">Ingen spørsmål venter på godkjenning.</p>'; boks.querySelector('.admin-spg-antall').textContent = ''; return; }
+        return k.from('sporsmal_status').select('id,status').in('id', l.map(function (x) { return x.id; })).then(function (r) {
+          var st = {}; ((r && r.data) || []).forEach(function (x) { st[x.id] = x.status; });
+          var flagg = function (x) { return x.kontroll && x.kontroll.ok === false; };
+          var venter = l.filter(function (x) { return !st[x.id]; }).sort(function (a, b) { return flagg(b) - flagg(a); });
+          var avvist = l.filter(function (x) { return st[x.id] === 'avvist'; });
+          var nf = venter.filter(flagg).length;
+          boks.querySelector('.admin-spg-antall').textContent = venter.length ? '(' + venter.length + ' venter' + (nf ? ', ' + nf + ' flagget' : '') + ')' : '';
+          var kort = function (x, s) {
+            return '<div class="spg"><div class="spg-meta">' + esc(x.id) + ' · ' + esc(x.vanskelighet) + ' · ' + esc(x.undertema) + '</div>' +
+              (flagg(x) ? '<p class="spg-flagg"><b>⚠ KI-kontrollen:</b> ' + esc(x.kontroll.merknad || '') + (x.kontroll.ki ? ' (KI fikk ' + esc(x.kontroll.ki) + ')' : '') + '</p>' : x.kontroll && x.kontroll.ok ? '<p class="spg-ok">✓ KI-kontrollen er enig med fasiten</p>' : '') +
+              '<p class="spg-tekst">' + esc(x.tekst) + '</p><p>Fasit: <b>' + esc(x.riktig) + '</b> · Feil: ' + (x.feil || []).map(function (f) { return esc(f.svar); }).join(' · ') + '</p>' +
+              '<p class="konto-ingress">' + esc(x.forklaring) + '</p><div class="spg-knapper">' +
+              (s === 'avvist' ? '<button type="button" data-spg="' + esc(x.id) + '" data-spg-st="angre">Angre avvisning</button>'
+                : '<button type="button" data-spg="' + esc(x.id) + '" data-spg-st="godkjent">Godkjenn</button><button type="button" data-spg="' + esc(x.id) + '" data-spg-st="avvist">Avvis</button>') + '</div></div>';
+          };
+          var utenFlagg = venter.filter(function (x) { return !flagg(x); });
+          el.innerHTML = (venter.length ? (utenFlagg.length ? '<p><button type="button" data-spg-alle="' + esc(utenFlagg.map(function (x) { return x.id; }).join(',')) + '">Godkjenn alle ' + utenFlagg.length + ' uten flagg</button></p>' : '') + venter.map(function (x) { return kort(x, ''); }).join('')
+            : '<p class="konto-ingress">Ingen spørsmål venter på godkjenning.</p>') +
+            (avvist.length ? '<p><button type="button" data-spg-vis-avviste="1">' + (spgAvviste ? 'Skjul' : 'Vis') + ' ' + avvist.length + ' avviste</button></p>' + (spgAvviste ? avvist.map(function (x) { return kort(x, 'avvist'); }).join('') : '') : '');
+          spgMatte(el);
+        });
+      }).catch(function () { el.innerHTML = '<p class="konto-ingress">Fikk ikke hentet spørsmålene.</p>'; });
+    }
     function tegnAdmin() {
+      tegnSpg();
       tegnGjennomsyn();
       tegnTilbakemeldinger();
       k.rpc('admin_foresporsler').then(function (r) {
@@ -337,6 +386,16 @@ function start() {
     };
     boks.onclick = function (ev) {
       var b = ev.target.closest('button'); if (!b) return;
+      if (b.dataset.spg || b.dataset.spgAlle) {
+        var ids = b.dataset.spgAlle ? b.dataset.spgAlle.split(',') : [b.dataset.spg], ny = b.dataset.spgAlle ? 'godkjent' : b.dataset.spgSt;
+        b.disabled = true;
+        k.rpc('sett_sporsmal_status', { ids: ids, ny: ny === 'angre' ? null : ny }).then(function (r) {
+          if (r.error) { m.classList.add('feil'); m.textContent = 'Klarte ikke å lagre: ' + norsk(r.error); b.disabled = false; return; }
+          tegnSpg();
+        });
+        return;
+      }
+      if (b.dataset.spgVisAvviste) { spgAvviste = !spgAvviste; tegnSpg(); return; }
       if (b.dataset.gjs) {
         var st = b.dataset.gjsStatus;
         if (st === 'avvist' && b.dataset.bekreft !== '1') { b.dataset.bekreft = '1'; b.textContent = 'Bekreft avvisning'; return; }

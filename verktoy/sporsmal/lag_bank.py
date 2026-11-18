@@ -223,4 +223,15 @@ katalog = {e["id"]: dict(omrade=o["id"], tittel=e["tittel"], undertemaer={d["id"
            for o in kart["omrader"] for e in o["temaer"] if e.get("undertemaer")}
 ut = {"omrader": {o["id"]: o["tittel"] for o in kart["omrader"]}, "katalog": katalog, "struktur": {t: dict(omrade=tre[t][0], tittel=tre[t][1], undertemaer=tre[t][2]) for t in dict.fromkeys(x["tema"] for x in B)},
       "sporsmal": [{k: v for k, v in x.items() if k != "ck"} for x in B]}
+# Spørsmål som er lagt direkte i studie/sporsmal.json (f.eks. elektrisitet fra 18. nov. 2026, id over denne listen) og
+# godkjenningsfeltene skal ikke forsvinne når banken lages på nytt: de flettes inn igjen.
+try:
+    gml = json.load(open(sys.argv[2]))
+    egne = {x["id"] for x in ut["sporsmal"]}
+    ut["sporsmal"] += [x for x in gml.get("sporsmal", []) if x["id"] not in egne]
+    for t, v in gml.get("struktur", {}).items():
+        ut["struktur"].setdefault(t, v)
+        for u, n in v.get("undertemaer", {}).items(): ut["struktur"][t]["undertemaer"].setdefault(u, n)
+except FileNotFoundError:
+    pass
 json.dump(ut, open(sys.argv[2], "w"), ensure_ascii=False, indent=0)

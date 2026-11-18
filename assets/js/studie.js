@@ -3100,7 +3100,13 @@ function studieStart() {
     window.fhKonto(),
   ]).then(function (r) {
     S = r[0].struktur; K = r[0].katalog || r[0].struktur; Q = r[0].sporsmal; T.omrader = r[0].omrader || {}; k = r[2];
-    return k.auth.getSession();
+    // Nye spørsmål i banken («godkjenning»: «kreves») vises først når en administrator har godkjent dem (Min side).
+    var vent = Q.filter(function (x) { return x.godkjenning === 'kreves'; });
+    var gk = !vent.length ? Promise.resolve() : k.from('sporsmal_status').select('id,status').in('id', vent.map(function (x) { return x.id; })).then(function (s) {
+      var ok = {}; ((s && s.data) || []).forEach(function (x) { if (x.status === 'godkjent') ok[x.id] = 1; });
+      Q = Q.filter(function (x) { return x.godkjenning !== 'kreves' || ok[x.id]; });
+    }, function () { Q = Q.filter(function (x) { return x.godkjenning !== 'kreves'; }); });
+    return gk.then(function () { return k.auth.getSession(); });
   }).then(function (r) {
     var sesjon = r.data.session;
     // Påmelding fra QR-kode eller lenke (?kode=…): koden huskes gjennom innlogging/registrering.
