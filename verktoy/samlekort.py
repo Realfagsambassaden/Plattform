@@ -23,17 +23,17 @@ def e(x):
     return html.escape(str(x), quote=True)
 
 
-def kopper(n, te=False, energi=0):
+def kopper(n, te=False, energi=0, piller=0):
     """Koffein som rekker av kopper (☕), te (🍵) og energidrikk (🥫). Mer enn 10 til sammen sprenger skalaen:
     rekka renner ut av kortet."""
     try:
         n = float(n)
     except (TypeError, ValueError):
         return f'<em class="sk-ukjent">{UKJENT}</em>'
-    energi = int(energi or 0)
-    rekke = '☕' * int(round(n)) + ('🍵🍵' if te else '') + '🥫' * energi
-    tittel = f'{int(n) if n == int(n) else n} kopper kaffe om dagen' + (' + masse te' if te else '') + (f' + {energi} energidrikker' if energi else '')
-    if n + energi > 10:
+    energi, piller = int(energi or 0), int(piller or 0)
+    rekke = '☕' * int(round(n)) + ('🍵🍵' if te else '') + '🥫' * energi + '💊' * piller
+    tittel = f'{int(n) if n == int(n) else n} kopper kaffe om dagen' + (' + masse te' if te else '') + (f' + {energi} energidrikker' if energi else '') + (f' + {piller} koffeinpiller' if piller else '')
+    if n + energi + piller > 10:
         return f'<em class="sk-kopper sk-sprenger" title="{tittel}">{rekke}</em>'
     return f'<em class="sk-kopper" title="{tittel}">{rekke}</em>'
 
@@ -64,11 +64,11 @@ def kort(p, nr, bilder, href, h='h3'):
         ('⏳', 'Erfaring', soyle(ar, 20, f'{ar} år' if ar not in (None, '') else '')),
         ('⭐', 'Kvalitet', ord_(p.get('kvalitet'))),
         ('🤪', 'Fun fact', ord_(p.get('funfact'))),
-        ('☕', 'Koffein', kopper(p.get('koffein'), p.get('te'), p.get('energidrikk'))),
+        ('☕', 'Koffein', kopper(p.get('koffein'), p.get('te'), p.get('energidrikk'), p.get('koffeinpiller'))),
     ]
     rader = ''.join(f'<span class="sk-stat"><b><span aria-hidden="true">{ik}</span>{n}</b><span class="sk-verdi">{v}</span></span>' for ik, n, v in stats)
     logo = f'<img class="sk-logo" src="{bilder}{e(p["ikon"])}" alt="">' if p.get('ikon') else ''
-    spr = ' data-sprenger' if isinstance(p.get('koffein'), (int, float)) and p['koffein'] + int(p.get('energidrikk') or 0) > 10 else ''
+    spr = ' data-sprenger' if isinstance(p.get('koffein'), (int, float)) and p['koffein'] + int(p.get('energidrikk') or 0) + int(p.get('koffeinpiller') or 0) > 10 else ''
     return (f'<article class="samlekort" data-farge="{e(p.get("farge", "gronn"))}" id="{e(p["id"])}"{spr}>'
             f'<{tag} class="sk-inni"{lenke}><span class="sk-flate">'
             f'<span class="sk-topp"><{h} class="sk-navn">{e(p["navn"])}</{h}>{logo}</span>'
