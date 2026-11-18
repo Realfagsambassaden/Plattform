@@ -98,23 +98,6 @@ anchor-sections: false
   var m = location.hash.match(/^#niva-(\w+)/); if (m) vis(m[1], false);
 })();
 </script>
-<section class="utforsk-del">
-  <p class="eyebrow">Eller finn din egen vei</p>
-<div class="tracks brede">
-  <a class="track live utforsk" href="tema/index.html">
-    <img class="track-bilde" src="assets/img/tegninger/kjelke.webp" alt="" loading="lazy">
-    <span class="status">Utforsk</span>
-    <h3>Alle temaer</h3>
-    <p>Alt stoffet ordnet etter tema: mekanikk, fluider, termofysikk, elektrisitet og magnetisme og mer.</p>
-  </a>
-  <a class="track live egen" href="dekning.html">
-    <img class="track-bilde" src="assets/img/tegninger/sau-maling.webp" alt="" loading="lazy">
-    <span class="status">Din løype</span>
-    <h3>Lag din egen løype</h3>
-    <p>Lim inn emnebeskrivelsen til emnet ditt, så finner vi sidene som passer.</p>
-  </a>
-</div>
-</section>
 
 <section class="slik">
   <p class="eyebrow">Slik lærer du her</p>
