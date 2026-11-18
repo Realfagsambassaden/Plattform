@@ -104,7 +104,12 @@ def profilside(p, nr, mal):
     navn = {'youtube': 'YouTube', 'instagram': 'Instagram', 'tiktok': 'TikTok', 'facebook': 'Facebook', 'linkedin': 'LinkedIn', 'nettside': 'Nettside'}
     deler.append('<h2>Følg meg</h2>' + ('<div class="sosiale">' + ''.join(f'<a class="sosial" href="{e(u)}">{navn.get(k, k.title())}</a>' for k, u in sos.items()) + '</div>'
                                         if sos else '<p class="snart">Lenker kommer.</p>'))
-    deler.append('<h2>Foredrag, skolebesøk og privatundervisning</h2><p>Vil du booke privatundervisning, eller invitere meg til skolebesøk, show eller andre arrangementer? <span class="snart">Kontaktinformasjon kommer snart.</span></p>')
+    bt = p.get('booking_tekst') or 'Vil du booke privatundervisning, eller invitere meg til skolebesøk, show eller andre arrangementer?'
+    if p.get('booking'):
+        bt += f' Send en e-post til <a href="mailto:{e(p["booking"])}">{e(p["booking"])}</a>.'
+    else:
+        bt += ' <span class="snart">Kontaktinformasjon kommer snart.</span>'
+    deler.append(f'<h2>Foredrag, skolebesøk og privatundervisning</h2><p>{bt}</p>')
     return (hode + '<!-- Laget av verktoy/samlekort.py fra ambassaden/ambassadorer.yml – rediger yml-fila, ikke denne. -->\n<main>\n'
             '  <section class="seksjon profilside">\n    <p class="overlinje"><a href="../#ambassadorer">← Alle ambassadørene</a></p>\n'
             '    <div class="profilside-rad">\n      <div class="profilside-kort">' + kort(p, nr, '../img/', None, 'h1') + '</div>\n'

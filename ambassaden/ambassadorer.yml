@@ -8,6 +8,7 @@
 #   funfact:   noe artig (kort, helst under 60 tegn)
 #   koffein:   antall kaffekopper om dagen (10 eller mer «sprenger skalaen»: koppene går ut av kortet)
 #   te:        true hvis det også går mye te (vises som tekopper)
+#   booking:   e-post for å booke personen (foredrag, show, skolebesøk, privatundervisning); booking_tekst: egen tekst foran
 #   farge:     gronn, oransje, bla, rosa, turkis, gul
 ambassadorer:
   - id: ben
@@ -42,7 +43,15 @@ ambassadorer:
       - [Ingeniørfysikk, https://fysikkhjelp.no/ingeniorfysikk/index.html]
       - [Forkurs i matematikk, https://matematikkhjelp.no/matte-forkurs/index.html]
       - [Flervariabel kalkulus, https://matematikkhjelp.no/flervariabel-kalkulus/index.html]
-    sosiale: {youtube: , instagram: , tiktok: , facebook: , linkedin: , nettside: }
+    booking: normann.formidling@gmail.com
+    booking_tekst: Jeg reiser rundt med foredrag om kosmologi, og kan også bookes til skolebesøk, show og privatundervisning.
+    sosiale:
+      nettside: https://bendavidnormann.com
+      youtube: https://www.youtube.com/@DrNormann
+      tiktok: https://www.tiktok.com/@drnormann
+      instagram:
+      facebook:
+      linkedin:
 
   - id: andrea
     navn: Andrea
@@ -79,10 +88,12 @@ ambassadorer:
     kvalitet: Snill
     funfact: Spiller sjakk hele tiden
     koffein: 2
-    om: Siebe har doktorgrad i fysikk og brenner for å formidle matematikk og realfag. Han reiser rundt i Norge som «Distriktsmatematikeren».
-    erfaring: [Doktorgrad i fysikk, Reiser rundt i Norge som «Distriktsmatematikeren»]
+    om: Siebe har doktorgrad i fysikk og brenner for å formidle matematikk og realfag. Han reiser rundt i Norge som «Distriktsmatematikeren» og holder show.
+    erfaring: [Doktorgrad i fysikk, Reiser rundt i Norge og holder show som «Distriktsmatematikeren»]
     meritter: []
     tilbud: []
+    booking: siebe.b.v.albada@ntnu.no
+    booking_tekst: Siebe reiser rundt i Norge og holder show som «Distriktsmatematikeren», og kan bookes til skoler og arrangementer.
     sosiale: {}
 
   - id: mikael
