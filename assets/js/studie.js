@@ -174,6 +174,7 @@ function studieStart() {
   ];
   function undertemaLenke(x) {
     var url = temaUrl(x.t, x.u), sider = (FINNES && FINNES['/tema/' + S[x.t].omrade + '/' + x.t + '/' + x.u + '.html']) || [];
+    if (appModus()) return '<div class="st-rad-ut"><a href="' + (lesUrl(x.t, x.u) || lesUrl(x.t, Object.keys(S[x.t].undertemaer)[0]) || '#') + '">' + esc(S[x.t].undertemaer[x.u]) + '</a>' + (url ? '' : '<span class="st-sm"> (lærestoff kommer)</span>') + '</div>';
     return '<div class="st-rad-ut"><a href="' + (url || temaUrl(x.t)) + '">' + esc(S[x.t].undertemaer[x.u]) + '</a>' +
       (sider.length ? '<span class="st-sm"> Les: ' + sider.slice(0, 2).map(function (y) { return '<a href="' + y.url + '">' + esc(y.tittel || 'side') + '</a>'; }).join(' · ') + '</span>'
         : url ? '' : '<span class="st-sm"> (lærestoff kommer)</span>') + '</div>';
@@ -2789,9 +2790,12 @@ function studieStart() {
   function utNivaer(id) { var sti = utSti(id), l = (FINNES && sti && FINNES[sti]) || []; return NIVAER.filter(function (n) { return l.some(function (x) { return x.niva === n[1]; }); }); }
   function nivaFor(w, id, r) { return ((w && w.niva) || {})[id] || (r && r.niva) || ''; }
   function utLenke(id, niva) {
-    var sti = utSti(id), l = (FINNES && sti && FINNES[sti]) || [];
-    if (niva) { var x = l.find(function (y) { return y.niva === NIVANAVN[niva]; }); if (x) return x.url; }
-    return utUrlK(id);
+    var sti = utSti(id), l = (FINNES && sti && FINNES[sti]) || [], url = null;
+    if (niva) { var x = l.find(function (y) { return y.niva === NIVANAVN[niva]; }); if (x) url = x.url; }
+    url = url || utUrlK(id);
+    // Studenter i appen leser i fokusmodus (bare kursets temaer, ✕ tilbake til appen), ikke på nettsidene.
+    if (url && appModus()) { var a = aktivtKurs(); return 'fokus.html#' + (a && a !== 'egen' ? encodeURIComponent(a.kurs) : 'min') + '@' + encodeURIComponent(id); }
+    return url;
   }
   function utUrlK(id) { var p = id.split('/'), kt = K[p[1]]; if (!kt || !kt.omrade) return null; var sti = '/tema/' + kt.omrade + '/' + p[1] + '/' + p[2] + '.html'; return FINNES && !FINNES[sti] ? null : '..' + sti; }
   function mandag(aar, uke) { var j4 = new Date(Date.UTC(aar, 0, 4)), d = (j4.getUTCDay() || 7) - 1; return new Date(Date.UTC(aar, 0, 4 - d + (uke - 1) * 7)); }
