@@ -60,7 +60,7 @@ function fokusStart() {
 
   function skjelett() {
     rot.innerHTML =
-      '<div class="fk-topp"><a class="fk-ut" href="index.html" title="Avslutt fokusvisning">✕</a><b class="fk-fag"></b><span class="fk-her"></span>' +
+      '<div class="fk-topp"><a class="fk-ut" href="index.html" title="Avslutt fokusmodus">✕</a><b class="fk-fag"></b><span class="fk-her"></span>' +
       '<button type="button" class="fk-knapp" data-h="tid">☰ Tidslinje</button><button type="button" class="fk-knapp" data-h="kravkort">📝 Arbeidskrav</button></div>' +
       '<iframe class="fk-hoved" title="Lærestoff"></iframe>' +
       '<div class="fk-bunn"><button type="button" class="fk-knapp" data-h="forrige">← Forrige</button><span class="fk-pos"></span><button type="button" class="fk-knapp" data-h="neste">Neste →</button></div>' +
@@ -205,7 +205,7 @@ function fokusStart() {
       });
       return [{ data: { navn: L.tittel, moduler: mods, ramme: {}, elementer: { arbeidskrav: false } } }, { data: [] }];
     }
-    if (!sesjon) throw new Error('Logg inn for å bruke fokusvisningen.');
+    if (!sesjon) throw new Error('Logg inn for å bruke fokusmodus.');
     if (kilde === 'min') {
       // Studentens egen løype: temaene hen har valgt i studieappen, med alle undertemaene.
       return k.from('studie_innstillinger').select('valgt').eq('eier', bruker.id).maybeSingle().then(function (r) {
@@ -215,7 +215,7 @@ function fokusStart() {
           return { navn: K[t].tittel, uker: [{ undertemaer: Object.keys(K[t].undertemaer).map(function (u) { return x + '/' + u; }) }] }; }) } }, { data: [] }];
       });
     }
-    if (!kursId) throw new Error('Velg et kurs under «Kurs» i studieappen og trykk «Fokusvisning».');
+    if (!kursId) throw new Error('Velg et kurs under «Kurs» i studieappen og trykk «Fokusmodus».');
     return Promise.all([k.from('kurs').select('id, navn, moduler, ramme, elementer').eq('id', kursId).maybeSingle(), k.from('ovelser').select('*').eq('kurs', kursId), hentQuizer()]);
   }).then(function (r) {
     kurs = r[0] && r[0].data; if (!kurs) throw new Error('Fant ikke kurset. Er du påmeldt?');
