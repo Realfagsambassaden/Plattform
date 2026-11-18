@@ -851,12 +851,19 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 // Mørk «tavlevask» bak Dashman til venstre, så formlene i bakgrunnsbildet ikke forstyrrer tegningen.
 .hero-dashman-v { box-sizing: content-box; padding: 4rem 6rem 4rem 4.5rem; margin: -4rem -6rem -4rem -4.5rem;
   background: radial-gradient(ellipse closest-side at 45% 52%, rgba($slate, .9) 45%, rgba($slate, .55) 72%, rgba($slate, 0) 100%); }
+// Snakkeboble i kritt over Dashman til venstre
+.hero-dm-boble { position: absolute; z-index: 1; left: 1rem; top: calc(22% - 8.5rem); width: 205px; margin: 0; padding: .6rem .9rem .7rem; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; font-size: 1.02rem; line-height: 1.3; text-align: center; background: rgba($slate, .92); transform: rotate(-3deg); pointer-events: none; }
+.hero-dm-boble::before { content: ""; position: absolute; inset: 0; border: 2.5px solid rgba($chalk, .9); border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px; filter: var(--kritt-filter); }
+.hero-dm-boble::after { content: ""; position: absolute; left: 46%; bottom: -15px; width: 22px; height: 16px; border-right: 2.5px solid rgba($chalk, .9); border-bottom: 2.5px solid rgba($chalk, .9); border-bottom-right-radius: 20px; transform: skewX(-25deg); filter: var(--kritt-filter); }
+.hero-dm-boble b { color: $neon; font-weight: 400; }
 @media (max-width: 860px) {
   .hero.sentrert { padding-top: 9rem; }
+  .hero-dm-boble { top: 1.2rem; left: 9rem; width: 170px; font-size: .9rem; }
+  .hero-dm-boble::after { left: -16px; bottom: 40%; transform: rotate(100deg) skewX(-25deg); }
   .hero.sentrert .hero-scene { left: -3rem; right: -3rem; }
   .hero-dashman-v { height: 150px; top: .5rem; left: .5rem; }
 }
-@media (min-width: 861px) and (max-width: 1200px) { .hero-dashman-v { height: 190px; top: 30%; left: 0; } }
+@media (min-width: 861px) and (max-width: 1200px) { .hero-dashman-v { height: 190px; top: 30%; left: 0; } .hero-dm-boble { top: calc(30% - 8.5rem); } }
 
 // ---------- Forsiden: «FORSTÅ fysikk» i kritt og skrubryter for nivå ----------
 // Krittfilteret settes som --kritt-filter av JavaScript (index.qmd, loype.js) der SVG-filteret #kritt finnes.
@@ -876,6 +883,23 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .kritt-laer { margin: 0 0 .1rem; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; font-size: 1.25rem; filter: var(--kritt-filter); }
 .kritt-av { margin: .35rem 0 0; font-family: "Kritt", "Architects Daughter", cursive; color: $yellow; font-size: clamp(1.1rem, 2.4vw, 1.4rem); letter-spacing: .03em; text-shadow: 0 0 8px rgba($yellow, .45); filter: var(--kritt-filter); transform: rotate(-1.5deg); }
 .kritt-av .gratis { color: $orange; text-shadow: 0 0 10px rgba($orange, .6); }
+// «Last ned appen» med krittpil og grønn knapp på forsiden (til app.qmd)
+.last-ned { display: flex; align-items: center; justify-content: center; gap: .5rem; margin: 1.1rem 0 .2rem; flex-wrap: wrap; }
+.last-ned-tekst { font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; font-size: clamp(1.15rem, 2.6vw, 1.45rem); text-shadow: 0 0 8px rgba($chalk, .3); filter: var(--kritt-filter); transform: rotate(-2deg); }
+.last-ned-pil { width: 78px; height: 36px; fill: none; stroke: $chalk; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; filter: var(--kritt-filter); opacity: .9; }
+.last-ned-knapp { display: inline-block; background: $neon; color: $slate !important; font-weight: 700; padding: .55rem 1.3rem; border-radius: 10px; text-decoration: none; box-shadow: 0 0 14px rgba($neon, .45); transition: transform .15s, box-shadow .15s; }
+.last-ned-knapp:hover { transform: translateY(-1px); box-shadow: 0 0 20px rgba($neon, .65); }
+// Nedlastingssiden (app.qmd)
+.app-side { max-width: 720px; margin: 0 auto 3rem; }
+.app-veiledning { display: grid; gap: 1rem; }
+.app-boks { border: 1px solid $line; border-radius: 12px; padding: 1rem 1.3rem; }
+.app-boks.din { border-color: rgba($neon, .7); box-shadow: 0 0 0 1px rgba($neon, .25); }
+.app-boks h2 { margin-top: 0; font-size: 1.25rem; border: 0; }
+.app-sm { color: $dust; font-size: .9rem; margin-bottom: 0; }
+.app-knapp { background: $neon; color: $slate; border: 0; font-weight: 700; font-size: 1.1rem; padding: .7rem 1.6rem; border-radius: 10px; margin-bottom: 1rem; cursor: pointer; box-shadow: 0 0 14px rgba($neon, .45); }
+.app-qr { width: 180px; background: #fff; padding: 6px; border-radius: 8px; }
+.app-qr svg { display: block; width: 100%; height: auto; }
+.app-ferdig { border-left: 3px solid $neon; padding-left: .8rem; }
 
 .bryter { position: relative; width: 400px; max-width: 100%; height: 265px; margin: .2rem auto 0; }
 .bryter .niva-knapper { display: block; }
