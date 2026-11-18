@@ -269,20 +269,27 @@ async function svarPa(side, elev, o, tekst, r, p) {
       if (/Klarte ikke å vurdere/.test(d.tilbakemelding || '')) await nyttFunn(elev, 'feil', 'KI-en klarte ikke å vurdere bildet', JSON.stringify(d).slice(0, 600), side);
       notat(elev, `lastet opp utregning (${streker ? 'med' : 'uten'} streker) → ${d.vurdering || '?'} / håndskrift ${d.handskrift || '?'} / streker ${d.streker || '?'}`);
       if (streker && d.streker === 'nei') await nyttFunn(elev, 'til sjekk', 'KI-en så ikke de to strekene under svaret', d.tilbakemelding, side);
+      // «Er dette håndskrevet?» (robotens skrift er en font, så KI-en er ofte usikker): eleven sier ja til gjennomsyn.
+      const ja = await side.$('[data-h=lagreSvar][data-v=ja]');
+      if (ja) { notat(elev, 'KI-en lurte på om det var håndskrevet → ja, lagre for gjennomsyn'); await ja.click(); await side.waitForTimeout(2500); }
     }
   }
 }
 
 async function snakkMedDashman(side, elev, r) {
   try {
-    await side.goto(`${NETTSTED}/studie/index.html#dashman`, { waitUntil: 'domcontentloaded' });
+    await side.goto(`${NETTSTED}/studie/index.html`, { waitUntil: 'domcontentloaded' });
+    await side.waitForSelector('.dm-knapp', { timeout: 20000 });
+    if (await side.$('.dm-panel[hidden]')) await side.click('.dm-knapp');
     await side.waitForSelector('.dm-panel:not([hidden]) textarea', { timeout: 20000 });
     const sporsmal = (await ki(`Du er ${elev.navn}, elev på forkurs i fysikk (nivå ${elev.niva} av 10). Skriv ETT kort, naturlig spørsmål til KI-læringsassistenten Dashman om elektrisitet eller noe du lurer på i fysikken. Bare spørsmålet, på norsk, som en ekte elev ville skrevet det (gjerne med skrivefeil hvis nivået er lavt).`, 'Spørsmål:', 120)).trim() || 'Hva er forskjellen på strøm og spenning?';
-    const for_ = await side.$$eval('.dm-m.dm-fra', (l) => l.length);
+    const SVAR = '.dm-m.dm-fra:not(.dm-tenker):not(.dm-niva):not(.dm-husker)';
+    const for_ = await side.$$eval(SVAR, (l) => l.length);
     await side.fill('.dm-panel textarea', sporsmal); await side.press('.dm-panel textarea', 'Enter');
     const t0 = Date.now();
-    await side.waitForFunction((n) => { const l = document.querySelectorAll('.dm-m.dm-fra:not(.dm-tenker)'); return l.length > n; }, for_, { timeout: 90000 });
-    const svar = await side.$$eval('.dm-m.dm-fra:not(.dm-tenker)', (l) => l[l.length - 1].innerText);
+    await side.waitForFunction(([n, sel]) => !document.querySelector('.dm-tenker') && document.querySelectorAll(sel).length > n, [for_, SVAR], { timeout: 90000 });
+    await side.waitForTimeout(1500);   // svaret kan skrives fram litt etter litt
+    const svar = await side.$$eval(SVAR, (l) => l[l.length - 1].innerText);
     const feil = await side.$('.dm-feil');
     if (feil) await nyttFunn(elev, 'feil', 'Dashman svarte med en feilmelding', svar, side);
     else if (svar.trim().length < 15) await nyttFunn(elev, 'advarsel', 'Dashman ga et tomt eller svært kort svar', svar, side);
