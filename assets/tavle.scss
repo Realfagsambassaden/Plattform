@@ -405,6 +405,9 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 }
 // På store skjermer står sidemenyen nede til venstre. Da står Dashman nede til høyre, over tilbakemeldingsknappen.
 @media (min-width: 992px) { .dm-knapp { left: auto; right: 1rem; bottom: calc(1rem + 62px); } }
+// Fokusmodus: Dashman står over Forrige/Neste-linja, ikke oppå «Forrige».
+html.fk-aktiv .dm-knapp { bottom: calc(64px + env(safe-area-inset-bottom)); }
+@media (min-width: 992px) { html.fk-aktiv .dm-knapp { bottom: calc(64px + 62px); } }
 @media print { .dm-knapp, .dm-panel { display: none !important; } }
 
 // ---------- hero-scene og profiler ----------

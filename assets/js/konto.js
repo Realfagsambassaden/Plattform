@@ -122,7 +122,8 @@
       '#fh-chat .fc-bilde button{position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;border:0;background:#3a4440;color:#eceeea;cursor:pointer;line-height:1}' +
       '#fh-chat .fc-samtykke{display:flex;gap:.45rem;align-items:flex-start;font-size:.82rem;line-height:1.35;color:#d7dad4;background:#1d2422;border:1px solid #e6d98a;border-radius:8px;padding:.45rem .55rem}' +
       '#fh-chat .fc-samtykke input{width:auto;margin-top:.15rem;flex:0 0 auto}' +
-      'html.fk-aktiv #fh-chat{bottom:64px}html.fk-aktiv #fh-chat .fc-knapp{padding:.4rem .8rem;font-size:.9rem}' +   /* over Forrige/Neste i fokusvisningen */
+      'html.fk-aktiv #fh-chat{bottom:64px}html.fk-aktiv #fh-chat .fc-knapp{padding:.4rem .8rem;font-size:.9rem}' +
+      '@media (max-width:600px){html.fk-aktiv #fh-chat .fc-knapp .fc-tekst{display:none}html.fk-aktiv #fh-chat .fc-knapp{padding:.45rem .55rem}}' +   /* på mobil i fokusmodus: bare ikonet */   /* over Forrige/Neste i fokusvisningen */
       '@media print{#fh-chat{display:none}}';
     document.head.appendChild(st);
     var rot = document.createElement('div'); rot.id = 'fh-chat';
@@ -134,7 +135,7 @@
       '<div class="fc-vedlegg"><label class="fc-fil">📎 Legg ved skjermbilde<input type="file" accept="image/*" name="bilde"></label><span class="fc-bilde" hidden></span></div>' +
       '<label class="fc-samtykke" hidden><input type="checkbox" name="samtykke"><span>Jeg godtar at skjermbildet lagres, så dere kan finne og rette feilen. Meldingen med bildet sendes <b>uten</b> å knyttes til profilen min, og bildet slettes når feilen er rettet.</span></label>' +
       '<button type="submit" class="fc-send">Send</button></form></div>' +
-      '<button type="button" class="fc-knapp" aria-expanded="false">💬 Tilbakemelding</button>';
+      '<button type="button" class="fc-knapp" aria-expanded="false">💬<span class="fc-tekst"> Tilbakemelding</span></button>';
     document.body.appendChild(rot);
     var panel = rot.querySelector('.fc-panel'), knapp = rot.querySelector('.fc-knapp'), logg = rot.querySelector('.fc-logg'), skj = rot.querySelector('form');
     function apne(v) { panel.hidden = !v; knapp.setAttribute('aria-expanded', String(v)); if (v) skj.tekst.focus(); }
