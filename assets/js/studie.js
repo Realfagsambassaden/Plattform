@@ -318,7 +318,8 @@ function studieStart() {
       (T.svar || []).forEach(function (s) { if (ider.indexOf(s.id) >= 0 && !s.rep) siste = s; });
       // Krever øvingen bilde, er et innskrevet riktig svar ikke nok: utregningen må også være godkjent (rekkefølgen er fri).
       var kiOk = siste && siste.ki && (siste.ki.status === 'godkjent' || siste.ki.status === 'kanskje');
-      var st = !siste ? 'ingen' : siste.ki && siste.ki.status === 'kanskje' ? 'kanskje' : (siste.ki && siste.ki.status === 'godkjent') || (siste.type === 'riktig' && (o.svarform !== 'bilde' || kiOk)) ? 'ok' : 'nei';
+      // Klarte ikke KI-en å vurdere bildet (teknisk feil), venter det på gjennomsyn: oransje, ikke rødt.
+      var st = !siste ? 'ingen' : siste.ki && (siste.ki.status === 'kanskje' || (!siste.ki.status && siste.ki.gjennomsyn === 'venter')) ? 'kanskje' : (siste.ki && siste.ki.status === 'godkjent') || (siste.type === 'riktig' && (o.svarform !== 'bilde' || kiOk)) ? 'ok' : 'nei';
       return { tekst: g[0].tekst, ider: ider, status: st };
     });
   }

@@ -679,8 +679,10 @@ async function vurder(request, env, b, h) {
     `Spørsmål:\n${kort(s.tekst, 1500)}\n\nRiktig svar: ${kort(s.riktig, 200)}\nForklaring (fasit): ${kort(s.forklaring, 1500)}\n\n` +
     `Studenten valgte: ${kort(b.valgt, 200)}\n\n` +
     `Studentens forklaring: ${tekst || "(se bildet)"}${bilde ? "\n\nStudentens håndskrevne besvarelse er vedlagt som bilde." : ""}`;
-  const raa = await spor(env, SYSTEM_VURDER.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 1500, bilde);
-  const r = lesJson(raa) || {};
+  // Får vi ikke et svar vi kan lese (feil hos KI-leverandøren eller avkuttet JSON), prøver vi én gang til med mer plass.
+  let r = {};
+  try { r = lesJson(await spor(env, SYSTEM_VURDER.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 1500, bilde)) || {}; } catch (e) { r = {}; }
+  if (!r.tilbakemelding) { try { r = lesJson(await spor(env, SYSTEM_VURDER.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 2500, bilde)) || {}; } catch (e) { r = {}; } }
   const vurdering = ["riktig", "regnefeil", "begrep", "uklar"].includes(r.vurdering) ? r.vurdering : "uklar";
   const sikkerhet = ["hoy", "middels", "lav"].includes(r.sikkerhet) ? r.sikkerhet : "lav";
   // Uten bilde er det ingenting å sjekke. Med bilde: alt annet enn et tydelig ja/nei regnes som usikkert.
