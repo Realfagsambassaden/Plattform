@@ -2959,8 +2959,8 @@ function studieStart() {
       if (Math.abs(y - sist) < 8) return;
       sett(y > sist && y > 80 && !bunn); sist = y;
     }, { passive: true });
-    document.addEventListener('focusin', function (e) { if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && e.target.type !== 'checkbox' && e.target.type !== 'radio') document.body.classList.add('st-skriver'); });
-    document.addEventListener('focusout', function () { setTimeout(function () { if (!/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName || '')) document.body.classList.remove('st-skriver'); }, 100); });
+    document.addEventListener('focusin', function (e) { if (e.target.closest && e.target.closest('#fh-chat')) return; if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && e.target.type !== 'checkbox' && e.target.type !== 'radio') document.body.classList.add('st-skriver'); });
+    document.addEventListener('focusout', function () { setTimeout(function () { var a = document.activeElement || {}; if (!/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName || '') || (a.closest && a.closest('#fh-chat'))) document.body.classList.remove('st-skriver'); }, 100); });
   })();
   // Sveip til venstre på en plan (Ukeplanen min) viser «Meld av» / «Fjern» bak kortet.
   var sveip = null;
