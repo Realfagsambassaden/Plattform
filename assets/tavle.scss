@@ -844,6 +844,9 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .hero.sentrert .hero-scene { left: -1rem; right: -9rem; width: auto; top: -2.5rem; }
 .hero.sentrert .hero-scene img { -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent); mask-image: linear-gradient(to bottom, #000 78%, transparent); }
 .hero-dashman-v { position: absolute; z-index: 0; left: 2%; top: 22%; height: clamp(220px, 24vw, 340px); width: auto; filter: drop-shadow(0 0 7px rgba(255, 255, 255, .35)); transform: rotate(-4deg); pointer-events: none; }
+// Mørk «tavlevask» bak Dashman til venstre, så formlene i bakgrunnsbildet ikke forstyrrer tegningen.
+.hero-dashman-v { box-sizing: content-box; padding: 4rem 6rem 4rem 4.5rem; margin: -4rem -6rem -4rem -4.5rem;
+  background: radial-gradient(ellipse closest-side at 45% 52%, rgba($slate, .9) 45%, rgba($slate, .55) 72%, rgba($slate, 0) 100%); }
 @media (max-width: 860px) {
   .hero.sentrert { padding-top: 9rem; }
   .hero.sentrert .hero-scene { left: -3rem; right: -3rem; }
