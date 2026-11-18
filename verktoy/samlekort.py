@@ -23,7 +23,7 @@ def e(x):
     return html.escape(str(x), quote=True)
 
 
-def kopper(n, te=False, energi=0, piller=0, ekstra=None):
+def kopper(n, te=False, energi=0, piller=0, ekstra=None, egen_tittel=None):
     """Koffein som rekker av kopper (☕), te (🍵) og energidrikk (🥫). Mer enn 10 til sammen sprenger skalaen:
     rekka renner ut av kortet."""
     try:
@@ -40,6 +40,8 @@ def kopper(n, te=False, energi=0, piller=0, ekstra=None):
         elif hva == 'energidrikk': energi += int(ant)
         else: piller += int(ant)
     tittel = f'{int(n) if n == int(n) else n} kopper kaffe om dagen' + (' + masse te' if te else '') + (f' + {energi} energidrikker' if energi else '') + (f' + {piller} koffeinpiller' if piller else '')
+    if egen_tittel:
+        tittel = e(egen_tittel)
     if n + energi + piller > 10:
         return f'<em class="sk-kopper sk-sprenger" title="{tittel}">{rekke}</em>'
     return f'<em class="sk-kopper" title="{tittel}">{rekke}</em>'
@@ -71,7 +73,7 @@ def kort(p, nr, bilder, href, h='h3'):
         ('⏳', 'Erfaring', soyle(ar, 20, f'{ar} år' if ar not in (None, '') else '')),
         ('⭐', 'Kvalitet', ord_(p.get('kvalitet'))),
         ('🤪', 'Fun fact', ord_(p.get('funfact'))),
-        ('☕', 'Koffein', kopper(p.get('koffein'), p.get('te'), p.get('energidrikk'), p.get('koffeinpiller'), p.get('ekstra_koffein'))),
+        ('☕', 'Koffein', kopper(p.get('koffein'), p.get('te'), p.get('energidrikk'), p.get('koffeinpiller'), p.get('ekstra_koffein'), p.get('koffein_tittel'))),
     ]
     rader = ''.join(f'<span class="sk-stat"><b><span aria-hidden="true">{ik}</span>{n}</b><span class="sk-verdi">{v}</span></span>' for ik, n, v in stats)
     logo = f'<img class="sk-logo" src="{bilder}{e(p["ikon"])}" alt="">' if p.get('ikon') else ''

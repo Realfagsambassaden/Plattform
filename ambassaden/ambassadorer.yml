@@ -6,7 +6,7 @@
 #   erfaring_ar: år med undervisning og formidling (søyle på kortet; full søyle = 20 år)
 #   kvalitet:  ett eller to ord («Engasjert», «Kul», «Koselig» …)
 #   funfact:   noe artig (kort, helst under 60 tegn)
-#   koffein:   antall kaffekopper om dagen; energidrikk: antall energidrikker; koffeinpiller: antall koffeinpiller; ekstra_koffein: [[kaffe, 20], …] legges til etter i rekka; te: true hvis det også går mye te
+#   koffein:   antall kaffekopper om dagen; energidrikk: antall energidrikker; koffeinpiller: antall koffeinpiller; ekstra_koffein: [[kaffe, 20], …] legges til etter i rekka; koffein_tittel: egen tekst når man holder musa over; te: true hvis det også går mye te
 #              (mer enn 10 til sammen «sprenger skalaen»: rekka går ut av kortet)
 #   booking:   e-post for å booke personen (foredrag, show, skolebesøk, privatundervisning); booking_tekst: egen tekst foran
 #   farge:     gronn, oransje, bla, rosa, turkis, gul
@@ -149,7 +149,8 @@ ambassadorer:
     funfact: Geni
     koffein: 6
     energidrikk: 20
-    ekstra_koffein: [[kaffe, 20], [koffeinpiller, 30]]
+    ekstra_koffein: [[kaffe, 20], [energidrikk, 30]]
+    koffein_tittel: Alt for mye
     om: Jonas er en ekstremt dyktig formidler, med bachelorgrad i datavitenskap og master i fysikk.
     erfaring: [Bachelorgrad i datavitenskap, Master i fysikk]
     meritter: []
