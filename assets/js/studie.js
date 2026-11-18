@@ -348,7 +348,10 @@ function studieStart() {
     if (raw.length >= 3 && raw.length % 3 === 0 && !raw.some(function (x) { return x.gruppe != null; }) && raw.every(function (x, j) {
       var a = raw[j - j % 3], tre = raw.slice(j - j % 3, j - j % 3 + 3);
       return x.undertema === a.undertema && tre.map(function (y) { return y.vanskelighet; }).sort().join() === 'lett,middels,vanskelig'; })) gjettGrupper(raw, 'auto');
-    var liste = o.kilde === 'egne' ? (o.tilfeldig ? raw.map(function (x) { return [Math.random(), x]; }).sort(function (a, b) { return a[0] - b[0]; }).map(function (a) { return a[1]; }) : sorterDelkap(raw, t)).map(function (x) { if (!erMal(x)) return x; try { return Object.assign(lagVariant(x), { gruppe: x.gruppe, _i: x._i }); } catch (e) { return null; } }).map(function (x, i) {
+    // Tilfeldige tall og rekkefølge er faste for hver student (frø fra bruker og arbeidskrav): samme oppgaver på
+    // telefon og PC og neste gang arbeidskravet åpnes, men forskjellige tall fra student til student.
+    var fro = (bruker && bruker.id || '') + ':' + o.id, rngR = lagRng(fro + ':rekkefolge');
+    var liste = o.kilde === 'egne' ? (o.tilfeldig ? raw.map(function (x) { return [rngR(), x]; }).sort(function (a, b) { return a[0] - b[0]; }).map(function (a) { return a[1]; }) : sorterDelkap(raw, t)).map(function (x) { if (!erMal(x)) return x; try { return Object.assign(lagVariant(x, lagRng(fro + ':' + x._i)), { gruppe: x.gruppe, _i: x._i }); } catch (e) { return null; } }).map(function (x, i) {
       if (!x) return null;
       var tu = String(x.undertema || ut[0] || '').split('/'), tt = tu.length > 1 ? tu[0] : t, uu = tu.length > 1 ? tu[1] : tu[0];
       return Object.assign({}, x, { id: 'ov-' + o.id.slice(0, 8) + '-' + (x._i != null ? x._i : i), tema: K[tt] || S[tt] ? tt : t, undertema: uu || '', vanskelighet: x.vanskelighet || 'middels', forventet_tid_s: x.forventet_tid_s || 90, forklaring: x.forklaring || '' });
@@ -1572,14 +1575,22 @@ function studieStart() {
       return iFormel ? ut.replace(/^\$|\$$/g, '') : ut;
     });
   }
-  function lagVariant(x) {
+  // Tallgenerator med frø (mulberry32 med en enkel tekst-hash), så samme frø alltid gir samme tall.
+  function lagRng(frø) {
+    var h = 1779033703 ^ String(frø).length;
+    for (var i = 0; i < String(frø).length; i++) { h = Math.imul(h ^ String(frø).charCodeAt(i), 3432918353); h = h << 13 | h >>> 19; }
+    var a = h >>> 0;
+    return function () { a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  }
+  function lagVariant(x, rng) {
+    rng = rng || Math.random;
     var n = +x.siffer || 3, enh = x.enhet ? ' ' + String(x.enhet).replace(/\^-?\d/g, function (m) { return m.slice(1).split('').map(function (c) { return '⁻⁰¹²³⁴⁵⁶⁷⁸⁹'['-0123456789'.indexOf(c)]; }).join(''); }) : '';
     if (!String(x.svar || '').trim()) throw new Error('Skriv fasit som et uttrykk, f.eks. m*a.');
     x.variabler.forEach(function (a) { if (!/^[a-zA-Z_]\w*$/.test(a.navn || '') || FUNK_R[a.navn] || a.navn === 'pi' || a.navn === 'e' || a.navn === 'svar') throw new Error('Ugyldig variabelnavn «' + (a.navn || '') + '». Bruk bokstaver, f.eks. m eller v0.');
       if (!isFinite(+a.min) || !isFinite(+a.maks) || +a.maks < +a.min || !(+a.steg > 0)) throw new Error('Sjekk fra/til/steg for ' + a.navn + '.'); });
     for (var forsok = 0; forsok < 30; forsok++) {
       var v = {};
-      x.variabler.forEach(function (a) { var mi = +a.min, ma = +a.maks, st = +a.steg || 1, k = Math.floor((ma - mi) / st + 1e-9) + 1; v[a.navn] = +(mi + Math.floor(Math.random() * Math.max(1, k)) * st).toPrecision(12); });
+      x.variabler.forEach(function (a) { var mi = +a.min, ma = +a.maks, st = +a.steg || 1, k = Math.floor((ma - mi) / st + 1e-9) + 1; v[a.navn] = +(mi + Math.floor(rng() * Math.max(1, k)) * st).toPrecision(12); });
       var svar = regn(x.svar, v); if (!isFinite(svar)) continue;
       v.svar = svar;
       var riktig = tallTekst(svar, n) + enh, sett = [riktig];
@@ -1643,6 +1654,10 @@ function studieStart() {
   }
   function velgVariant(g) {
     if (!g || g.length < 2) return g && g[0];
+    // Har studenten svart på en av variantene før, brukes den (samme oppgave på alle enheter og neste gang).
+    var ider = g.map(function (x) { return x.id; }), tidl = null;
+    (T.svar || []).forEach(function (s) { if (ider.indexOf(s.id) >= 0) tidl = s.id; });
+    if (tidl) return g[ider.indexOf(tidl)];
     var n = niva(g[0].tema);
     return g.slice().sort(function (a, b) { return Math.abs(NIV.indexOf(a.vanskelighet) - n) - Math.abs(NIV.indexOf(b.vanskelighet) - n); })[0];
   }
