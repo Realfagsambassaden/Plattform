@@ -33,9 +33,15 @@ const LAGRING = 'sb-fwyoldmtjnfxtkdwldzx-auth-token';
 const ALLE = ['Arnt', 'Bernt', 'Celine', 'David', 'Ernst', 'Felicia', 'Gunn', 'Hårek', 'Iselin', 'Julie'];
 const VALGT = (process.env.ELEVER || '').trim() ? process.env.ELEVER.split(',').map((s) => s.trim()).filter((n) => ALLE.includes(n)) : ALLE;
 
-if (!SERVICE) { console.error('Mangler SUPABASE_SERVICE_ROLE_KEY (GitHub-hemmelighet).'); process.exit(1); }
-if (!KILDE) { console.error('Mangler KURS (kurs-id).'); process.exit(1); }
 fs.mkdirSync(path.join(UT, 'bilder'), { recursive: true });
+// Stopper roboten før den kommer i gang, skrives grunnen i rapporten (så den havner i sammendraget og issuet).
+function stopp(grunn) {
+  fs.writeFileSync(path.join(UT, 'rapport.md'), `# Fiktiv klasse: stoppet før start\n\n**1 feil, 0 til sjekk**\n\n\`\`\`\n${grunn}\n\`\`\`\n`);
+  console.error(grunn); process.exit(1);
+}
+process.on('unhandledRejection', (e) => stopp('Roboten krasjet: ' + (e && e.stack || e)));
+if (!SERVICE) stopp('Mangler SUPABASE_SERVICE_ROLE_KEY (GitHub-hemmelighet).');
+if (!KILDE) stopp('Mangler KURS (kurs-id).');
 const admin = createClient(SUPA_URL, SERVICE, { auth: { persistSession: false, autoRefreshToken: false } });
 
 // ---------------------------------------------------------------- funn
@@ -328,10 +334,11 @@ function rapport(info) {
 }
 
 // ---------------------------------------------------------------- hovedløp
-const info = await lagKopi();
+let info;
+try { info = await lagKopi(); } catch (e) { stopp('Kopien av kurset: ' + e.message); }
 console.log(`Kopi: ${info.kopi.navn} (${info.kopi.id}), ${info.ovelser.length} arbeidskrav`);
 const elever = [];
-for (const navn of VALGT) elever.push(await lagElev(navn, ALLE.indexOf(navn) + 1, info.kopi.id));
+for (const navn of VALGT) { try { elever.push(await lagElev(navn, ALLE.indexOf(navn) + 1, info.kopi.id)); } catch (e) { stopp('Kontoen til ' + navn + ': ' + e.message); } }
 if (NULLSTILL) for (const e of elever) await nullstill(e, info.ovelser);
 const nettleser = await chromium.launch();
 for (let runde = 1; runde <= RUNDER; runde++) {
