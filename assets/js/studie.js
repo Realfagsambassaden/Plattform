@@ -2258,7 +2258,8 @@ function studieStart() {
         // Levere utregningen er likestilt med å skrive inn svaret: ett trykk, og bildet vurderes med en gang.
         (!a ? '<p class="st-lever"><label class="st-btn">' + ikon('kamera', 18) + ' Lever utregningen (bilde)<input type="file" accept="image/*" capture="environment" id="st-lever" hidden></label>' +
           '<span class="st-sm"> Svaret med to streker under. Du trenger ikke skrive det inn.</span></p>' : '') +
-        '<p class="st-dmhjelp">' + (a ? '' : '<label class="st-btn g liten">' + ikon('kamera', 18) + ' ' + (q.bilde ? 'Vis Dashman nytt bilde' : 'Vis Dashman utregningen') + '<input type="file" accept="image/*" capture="environment" id="st-qskann" hidden></label> ') +
+        // Bilde til Dashman tas inne i Dashman-samtalen (kameraknappen der), ikke med egen knapp her.
+        '<p class="st-dmhjelp">' +
         (!a && !x.rep ? '<button type="button" class="st-btn g liten" data-h="hoppOver" title="Gå videre uten å svare. Spørsmålet kommer igjen til slutt.">Hopp over →</button> ' : '') +
         (appModus() || !a ? '<button type="button" class="st-btn g liten st-dmknapp" data-h="quizDashman"><img class="st-dmknapp-ikon" src="' + DMBILDER + 'ikon.webp" alt=""> ' + (a ? 'Snakk med Dashman om dette' : 'Spør Dashman om hjelp') + '</button>' : '') + '</p>' +
         (!a && q.bilde ? '<img class="st-forhand" alt="Utregningen din" src="' + q.bilde + '"><p class="st-sm">Dashman ser på utregningen og gir hint uten å si svaret. Bildet blir med når du har valgt svar.' +
