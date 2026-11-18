@@ -1,0 +1,142 @@
+# Ambassadørene. Alt om samlekortene og profilsidene står her, og verktoy/samlekort.py lager HTML-en ut fra fila
+# (Realfagsambassaden: forsiden og profil/<id>.html; fysikkhjelp.no: forsiden og «Om oss» for dem med fysikkhjelp under nettsteder).
+# Rediger gjerne rett i GitHub. Felt som står tomme, vises som «???» på kortet eller som «Kommer snart» på profilen.
+#
+#   utdanning: skår 0–100 (søyle på kortet), utdanning_tekst: hva den står for
+#   erfaring_ar: år med undervisning og formidling (søyle på kortet; full søyle = 20 år)
+#   kvalitet:  ett eller to ord («Engasjert», «Kul», «Koselig» …)
+#   funfact:   noe artig (kort, helst under 60 tegn)
+#   koffein:   antall kopper kaffe (eller annet med koffein) om dagen
+#   farge:     gronn, oransje, bla, rosa, turkis, gul
+ambassadorer:
+  - id: ben
+    navn: Dr. Normann
+    fullt_navn: Ben David Normann
+    foto: ben-portrett.webp
+    ikon: drnormann-ikon.png
+    rolle: Ph.d. i matematisk kosmologi
+    farge: gronn
+    nettsteder: [fysikkhjelp]
+    utdanning: 95
+    utdanning_tekst: Ph.d.
+    erfaring_ar: 10
+    kvalitet:
+    funfact:
+    koffein:
+    om: >-
+      Jeg heter Ben, har doktorgrad i matematisk kosmologi og har formidlet og undervist realfag i ti år. Forklaringene jeg legger ut,
+      er de jeg selv skulle ønske jeg hadde som student: én idé om gangen, tegnet ut på tavla, med regning du kan følge linje for linje.
+      Jeg vil at du skal skjønne <em>hvorfor</em> fysikken er som den er, ikke bare hvilken formel du skal bruke.
+    utdanning_og_bakgrunn:
+    erfaring:
+      - Doktorgrad i matematisk kosmologi
+      - Forsker og underviser i fysikk og matematikk ved NTNU
+      - Lager undervisningsvideoer som Dr. Normann
+    meritter:
+      - Har holdt TEDx-foredrag
+      - Vant den nasjonale finalen i Forsker Grand Prix 2018
+      - Vant to priser for filmserien «Kosmologi med Ben», som snart kommer på NRK
+    tilbud:
+      - [Forkurs i fysikk, https://fysikkhjelp.no/fysikk-forkurs/index.html]
+      - [Ingeniørfysikk, https://fysikkhjelp.no/ingeniorfysikk/index.html]
+      - [Forkurs i matematikk, https://matematikkhjelp.no/matte-forkurs/index.html]
+      - [Flervariabel kalkulus, https://matematikkhjelp.no/flervariabel-kalkulus/index.html]
+    sosiale: {youtube: , instagram: , tiktok: , facebook: , linkedin: , nettside: }
+
+  - id: andrea
+    navn: Andrea
+    fullt_navn: Andrea
+    foto: andrea-portrett.webp
+    ikon: andrea-ikon.png
+    rolle: Dobbel mastergrad
+    farge: oransje
+    nettsteder: [fysikkhjelp]
+    utdanning: 85
+    utdanning_tekst: Dobbel master
+    erfaring_ar:
+    kvalitet:
+    funfact:
+    koffein:
+    om: Andrea har i en årrekke vært ansiktet utad og selve drivkraften i NTNU Fysikkstudio, som lager fysikkvideoer av høy kvalitet.
+    erfaring:
+      - Dobbel mastergrad
+      - "NTNU Fysikkstudio: fysikkvideoer av høy kvalitet"
+    meritter: []
+    tilbud: []
+    sosiale: {}
+
+  - id: siebe
+    navn: Distriktsmatematikeren
+    fullt_navn: Siebe
+    foto: siebe-portrett.webp
+    ikon: distriktsmatematikeren-ikon.png
+    rolle: Ph.d. i fysikk
+    farge: bla
+    utdanning: 95
+    utdanning_tekst: Ph.d.
+    erfaring_ar:
+    kvalitet:
+    funfact:
+    koffein:
+    om: Siebe har doktorgrad i fysikk og brenner for å formidle matematikk og realfag.
+    erfaring: [Doktorgrad i fysikk]
+    meritter: []
+    tilbud: []
+    sosiale: {}
+
+  - id: mikael
+    navn: Mikael
+    fullt_navn: Mikael
+    foto: mikael-portrett.webp
+    ikon: mikael-ikon.png
+    rolle: Ph.d. i matematikk
+    farge: rosa
+    utdanning: 95
+    utdanning_tekst: Ph.d.
+    erfaring_ar:
+    kvalitet:
+    funfact:
+    koffein:
+    om: Mikael har doktorgrad i matematikk.
+    erfaring: [Doktorgrad i matematikk]
+    meritter: []
+    tilbud: []
+    sosiale: {}
+
+  - id: kenny
+    navn: Kenny
+    fullt_navn: Kenny
+    foto: kenny-portrett.webp
+    ikon: kenny-ikon.png
+    rolle: Lektor i fysikk
+    farge: turkis
+    utdanning: 78
+    utdanning_tekst: Master + lektor
+    erfaring_ar:
+    kvalitet: Kul
+    funfact:
+    koffein:
+    om: Kenny er veldig kul. Han har mastergrad i fysikk, er lektor i fysikk og har erfaring fra Newton-rommet.
+    erfaring: [Mastergrad i fysikk, Lektor i fysikk, Newton-rommet]
+    meritter: []
+    tilbud: []
+    sosiale: {}
+
+  - id: jonas
+    navn: Jonas
+    fullt_navn: Jonas
+    foto: jonas-portrett.webp
+    ikon: jonas-ikon.png
+    rolle: Master i fysikk
+    farge: gul
+    utdanning: 80
+    utdanning_tekst: Master + bachelor
+    erfaring_ar:
+    kvalitet: Dyktig formidler
+    funfact:
+    koffein:
+    om: Jonas er en ekstremt dyktig formidler, med bachelorgrad i datavitenskap og master i fysikk.
+    erfaring: [Bachelorgrad i datavitenskap, Master i fysikk]
+    meritter: []
+    tilbud: []
+    sosiale: {}

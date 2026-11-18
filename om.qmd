@@ -15,30 +15,13 @@ page-layout: full
 <section class="profiler">
   <p class="eyebrow">Våre profiler</p>
   <h2>Hvem forklarer?</h2>
-  <div class="profil-rad">
-    <article class="profilkort">
-      <div class="profil-bilder">
-        <a class="profil-lenke" href="profiler/ben.html" aria-label="Om Dr. Normann"><img class="profil-foto" src="assets/img/ben-portrett.webp" alt="Portrett av Ben David Normann"><img class="profil-ikon" src="assets/img/drnormann-ikon.png" alt=""></a>
-        <a class="btn-chalk profil-tilbud" href="profiler/ben.html">Mine tilbud</a>
-      </div>
-      <div>
-        <h3>Dr. Normann</h3>
-        <p class="profil-rolle">Ph.d. i matematisk kosmologi</p>
-        <p>Jeg heter Ben, har doktorgrad i matematisk kosmologi og har formidlet og undervist realfag i ti år. I 2018 vant jeg den nasjonale finalen i Forsker Grand Prix.</p>
-        <p>Her legger jeg ut forklaringene jeg selv skulle ønske jeg hadde: én idé om gangen, tegnet ut på tavla, med regning du kan følge linje for linje.</p>
-      </div>
-    </article>
-    <article class="profilkort">
-      <div class="profil-bilder">
-        <a class="profil-lenke" href="profiler/andrea.html" aria-label="Om Andrea"><img class="profil-foto" src="assets/img/andrea-portrett.webp" alt="Portrett av Andrea"><img class="profil-ikon" src="assets/img/andrea-ikon.png" alt=""></a>
-        <a class="btn-chalk profil-tilbud" href="profiler/andrea.html">Mine tilbud</a>
-      </div>
-      <div>
-        <h3>Andrea</h3>
-        <p class="profil-rolle">Dobbel mastergrad</p>
-        <p>Andrea har i en årrekke vært ansiktet utad og selve drivkraften i NTNU Fysikkstudio, som lager fysikkvideoer av høy kvalitet.</p>
-      </div>
-    </article>
+  <!-- >>> samlekort (lages av verktoy/samlekort.py fra ambassaden/ambassadorer.yml – ikke rediger mellom disse linjene) -->
+  <div class="samlekort-rad">
+    <article class="samlekort" data-farge="gronn" id="ben"><a class="sk-inni" href="https://realfagsambassaden.no/profil/ben.html" aria-label="Les om Dr. Normann"><span class="sk-flate"><span class="sk-topp"><h3 class="sk-navn">Dr. Normann</h3><img class="sk-ikon" src="https://realfagsambassaden.no/img/drnormann-ikon.png" alt=""></span><span class="sk-bilde"><img src="https://realfagsambassaden.no/img/ben-portrett.webp" alt="Portrett av Ben David Normann"></span><span class="sk-rolle">Ph.d. i matematisk kosmologi</span><span class="sk-stats"><span class="sk-stat"><b>Utdanning</b><span class="sk-verdi"><span class="sk-soyle" style="--v:95%"><i></i></span><small>Ph.d.</small></span></span><span class="sk-stat"><b>Erfaring</b><span class="sk-verdi"><span class="sk-soyle" style="--v:50%"><i></i></span><small>10 år</small></span></span><span class="sk-stat"><b>Kvalitet</b><span class="sk-verdi"><em class="sk-ukjent">???</em></span></span><span class="sk-stat"><b>Fun fact</b><span class="sk-verdi"><em class="sk-ukjent">???</em></span></span><span class="sk-stat"><b>Koffein</b><span class="sk-verdi"><em class="sk-ukjent">???</em></span></span></span><span class="sk-bunn"><span class="sk-tilbud">Trykk for å lese mer →</span><span class="sk-nr">#001</span></span></span><span class="sk-glans" aria-hidden="true"></span></a></article>
+    <article class="samlekort" data-farge="oransje" id="andrea"><a class="sk-inni" href="https://realfagsambassaden.no/profil/andrea.html" aria-label="Les om Andrea"><span class="sk-flate"><span class="sk-topp"><h3 class="sk-navn">Andrea</h3><img class="sk-ikon" src="https://realfagsambassaden.no/img/andrea-ikon.png" alt=""></span><span class="sk-bilde"><img src="https://realfagsambassaden.no/img/andrea-portrett.webp" alt="Portrett av Andrea"></span><span class="sk-rolle">Dobbel mastergrad</span><span class="sk-stats"><span class="sk-stat"><b>Utdanning</b><span class="sk-verdi"><span class="sk-soyle" style="--v:85%"><i></i></span><small>Dobbel master</small></span></span><span class="sk-stat"><b>Erfaring</b><span class="sk-verdi"><em class="sk-ukjent">???</em></span></span><span class="sk-stat"><b>Kvalitet</b><span class="sk-verdi"><em class="sk-ukjent">???</em></span></span><span class="sk-stat"><b>Fun fact</b><span class="sk-verdi"><em class="sk-ukjent">???</em></span></span><span class="sk-stat"><b>Koffein</b><span class="sk-verdi"><em class="sk-ukjent">???</em></span></span></span><span class="sk-bunn"><span class="sk-tilbud">Trykk for å lese mer →</span><span class="sk-nr">#002</span></span></span><span class="sk-glans" aria-hidden="true"></span></a></article>
   </div>
+  <!-- <<< samlekort -->
+  <p class="alle-ambassadorer"><a href="https://realfagsambassaden.no/#ambassadorer">Se alle ambassadørene på Realfagsambassaden →</a></p>
 </section>
+<script src="assets/js/samlekort.js"></script>
 ```

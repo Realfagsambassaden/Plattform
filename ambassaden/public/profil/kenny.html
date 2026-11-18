@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kenny – Realfagsambassaden</title>
+<meta name="description" content="Lektor i fysikk. Ambassadør i Realfagsambassaden.">
+<link rel="icon" href="../img/ra-favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Comic+Neue:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../stil.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="kritt" x="-5%" y="-15%" width="110%" height="130%"><feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="4" result="ujevn"/><feDisplacementMap in="SourceGraphic" in2="ujevn" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="kant"/><feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="1" seed="9" result="korn"/><feColorMatrix in="korn" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.6 1.55" result="hull"/><feComposite in="kant" in2="hull" operator="in"/></filter></svg>
+<header class="topp">
+  <a class="merke" href="../"><img src="../img/ra-ikon.png" alt="" width="44" height="44"><img class="ordmerke" src="../img/ra-logo-linje.png" alt="Realfagsambassaden" height="26"></a>
+  <nav aria-label="Hovedmeny">
+    <a href="../#sider">Ressurssider</a>
+    <a href="../#podkast">Podkast</a>
+    <a href="../#ambassadorer">Ambassadørene</a>
+    <a href="../doner.html">Donér materiale</a>
+  </nav>
+</header>
+
+<!-- Laget av verktoy/samlekort.py fra ambassaden/ambassadorer.yml – rediger yml-fila, ikke denne. -->
+<main>
+  <section class="seksjon profilside">
+    <p class="overlinje"><a href="../#ambassadorer">← Alle ambassadørene</a></p>
+    <div class="profilside-rad">
+      <div class="profilside-kort"><article class="samlekort" data-farge="turkis" id="kenny"><div class="sk-inni"><span class="sk-flate"><span class="sk-topp"><h1 class="sk-navn">Kenny</h1><img class="sk-ikon" src="../img/kenny-ikon.png" alt=""></span><span class="sk-bilde"><img src="../img/kenny-portrett.webp" alt="Portrett av Kenny"></span><span class="sk-rolle">Lektor i fysikk</span><span class="sk-stats"><span class="sk-stat"><b>Utdanning</b><span class="sk-verdi"><span class="sk-soyle" style="--v:78%"><i></i></span><small>Master + lektor</small></span></span><span class="sk-stat"><b>Erfaring</b><span class="sk-verdi"><em class="sk-ukjent">???</em></span></span><span class="sk-stat"><b>Kvalitet</b><span class="sk-verdi"><em>Kul</em></span></span><span class="sk-stat"><b>Fun fact</b><span class="sk-verdi"><em class="sk-ukjent">???</em></span></span><span class="sk-stat"><b>Koffein</b><span class="sk-verdi"><em class="sk-ukjent">???</em></span></span></span><span class="sk-bunn"><span class="sk-tilbud"></span><span class="sk-nr">#005</span></span></span><span class="sk-glans" aria-hidden="true"></span></div></article></div>
+      <div class="profilside-tekst">
+        <h2>Om meg</h2><p>Kenny er veldig kul. Han har mastergrad i fysikk, er lektor i fysikk og har erfaring fra Newton-rommet.</p>
+        <h2>Utdanning og bakgrunn</h2><p class="snart">Kommer snart.</p>
+        <h2>Erfaring</h2><ul><li>Mastergrad i fysikk</li><li>Lektor i fysikk</li><li>Newton-rommet</li></ul>
+        <h2>Mine tilbud</h2><p class="snart">Kommer snart.</p>
+        <h2>Følg meg</h2><p class="snart">Lenker kommer.</p>
+        <h2>Foredrag, skolebesøk og privatundervisning</h2><p>Vil du booke privatundervisning, eller invitere meg til skolebesøk, show eller andre arrangementer? <span class="snart">Kontaktinformasjon kommer snart.</span></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="bunn">
+  <span>Realfagsambassaden · drevet av Normann Formidling</span>
+  <span><a href="../">Til forsiden</a></span>
+</footer>
+
+<script>
+(function () {
+  var skjema = document.getElementById('doner'), slipp = document.getElementById('slipp');
+  var input = slipp.querySelector('input[type=file]'), liste = slipp.querySelector('.filliste');
+  var melding = skjema.querySelector('.melding'), fremdrift = skjema.querySelector('.fremdrift'), knapp = skjema.querySelector('button[type=submit]');
+  var valgte = [];
+  function mb(b) { return (b / 1048576).toFixed(1) + ' MB'; }
+  function vis() {
+    liste.innerHTML = '';
+    valgte.forEach(function (f, i) {
+      var li = document.createElement('li'); li.textContent = f.name + ' · ' + mb(f.size);
+      var x = document.createElement('button'); x.type = 'button'; x.textContent = '×'; x.setAttribute('aria-label', 'Fjern ' + f.name);
+      x.onclick = function (e) { e.preventDefault(); valgte.splice(i, 1); vis(); };
+      li.appendChild(x); liste.appendChild(li);
+    });
+  }
+  function legg(fl) { Array.prototype.forEach.call(fl, function (f) { valgte.push(f); }); vis(); }
+  input.addEventListener('change', function () { legg(input.files); input.value = ''; });
+  ['dragenter', 'dragover'].forEach(function (t) { slipp.addEventListener(t, function (e) { e.preventDefault(); slipp.classList.add('over'); }); });
+  ['dragleave', 'drop'].forEach(function (t) { slipp.addEventListener(t, function (e) { e.preventDefault(); slipp.classList.remove('over'); }); });
+  slipp.addEventListener('drop', function (e) { legg(e.dataTransfer.files); });
+  function si(t, feil) { melding.textContent = t; melding.className = 'melding' + (feil ? ' feil' : ' ok'); }
+
+  skjema.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!skjema.navn.value.trim() || !skjema.epost.value.trim() || !skjema.fag.value.trim()) return si('Fyll inn navn, e-post og fag.', true);
+    if (!valgte.length) return si('Legg ved minst én fil.', true);
+    if (!skjema.rettigheter.checked) return si('Du må bekrefte at du har rett til å dele notatene.', true);
+    var tot = valgte.reduce(function (s, f) { return s + f.size; }, 0);
+    if (tot > 90 * 1048576) return si('Filene er for store til sammen (maks 90 MB). Del dem opp i flere donasjoner.', true);
+    var fd = new FormData(skjema); fd.delete('filer'); valgte.forEach(function (f) { fd.append('filer', f, f.name); });
+    var x = new XMLHttpRequest(); x.open('POST', '/api/doner');
+    knapp.disabled = true; fremdrift.hidden = false; si('Laster opp …');
+    x.upload.onprogress = function (ev) { if (ev.lengthComputable) { fremdrift.firstElementChild.style.width = (100 * ev.loaded / ev.total) + '%'; si(ev.loaded < ev.total ? 'Laster opp … ' + Math.round(100 * ev.loaded / ev.total) + ' %' : 'Lagrer notatene trygt … dette tar litt tid. Ikke lukk siden.'); } };
+    x.onload = function () {
+      var j = {}; try { j = JSON.parse(x.responseText); } catch (er) {}
+      knapp.disabled = false; fremdrift.hidden = true;
+      if (x.status >= 200 && x.status < 300 && j.ok) {
+        skjema.reset(); valgte = []; vis();
+        si('Tusen takk! Notatene er mottatt. Vi tar kontakt når vi har gått gjennom dem.');
+      } else si(j.feil || ('Noe gikk galt (' + x.status + '). Prøv igjen.'), true);
+    };
+    x.onerror = function () { knapp.disabled = false; fremdrift.hidden = true; si('Fikk ikke kontakt. Sjekk nettforbindelsen og prøv igjen.', true); };
+    x.send(fd);
+  });
+})();
+</script>
+<script src="../kort.js"></script>
+</body>
+</html>
