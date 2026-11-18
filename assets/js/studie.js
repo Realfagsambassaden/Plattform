@@ -327,7 +327,9 @@ function studieStart() {
     var l = ovStatus(o), n = function (s) { return l.filter(function (x) { return x.status === s; }).length; }, krav = Math.min(o.krav, l.length);
     var ok = n('ok') + n('kanskje') >= krav;
     return '<div class="st-ovoversikt"><div class="st-ovprikker">' + l.map(function (x, i) {
-        return '<span class="st-ovprikk ' + x.status + (naId && x.ider.indexOf(naId) >= 0 ? ' na' : '') + '" title="' + (i + 1) + ': ' + STATUSNAVN[x.status] + '">' + (i + 1) + '</span>'; }).join('') + '</div>' +
+        var kl = 'st-ovprikk ' + x.status + (naId && x.ider.indexOf(naId) >= 0 ? ' na' : ''), tt = (i + 1) + ': ' + STATUSNAVN[x.status];
+        return naId ? '<button type="button" class="' + kl + '" data-h="ovGa" data-i="' + i + '" title="' + tt + ' – gå til spørsmålet">' + (i + 1) + '</button>'
+          : '<span class="' + kl + '" title="' + tt + '">' + (i + 1) + '</span>'; }).join('') + '</div>' +
       // Bare kravet under tallene. Fargen sier status: grønn godkjent, oransje under vurdering (godkjent hvis «kanskje»-svarene holder), rød ikke godkjent ennå. Forklaring bak (i).
       '<div class="st-ovkrav"><b class="st-ovtotal ' + (n('ok') >= krav ? 'ok' : ok ? 'kanskje' : 'nei') + '">Krav: ' + krav + ' av ' + l.length + '</b>' +
       '<button type="button" class="st-ovinfoknapp" data-h="ovInfo" aria-label="Hva betyr fargene?">i</button></div>' +
@@ -357,9 +359,9 @@ function studieStart() {
     // Fortsett der du slapp: spørsmål som allerede er godkjent (eller under vurdering) fra før, hoppes over.
     // Svarene ligger i databasen, så dette virker også på en annen enhet og etter at appen er lukket.
     if (liste && o.kilde === 'egne') {
-      var okIder = {}, nOk = 0;
-      ovStatus(o).forEach(function (g) { if (g.status === 'ok' || g.status === 'kanskje') { nOk++; g.ider.forEach(function (id) { okIder[id] = true; }); } });
-      if (nOk) { T.q.okIder = okIder; varsle(nOk === n ? 'Alle spørsmålene er allerede godkjent.' : 'Du fortsetter der du slapp. ' + nOk + ' av ' + n + ' spørsmål er allerede godkjent.'); }
+      var nOk = ovStatus(o).filter(function (g) { return g.status === 'ok' || g.status === 'kanskje'; }).length;
+      T.q.hoppOk = true;
+      if (nOk) { varsle(nOk === n ? 'Alle spørsmålene er allerede godkjent.' : 'Du fortsetter der du slapp. ' + nOk + ' av ' + n + ' spørsmål er allerede godkjent.'); }
     }
     nesteSp();
     if (T.q.ferdig) { avsluttQuiz(); return ga('resultat'); }
@@ -448,6 +450,12 @@ function studieStart() {
     var t = String(r == null ? '' : r).replace(/\$/g, '').replace(/\\(?:mathrm|text|mathit)\{([^}]*)\}/g, '$1').replace(/\\[,;: ]|~/g, ' ')
       .replace(/\\cdot|\\times|·|×/g, '*').replace(/−/g, '-').replace(/\\mu\s*|μ|µ/g, 'u').replace(/\\Omega|Ω/g, 'ohm').replace(/[{}]/g, '');
     if (t.lastIndexOf('=') >= 0) t = t.slice(t.lastIndexOf('=') + 1);
+    // Brøk: «3/4», «-1/2 A» eller \frac{3}{4}. En brøk er eksakt, så alle antall siffer godtas.
+    var br = /^\s*([-+]?)\s*\\[dt]?frac\s*(\d+(?:[.,]\d+)?)\s*(\d+(?:[.,]\d+)?)|^\s*([-+]?)\s*\(?\s*(\d+(?:[.,]\d+)?)\s*\/\s*(\d+(?:[.,]\d+)?)\s*\)?(?![\d.,^])/.exec(t);
+    if (br) {
+      var bt = +(br[2] || br[5]).replace(',', '.'), bn = +(br[3] || br[6]).replace(',', '.');
+      if (bn) return { v: ((br[1] || br[4]) === '-' ? -1 : 1) * bt / bn, sMin: 1, sMax: 99, enhet: t.slice(br.index + br[0].length).replace(/^\s*\*?\s*/, '').replace(/\s+/g, '').replace(/[.]$/, ''), brok: true };
+    }
     var m = /([-+]?\s*\d+(?:[.,]\d+)?|[-+]?\s*[.,]\d+)(?:\s*[eE]\s*([-+]?\d+)|\s*\*\s*10\s*\^\s*\(?\s*([-+]?\d+)\s*\)?)?/.exec(t);
     if (!m) return null;
     var mant = m[1].replace(/\s/g, '').replace(',', '.'), eks = +(m[2] || m[3] || 0);
@@ -527,7 +535,7 @@ function studieStart() {
   // Retter et svar som ikke er godkjent: forrige forsøk tas ut av resultatet (det står igjen i statistikken), og det nye vurderes.
   function nullstillSvar(q) {
     var x = q.na; if (q.svart == null) return;
-    q.res.pop(); if (!x.rep) q.hovedRes.pop();
+    q.res.pop(); if (!x.rep && !x.omvei) q.hovedRes.pop();
     q.svart = null; q.kiSvar = null; q.kiBilde = false; q.kiGodkjent = false; q.sporLagre = false;
   }
   function oppdaterTall() {
@@ -549,17 +557,22 @@ function studieStart() {
   function nesteSp() {
     var q = T.q, x = null, rep = false;
     // Arbeidskrav: godkjente spørsmål fra tidligere økter telles som riktige og hoppes over.
-    if (q.okIder && q.liste) {
-      while (q.nr < q.hoved && q.liste[q.nr].some(function (y) { return q.okIder[y.id]; })) { q.res.push('riktig'); q.hovedRes.push('riktig'); q.nr++; }
+    // (Også spørsmål du har fått godkjent via en «omvei» tidligere i økta.)
+    if (q.hoppOk && q.liste) {
+      var okIder = {}; ovStatus(q.ovelse).forEach(function (g) { if (g.status === 'ok' || g.status === 'kanskje') g.ider.forEach(function (id) { okIder[id] = true; }); });
+      while (q.nr < q.hoved && q.liste[q.nr].some(function (y) { return okIder[y.id]; })) { q.res.push('riktig'); q.hovedRes.push('riktig'); q.nr++; }
       if (q.nr >= q.hoved) { q.ferdig = true; return; }
     }
     if (q.nr >= q.hoved) { x = repSp(q); rep = !!x; }
     if (!x && q.nr < q.hoved) x = q.liste ? velgVariant(q.liste[q.nr]) : velgNeste(q.tema, q.brukt, q.ut);
     if (!x) { q.ferdig = true; return; }
     q.brukt.push(x.id);
+    lagNa(q, x, rep);
+  }
+  function lagNa(q, x, rep, omvei) {
     var alt = x.tall ? [{ svar: x.riktig, type: 'riktig' }] : [{ svar: x.riktig, type: 'riktig' }].concat(x.feil || []).map(function (a) { return [Math.random(), a]; }).sort(function (a, b) { return a[0] - b[0]; }).map(function (a) { return a[1]; });
     stoppTale();
-    q.na = Object.assign({}, x, { alt: alt, rep: rep, start: performance.now() }); q.svart = null;
+    q.na = Object.assign({}, x, { alt: alt, rep: rep, omvei: !!omvei, start: performance.now() }); q.svart = null;
     if (x.tall) sifferFasit(q.na);
     if (q.forstatt && q.forstatt.id !== x.id) q.forstatt = null; q.kiGodkjent = false; q.kiSvar = null; q.kiBilde = false; q.bilde = null; q.tekst = '';
   }
@@ -568,7 +581,7 @@ function studieStart() {
     if (q.svart != null) return;
     q.svart = i;
     var s = { id: x.id, nettsted: NETTSTED, tema: x.tema, undertema: x.undertema, v: x.vanskelighet, type: a.type, tid: tid, forv: x.forventet_tid_s, rep: x.rep, ki: null, dato: new Date().toISOString() };
-    T.svar.push(s); q.res.push(a.type); if (!x.rep) q.hovedRes.push(a.type); q.sist = s;
+    T.svar.push(s); q.res.push(a.type); if (!x.rep && !x.omvei) q.hovedRes.push(a.type); q.sist = s;
     var fs = q.forstatt && q.forstatt.id === x.id ? q.forstatt : null;
     if (fs && a.type === 'riktig') {
       // Bildet fra et tidligere forsøk viste forståelse; nå er svaret riktig, så spørsmålet er godkjent uten nytt bilde.
@@ -590,8 +603,35 @@ function studieStart() {
     }
     tegn();
   }
+  // Arbeidskrav: trykk på et nummer for å gå til det spørsmålet. Et senere spørsmål flyttes fram og tas nå.
+  // Et spørsmål du har vært på, åpnes som en «omvei»: svaret lagres (og kan gjøre spørsmålet godkjent),
+  // og «Tilbake» tar deg til spørsmålet du var på.
+  var OMVEI_FELT = ['na', 'svart', 'kiGodkjent', 'kiSvar', 'kiBilde', 'bilde', 'tekst', 'forstatt', 'sist'];
+  function gaTilSp(gi) {
+    var q = T.q; if (!q || !q.liste || !q.ovelse) return;
+    var gs = ovStatus(q.ovelse)[gi] || {}, erOk = gs.status === 'ok' || gs.status === 'kanskje', ider = gs.ider || [], li = q.liste.findIndex(function (g) { return g.some(function (y) { return ider.indexOf(y.id) >= 0; }); });
+    if (li < 0) return;
+    if (q.omvei) { tilbakeFraOmvei(); if (li === q.nr) return tegn(); }
+    if (li === q.nr) return;
+    stoppTale();
+    if (li > q.nr && q.svart == null && !erOk) {
+      q.brukt.pop(); q.liste.splice(q.nr, 0, q.liste.splice(li, 1)[0]); nesteSp(); return tegn();
+    }
+    var lagret = {}; OMVEI_FELT.forEach(function (f) { lagret[f] = q[f]; });
+    q.omvei = { lagret: lagret, nr: li };
+    // Et godkjent spørsmål kan øves på igjen uten at godkjenningen forsvinner (svaret lagres som repetisjon).
+    lagNa(q, velgVariant(q.liste[li]), erOk, true);
+    if (erOk) varsle('Spørsmål ' + (gi + 1) + ' er allerede godkjent. Du kan øve på det igjen uten at godkjenningen forsvinner.');
+    tegn(); scrollTo(0, rot.getBoundingClientRect().top + scrollY - 80);
+  }
+  function tilbakeFraOmvei() {
+    var q = T.q; if (!q || !q.omvei) return;
+    stoppTale(); OMVEI_FELT.forEach(function (f) { q[f] = q.omvei.lagret[f]; }); q.omvei = null;
+  }
   function videre() {
-    var q = T.q; q.nr++;
+    var q = T.q;
+    if (q.omvei) { tilbakeFraOmvei(); tegn(); return scrollTo(0, rot.getBoundingClientRect().top + scrollY - 80); }
+    q.nr++;
     if (q.nr >= q.antall) { avsluttQuiz(); return ga('resultat'); }
     nesteSp(); if (q.ferdig) { avsluttQuiz(); return ga('resultat'); }
     tegn(); scrollTo(0, rot.getBoundingClientRect().top + scrollY - 80);
@@ -695,7 +735,7 @@ function studieStart() {
     return 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, function () { return (Math.random() * 16 | 0).toString(16); });
   }
   function godkjennSp(q, tvil) {
-    q.res[q.res.length - 1] = 'riktig'; if (!q.na.rep && q.hovedRes.length) q.hovedRes[q.hovedRes.length - 1] = 'riktig';
+    q.res[q.res.length - 1] = 'riktig'; if (!q.na.rep && !q.na.omvei && q.hovedRes.length) q.hovedRes[q.hovedRes.length - 1] = 'riktig';
     // Grønt = godkjent, oransje = kanskje (Dashman i tvil: lav sikkerhet eller usikker håndskrift), rødt = ikke godkjent.
     q.kiGodkjent = tvil ? 'kanskje' : 'ja'; q.kanskje = (q.kanskje || 0) + (tvil ? 1 : 0);
   }
@@ -2322,7 +2362,7 @@ function studieStart() {
         }
         var sfk = q.ovelse && q.ovelse.svarform, mangler = q.sporLagre || q.venter, uGodkj = sfk && sfk !== 'valgfri' && !q.kiGodkjent && (!q.kiSvar || q.kiSvar.feil || (sfk === 'bilde' && !q.kiBilde));
         var igjen = a.type !== 'riktig' && !x.rep && !(q.ovelse && q.ovelse.ettForsok);
-        fb += '<p class="st-videre">' + '<button type="button" class="st-btn" data-h="videre"' + (mangler ? ' disabled title="Forklar svaret først"' : '') + '>' + (q.nr + 1 >= q.antall ? 'Se resultat' : 'Neste') + '</button>' + (uGodkj && !mangler ? ' <span class="st-sm">' + (sfk === 'bilde' ? 'Ikke godkjent før utregningen er lastet opp. Du kan gå videre og ta spørsmålet igjen senere.' : 'Ikke godkjent før du har forklart svaret. Du kan gå videre og ta spørsmålet igjen senere.') + '</span>' : '') + '</p>';
+        fb += '<p class="st-videre">' + '<button type="button" class="st-btn" data-h="videre"' + (mangler ? ' disabled title="Forklar svaret først"' : '') + '>' + (q.omvei ? 'Tilbake til spørsmålet du var på' : q.nr + 1 >= q.antall ? 'Se resultat' : 'Neste') + '</button>' + (uGodkj && !mangler ? ' <span class="st-sm">' + (sfk === 'bilde' ? 'Ikke godkjent før utregningen er lastet opp. Du kan gå videre og ta spørsmålet igjen senere.' : 'Ikke godkjent før du har forklart svaret. Du kan gå videre og ta spørsmålet igjen senere.') + '</span>' : '') + '</p>';
       }
       return '<div class="st-rad st-sm"><span>' + esc(tittel(x.tema)) + (function (n) { return n ? ' · ' + esc(n) : ''; })(((S[x.tema] || K[x.tema] || {}).undertemaer || {})[x.undertema]) + (x.rep ? ' · repetisjon' : '') + '</span><span>' + (q.nr + 1) + ' av ' + q.antall + '</span></div>' +
         '<div class="st-fram"><i style="width:' + (q.nr / q.antall * 100) + '%"></i></div>' + (q.ovelse ? ovOversiktHtml(q.ovelse, x.id) : '') +
@@ -3002,13 +3042,14 @@ function studieStart() {
       provIgjen: function () {
         // Uendelig mange forsøk: siste svar tas bort fra resultatet (det lagrede svaret blir stående i statistikken).
         var q = T.q, x = q.na; if (q.svart == null) return;
-        q.res.pop(); if (!x.rep) q.hovedRes.pop();
+        q.res.pop(); if (!x.rep && !x.omvei) q.hovedRes.pop();
         q.svart = null; q.kiSvar = null; q.kiBilde = false; q.kiGodkjent = false; q.sporLagre = false; q.tekst = ''; x.tallInn = ''; x.tallMelding = '';
         x.start = performance.now(); tegn();
       },
       hoppOver: function () {
         // Hopp over: spørsmålet flyttes sist (arbeidskrav) eller hoppes over (quiz fra banken).
-        var q = T.q; if (q.svart != null) return;
+        var q = T.q; if (q.omvei) { tilbakeFraOmvei(); return tegn(); }
+        if (q.svart != null) return;
         if (q.liste && q.nr < q.liste.length - 1) { q.liste.push(q.liste.splice(q.nr, 1)[0]); q.brukt.pop(); nesteSp(); if (q.ferdig) { avsluttQuiz(); return ga('resultat'); } tegn(); return; }
         if (q.liste) return varsle('Dette er det siste spørsmålet. Svar på det, eller trykk ✕ for å avslutte.', true);
         q.brukt.pop(); q.nr++; if (q.nr >= q.antall) { avsluttQuiz(); return ga('resultat'); } nesteSp(); tegn();
@@ -3045,6 +3086,7 @@ function studieStart() {
       svar: function () { svar(+d.i); },
       tallSvar: tallSvar,
       videre: videre,
+      ovGa: function () { gaTilSp(+d.i); },
       vurder: vurder,
       tale: function () { tale(b); },
       rad: hentRad,
