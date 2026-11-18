@@ -69,7 +69,11 @@ toc: false
 .studie .st-ovprikk.nei { border-color: #e06c6c; background: rgba(224,108,108,.22); color: #e06c6c; }
 .studie .st-ovprikk.na { outline: 2px solid var(--bs-body-color); outline-offset: 1px; }
 .studie .st-ovliste .st-ovprikk { min-width: .9rem; height: .9rem; vertical-align: middle; }
-.studie .st-ovtotal.ok { color: #8fcf86; } .studie .st-ovtotal.nei { color: #e06c6c; } .studie .st-fb.kanskje { border-color: #e39d63; } .studie .st-fb.kanskje b { color: #e39d63; } .studie .st-fb.n { border-color: var(--bs-danger); } .studie .st-fb.ki { border-color: var(--bs-info); }
+.studie .st-ovtotal.ok { color: #8fcf86; } .studie .st-ovtotal.kanskje { color: #e39d63; } .studie .st-ovtotal.nei { color: #e06c6c; }
+.studie .st-ovkrav { display: flex; align-items: center; justify-content: space-between; margin-top: .4rem; }
+.studie .st-ovinfoknapp { width: 1.5rem; height: 1.5rem; border-radius: 99px; border: 1.5px solid var(--bs-secondary-color); background: none; color: var(--bs-secondary-color); font: italic 700 .8rem/1 Georgia, serif; padding: 0; cursor: pointer; }
+.studie .st-ovinfo { display: none; margin-top: .4rem; } .studie .vis-info .st-ovinfo { display: block; } .studie .vis-info .st-ovinfoknapp { color: var(--bs-body-color); border-color: var(--bs-body-color); }
+.studie .st-ovinfo .st-ovprikk { min-width: 1.1rem; height: 1.1rem; font-size: .6rem; vertical-align: middle; } .studie .st-fb.kanskje { border-color: #e39d63; } .studie .st-fb.kanskje b { color: #e39d63; } .studie .st-fb.n { border-color: var(--bs-danger); } .studie .st-fb.ki { border-color: var(--bs-info); }
 .studie .st-vedlegg { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0; }
 .studie .st-vedlegg input[type=file] { display: none; }
 .studie .st-forhand { max-width: 100%; max-height: 260px; border-radius: 8px; margin: .3rem 0; }
