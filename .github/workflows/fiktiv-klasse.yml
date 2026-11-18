@@ -1,0 +1,68 @@
+# Fiktiv klasse: ti robot-elever bruker studieappen i en kopi av kurset og lager en feilrapport (verktoy/fiktiv_klasse).
+# Startes fra knappen «Kjør fiktiv klasse» i kursbyggeren (bare admin, via hint-tjeneren) eller her under Actions.
+# Krever GitHub-hemmeligheten SUPABASE_SERVICE_ROLE_KEY (Supabase → Project Settings → API keys → service_role / secret).
+name: Fiktiv klasse
+on:
+  workflow_dispatch:
+    inputs:
+      kurs:
+        description: Kurs-id (kurset som kopieres; robotene bruker kopien)
+        required: true
+      runder:
+        description: Antall runder (1–10)
+        default: "1"
+      elever:
+        description: Bare noen elever, f.eks. «Arnt,Julie» (tomt = alle ti)
+        default: ""
+      nullstill:
+        description: Slett robotenes tidligere svar først
+        type: boolean
+        default: false
+concurrency:
+  group: fiktiv-klasse
+  cancel-in-progress: false
+permissions:
+  contents: read
+  issues: write
+jobs:
+  klasse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Installer roboten
+        working-directory: verktoy/fiktiv_klasse
+        run: npm install --no-audit --no-fund && npx playwright install --with-deps chromium
+      - name: Kjør klassen
+        working-directory: verktoy/fiktiv_klasse
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          KURS: ${{ inputs.kurs }}
+          RUNDER: ${{ inputs.runder }}
+          ELEVER: ${{ inputs.elever }}
+          NULLSTILL: ${{ inputs.nullstill }}
+          UT: ${{ github.workspace }}/fiktiv-rapport
+        run: node klasse.mjs
+      - name: Sammendrag
+        if: always()
+        run: test -f fiktiv-rapport/rapport.md && head -c 60000 fiktiv-rapport/rapport.md >> "$GITHUB_STEP_SUMMARY" || echo "Ingen rapport." >> "$GITHUB_STEP_SUMMARY"
+      - name: Vedlegg (rapport og skjermbilder)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fiktiv-klasse-rapport
+          path: fiktiv-rapport
+          retention-days: 30
+      - name: Issue med funnene
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test -f fiktiv-rapport/rapport.md || exit 0
+          { head -c 55000 fiktiv-rapport/rapport.md; echo; echo "Skjermbilder: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"; } > /tmp/kropp.md
+          gh issue create --repo "${{ github.repository }}" --title "Fiktiv klasse $(date -u +%Y-%m-%d\ %H:%M): $(grep -m1 -o '[0-9]* feil, [0-9]* til sjekk' fiktiv-rapport/rapport.md)" --body-file /tmp/kropp.md --label fiktiv-klasse || \
+          gh issue create --repo "${{ github.repository }}" --title "Fiktiv klasse $(date -u +%Y-%m-%d\ %H:%M)" --body-file /tmp/kropp.md

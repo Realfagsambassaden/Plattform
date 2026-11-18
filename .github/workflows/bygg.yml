@@ -104,6 +104,7 @@ jobs:
       VARSEL_EPOST: ${{ secrets.VARSEL_EPOST }}
       PUSH_HEMMELIG: ${{ secrets.PUSH_HEMMELIG }}
       VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+      GH_DISPATCH: ${{ secrets.FIKTIV_TOKEN || secrets.PLATTFORM_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       # Eksamensoppgavene til eksamenstreningen ligger i det private repoet Realfagsambassaden/eksamener. Krever en
@@ -153,6 +154,20 @@ jobs:
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           VARSEL_EPOST: ${{ secrets.VARSEL_EPOST }}
+      # Fiktiv klasse: nøkkelen hint-tjeneren bruker for å starte GitHub-jobben (Actions: lese og skrive i Plattform).
+      # FIKTIV_TOKEN hvis den finnes, ellers PLATTFORM_TOKEN.
+      - name: Nøkkel for fiktiv klasse
+        if: env.GH_DISPATCH != ''
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: hint-tjener
+          command: deploy
+          secrets: |
+            GH_DISPATCH
+        env:
+          GH_DISPATCH: ${{ secrets.FIKTIV_TOKEN || secrets.PLATTFORM_TOKEN }}
       # Push-varsler i studieappen. Legg PUSH_HEMMELIG og VAPID_PRIVATE_KEY inn som GitHub-hemmeligheter.
       - name: Push-varsler (hvis satt opp)
         if: env.PUSH_HEMMELIG != '' && env.VAPID_PRIVATE_KEY != ''

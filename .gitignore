@@ -34,3 +34,4 @@ __pycache__/
 # Lages av verktoy/eksamener.py ved publisering
 hint-tjener/statisk/eksamen/*/
 eksamener-repo/
+verktoy/fiktiv_klasse/node_modules/

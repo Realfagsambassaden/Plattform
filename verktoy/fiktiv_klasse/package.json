@@ -1,0 +1,10 @@
+{
+  "name": "fiktiv-klasse",
+  "private": true,
+  "type": "module",
+  "description": "Robot-elever som tester studieappen (se klasse.mjs).",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "playwright": "^1.48.0"
+  }
+}
