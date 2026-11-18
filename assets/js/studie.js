@@ -249,7 +249,8 @@ function studieStart() {
     if (o.kilde !== 'egne' || !(o.sporsmal || []).length || (o.frist && Date.now() > Date.parse(o.frist))) return false;
     var l = ovStatus(o); return l.filter(function (x) { return x.status === 'ok' || x.status === 'kanskje'; }).length >= Math.min(o.krav, l.length);
   }
-  function godkjent(o) { return godkjentSamlet(o) || (T.quizer || []).some(function (q) { return q.ovelse === o.id && q.riktige >= Math.min(o.krav, q.antall || o.krav) && (!o.frist || Date.parse(q.fullfort) <= Date.parse(o.frist)); }); }
+  function frivillig(o) { return +o.krav === 0; }
+  function godkjent(o) { if (frivillig(o)) return false; return godkjentSamlet(o) || (T.quizer || []).some(function (q) { return q.ovelse === o.id && q.riktige >= Math.min(o.krav, q.antall || o.krav) && (!o.frist || Date.parse(q.fullfort) <= Date.parse(o.frist)); }); }
   function mineOvelser() { var a = aktivtKurs(), mine = a ? (a === 'egen' ? [] : [a.kurs]) : T.deltar.map(function (d) { return d.kurs; }); return (T.ovelser || []).filter(function (o) { return mine.indexOf(o.kurs) >= 0; }); }
   // Spørsmål i arbeidskrav ordnes etter delkapitlenes rekkefølge (temaenes og undertemaenes rekkefølge på nettstedet),
   // så studentene jobber sekvensielt. Innenfor et delkapittel beholdes rekkefølgen underviseren har.
@@ -329,8 +330,54 @@ function studieStart() {
     }).then(sjekk).then(function () { try { if (window.parent !== window) window.parent.postMessage({ type: 'fh-quiz', ovelse: rad.ovelse }, location.origin); } catch (e) {} })
       .catch(function (e) { varsle('Resultatet ble ikke lagret: ' + feilmelding(e), true); });
   }
+  // ---------------------------------------------------------------- Min quiz (studenten designer selv, Bens beslutning 18. nov. 2026)
+  // Quizen er frivillig hjelp gjennom semesteret, ikke noe faglæreren lager. Studenten velger hvor mange spørsmål om
+  // dagen og hva de skal handle om (denne ukas tema + repetisjon fra tidligere uker), eller lar Dashman velge ut fra
+  // kunnskapsprofilen (svake temaer og det som er lenge siden). Lagres i studie_innstillinger.niva._quiz.
+  function mq() { var q = (T.inn.niva || {})._quiz; return q && typeof q === 'object' ? q : null; }
+  function settMq(q) { T.inn.niva = Object.assign({}, T.inn.niva, { _quiz: Object.assign({}, mq() || {}, q) }); lagreInn(); }
+  function dagensSvar() { var d = idag(); return T.svar.filter(function (s) { return s.nettsted === NETTSTED && !s.rep && String(s.id).indexOf('ov-') !== 0 && String(s.dato || '').slice(0, 10) === d; }).length; }
+  function svakhet(t) {
+    var l = mineSvar(t).slice(-12); if (!l.length) return 0.5;
+    var feil = l.filter(function (s) { return eff(s) !== 'riktig'; }).length / l.length;
+    var sist = Date.parse(l[l.length - 1].dato) || 0, dager = (Date.now() - sist) / 864e5;
+    return feil + Math.min(0.5, dager / 28);   // feil teller mest; lenge siden gir litt ekstra (repetisjon med mellomrom)
+  }
+  function dagensTemaer(n) {
+    var v = loypeTemaer().filter(function (t) { return S[t]; }), uke = ukensTema(), i = v.indexOf(uke), q = mq() || {};
+    var tidligere = v.slice(0, Math.max(0, i)), ut = [];
+    if (q.dashman) {
+      var veid = tidligere.map(function (t) { return [svakhet(t) + Math.random() * 0.2, t]; }).sort(function (a, b) { return b[0] - a[0]; }).map(function (a) { return a[1]; });
+      for (var k2 = 0; k2 < n; k2++) ut.push(k2 % 2 === 0 && S[uke] ? uke : (veid[(k2 >> 1) % Math.max(1, veid.length)] || uke));
+    } else {
+      var bak = q.bakover === 'alle' ? tidligere : tidligere.slice(Math.max(0, tidligere.length - (+q.bakover || 0)));
+      var nRep = bak.length ? Math.round(n * (q.bakover && q.bakover !== '0' ? 0.4 : 0)) : 0;
+      for (var j = 0; j < n - nRep; j++) ut.push(S[uke] ? uke : bak[j % bak.length]);
+      for (var r = 0; r < nRep; r++) ut.push(bak[Math.floor(Math.random() * bak.length)]);
+    }
+    return ut.filter(Boolean);
+  }
+  function startDagensQuiz(flere) {
+    var q = mq() || {}, n = +q.antall || 1, igjen = flere ? n : Math.max(0, n - dagensSvar());
+    if (!igjen) return ga('ferdigIdag', { t: ukensTema() });
+    var tm = dagensTemaer(igjen), brukt = [], liste = [];
+    tm.forEach(function (t) { var x = velgNeste(t, brukt.concat(T.svar.filter(function (s) { return String(s.dato || '').slice(0, 10) === idag(); }).map(function (s) { return s.id; }))); if (x) { brukt.push(x.id); liste.push([x]); } });
+    if (!liste.length) return varsle('Fant ingen spørsmål til dagens quiz. Velg temaer under «Design din løype».', true);
+    T.q = { tema: tm[0], nr: 0, hoved: liste.length, antall: liste.length, brukt: [], res: [], hovedRes: [], rekke: 0, liste: liste, dagens: true, forsok: nyUuid() };
+    nesteSp(); ga('quiz');
+  }
+  function minQuizValg() {
+    var q = mq() || {}, pa = q.pa !== false && mq() !== null, r = function (navn, verdi, tekst, valgt) { return '<label class="st-valg"><input type="radio" name="' + navn + '" value="' + verdi + '"' + (valgt ? ' checked' : '') + '> ' + tekst + '</label>'; };
+    return '<h2>Min quiz</h2><p class="st-sm">Frivillig hjelp gjennom semesteret: noen spørsmål hver dag fra temaet du jobber med nå, og repetisjon av det du har hatt. Du bestemmer selv, eller lar Dashman velge.</p>' +
+      r('st-mq-antall', '0', 'Ingen daglig quiz', !pa) + r('st-mq-antall', '1', 'Ett spørsmål om dagen', pa && (+q.antall || 1) === 1) + r('st-mq-antall', '3', 'Tre spørsmål om dagen', pa && +q.antall === 3) + r('st-mq-antall', '5', 'Fem spørsmål om dagen', pa && +q.antall === 5) +
+      (pa ? '<h3>Hva skal spørsmålene handle om?</h3>' +
+        r('st-mq-hva', 'dashman', 'La Dashman velge: denne ukas tema, og repetisjon av det du sliter med eller ikke har sett på en stund', !!q.dashman) +
+        r('st-mq-hva', 'selv', 'Jeg velger selv:', !q.dashman) +
+        (!q.dashman ? '<label class="st-sm" style="margin-left:1.6rem">Repetisjon fra tidligere uker <select data-mq="bakover">' + [['0', 'ingen, bare denne uka'], ['1', 'forrige uke'], ['2', 'de to siste ukene'], ['4', 'de fire siste ukene'], ['alle', 'alle tidligere uker']].map(function (o) { return '<option value="' + o[0] + '"' + (String(q.bakover || '0') === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></label>' : '') : '') +
+      '<p class="st-sm">Vil du øve mer på ett tema, åpner du uka i Ukeplanen min og trykker «Øv på temaet».</p>';
+  }
   function startQuiz(t, flere) {
-    var dag = T.inn.modus === 'dag' && !flere;
+    var dag = false;   // «Øv på temaet»: alltid et helt sett; den daglige quizen er startDagensQuiz
     var hoved = dag ? Math.max(0, PER_DAG - iDag(t)) : OKT;
     if (!hoved) return ga('ferdigIdag', { t: t });
     // Repetisjon bare når det finnes svar fra andre temaer å repetere.
@@ -1511,7 +1558,7 @@ function studieStart() {
         if (!x.tekst.trim() || !x.riktig.trim() || x.feil.filter(function (y) { return y.svar.trim(); }).length < 2) return varsle('Spørsmål ' + (i + 1) + ' mangler tekst, riktig svar eller minst to gale svar.', true); }
     }
     if (v.kilde === 'egne' && v.rekkefolge !== 'tilfeldig') v.sporsmal = sorterDelkap(v.sporsmal, (v.ut[0] || '').split('/')[1]);
-    var krav = Math.max(1, Math.min(n, +v.krav || 1));
+    var krav = String(v.krav) === '0' ? 0 : Math.max(1, Math.min(n, +v.krav || 1));   // 0 = ingen krav (frivillig)
     var rad = { kurs: f.c.id, tittel: v.tittel.trim(), tema: v.ut[0].split('/').slice(0, 2).join('/'), undertemaer: v.ut, kilde: v.kilde,
       sporsmal: v.kilde === 'egne' ? v.sporsmal.map(function (x) { var y = Object.assign({}, x, { feil: x.feil.filter(function (z) { return (z.svar || '').trim() || (erMal(x) && (z.uttrykk || '').trim()); }) }); if (!erMal(y)) { delete y.variabler; delete y.svar; } return y; }) : [],
       svarform: v.svarform, tilfeldig: v.kilde === 'egne' && v.rekkefolge === 'tilfeldig', antall: n, krav: krav, frist: v.frist ? new Date(v.frist + 'T23:59:59').toISOString() : null, beskrivelse: v.beskrivelse.trim() };
@@ -1638,7 +1685,7 @@ function studieStart() {
       (v.svarform !== 'valgfri' ? '<p class="st-sm">Studenten må forklare hvert svar og få det vurdert av KI før neste spørsmål. Lyd lagres aldri; tale blir tekst på studentens enhet.</p>' : '') +
       '<label class="st-sm" for="st-ov-besk">Beskjed til studentene (valgfri)</label><textarea id="st-ov-besk" class="st-felt" rows="2" data-ov="beskrivelse" maxlength="2000" placeholder="F.eks. «Bruk formelarket. Vis utregningen.»">' + esc(v.beskrivelse) + '</textarea>' +
       '<div class="st-rad" style="gap:1rem"><span style="flex:1"><label class="st-sm" for="st-ov-krav">Krav for godkjent</label><select id="st-ov-krav" data-ovvalg="krav">' +
-      (n ? Array.apply(null, { length: n }).map(function (_, i) { return opt(i + 1, 'minst ' + (i + 1) + ' av ' + n + ' riktige', +v.krav === i + 1 || (+v.krav > n && i + 1 === n)); }).join('') : '<option>legg til spørsmål først</option>') + '</select></span>' +
+      (n ? opt(0, 'ingen krav (frivillig)', String(v.krav) === '0') + Array.apply(null, { length: n }).map(function (_, i) { return opt(i + 1, 'minst ' + (i + 1) + ' av ' + n + ' riktige', +v.krav === i + 1 || (+v.krav > n && i + 1 === n)); }).join('') : '<option>legg til spørsmål først</option>') + '</select></span>' +
       '<span style="flex:1"><label class="st-sm" for="st-ov-frist">Frist (valgfri)</label><input id="st-ov-frist" class="st-felt" type="date" data-ov="frist" value="' + esc(v.frist) + '"></span></div>' +
       '<p style="margin-top:1rem"><button type="button" class="st-btn" data-h="lagreKrav"' + (f.ovLagrer ? ' disabled' : '') + '>' + (f.ovLagrer ? 'Lagrer …' : v.id ? 'Lagre endringene' : 'Lagre arbeidskravet') + '</button> <button type="button" class="st-btn g" data-h="avbrytKrav">Avbryt</button></p></div>';
     return o;
@@ -1827,7 +1874,7 @@ function studieStart() {
   function loypeTemaer() { var a = aktivtKurs(); if (a && a !== 'egen') { var kt = kursTemaer(a); if (kt.length) return kt; } return valgt(); }
   function ukensTema() { var v = loypeTemaer(); return v.filter(function (t) { return !T.ukevurd[t]; })[0] || v[v.length - 1]; }
   function apneKrav() {
-    return mineOvelser().filter(function (o) { return !godkjent(o) && (!o.frist || Date.parse(o.frist) > Date.now()); })
+    return mineOvelser().filter(function (o) { if (frivillig(o)) { var st = o.kilde === 'egne' && (o.sporsmal || []).length ? ovStatus(o) : []; if (st.length && st.every(function (x) { return x.status === 'ok' || x.status === 'kanskje'; })) return false; } return !godkjent(o) && (!o.frist || Date.parse(o.frist) > Date.now()); })
       .sort(function (a, b) { return (Date.parse(a.frist) || Infinity) - (Date.parse(b.frist) || Infinity); });
   }
   function besteForsok(o) { return (T.quizer || []).filter(function (q) { return q.ovelse === o.id; }).reduce(function (m, q) { return Math.max(m, q.riktige || 0); }, 0); }
@@ -2006,13 +2053,18 @@ function studieStart() {
       // Fokusmodus øverst: ett trykk inn i faget man holder på med (studentene ville ha dette lett tilgjengelig).
       if (!T.eksempel && (ak || v.length)) o += '<a class="st-dkort st-fokusknapp" href="fokus.html#' + (ak && ak !== 'egen' ? encodeURIComponent(ak) : 'min') + '"><span class="st-merke">Fokusmodus</span><b class="st-dtittel">▶ ' + esc(ak && ak !== 'egen' ? fagnavn(ak) : 'Min løype') + '</b><span class="st-sm">Les sidene, se videoene og gjør oppgavene i rekkefølge, uten noe annet på skjermen.</span></a>';
       if (!v.length) o += '<div class="st-dkort g"><span class="st-merke">Kom i gang</span><b class="st-dtittel">Velg hva du skal studere</b><span class="st-sm">Velg temaer, så får du en løype med én uke per tema og en liten quiz hver dag.</span><div><button type="button" class="st-btn" data-h="ga" data-v="innstillinger">Velg temaer</button></div></div>';
-      else if (!S[t]) o += '<div class="st-dkort g"><span class="st-merke">Denne uka</span><b class="st-dtittel">' + esc(tittel(t)) + '</b><span class="st-sm">Det finnes ingen quiz for dette temaet ennå. Les lærestoffet under, og spør Dashman hvis noe er uklart. Ferdig? Si hvor vanskelig det var:</span>' + skala(t) + '</div>';
       else {
-        var dag = T.inn.modus === 'dag', ferdig = dag && iDag(t) >= PER_DAG;
-        var ff = fagForTema(t);
-        o += '<div class="st-dkort g"><span class="st-merke">' + (dag ? 'Dagens quiz' : 'Ukens quiz') + (ff ? ' · ' + esc(ff) : '') + '</span><b class="st-dtittel">' + esc(tittel(t)) + '</b>' +
-          '<span class="st-sm">' + (ferdig ? 'Dagens spørsmål er tatt. Bra!' : (dag ? PER_DAG : OKT) + ' spørsmål') + '</span>' +
-          '<div>' + (ferdig ? '<button type="button" class="st-btn g" data-h="quizFlere" data-t="' + t + '">Ta flere likevel</button>' : '<button type="button" class="st-btn" data-h="quiz" data-t="' + t + '">Start quizen</button>') + '</div></div>';
+        // Min quiz: studenten har valgt selv (eller ikke ennå). Uten valg spør vi én gang.
+        var q0 = mq(), harSp = loypeTemaer().some(function (x) { return S[x]; });
+        if (!S[t]) o += '<div class="st-dkort"><span class="st-merke">Denne uka</span><b class="st-dtittel">' + esc(tittel(t)) + '</b><span class="st-sm">Les lærestoffet under, og spør Dashman hvis noe er uklart. Ferdig med uka? Si hvor vanskelig det var:</span>' + skala(t) + '</div>';
+        if (harSp && q0 === null) o += '<div class="st-dkort g"><span class="st-merke">Min quiz</span><b class="st-dtittel">Vil du ha en daglig quiz?</b><span class="st-sm">Noen spørsmål hver dag fra temaet du jobber med, og repetisjon av det du har hatt. Du kan endre det når som helst.</span>' +
+          '<div class="st-knapperad"><button type="button" class="st-btn" data-h="mqVelg" data-v="1">Ett om dagen</button><button type="button" class="st-btn" data-h="mqVelg" data-v="3">Tre om dagen</button><button type="button" class="st-btn" data-h="mqVelg" data-v="dashman">La Dashman velge</button><button type="button" class="st-btn g" data-h="mqVelg" data-v="0">Nei takk</button></div></div>';
+        else if (harSp && q0.pa !== false) {
+          var n0 = +q0.antall || 1, tatt = dagensSvar(), ferdig = tatt >= n0;
+          o += '<div class="st-dkort g"><span class="st-merke">Dagens quiz' + (q0.dashman ? ' · Dashman velger' : '') + '</span><b class="st-dtittel">' + (ferdig ? 'Ferdig for i dag!' : (n0 - tatt) + ' spørsmål') + '</b>' +
+            '<span class="st-sm">' + (ferdig ? 'Bra! Nye spørsmål i morgen.' : 'Fra ' + esc(tittel(t)) + (q0.dashman || (q0.bakover && q0.bakover !== '0') ? ' og repetisjon fra tidligere uker' : '')) + '</span>' +
+            '<div>' + (ferdig ? '<button type="button" class="st-btn g" data-h="dagensQuiz" data-v="flere">Ta flere likevel</button>' : '<button type="button" class="st-btn" data-h="dagensQuiz">Start</button>') + ' <button type="button" class="st-btn g liten" data-h="ga" data-v="innstillinger">Endre</button></div></div>';
+        }
       }
       apneKrav().slice(0, 2).forEach(function (x) {
         var beste = besteForsok(x), and = Math.min(1, beste / (x.krav || 1));
@@ -2080,10 +2132,7 @@ function studieStart() {
         '<p><button type="button" class="st-btn" data-h="loypeforslag"' + (T.loypeVenter ? ' disabled' : '') + '>' + (T.loypeVenter ? 'Dashman tenker …' : 'Foreslå temaer') + '</button></p>' +
         (T.loypeKommentar ? '<p class="st-sm">' + esc(T.loypeKommentar) + '</p>' : '') + '</div>' +
         '<h3>Temaer du studerer</h3><p class="st-sm">Kryss av selv, eller juster forslaget. Rekkefølgen her blir rekkefølgen i løypa, med én uke per tema.</p>' + temavalg() +
-        '<h2>Quiz</h2>' +
-        '<label class="st-valg"><input type="radio" name="st-modus" value="alle"' + (T.inn.modus === 'alle' ? ' checked' : '') + '> Alle spørsmålene på én gang</label>' +
-        '<label class="st-valg"><input type="radio" name="st-modus" value="dag"' + (T.inn.modus === 'dag' ? ' checked' : '') + '> Noen spørsmål hver dag (' + PER_DAG + ' per tema)</label>' +
-        '<label class="st-valg"><input type="checkbox" data-inn="repetisjon"' + (T.inn.repetisjon ? ' checked' : '') + '> Repetisjonsspørsmål</label>' +
+        minQuizValg() +
         '<h2>Varsler</h2>' +
         '<label class="st-valg"><input type="checkbox" id="st-varsler"' + (T.inn.varsler && ('Notification' in window) && Notification.permission === 'granted' ? ' checked' : '') + (pushMulig() ? '' : ' disabled') + '> Varsel om nye arbeidskrav, frister og beskjeder fra faglæreren</label>' +
         '<p class="st-sm">' + (pushMulig() ? 'Varslene kommer på denne enheten. Slår du dem på, får du et testvarsel med en gang.'
@@ -2127,9 +2176,8 @@ function studieStart() {
           return url ? '<a class="st-kort" href="' + url + '"><div class="st-rad"><span>' + esc(u[id]) + '</span><span class="st-sm">Lærestoff og video →</span></div></a>'
                      : '<div class="st-kort st-tom"><div class="st-rad"><span>' + esc(u[id]) + '</span><span class="st-sm">Lærestoff kommer</span></div></div>';
         }).join('') +
-        '<h3>Ukens quiz</h3><p class="st-ind">Du starter på nivå <b>' + NIV[niva(t)] + '</b>, og nivået følger svarene dine. ' +
-        (dag ? 'Du får ' + PER_DAG + ' spørsmål om dagen (' + iDag(t) + ' tatt i dag).' : 'Du får ' + OKT + ' spørsmål' + (T.inn.repetisjon ? ' og opptil ' + REP + ' repetisjonsspørsmål' : '') + '.') + '</p>' +
-        '<p><button type="button" class="st-btn" data-h="quiz" data-t="' + t + '">Start quiz</button></p>';
+        '<h3>Øv på temaet</h3><p class="st-ind">' + OKT + ' spørsmål fra ' + esc(tittel(t)) + '. Du starter på nivå <b>' + NIV[niva(t)] + '</b>, og nivået følger svarene dine.</p>' +
+        '<p><button type="button" class="st-btn" data-h="quiz" data-t="' + t + '">Øv på temaet</button></p>';
     },
     ferdigIdag: function () {
       return '<h2 class="st-h1">Dagens spørsmål er tatt</h2><p>Du har svart på ' + PER_DAG + ' spørsmål i ' + esc(tittel(T.t)) + ' i dag. Kom tilbake i morgen!</p>' +
@@ -2595,17 +2643,18 @@ function studieStart() {
     var l = (T.ovelser || []).filter(function (o) { return o.kurs === kursId; });
     if (!l.length) return '';
     // Ryddig kort: tittel + status øverst, så hva øvingen dekker, prikkene, og til slutt fremdrift og knapp på én linje.
-    return '<p class="st-sm" style="margin-top:.6rem"><b>Obligatoriske øvinger</b></p>' + l.map(function (o) {
+    return '<p class="st-sm" style="margin-top:.6rem"><b>Arbeidskrav</b></p>' + l.map(function (o) {
       var ok = godkjent(o), ute = o.frist && Date.now() > Date.parse(o.frist), egne = o.kilde === 'egne' && (o.sporsmal || []).length;
       var st = egne ? ovStatus(o) : null, nOk = st ? st.filter(function (x) { return x.status === 'ok' || x.status === 'kanskje'; }).length : 0;
       var nK = st ? st.filter(function (x) { return x.status === 'kanskje'; }).length : 0, begynt = st && st.some(function (x) { return x.status !== 'ingen'; });
-      if (st) ok = nOk >= Math.min(o.krav, st.length);
-      var knapp = !ok && !ute ? '<button type="button" class="st-btn liten" data-h="ovelse" data-id="' + o.id + '">' + (begynt ? 'Fortsett' : 'Start') + '</button>' : '';
-      return '<div class="st-ovkort"><div class="st-ovtopp"><b>' + esc(o.tittel) + '</b><span class="st-status ' + (ok ? 'ok' : 'nei') + '">' + (ok ? '✓ Godkjent' : 'Ikke godkjent') + '</span></div>' +
-        '<p class="st-sm">' + esc(dekkerTekst(o)) + ' · minst ' + o.krav + ' av ' + o.antall + ' riktige' + (SVARFORM_KORT[o.svarform] ? ' · krever ' + SVARFORM_KORT[o.svarform] : '') + (o.frist ? ' · frist ' + dato(o.frist) : '') + '</p>' +
+      var fv = frivillig(o);
+      if (st && !fv) ok = nOk >= Math.min(o.krav, st.length);
+      var knapp = (fv ? !(st && nOk === st.length) : !ok) && !ute ? '<button type="button" class="st-btn liten" data-h="ovelse" data-id="' + o.id + '">' + (begynt ? 'Fortsett' : 'Start') + '</button>' : '';
+      return '<div class="st-ovkort"><div class="st-ovtopp"><b>' + esc(o.tittel) + '</b><span class="st-status ' + (fv ? '' : ok ? 'ok' : 'nei') + '">' + (fv ? 'Frivillig' : ok ? '✓ Godkjent' : 'Ikke godkjent') + '</span></div>' +
+        '<p class="st-sm">' + esc(dekkerTekst(o)) + (fv ? ' · ingen krav' : ' · minst ' + o.krav + ' av ' + o.antall + ' riktige') + (SVARFORM_KORT[o.svarform] ? ' · krever ' + SVARFORM_KORT[o.svarform] : '') + (o.frist ? ' · frist ' + dato(o.frist) : '') + '</p>' +
         (o.beskrivelse ? '<p class="st-sm">' + esc(o.beskrivelse) + '</p>' : '') +
         (st ? '<div class="st-ovprikker">' + st.map(function (x, i) { return '<span class="st-ovprikk ' + x.status + '" title="' + (i + 1) + ': ' + STATUSNAVN[x.status] + '">' + (i + 1) + '</span>'; }).join('') + '</div>' : '') +
-        '<div class="st-ovbunn"><span class="st-sm">' + (st ? nOk + ' av ' + st.length + ' godkjent' + (nK ? ' (' + nK + ' kanskje)' : '') + ' · krav ' + Math.min(o.krav, st.length) : '') +
+        '<div class="st-ovbunn"><span class="st-sm">' + (st ? nOk + ' av ' + st.length + ' godkjent' + (nK ? ' (' + nK + ' kanskje)' : '') + (fv ? '' : ' · krav ' + Math.min(o.krav, st.length)) : '') +
         (!ok && ute ? (st ? ' · ' : '') + 'Fristen har gått ut.' : '') + '</span>' + knapp + '</div></div>';
     }).join('');
   }
@@ -2888,6 +2937,8 @@ function studieStart() {
         apneDashman('Jeg skannet løsningen min' + (sk.oppgave ? ' på denne oppgaven: ' + sk.oppgave : '') + '. Tilbakemeldingen var: «' + ((sk.svar && sk.svar.tilbakemelding) || '') + '». Kan du hjelpe meg videre?'); },
       uke: function () { ga('uke', { t: d.t }); },
       quiz: function () { startQuiz(d.t); },
+      dagensQuiz: function () { startDagensQuiz(d.v === 'flere'); },
+      mqVelg: function () { settMq(d.v === '0' ? { pa: false } : d.v === 'dashman' ? { pa: true, antall: 3, dashman: true } : { pa: true, antall: +d.v, dashman: false, bakover: '2' }); tegn(); },
       quizFlere: function () { startQuiz(d.t, true); },
       svar: function () { svar(+d.i); },
       tallSvar: tallSvar,
@@ -3025,6 +3076,9 @@ function studieStart() {
       var andre = (T.inn.valgt || []).filter(function (x) { return x.indexOf(NETTSTED + '/') !== 0; });
       T.inn.valgt = andre.concat(ny.map(nokkel)); lagreInn(); tegn();
     } else if (el.name === 'st-modus') { T.inn.modus = el.value; lagreInn(); }
+    else if (el.name === 'st-mq-antall') { settMq(el.value === '0' ? { pa: false } : { pa: true, antall: +el.value }); tegn(); }
+    else if (el.name === 'st-mq-hva') { settMq({ dashman: el.value === 'dashman' }); tegn(); }
+    else if (el.dataset.mq) { var o2 = {}; o2[el.dataset.mq] = el.value; settMq(o2); }
     else if (el.id === 'st-varsler') { (el.checked ? slaPaVarsler().then(function () { varsle('Varsler er slått på. Du får et testvarsel nå.'); }) : slaAvVarsler().then(function () { varsle('Varsler er slått av.'); })).catch(function (e) { el.checked = false; varsle(feilmelding(e), true); }); }
     else if (el.dataset.inn) { T.inn[el.dataset.inn] = el.checked; lagreInn(); }
     else if (el.dataset.felt === 'leggUT' && el.value) { var w = T.fag.u.moduler[+el.dataset.m].uker[+el.dataset.u]; if (w.undertemaer.indexOf(el.value) < 0) w.undertemaer.push(el.value); planlagreFag(); tegn(); }
