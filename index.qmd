@@ -59,7 +59,7 @@ anchor-sections: false
     </div>
   </div>
   <img class="hero-dashman-v" src="assets/img/dashman/glad.webp" alt="">
-  <p class="hero-dm-boble"><b>Dashman her!</b> Jeg er din personlige KI-assistent<svg class="hero-dm-hale" viewBox="0 0 46 64" aria-hidden="true"><path d="M42 2 C 36 24, 26 44, 8 62 C 18 42, 18 22, 8 2"/></svg></p>
+  <p class="hero-dm-boble"><b>Dashman her!</b> Jeg er din personlige KI-assistent<svg class="hero-dm-hale" viewBox="0 0 46 64" aria-hidden="true"><path class="fyll" d="M44 -9 L42 2 C 36 24, 26 44, 8 62 C 18 42, 18 22, 8 2 L6 -9 Z"/><path class="strek" d="M42 2 C 36 24, 26 44, 8 62 C 18 42, 18 22, 8 2"/></svg></p>
   <div class="hero-scene">
     <img src="assets/img/tegninger/hero-dashman.webp" alt="Dashman får en aha-opplevelse, med F = ma og E = mc² tegnet i kritt rundt seg på en tavle full av formler">
   </div>
