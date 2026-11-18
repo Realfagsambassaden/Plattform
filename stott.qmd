@@ -1,0 +1,12 @@
+---
+title: "Støtt oss!"
+toc: false
+page-layout: article
+---
+
+```{=html}
+<section class="stott-side">
+  <p>Fysikkhjelp.no drives av ildsjeler og er gratis for alle. Vil du hjelpe oss å holde det slik?</p>
+  <p class="stott-kommer">Informasjon kommer.</p>
+</section>
+```

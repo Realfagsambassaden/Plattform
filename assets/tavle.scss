@@ -951,3 +951,9 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 // Om oss (om.qmd)
 .om-oss { max-width: 760px; margin: 0 auto 2.5rem; }
 .om-oss h2 { margin-top: .3rem; }
+
+// «Støtt oss!» som oransje knapp i toppmenyen, og siden stott.qmd
+.stott-knapp { display: inline-block; background: $orange; color: $slate; font-weight: 700; padding: .25rem .8rem; border-radius: 8px; box-shadow: 0 0 10px rgba($orange, .45); }
+.navbar .nav-link:hover .stott-knapp, .navbar .nav-link:focus .stott-knapp { box-shadow: 0 0 16px rgba($orange, .7); }
+.stott-side { max-width: 720px; margin: 0 auto 3rem; }
+.stott-kommer { font-family: "Kritt", "Architects Daughter", cursive; color: $orange; font-size: 1.4rem; }
