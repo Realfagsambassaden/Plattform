@@ -164,6 +164,8 @@ jobs:
       DONASJON_TOKEN: ${{ secrets.DONASJON_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+      - name: Samlekort og profilsider fra ambassaden/ambassadorer.yml
+        run: pip install pyyaml && python3 verktoy/samlekort.py .
       - name: Publiser til Cloudflare
         uses: cloudflare/wrangler-action@v3
         with:
