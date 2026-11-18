@@ -1117,3 +1117,35 @@ grant execute on function public.oppmote_start(uuid, int), public.oppmote_stopp(
   public.oppmote_overstyr(bigint, uuid, boolean) to authenticated;
 revoke all on function public.oppmote_push(text) from public;
 grant execute on function public.oppmote_push(text) to anon, authenticated;
+
+-- =====================================================================
+-- Godkjenning av spørsmål i oppgavebanken (18. nov. 2026). Spørsmål i studie/sporsmal.json med "godkjenning": "kreves"
+-- vises ikke for studenter før en administrator har godkjent dem her (Min side → «Spørsmål til godkjenning»).
+-- =====================================================================
+create table if not exists public.sporsmal_status (
+  id      text primary key,                 -- spørsmålets id i banken, f.eks. «kretser-355»
+  status  text not null check (status in ('godkjent', 'avvist')),
+  merknad text,
+  av      uuid references auth.users (id) on delete set null default auth.uid(),
+  tid     timestamptz not null default now()
+);
+alter table public.sporsmal_status enable row level security;
+drop policy if exists "alle leser status" on public.sporsmal_status;
+create policy "alle leser status" on public.sporsmal_status for select using (true);
+revoke insert, update, delete on public.sporsmal_status from anon, authenticated;
+grant select on public.sporsmal_status to anon, authenticated;
+
+create or replace function public.sett_sporsmal_status(ids text[], ny text, merknad text default null) returns int
+  language plpgsql security definer set search_path = public as
+$$
+declare n int;
+begin
+  if not public.er_admin() then raise exception 'Bare administratorer kan godkjenne spørsmål i banken.'; end if;
+  if ny is null then delete from sporsmal_status where id = any (ids); get diagnostics n = row_count; return n; end if;
+  if ny not in ('godkjent', 'avvist') then raise exception 'ugyldig status'; end if;
+  insert into sporsmal_status (id, status, merknad) select unnest(ids), ny, merknad
+    on conflict (id) do update set status = excluded.status, merknad = excluded.merknad, av = auth.uid(), tid = now();
+  get diagnostics n = row_count; return n;
+end $$;
+revoke execute on function public.sett_sporsmal_status(text[], text, text) from public, anon;
+grant execute on function public.sett_sporsmal_status(text[], text, text) to authenticated;
