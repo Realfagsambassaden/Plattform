@@ -84,6 +84,10 @@ toc: false
 .studie .st-bar { height: 10px; background: var(--bs-border-color); border-radius: 5px; overflow: hidden; margin: .3rem 0; }
 .studie .st-stolpe .st-bar { margin: 0; }
 .studie .st-bar i { display: block; height: 100%; }
+.studie .st-kravbar { position: relative; flex: 1; height: 12px; background: var(--bs-border-color); border-radius: 6px; margin: .3rem 0; }
+.studie .st-kravbar i { display: block; height: 100%; border-radius: 6px; transition: width .6s ease, background .4s; }
+.studie .st-kravbar i.r { background: #e06c6c; } .studie .st-kravbar i.o { background: #e39d63; } .studie .st-kravbar i.g { background: #8fcf86; box-shadow: 0 0 8px rgba(143,207,134,.5); }
+.studie .st-kravbar s { position: absolute; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: var(--bs-body-color); opacity: .6; border-radius: 1px; }
 .studie .st-bar i.f { background: var(--st-f); } .studie .st-bar i.p { background: var(--st-p); } .studie .st-bar i.h { background: var(--st-h); } .studie .st-bar i.v { background: var(--bs-secondary-color); }
 .studie .st-skala { display: flex; gap: .4rem; margin: .4rem 0; }
 .studie .st-skala button { flex: 1; padding: .5rem 0; background: none; border: 2px solid var(--bs-border-color); border-radius: 8px; color: inherit; font-weight: 700; }

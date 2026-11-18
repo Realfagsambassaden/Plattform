@@ -1904,6 +1904,20 @@ function studieStart() {
       .sort(function (a, b) { return (Date.parse(a.frist) || Infinity) - (Date.parse(b.frist) || Infinity); });
   }
   function besteForsok(o) { return (T.quizer || []).filter(function (q) { return q.ovelse === o.id; }).reduce(function (m, q) { return Math.max(m, q.riktige || 0); }, 0); }
+  // Fremdriftsstolpe for et arbeidskrav: fylles gradvis med godkjente spørsmål (av alle). Rød til kravet er nådd,
+  // oransje hvis kravet bare nås med svar under vurdering, grønn når arbeidskravet er godkjent. Full stolpe = alle gjort.
+  // En liten strek viser hvor kravet ligger.
+  function kravStolpe(o) {
+    var st = o.kilde === 'egne' && (o.sporsmal || []).length ? ovStatus(o) : null;
+    var antall = st ? st.length : (o.antall || 1), krav = Math.min(o.krav || 0, antall);
+    var nOk = st ? st.filter(function (x) { return x.status === 'ok'; }).length : besteForsok(o);
+    var nK = st ? st.filter(function (x) { return x.status === 'kanskje'; }).length : 0;
+    var farge = nOk >= krav ? 'g' : nOk + nK >= krav ? 'o' : 'r';
+    return '<div class="st-rad" style="align-items:center"><div class="st-kravbar" title="' + (nOk + nK) + ' av ' + antall + ' godkjent' + (nK ? ' (' + nK + ' under vurdering)' : '') + '">' +
+      '<i class="' + farge + '" style="width:' + Math.round((nOk + nK) / antall * 100) + '%"></i>' +
+      (krav && krav < antall ? '<s style="left:' + (krav / antall * 100) + '%"></s>' : '') + '</div>' +
+      '<span class="st-sm">' + (frivillig(o) ? 'frivillig' : 'Krav: ' + krav + ' av ' + antall) + '</span></div>';
+  }
   function fristTekst(f) { if (!f) return ''; return new Date(f).toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'short' }); }
   function appTittel() { if (T.vis === 'hjem') { var a = aktivtKurs(); return T.loypeApen && mineLoyper().length > 1 ? (a && a !== 'egen' ? fagnavn(a) : 'Min egen løype') : 'Ukeplanen min'; } return { skann: 'Skann svaret ditt', uke: 'Ukeplanen min', profil: 'Kunnskapsprofil', kurs: 'Kursløype', fag: 'Kursene mine', pamelding: 'Kursløype', innstillinger: 'Design din løype', resultat: 'Resultat' }[T.vis] || ''; }
   function menyHtml() {
@@ -2096,8 +2110,8 @@ function studieStart() {
         var beste = besteForsok(x), and = Math.min(1, beste / (x.krav || 1));
         o += '<div class="st-dkort o"><div class="st-rad"><span class="st-merke">Arbeidskrav' + (fagForKrav(x) ? ' · ' + esc(fagForKrav(x)) : '') + '</span>' + (x.frist ? '<span class="st-sm st-frist">' + ikon('klokke', 16) + ' ' + esc(fristTekst(x.frist)) + '</span>' : '') + '</div>' +
           '<b class="st-dtittel">' + esc(x.tittel) + '</b>' +
-          '<div class="st-rad" style="align-items:center"><div class="st-bar" style="flex:1"><i class="h" style="width:' + Math.round(and * 100) + '%"></i></div><span class="st-sm">' + (beste ? 'beste: ' + beste + ' av ' + x.krav + ' riktige' : 'krav: ' + x.krav + ' av ' + x.antall + ' riktige') + '</span></div>' +
-          '<div><button type="button" class="st-btn o" data-h="ovelse" data-id="' + x.id + '">' + (beste ? 'Prøv igjen' : 'Start') + '</button></div></div>';
+          kravStolpe(x) +
+          '<div><button type="button" class="st-btn o" data-h="ovelse" data-id="' + x.id + '">' + (beste || (x.kilde === 'egne' && ovStatus(x).some(function (y) { return y.status !== 'ingen'; })) ? 'Fortsett' : 'Start') + '</button></div></div>';
       });
       o += '<button type="button" class="st-dmrad" data-h="dashman"><img src="' + DMBILDER + 'noytral.webp" alt="" class="st-dmfigur">' +
         krittboble('Står du fast på noe? Spør meg, så finner vi ut av det sammen.', true) + '</button>';
