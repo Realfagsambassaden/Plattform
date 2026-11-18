@@ -1752,6 +1752,8 @@ function studieStart() {
       from: function (t) {
         var q = { t: t, f: [], op: 'select' }, b = {
           select: function () { return b; }, order: function () { return b; }, limit: function () { return b; },
+          neq: function () { return b; }, gte: function () { return b; }, lte: function () { return b; }, gt: function () { return b; }, lt: function () { return b; },
+          in: function () { return b; }, is: function () { return b; }, ilike: function () { return b; }, range: function () { return b; },
           eq: function (c, v) { q.f.push([c, v]); return b; },
           maybeSingle: function () { q.kanskje = true; return b; }, single: function () { q.en = true; return b; },
           insert: function (r) { q.op = 'insert'; q.rad = r; return b; }, upsert: function (r) { q.op = 'upsert'; q.rad = r; return b; },
@@ -2751,6 +2753,19 @@ function studieStart() {
 
   // Alle klikk og endringer håndteres her (ingen inline-skript i HTML-en).
   rot.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' && ev.target && ev.target.id === 'st-tallsvar') { ev.preventDefault(); oppdaterTall(); } });
+  // Bunnpanelet (I dag / Skann / Dashman) skal ikke dekke innholdet: det skjules mens man skroller nedover og mens man
+  // skriver (tastaturet åpent), og kommer tilbake når man skroller opp eller er nederst på siden.
+  (function () {
+    var sist = window.scrollY || 0;
+    function sett(skjul) { document.body.classList.toggle('st-bunn-skjult', !!skjul); }
+    window.addEventListener('scroll', function () {
+      var y = window.scrollY || 0, bunn = y + window.innerHeight >= document.documentElement.scrollHeight - 40;
+      if (Math.abs(y - sist) < 8) return;
+      sett(y > sist && y > 80 && !bunn); sist = y;
+    }, { passive: true });
+    document.addEventListener('focusin', function (e) { if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && e.target.type !== 'checkbox' && e.target.type !== 'radio') document.body.classList.add('st-skriver'); });
+    document.addEventListener('focusout', function () { setTimeout(function () { if (!/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName || '')) document.body.classList.remove('st-skriver'); }, 100); });
+  })();
   // Sveip til venstre på en plan (Ukeplanen min) viser «Meld av» / «Fjern» bak kortet.
   var sveip = null;
   rot.addEventListener('touchstart', function (ev) {
