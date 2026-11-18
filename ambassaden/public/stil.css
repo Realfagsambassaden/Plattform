@@ -180,6 +180,12 @@ a.plattform{color:var(--kritt);text-decoration:none}a.plattform:hover{border-col
 .sk-verdi em small{font-family:"Comic Neue",system-ui,sans-serif}
 .sk-verdi .sk-ukjent{color:#a3a9ad;letter-spacing:.15em}
 .sk-tilbud{font-size:.8rem}
+.sk-kopper{letter-spacing:-.12em;font-size:1rem!important}
+.samlekort[data-sprenger]{position:relative;z-index:2}
+.samlekort[data-sprenger] .sk-flate,.samlekort[data-sprenger] .sk-stat,.samlekort[data-sprenger] .sk-verdi{overflow:visible}
+.sk-verdi .sk-sprenger{display:block!important;overflow:visible!important;white-space:nowrap;-webkit-line-clamp:unset!important;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6));animation:sk-koffein 1.6s ease-in-out infinite alternate}
+@keyframes sk-koffein{from{transform:translateX(0) rotate(0)}to{transform:translateX(6px) rotate(-1.5deg)}}
+@media (prefers-reduced-motion:reduce){.sk-verdi .sk-sprenger{animation:none}}
 /* Profilsidene (profil/*.html) */
 .profilside .overlinje a{color:var(--neon);text-decoration:none}
 .profilside-rad{display:grid;grid-template-columns:300px 1fr;gap:3rem;align-items:start}

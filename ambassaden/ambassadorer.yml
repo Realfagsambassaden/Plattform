@@ -6,7 +6,8 @@
 #   erfaring_ar: år med undervisning og formidling (søyle på kortet; full søyle = 20 år)
 #   kvalitet:  ett eller to ord («Engasjert», «Kul», «Koselig» …)
 #   funfact:   noe artig (kort, helst under 60 tegn)
-#   koffein:   antall kopper kaffe (eller annet med koffein) om dagen
+#   koffein:   antall kaffekopper om dagen (10 eller mer «sprenger skalaen»: koppene går ut av kortet)
+#   te:        true hvis det også går mye te (vises som tekopper)
 #   farge:     gronn, oransje, bla, rosa, turkis, gul
 ambassadorer:
   - id: ben
@@ -22,7 +23,7 @@ ambassadorer:
     erfaring_ar: 10
     kvalitet:
     funfact:
-    koffein:
+    koffein: 3
     om: >-
       Jeg heter Ben, har doktorgrad i matematisk kosmologi og har formidlet og undervist realfag i ti år. Forklaringene jeg legger ut,
       er de jeg selv skulle ønske jeg hadde som student: én idé om gangen, tegnet ut på tavla, med regning du kan følge linje for linje.
@@ -56,7 +57,7 @@ ambassadorer:
     erfaring_ar:
     kvalitet:
     funfact:
-    koffein:
+    koffein: 3
     om: Andrea har i en årrekke vært ansiktet utad og selve drivkraften i NTNU Fysikkstudio, som lager fysikkvideoer av høy kvalitet.
     erfaring:
       - Dobbel mastergrad
@@ -77,7 +78,7 @@ ambassadorer:
     erfaring_ar:
     kvalitet:
     funfact:
-    koffein:
+    koffein: 2
     om: Siebe har doktorgrad i fysikk og brenner for å formidle matematikk og realfag.
     erfaring: [Doktorgrad i fysikk]
     meritter: []
@@ -96,7 +97,7 @@ ambassadorer:
     erfaring_ar:
     kvalitet:
     funfact:
-    koffein:
+    koffein: 4
     om: Mikael har doktorgrad i matematikk.
     erfaring: [Doktorgrad i matematikk]
     meritter: []
@@ -115,7 +116,8 @@ ambassadorer:
     erfaring_ar:
     kvalitet: Kul
     funfact:
-    koffein:
+    koffein: 1
+    te: true
     om: Kenny er veldig kul. Han har mastergrad i fysikk, er lektor i fysikk og har erfaring fra Newton-rommet.
     erfaring: [Mastergrad i fysikk, Lektor i fysikk, Newton-rommet]
     meritter: []
@@ -134,7 +136,7 @@ ambassadorer:
     erfaring_ar:
     kvalitet: Dyktig formidler
     funfact:
-    koffein:
+    koffein: 99
     om: Jonas er en ekstremt dyktig formidler, med bachelorgrad i datavitenskap og master i fysikk.
     erfaring: [Bachelorgrad i datavitenskap, Master i fysikk]
     meritter: []
