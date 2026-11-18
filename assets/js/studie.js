@@ -1905,7 +1905,7 @@ function studieStart() {
   }
   function besteForsok(o) { return (T.quizer || []).filter(function (q) { return q.ovelse === o.id; }).reduce(function (m, q) { return Math.max(m, q.riktige || 0); }, 0); }
   function fristTekst(f) { if (!f) return ''; return new Date(f).toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'short' }); }
-  function appTittel() { if (T.vis === 'hjem') { var a = aktivtKurs(); return T.loypeApen && mineLoyper().length > 1 ? (a && a !== 'egen' ? fagnavn(a) : 'Min egen løype') : 'Ukeplanen min'; } return { skann: 'Skann svaret ditt', uke: 'Ukeplanen min', profil: 'Kunnskapsprofil', kurs: 'Kurstilbud', fag: 'Kursene mine', pamelding: 'Kurstilbud', innstillinger: 'Design din løype', resultat: 'Resultat' }[T.vis] || ''; }
+  function appTittel() { if (T.vis === 'hjem') { var a = aktivtKurs(); return T.loypeApen && mineLoyper().length > 1 ? (a && a !== 'egen' ? fagnavn(a) : 'Min egen løype') : 'Ukeplanen min'; } return { skann: 'Skann svaret ditt', uke: 'Ukeplanen min', profil: 'Kunnskapsprofil', kurs: 'Kursløype', fag: 'Kursene mine', pamelding: 'Kursløype', innstillinger: 'Design din løype', resultat: 'Resultat' }[T.vis] || ''; }
   function menyHtml() {
     var rad = function (ik, t, u, v, href) {
       var inni = '<span class="st-mikon">' + ikon(ik) + '</span><span class="st-mtekst">' + t + (u ? '<span class="st-sm">' + u + '</span>' : '') + '</span>' + ikon('pil', 18);
@@ -1918,7 +1918,7 @@ function studieStart() {
       rad('rute', 'Ukeplanen min', 'Uker, temaer og quiz i kursene dine', 'hjem') +
       rad('bok', 'Gå til ' + NETTSTED + '.no', 'Hele nettstedet. Åpnes utenfor appen', '', '../index.html') +
       rad('graf', 'Kunnskapsprofil', 'Forståelse, presisjon og hurtighet', 'profil') +
-      rad('kurs', 'Kurstilbud', 'Kurs som undervisere tilbyr. Meld deg på eller av', 'kurs') +
+      rad('kurs', 'Kursløype', 'Kurs som undervisere tilbyr. Meld deg på eller av', 'kurs') +
       rad('bruker', 'Min side', '', '', '../konto/index.html') +
       rad('tannhjul', 'Design din løype', 'Temaer (også fra en emnebeskrivelse), quiz og påminnelser', 'innstillinger') +
       '<button type="button" class="st-mrad" data-h="tilbakemelding"><span class="st-mikon">' + ikon('prat') + '</span><span class="st-mtekst">Gi tilbakemelding<span class="st-sm">Fant du en feil? Har du et forslag?</span></span>' + ikon('pil', 18) + '</button></nav>';
@@ -2318,19 +2318,8 @@ function studieStart() {
           (tm.length && !folger ? '<p><button type="button" class="st-btn liten" data-h="brukLoype" data-id="' + d.kurs + '">Bruk kursets løype (' + tm.length + ' temaer)</button></p>' : '') +
           oppmoteMittHtml(d.kurs) + ovelseListe(d.kurs) + studentFagTillegg(d) + '</div>';
       }).join('') : '<p class="st-ind">Du er ikke med i noe kurs.</p>';
-      // Åpne kurs (underviseren har krysset av for «Åpent kurs») og løypene på nettstedet
-      var apne = (T.apne || []).filter(function (c) { return !T.deltar.some(function (x) { return x.kurs === c.id; }); });
-      o += '<h3 id="st-apne-kurs">Kurstilbud</h3>' + (apne.length ? apne.map(function (c) {
-        return '<div class="st-kort"><div class="st-rad"><b>' + esc(c.navn) + '</b><button type="button" class="st-btn liten" data-h="apentKurs" data-id="' + c.id + '">Meld på</button></div>' +
-          (c.underviser ? '<span class="st-sm">Faglærer: ' + esc(c.underviser) + (c.temaer ? ' · ' + c.temaer + ' temaer' : '') + '</span>' : '') +
-          (c.beskrivelse ? '<p>' + esc(c.beskrivelse) + '</p>' : '') + (c.krev_innsyn ? '<span class="st-sm">Faglærer får innsyn i kunnskapsprofilen din (du må godta ved påmelding).</span>' : '') + '</div>';
-      }).join('') : '<p class="st-ind">Ingen åpne kurs akkurat nå' + ((T.apne || []).length ? ' som du ikke allerede er med i' : '') + '. Har du fått en kode fra faglæreren, bruk den under.</p>');
-      if (ALLE_LOYPER.length) o += '<h3>Løyper</h3><p class="st-sm">Ferdige løyper gjennom lærestoffet, f.eks. for et emne. Du trenger ikke melde deg på: åpne løypa og les i den rekkefølgen den foreslår.</p>' +
-        ALLE_LOYPER.map(function (L) {
-          return '<div class="st-kort"><div class="st-rad"><b>' + esc(L.tittel) + '</b><a class="st-btn g liten" href="..' + esc(L.url) + '">Åpne løypa</a></div>' +
-            ((L.emnekode || L.institusjon) ? '<span class="st-sm">' + esc([L.emnekode, L.institusjon].filter(Boolean).join(' · ')) + ' · ' + L.sider.length + ' sider</span>' : '<span class="st-sm">' + L.sider.length + ' sider</span>') +
-            (L.beskrivelse ? '<p class="st-sm">' + esc(String(L.beskrivelse).slice(0, 240)) + '</p>' : '') + '</div>';
-        }).join('');
+      // Åpne kurs og ferdige løyper vises ikke lenger (Bens beslutning 18. nov. 2026): man melder seg på med koden fra faglæreren.
+      o += '<h3 id="st-apne-kurs">Meld deg på et kurs</h3>';
       o += '<div class="st-kort"><label class="st-sm" for="st-kode">Meld deg på med koden fra faglæreren</label><div class="st-rad"><input id="st-kode" maxlength="12" placeholder="F.eks. K7Q2MX" autocomplete="off"><button type="button" class="st-btn" data-h="finnKurs">Finn kurs</button></div></div>';
       if (!erUnderviser() && !T.eksempel) o += '<p class="st-sm">Underviser? Be administratoren om en underviserkode, og legg den inn på <a href="../konto/index.html">Min side</a>.</p>';
       return o;

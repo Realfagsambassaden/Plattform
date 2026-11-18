@@ -235,7 +235,11 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 
 // ---------- konto ----------
 .navbar .nav-link.innlogget { color: $neon !important; }
-.konto { max-width: 460px; margin: 1rem auto 3rem; }
+.konto { max-width: 460px; margin: 1rem auto 3rem; position: relative; z-index: 1; }
+// ekte tavlesvamp (lærerens foto) med vaskespor øverst til høyre på Min side (pynt)
+.svamp-dekor { position: relative; height: 0; pointer-events: none; }
+.svamp-dekor img { position: absolute; top: -3.2rem; right: -2rem; width: min(520px, 52vw); }
+@media (max-width: 700px) { .svamp-dekor img { top: -4.5rem; right: -1rem; width: 62vw; opacity: .6; } }
 .konto-laster { color: $dust; text-align: center; padding: 2rem 0; }
 .konto-boks { border: 1px solid $line; border-radius: 12px; padding: 1.4rem; }
 .faner { display: flex; gap: .4rem; margin-bottom: 1rem; }
@@ -878,6 +882,7 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .kritt-formel .hjerte { font-size: 1.25em; line-height: 1; vertical-align: -.08em; display: inline-block; color: $yellow; -webkit-text-stroke: 1px $yellow; text-shadow: 0 0 10px rgba($yellow, .7); filter: var(--kritt-filter); transform: rotate(8deg); }
 .kritt-laer { margin: 0 0 .1rem; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; font-size: 1.25rem; filter: var(--kritt-filter); }
 .kritt-av { margin: .35rem 0 0; font-family: "Kritt", "Architects Daughter", cursive; color: $yellow; font-size: clamp(1.1rem, 2.4vw, 1.4rem); letter-spacing: .03em; text-shadow: 0 0 8px rgba($yellow, .45); filter: var(--kritt-filter); transform: rotate(-1.5deg); }
+.kritt-av .gratis { color: $orange; text-shadow: 0 0 10px rgba($orange, .6); }
 // «Last ned appen» med krittpil og grønn knapp på forsiden (til app.qmd)
 .last-ned { display: flex; align-items: center; justify-content: center; gap: .5rem; margin: 1.1rem 0 .2rem; flex-wrap: wrap; }
 .last-ned-tekst { font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; font-size: clamp(1.15rem, 2.6vw, 1.45rem); text-shadow: 0 0 8px rgba($chalk, .3); filter: var(--kritt-filter); transform: rotate(-2deg); }
@@ -942,3 +947,7 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .krever-melding { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; padding: .6rem .9rem; border: 1px dashed $line; border-radius: 10px; color: $dust; font-size: .92rem; }
 .krever-melding button { border: 1px solid $line; border-radius: 8px; background: none; color: $chalk; padding: .2rem .7rem; cursor: pointer; }
 .krever-melding button:hover { border-color: $neon; color: $neon; }
+
+// Om oss (om.qmd)
+.om-oss { max-width: 760px; margin: 0 auto 2.5rem; }
+.om-oss h2 { margin-top: .3rem; }

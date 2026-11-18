@@ -47,20 +47,9 @@ website:
             text: "Bølger og optikk"
           - href: emner/moderne/index.qmd
             text: "Moderne fysikk"
-      - text: Løyper
-        menu:
-          - href: loyper/index.qmd
-            text: "Alle løyper"
-          - href: forkurs/index.qmd
-            text: "Forkurs TRES0312"
-          - href: ingeniorfysikk/index.qmd
-            text: "Ingeniørfysikk"
-          - href: dekning.qmd
-            text: "Lag din egen løype"
-          - text: "---"
-          - href: larer/index.qmd
-            text: "For lærere: design din forelesning"
     right:
+      - href: om.qmd
+        text: Om oss
       - href: dekning.qmd
         text: Dekker vi emnet ditt?
       - href: konto/index.qmd

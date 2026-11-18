@@ -8,7 +8,7 @@ nivaer:
     navn: Forkurs
     overskrift: Lærebok i forkurs
     design: Design din løype gjennom forkurstema
-    kurs: Kurstilbud på forkursnivå
+    kurs: Kursløype
     tekst: "For deg som har lite fysikk eller matematikk fra før, eller skal ta forkurs."
     omrader: auto
     loyper: [forkurs-fysikk, tres0312]
@@ -16,7 +16,7 @@ nivaer:
     navn: Ingeniør
     overskrift: Lærebok i ingeniørfysikk
     design: Design din løype gjennom ingeniørtema
-    kurs: Kurstilbud på ingeniørnivå
+    kurs: Kursløype
     tekst: "Første år på ingeniør- og realfagsstudier."
     omrader: [mekanikk, fluider, bolger, elektromagnetisme, termofysikk]
     loyper: [ifya1000, ifya1002]
@@ -24,7 +24,7 @@ nivaer:
     navn: Fordypning
     overskrift: Lærebok i fordypning
     design: Design din løype gjennom fordypningstema
-    kurs: Kurstilbud på fordypningsnivå
+    kurs: Kursløype
     tekst: "Videre emner for deg som vil gå dypere."
     omrader: auto
     loyper: []

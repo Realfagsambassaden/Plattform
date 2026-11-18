@@ -380,7 +380,7 @@ if indeks.exists() and nv_f.exists() and '<!-- >>> nivakort' in indeks.read_text
         h.append('      <div class="niva-loyper"><h3 class="niva-del">Din vei</h3><p class="niva-forkl">Les fritt i temaene, eller følg en plan uke for uke.</p>')
         h.append('        <ul>')
         h.append(f'          <li><a href="studie/index.html#innstillinger"><span class="nl-navn">{escape(nv.get("design") or "Design din løype")}</span><span class="nl-kode">Velg temaene selv, eller lim inn en emnebeskrivelse, så foreslår Dashman dem.</span></a></li>')
-        h.append(f'          <li><a href="studie/index.html#apne-kurs"><span class="nl-navn">{escape(nv.get("kurs") or "Kurstilbud")}</span><span class="nl-kode">Kurs som undervisere tilbyr. Meld deg på med kode eller velg et åpent kurs.</span></a></li>')
+        h.append(f'          <li><a href="studie/index.html#apne-kurs"><span class="nl-navn">{escape(nv.get("kurs") or "Kursløype")}</span><span class="nl-kode">Kurs som undervisere tilbyr. Meld deg på med koden fra faglæreren.</span></a></li>')
         h.append('        </ul>')
         h.append('      </div>')
         h.append('    </div>')

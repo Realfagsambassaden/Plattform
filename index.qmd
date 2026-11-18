@@ -23,7 +23,7 @@ anchor-sections: false
     <div class="kritt-ramme">
       <p class="kritt-laer">Lær med</p>
       <p class="kritt-formel"><span class="t">Video + lærebok + KI =</span> <span class="hjerte" aria-label="kjærlighet">♥</span></p>
-      <p class="kritt-av">GRATIS, av EKTE fysikere!</p>
+      <p class="kritt-av"><span class="gratis">GRATIS</span>, av EKTE fysikere!</p>
     </div>
     <div class="last-ned">
       <span class="last-ned-tekst">Last ned appen</span>
