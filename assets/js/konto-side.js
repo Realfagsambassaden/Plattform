@@ -208,7 +208,7 @@ function start() {
       try { aktiv = localStorage.getItem('fh-aktivt-kurs'); } catch (e) {}
       l.sort(function (a, b) { return (b.kurs === aktiv) - (a.kurs === aktiv); });
       var lenke = function (href, navn, hoved) { return '<a class="btn-chalk' + (hoved ? '' : ' ghost') + '" href="' + href + '">' + esc(navn) + '</a>'; };
-      el.innerHTML = '<p class="profil-fokustittel"><b>Fortsett i fokusvisning</b></p><p class="profil-fokusknapper">' +
+      el.innerHTML = '<p class="profil-fokustittel"><b>Fortsett i fokusmodus</b></p><p class="profil-fokusknapper">' +
         (l.length ? l.map(function (d, i) { return lenke('../studie/fokus.html#' + encodeURIComponent(d.kurs), '▶ ' + d.kursinfo.navn, i === 0); }).join(' ') + ' ' + lenke('../studie/fokus.html#min', 'Min egen løype', false)
           : lenke('../studie/fokus.html#min', '▶ Min løype', true)) + '</p>';
       el.hidden = false;

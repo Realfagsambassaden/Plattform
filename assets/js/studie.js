@@ -2000,6 +2000,8 @@ function studieStart() {
       }).join('');
       if (ak && flereKurs()) o += '<div class="st-kursmerke"><span>' + ikon('bok', 18) + ' <b>' + esc(ak === 'egen' ? 'Min egen løype' : fagnavn(ak)) + '</b></span><button type="button" class="st-btn g liten" data-h="byttKurs">Bytt fag</button></div>';
       o += '<div class="st-hilsen"><span class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</span><span class="st-sm">' + esc(dato.charAt(0).toUpperCase() + dato.slice(1)) + '</span></div>' + gjsHtml + appKort();
+      // Fokusmodus øverst: ett trykk inn i faget man holder på med (studentene ville ha dette lett tilgjengelig).
+      if (!T.eksempel && (ak || v.length)) o += '<a class="st-dkort st-fokusknapp" href="fokus.html#' + (ak && ak !== 'egen' ? encodeURIComponent(ak) : 'min') + '"><span class="st-merke">Fokusmodus</span><b class="st-dtittel">▶ ' + esc(ak && ak !== 'egen' ? fagnavn(ak) : 'Min løype') + '</b><span class="st-sm">Les sidene, se videoene og gjør oppgavene i rekkefølge, uten noe annet på skjermen.</span></a>';
       if (!v.length) o += '<div class="st-dkort g"><span class="st-merke">Kom i gang</span><b class="st-dtittel">Velg hva du skal studere</b><span class="st-sm">Velg temaer, så får du en løype med én uke per tema og en liten quiz hver dag.</span><div><button type="button" class="st-btn" data-h="ga" data-v="innstillinger">Velg temaer</button></div></div>';
       else {
         var dag = T.inn.modus === 'dag', ferdig = dag && iDag(t) >= PER_DAG;
@@ -2095,7 +2097,7 @@ function studieStart() {
       var fornavn = (T.navn || '').split(/\s+/)[0];
       var o = '<p class="st-hand">Hei' + (fornavn ? ', ' + esc(fornavn) : '') + '!</p>' + (!T.navn && !T.eksempel ? '<p class="st-sm">Legg inn navnet ditt på <a href="../konto/index.html">Min side</a>, så ser faglæreren navnet ditt i stedet for e-posten.</p>' : '') + appKort();
       if (!v.length) o += '<div class="st-kort st-viktig"><b>Kom i gang</b><p>Velg temaene du skal studere, så lager vi en løype med én uke per tema.</p></div>';
-      else o += '<div class="st-rad" style="align-items:center"><h2>Din løype</h2>' + (T.eksempel ? '' : '<a class="st-btn g liten" href="fokus.html#min">Fokusvisning</a>') + '</div>' + v.map(function (t, i) {
+      else o += '<div class="st-rad" style="align-items:center"><h2>Din løype</h2>' + (T.eksempel ? '' : '<a class="st-btn g liten" href="fokus.html#min">Fokusmodus</a>') + '</div>' + v.map(function (t, i) {
         return '<button type="button" class="st-kort" data-h="uke" data-t="' + t + '"><div class="st-rad"><b>Uke ' + (i + 1) + ': ' + esc(tittel(t)) + '</b><span class="st-sm">' + (T.ukevurd[t] ? 'Vurdert ' + T.ukevurd[t] + '/5' : '→') + '</span></div>' +
           '<span class="st-sm">' + Object.keys(S[t].undertemaer).length + ' undertemaer · nivå: ' + NIV[niva(t)] + ' · ' + Math.min(denneUken(t), OKT) + ' av ' + OKT + ' spørsmål denne uken</span></button>';
       }).join('');
@@ -2563,7 +2565,7 @@ function studieStart() {
     if (besk.length) o += '<p class="st-sm" style="margin-top:.6rem"><b>Beskjeder fra faglæreren</b></p>' + besk.map(function (x) { return '<div class="st-tl-beskjed">📣 ' + (x.b.tid ? '<span class="st-sm">' + dato(x.b.tid) + ' · </span>' : '') + '<b>' + esc(x.m.navn) + ':</b> ' + esc(x.b.tekst) + '</div>'; }).join('');
     if (mods.length && (c.elementer || {}).tidslinje !== false) {
       var apen = T.tid && T.tid[d.kurs];
-      o += '<p><a class="st-btn liten" href="fokus.html#' + encodeURIComponent(d.kurs) + '">Fokusvisning</a> <button type="button" class="st-btn g liten" data-h="tidStudent" data-id="' + d.kurs + '">' + (apen ? 'Skjul tidslinjen' : 'Se tidslinjen for kurset') + '</button></p>';
+      o += '<p><a class="st-btn liten" href="fokus.html#' + encodeURIComponent(d.kurs) + '">▶ Fokusmodus</a> <button type="button" class="st-btn g liten" data-h="tidStudent" data-id="' + d.kurs + '">' + (apen ? 'Skjul tidslinjen' : 'Se tidslinjen for kurset') + '</button></p>';
       if (apen) o += tidslinjeHtml(mods, c.ramme || {}, (T.ovelser || []).filter(function (x) { return x.kurs === d.kurs; }), null, Object.assign({}, STD_ELEM, c.elementer || {}));
     }
     return o;
