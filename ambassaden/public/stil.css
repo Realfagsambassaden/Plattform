@@ -138,54 +138,6 @@ a.plattform{color:var(--kritt);text-decoration:none}a.plattform:hover{border-col
 .ansikter .a6{width:130px;height:130px;right:0;top:38%}
 @media (max-width:900px){.ansikter .a5,.ansikter .a6{display:none}.ansikter img{opacity:.28}}
 @media (max-width:560px){.ansikter .a1,.ansikter .a2{width:120px;height:120px}.ansikter .a3,.ansikter .a4{width:100px;height:100px}}
-/* Ambassadørene som samlekort («fotballkort»): holografisk ramme, navnebanner, bilde i vindu. Hele kortet vippes ved hover (kort.js). Samme stil som på fysikkhjelp.no. */
-.samlekort-rad{display:flex;flex-wrap:wrap;justify-content:center;gap:2.2rem;margin-top:1rem}
-.samlekort{flex:0 0 300px;width:300px;min-width:0;perspective:900px;display:flex}
-.samlekort[data-farge=gronn]{--k1:#8fcf86;--k2:#eee462;--k3:#56d7b8}
-.samlekort[data-farge=oransje]{--k1:#e39d63;--k2:#eee462;--k3:#e06c9a}
-.samlekort[data-farge=bla]{--k1:#86a8e0;--k2:#b9e3ff;--k3:#a98be0}
-.samlekort[data-farge=rosa]{--k1:#d99ab0;--k2:#f3c6e0;--k3:#a98be0}
-.samlekort[data-farge=turkis]{--k1:#7fc3b4;--k2:#c8f0e4;--k3:#86a8e0}
-.samlekort[data-farge=gul]{--k1:#e6d98a;--k2:#fff3b0;--k3:#e39d63}
-.sk-inni{position:relative;display:flex;flex:1;padding:9px;border-radius:18px;color:var(--kritt)!important;text-decoration:none!important;background:linear-gradient(125deg,var(--k1),var(--k2) 30%,var(--k3) 55%,var(--k1) 80%,var(--k2));background-size:220% 220%;background-position:var(--mx,30%) var(--my,30%);box-shadow:0 10px 28px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.15) inset;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transform-style:preserve-3d;transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s}
-.sk-inni:hover{transform:rotateX(var(--rx,4deg)) rotateY(var(--ry,-8deg)) rotate(-1.5deg) scale(1.04);box-shadow:0 22px 44px rgba(0,0,0,.6),0 0 34px color-mix(in srgb,var(--k1) 45%,transparent)}
-.sk-inni.vipper{transition:transform .08s linear,box-shadow .3s}
-.sk-inni:focus-visible{outline:3px solid var(--k2);outline-offset:4px}
-.sk-flate{flex:1;display:flex;flex-direction:column;height:480px;border-radius:11px;padding:.7rem .8rem .6rem;background:linear-gradient(180deg,var(--tavle2),var(--tavle) 70%);position:relative;overflow:hidden}
-.sk-topp{display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.25rem .6rem;border-radius:8px;background:linear-gradient(90deg,color-mix(in srgb,var(--k1) 35%,var(--tavle)),transparent)}
-.sk-navn{min-width:0;overflow-wrap:anywhere;font:400 1.4rem/1.1 "Kritt","Architects Daughter",cursive;color:var(--kritt);letter-spacing:.02em;margin:0;filter:none!important;-webkit-text-stroke:0!important}
-.sk-ikon{width:46px;height:auto;filter:drop-shadow(0 0 4px rgba(0,0,0,.8));transform:rotate(-6deg)}
-.sk-ikon.bred{width:62px}
-.sk-flate{min-width:0}
-.samlekort#siebe .sk-navn{font-size:.98rem;overflow-wrap:normal}.samlekort#siebe .sk-ikon{width:52px}
-.sk-bilde{display:block;margin:.55rem 0 .45rem;height:200px;border-radius:8px;overflow:hidden;border:3px solid var(--k1);box-shadow:0 0 0 2px rgba(0,0,0,.4),inset 0 0 20px rgba(0,0,0,.5);background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--k1) 40%,var(--tavle)),var(--tavle) 75%)}
-.sk-bilde img{width:100%;height:100%;object-fit:cover;object-position:50% 12%;display:block}
-.sk-rolle{align-self:flex-start;font:400 .85rem/1.5 "Architects Daughter",cursive;color:var(--tavle);background:var(--k1);padding:.05rem .6rem;border-radius:99px;margin-bottom:.45rem}
-.sk-tekst{flex:1;font-size:.84rem;line-height:1.42;color:rgba(236,238,234,.88);border-top:1px solid rgba(236,238,234,.12);border-bottom:1px solid rgba(236,238,234,.12);padding:.45rem 0}
-.sk-bunn{display:flex;justify-content:space-between;align-items:center;padding-top:.45rem;font-size:.85rem}
-.sk-tilbud{color:var(--k1);font-weight:700}
-.sk-nr{font-family:"Architects Daughter",cursive;color:var(--stov);font-size:.75rem}
-.sk-glans{position:absolute;inset:0;border-radius:18px;pointer-events:none;opacity:0;transition:opacity .3s;mix-blend-mode:soft-light;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.75),rgba(255,255,255,0) 45%),repeating-linear-gradient(115deg,rgba(255,0,180,.1) 0 8px,rgba(0,255,220,.1) 8px 16px,rgba(255,240,0,.1) 16px 24px)}
-.sk-inni:hover .sk-glans{opacity:1}
-@media (prefers-reduced-motion:reduce){.sk-inni,.sk-inni:hover{transform:none;transition:none}}
-/* Skårene på kortet (som på et fotballkort) */
-.sk-stats{flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:.2rem;border-top:1px solid rgba(236,238,234,.12);border-bottom:1px solid rgba(236,238,234,.12);padding:.4rem 0;font-size:.8rem}
-.sk-stat{display:grid;grid-template-columns:4.9rem 1fr;align-items:center;gap:.5rem;min-height:1.55rem}
-.sk-stat b{font-weight:700;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--k1)}
-.sk-verdi{display:flex;align-items:center;gap:.45rem;min-width:0}
-.sk-soyle{flex:1;height:9px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.5)}
-.sk-soyle i{display:block;height:100%;width:var(--v);border-radius:99px;background:linear-gradient(90deg,var(--k1),var(--k2))}
-.sk-verdi small{font-size:.7rem;color:#a3a9ad;white-space:nowrap}
-.sk-verdi em{font-style:normal;font-family:"Kritt","Architects Daughter",cursive;font-size:.95rem;line-height:1.2;color:#eceeea;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.sk-verdi em small{font-family:"Comic Neue",system-ui,sans-serif}
-.sk-verdi .sk-ukjent{color:#a3a9ad;letter-spacing:.15em}
-.sk-tilbud{font-size:.8rem}
-.sk-kopper{letter-spacing:-.12em;font-size:1rem!important}
-.samlekort[data-sprenger]{position:relative;z-index:2}
-.samlekort[data-sprenger] .sk-flate,.samlekort[data-sprenger] .sk-stat,.samlekort[data-sprenger] .sk-verdi{overflow:visible}
-.sk-verdi .sk-sprenger{display:block!important;overflow:visible!important;white-space:nowrap;-webkit-line-clamp:unset!important;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6));animation:sk-koffein 1.6s ease-in-out infinite alternate}
-@keyframes sk-koffein{from{transform:translateX(0) rotate(0)}to{transform:translateX(6px) rotate(-1.5deg)}}
-@media (prefers-reduced-motion:reduce){.sk-verdi .sk-sprenger{animation:none}}
 /* Profilsidene (profil/*.html) */
 .profilside .overlinje a{color:var(--neon);text-decoration:none}
 .profilside-rad{display:grid;grid-template-columns:300px 1fr;gap:3rem;align-items:start}
@@ -193,12 +145,6 @@ a.plattform{color:var(--kritt);text-decoration:none}a.plattform:hover{border-col
 .profilside-tekst h2{font-size:1.5rem;margin:1.8rem 0 .6rem}
 .profilside-tekst h2:first-child{margin-top:0}
 .profilside-tekst ul{padding-left:1.2rem}
-.sosiale{display:flex;flex-wrap:wrap;gap:.5rem}
-.sosial{display:inline-flex;padding:.35rem .9rem;border:1.5px solid var(--neon);border-radius:99px;color:var(--neon);text-decoration:none;font-weight:700;font-size:.9rem}
-.sosial:hover{background:var(--neon);color:var(--tavle)}
-.sosial[href=""]{display:none}
-.sosiale-tom{display:none;margin:0}
-.sosiale:not(:has(.sosial:not([href=""]))) .sosiale-tom{display:block}
 @media (max-width:760px){.profilside-rad{grid-template-columns:1fr}.profilside-kort{position:static;justify-self:center}}
 /* «Støtt oss!» som oransje knapp i menyen, og stott.html */
 .topp nav a.stott-knapp{background:var(--oransje);color:var(--tavle);font-weight:700;padding:.3rem .85rem;border-radius:8px;box-shadow:0 0 10px rgba(227,157,99,.45)}
