@@ -48,6 +48,9 @@ website:
           - href: emner/moderne/index.qmd
             text: "Moderne fysikk"
     right:
+      - href: stott.qmd
+        text: "<span class='stott-knapp'>Støtt oss!</span>"
+        aria-label: "Støtt oss"
       - href: om.qmd
         text: Om oss
       - href: dekning.qmd

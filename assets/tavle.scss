@@ -994,6 +994,11 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .om-oss { max-width: 760px; margin: 0 auto 2.5rem; }
 .om-oss h2 { margin-top: .3rem; }
 
+// «Støtt oss!» som oransje knapp i toppmenyen, og siden stott.qmd
+.stott-knapp { display: inline-block; background: $orange; color: $slate; font-weight: 700; padding: .25rem .8rem; border-radius: 8px; box-shadow: 0 0 10px rgba($orange, .45); }
+.navbar .nav-link:hover .stott-knapp, .navbar .nav-link:focus .stott-knapp { box-shadow: 0 0 16px rgba($orange, .7); }
+.stott-side { max-width: 720px; margin: 0 auto 3rem; }
+.stott-kommer { font-family: "Kritt", "Architects Daughter", cursive; color: $orange; font-size: 1.4rem; }
 // Sosiale lenker på profilsidene (profiler/*.qmd). Tomme lenker skjules; er alle tomme, vises «Lenker kommer».
 .sosiale { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0 1rem; }
 .sosial { display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .9rem; border: 1.5px solid $neon; border-radius: 99px; color: $neon !important; text-decoration: none !important; font-weight: 700; font-size: .9rem; transition: background .2s, color .2s; }
