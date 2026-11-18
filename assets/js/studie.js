@@ -284,13 +284,17 @@ function studieStart() {
       return { tekst: g[0].tekst, ider: ider, status: st };
     });
   }
-  var STATUSNAVN = { ok: 'Godkjent', kanskje: 'Kanskje', nei: 'Ikke godkjent', ingen: 'Ikke svart' };
+  var STATUSNAVN = { ok: 'Godkjent', kanskje: 'Under vurdering', nei: 'Ikke godkjent', ingen: 'Ikke svart' };
   function ovOversiktHtml(o, naId) {
     var l = ovStatus(o), n = function (s) { return l.filter(function (x) { return x.status === s; }).length; }, krav = Math.min(o.krav, l.length);
     var ok = n('ok') + n('kanskje') >= krav;
     return '<div class="st-ovoversikt"><div class="st-ovprikker">' + l.map(function (x, i) {
         return '<span class="st-ovprikk ' + x.status + (naId && x.ider.indexOf(naId) >= 0 ? ' na' : '') + '" title="' + (i + 1) + ': ' + STATUSNAVN[x.status] + '">' + (i + 1) + '</span>'; }).join('') + '</div>' +
-      '<p class="st-sm">' + (n('ok') + n('kanskje')) + ' av ' + l.length + ' riktige (' + n('kanskje') + ' kanskje) · krav ' + krav + ' · <b class="st-ovtotal ' + (ok ? 'ok' : 'nei') + '">' + (ok ? 'Godkjent' : 'Ikke godkjent ennå') + '</b></p></div>';
+      // Bare kravet under tallene. Fargen sier status: grønn godkjent, oransje under vurdering (godkjent hvis «kanskje»-svarene holder), rød ikke godkjent ennå. Forklaring bak (i).
+      '<div class="st-ovkrav"><b class="st-ovtotal ' + (n('ok') >= krav ? 'ok' : ok ? 'kanskje' : 'nei') + '">Krav: ' + krav + ' av ' + l.length + '</b>' +
+      '<button type="button" class="st-ovinfoknapp" data-h="ovInfo" aria-label="Hva betyr fargene?">i</button></div>' +
+      '<div class="st-ovinfo st-sm"><p><span class="st-ovprikk ok">1</span> godkjent · <span class="st-ovprikk kanskje">2</span> under vurdering · <span class="st-ovprikk nei">3</span> ikke godkjent · <span class="st-ovprikk ingen">4</span> ikke svart</p>' +
+      '<p>Du har ' + n('ok') + ' godkjent' + (n('kanskje') ? ' og ' + n('kanskje') + ' under vurdering' : '') + '. Kravet er ' + krav + '. Grønt krav: arbeidskravet er godkjent. Oransje: godkjent hvis svarene under vurdering holder. Rødt: ikke godkjent ennå.</p></div></div>';
   }
   function startOvelse(id) {
     var o = T.ovelser.find(function (x) { return x.id === id; }), t = o.tema.split('/')[1];
@@ -2881,6 +2885,7 @@ function studieStart() {
       ga: function () { ga(d.v, { meny: false }); },
       meny: function () { T.meny = true; tegn(); var f = document.querySelector('.st-meny .st-mrad'); if (f) f.focus(); },
       lukkMeny: function () { T.meny = false; tegn(); },
+      ovInfo: function () { var v = b.closest('.st-ovoversikt'); if (v) v.classList.toggle('vis-info'); },
       tilbakemelding: function () { T.meny = false; tegn(); if (window.fhTilbakemelding) window.fhTilbakemelding(); },
       dashman: function () { apneDashman(); },
       ovelse: function () { startOvelse(d.id); },
