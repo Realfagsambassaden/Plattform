@@ -432,7 +432,10 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
   .dm-scene { --dm-skala: .5; min-width: 0; min-height: 0; margin: 0 0 -.2rem .6rem; order: -1; }
   // iPhone/Safari: «vh» er høyden uten adresselinja, så toppen av boblen (med ×) havnet utenfor skjermen.
   // «dvh» er den synlige høyden. Plass til Dashman-figuren over (ca. 120 px) og safe area.
-  .dm-boble { width: 100%; max-height: 70vh; max-height: calc(100dvh - 140px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); padding: 1.4rem 1.3rem 2rem 1.6rem; }
+  .dm-boble { width: 100%; max-height: 70vh; max-height: calc(var(--dm-vh, 100dvh) - 140px - env(safe-area-inset-top)); padding: 1.4rem 1.3rem 2rem 1.6rem; }
+  .dm-panel.dm-tastatur .dm-scene { display: none; }
+  .dm-panel.dm-tastatur .dm-boble { max-height: calc(var(--dm-vh, 100dvh) - 1rem); }
+  .dm-panel.dm-tastatur .dm-info { display: none; }
   // Krittstreken svinger inn nede til venstre: hold teksten unna kanten
   .dm-info { padding: 0 1rem 0 1.4rem; text-align: center; }
   .dm-kontur.bred { display: none; } .dm-kontur.smal { display: block; }

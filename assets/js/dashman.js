@@ -79,6 +79,18 @@
   document.addEventListener('visibilitychange', function () { if (!document.hidden) synlig(); });
   document.addEventListener('fh-innlogget', synlig);
   var logg = panel.querySelector('.dm-logg'), holder = panel.querySelector('.dm-holder'), felt = panel.querySelector('textarea');
+  // Mobil: Dashman skal alltid få plass på den delen av skjermen som faktisk synes (også når tastaturet er oppe
+  // eller adresselinja i Safari tar plass), så × øverst alltid kan nås. visualViewport gir den synlige høyden.
+  function tilpassHoyde() {
+    var vv = window.visualViewport;
+    if (!vv || window.innerWidth > 700 || panel.hidden) { panel.style.removeProperty('--dm-vh'); panel.style.removeProperty('bottom'); panel.classList.remove('dm-tastatur'); return; }
+    panel.style.setProperty('--dm-vh', Math.round(vv.height) + 'px');
+    panel.style.bottom = Math.max(8, Math.round(window.innerHeight - vv.height - vv.offsetTop) + 8) + 'px';
+    panel.classList.toggle('dm-tastatur', vv.height < window.innerHeight * .75);   // tastaturet er oppe: skjul figuren
+  }
+  if (window.visualViewport) { visualViewport.addEventListener('resize', tilpassHoyde); visualViewport.addEventListener('scroll', tilpassHoyde); }
+  window.addEventListener('orientationchange', function () { setTimeout(tilpassHoyde, 300); });
+  new MutationObserver(tilpassHoyde).observe(panel, { attributes: true, attributeFilter: ['hidden'] });
 
   var bilde = null, animTid = null, blunkTid = null;
   function vis(navn) {
