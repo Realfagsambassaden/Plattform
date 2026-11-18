@@ -16,7 +16,9 @@ function fokusStart() {
   var NETTSTED = ((document.querySelector('meta[name="nettsted-navn"]') || {}).content || 'fysikkhjelp.no').replace(/\.no$/, '');
   // Kilde: «#<fag-id>» (et fag), «#loype-<id>[@<side>]» (en ferdig løype på nettstedet) eller «#min» (studentens egen løype).
   var kursId = decodeURIComponent((location.hash || '').slice(1));
-  var lm = /^loype-([^@]+)(?:@(.*))?$/.exec(kursId), kilde = lm ? 'loype' : kursId === 'min' ? 'min' : 'fag';
+  var lm = /^loype-([^@]+)(?:@(.*))?$/.exec(kursId), kilde = lm ? 'loype' : /^min(@|$)/.test(kursId) ? 'min' : 'fag';
+  // «#<fag>@<undertema-id>» / «#min@<undertema-id>»: åpne på en bestemt side (fra «Les om ukens tema» i appen).
+  var hopp = null; if (!lm && kursId.indexOf('@') > 0) { hopp = kursId.slice(kursId.indexOf('@') + 1); kursId = kursId.slice(0, kursId.indexOf('@')); }
   var MODFARGE = ['var(--bs-primary)', 'var(--bs-info)', '#eee462', 'var(--bs-warning)', '#c792ea', '#ff8a8f'];
   var LJ = null, K = {}, FINNES = null, kurs = null, krav = [], quizer = [], rekke = [], her = -1, aktivKrav = null, k = null, bruker = null;
   document.documentElement.classList.add('fk-aktiv');
@@ -226,6 +228,7 @@ function fokusStart() {
     rekke = lagRekke();
     var start = parseInt(hent(), 10);
     if (lm && lm[2]) { var ii = rekke.findIndex(function (x) { return x.url === decodeURIComponent(lm[2]); }); if (ii >= 0) start = ii; }
+    if (hopp) { var ih = rekke.findIndex(function (x) { return x.id === hopp || x.url === hopp; }); if (ih >= 0) start = ih; }
     if (!(start >= 0 && start < rekke.length)) start = rekke.findIndex(function (x) { return x.type === 'ut'; });
     if (start < 0) start = 0;
     var x = rekke[start];
