@@ -2,7 +2,7 @@
 // - Sider og filer hentes alltid fra nettet først, så du får nyeste versjon. Er du uten nett, brukes det som sist ble lastet.
 // - Bare filer fra fysikkhjelp.no lagres. Innlogging, svar og KI (Supabase og hint-tjeneren) går aldri via lageret.
 // - Ingen personlige data lagres her; lageret inneholder bare offentlige sider, bilder og skript.
-var LAGER = 'fh-v1';
+var LAGER = 'fh-v2';
 var START = ['/offline.html', '/assets/img/app/ikon-192.png'];
 
 self.addEventListener('install', function (e) {
@@ -15,7 +15,9 @@ self.addEventListener('activate', function (e) {
 self.addEventListener('fetch', function (e) {
   var r = e.request, u = new URL(r.url);
   if (r.method !== 'GET' || u.origin !== location.origin) return;
-  e.respondWith(fetch(r).then(function (svar) {
+  // «no-cache»: spør alltid serveren om filen er endret (rask når den ikke er det). Ellers kan nettleserens
+  // vanlige mellomlager gi gammel studie.js/fokus.js i opptil ti minutter etter en ny versjon, sammen med ny HTML.
+  e.respondWith(fetch(r, { cache: 'no-cache' }).then(function (svar) {
     if (svar.ok && svar.type === 'basic') { var kopi = svar.clone(); caches.open(LAGER).then(function (c) { c.put(r, kopi); }); }
     return svar;
   }).catch(function () {
