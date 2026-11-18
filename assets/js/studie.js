@@ -1912,7 +1912,7 @@ function studieStart() {
       '<button type="button" class="st-ikonknapp" data-h="lukkMeny" aria-label="Lukk menyen">' + ikon('x') + '</button></div>' +
       rad('hjem', 'I dag', 'Quiz, arbeidskrav og Dashman', 'idag') +
       rad('rute', 'Ukeplanen min', 'Uker, temaer og quiz i kursene dine', 'hjem') +
-      rad('bok', 'Les og øv', 'Lærestoff, videoer og oppgaver', '', '../index.html') +
+      rad('bok', 'Hele læreboka', 'Alle temaene på fysikkhjelp.no – åpnes utenfor appen', '', '../index.html') +
       rad('graf', 'Kunnskapsprofil', 'Forståelse, presisjon og hurtighet', 'profil') +
       rad('kurs', 'Kurstilbud', 'Kurs som undervisere tilbyr. Meld deg på eller av', 'kurs') +
       rad('bruker', 'Min side', '', '', '../konto/index.html') +
