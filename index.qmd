@@ -127,30 +127,31 @@ anchor-sections: false
   <h2>Hvem forklarer?</h2>
   <div class="samlekort-rad">
     <article class="samlekort" data-farge="gronn">
-      <a class="sk-inni" href="profiler/ben.html" aria-label="Om Dr. Normann">
+      <a class="sk-inni" href="https://realfagsambassaden.no/profil/ben.html" aria-label="Om Dr. Normann">
         <span class="sk-flate">
           <span class="sk-topp"><span class="sk-navn">Dr. Normann</span><img class="sk-ikon" src="assets/img/drnormann-ikon.png" alt=""></span>
           <span class="sk-bilde"><img src="assets/img/ben-portrett.webp" alt="Portrett av Ben David Normann"></span>
           <span class="sk-rolle">Ph.d. i matematisk kosmologi</span>
           <span class="sk-tekst">Jeg heter Ben, har doktorgrad i matematisk kosmologi og har formidlet og undervist realfag i ti år. I 2018 vant jeg den nasjonale finalen i Forsker Grand Prix. Her legger jeg ut forklaringene jeg selv skulle ønske jeg hadde: én idé om gangen, tegnet ut på tavla, med regning du kan følge linje for linje.</span>
-          <span class="sk-bunn"><span class="sk-tilbud">Mine tilbud →</span><span class="sk-nr">#001</span></span>
+          <span class="sk-bunn"><span class="sk-tilbud">Les mer →</span><span class="sk-nr">#001</span></span>
         </span>
         <span class="sk-glans" aria-hidden="true"></span>
       </a>
     </article>
     <article class="samlekort" data-farge="oransje">
-      <a class="sk-inni" href="profiler/andrea.html" aria-label="Om Andrea">
+      <a class="sk-inni" href="https://realfagsambassaden.no/profil/andrea.html" aria-label="Om Andrea">
         <span class="sk-flate">
           <span class="sk-topp"><span class="sk-navn">Andrea</span><img class="sk-ikon" src="assets/img/andrea-ikon.png" alt=""></span>
           <span class="sk-bilde"><img src="assets/img/andrea-portrett.webp" alt="Portrett av Andrea"></span>
           <span class="sk-rolle">Dobbel mastergrad</span>
           <span class="sk-tekst">Andrea har i en årrekke vært ansiktet utad og selve drivkraften i NTNU Fysikkstudio, som lager fysikkvideoer av høy kvalitet.</span>
-          <span class="sk-bunn"><span class="sk-tilbud">Mine tilbud →</span><span class="sk-nr">#002</span></span>
+          <span class="sk-bunn"><span class="sk-tilbud">Les mer →</span><span class="sk-nr">#002</span></span>
         </span>
         <span class="sk-glans" aria-hidden="true"></span>
       </a>
     </article>
   </div>
+  <p class="alle-ambassadorer"><a href="https://realfagsambassaden.no/#ambassadorer">Se alle ambassadørene på Realfagsambassaden →</a></p>
 </section>
 
 <script src="assets/js/samlekort.js"></script>
