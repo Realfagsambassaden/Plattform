@@ -59,7 +59,7 @@ anchor-sections: false
     </div>
   </div>
   <img class="hero-dashman-v" src="assets/img/dashman/glad.webp" alt="">
-  <p class="hero-dm-boble"><b>Dashman her!</b> Jeg er din personlige KI-assistent<svg class="hero-dm-hale" viewBox="0 0 46 64" aria-hidden="true"><path class="fyll" d="M44 -9 L42 2 C 36 24, 26 44, 8 62 C 18 42, 18 22, 8 2 L6 -9 Z"/><path class="strek" d="M42 2 C 36 24, 26 44, 8 62 C 18 42, 18 22, 8 2"/></svg></p>
+  <p class="hero-dm-boble"><b>Dashman her!</b> Jeg er din personlige KI-assistent<svg class="hero-dm-hale" aria-hidden="true"><path class="fyll"/><path class="strek"/></svg></p>
   <div class="hero-scene">
     <img src="assets/img/tegninger/hero-dashman.webp" alt="Dashman får en aha-opplevelse, med F = ma og E = mc² tegnet i kritt rundt seg på en tavle full av formler">
   </div>
@@ -73,6 +73,31 @@ anchor-sections: false
   <!-- >>> nivakort (lages av verktoy/tema.py fra nivaer.yml – ikke rediger mellom disse linjene) -->
   <!-- <<< nivakort -->
 </div>
+<script>
+// Halen på Dashmans snakkeboble: en bøyd trekant i kritt som alltid peker mot hodet hans, uansett skjermbredde.
+(function () {
+  var b = document.querySelector('.hero-dm-boble'), dm = document.querySelector('.hero-dashman-v'), h = b && b.querySelector('.hero-dm-hale');
+  if (!b || !dm || !h) return;
+  function sikt() {
+    var br = b.getBoundingClientRect(), cs = getComputedStyle(dm), pt = parseFloat(cs.paddingTop) || 0, pl = parseFloat(cs.paddingLeft) || 0, pr = parseFloat(cs.paddingRight) || 0, pb = parseFloat(cs.paddingBottom) || 0;
+    var dr = dm.getBoundingClientRect(), iw = dr.width - pl - pr, ih = dr.height - pt - pb;
+    var hx = dr.left + pl + iw * .5, hy = dr.top + pt + ih * .2;          // hodet: øverst på figuren
+    var bx, by, under = hy > br.bottom - 10;
+    if (under) { bx = Math.max(br.left + 22, Math.min(br.right - 22, hx)); by = br.bottom - 2; }
+    else { bx = hx < br.left ? br.left + 2 : br.right - 2; by = Math.max(br.top + 20, Math.min(br.bottom - 20, hy)); }
+    var dx = hx - bx, dy = hy - by, len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len, px = -uy, py = ux;
+    var L = Math.max(30, Math.min(52, len - 34)), tx = ux * L, ty = uy * L, w = 17;
+    var f = function (x, y) { return x.toFixed(1) + ' ' + y.toFixed(1); };
+    var b1 = [px * w, py * w], b2 = [-px * w, -py * w], c1 = [tx * .55 + px * 16, ty * .55 + py * 16], c2 = [tx * .45 + px * 7, ty * .45 + py * 7];
+    var stk = 'M' + f(b1[0], b1[1]) + ' Q' + f(c1[0], c1[1]) + ' ' + f(tx, ty) + ' Q' + f(c2[0], c2[1]) + ' ' + f(b2[0], b2[1]);
+    h.querySelector('.strek').setAttribute('d', stk);
+    h.querySelector('.fyll').setAttribute('d', 'M' + f(b1[0] - ux * 10, b1[1] - uy * 10) + ' L' + stk.slice(1) + ' L' + f(b2[0] - ux * 10, b2[1] - uy * 10) + ' Z');
+    h.style.left = (bx - br.left) + 'px'; h.style.top = (by - br.top) + 'px';
+  }
+  sikt(); window.addEventListener('resize', sikt); window.addEventListener('load', sikt);
+  if (document.fonts) document.fonts.ready.then(sikt);
+})();
+</script>
 <script>document.documentElement.style.setProperty('--kritt-filter', 'url(#kritt)');</script>
 <script>
 // «Velg nivå!» som skrubryter: Forkurs til venstre, Ingeniør rett opp, Fordypning til høyre. Knotten skrus til valget,

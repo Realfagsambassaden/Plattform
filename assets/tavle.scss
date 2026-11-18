@@ -857,7 +857,7 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .hero-dm-boble { position: absolute; z-index: 1; left: 1rem; top: calc(22% - 8.5rem); width: 205px; margin: 0; padding: .6rem .9rem .7rem; font-family: "Kritt", "Architects Daughter", cursive; color: $chalk; font-size: 1.02rem; line-height: 1.3; text-align: center; background: rgba($slate, .92); transform: rotate(-3deg); pointer-events: none; }
 .hero-dm-boble::before { content: ""; position: absolute; inset: 0; border: 2.5px solid rgba($chalk, .9); border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px; filter: var(--kritt-filter); }
 // Halen: bøyd trekant i kritt (to streker) ned mot Dashman
-.hero-dm-hale { position: absolute; z-index: 1; left: 26%; top: calc(100% - 4px); width: 46px; height: 64px; overflow: visible; }
+.hero-dm-hale { position: absolute; z-index: 1; left: 30%; top: 100%; width: 1px; height: 1px; overflow: visible; }  // retning og plass settes av skriptet i index.qmd
 .hero-dm-hale .strek { filter: var(--kritt-filter); }
 // Fyllet går litt opp i boblen og dekker kantstreken der, så halen er åpen inn til boblen.
 .hero-dm-hale .fyll { fill: $slate; stroke: none; }
@@ -866,7 +866,6 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 @media (max-width: 860px) {
   .hero.sentrert { padding-top: 9rem; }
   .hero-dm-boble { top: 1.2rem; left: 9rem; width: 170px; font-size: .9rem; }
-  .hero-dm-hale { left: -44px; top: 22%; transform: rotate(68deg); }
   .hero.sentrert .hero-scene { left: -3rem; right: -3rem; }
   .hero-dashman-v { height: 150px; top: .5rem; left: .5rem; }
 }
