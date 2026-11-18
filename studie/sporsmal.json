@@ -7502,7 +7502,11 @@
 }
 ],
 "forklaring": "Elementærladningen er $\\mathrm{e} = 1.602\\cdot10^{-19}\\ \\mathrm{C}$. Et elektron har ladningen $-\\mathrm{e}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-299",
@@ -7527,7 +7531,11 @@
 }
 ],
 "forklaring": "$Q = -n\\mathrm{e} = -5.0\\cdot10^{12}\\cdot1.602\\cdot10^{-19}\\ \\mathrm{C}$. Overskudd av elektroner gir negativ ladning.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-300",
@@ -7552,7 +7560,11 @@
 }
 ],
 "forklaring": "$n = |Q|/\\mathrm{e} = 3.2\\cdot10^{-9}\\ \\mathrm{C} / 1.602\\cdot10^{-19}\\ \\mathrm{C}$. Negativ ladning betyr at den har fått elektroner.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-301",
@@ -7577,7 +7589,11 @@
 }
 ],
 "forklaring": "Coulombs lov: $F = \\mathrm{k_e}q_1q_2/r^2$. Dobbel $r$ gir $r^2$ fire ganger så stor.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-302",
@@ -7602,7 +7618,11 @@
 }
 ],
 "forklaring": "$F = \\mathrm{k_e}q_1q_2/r^2 = 8.99\\cdot10^{9}\\cdot(1.0\\cdot10^{-6})^2/1.0^2\\ \\mathrm{N}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-303",
@@ -7627,7 +7647,11 @@
 }
 ],
 "forklaring": "$E = F/q$ gir newton per coulomb. Det er det samme som volt per meter.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-304",
@@ -7652,7 +7676,11 @@
 }
 ],
 "forklaring": "Homogent betyr likt overalt. Feltet peker fra den positive mot den negative plata.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-305",
@@ -7677,7 +7705,11 @@
 }
 ],
 "forklaring": "Ladningen bevares: $(6.0 - 2.0)\\ \\mathrm{nC}$ fordeles likt på to like kuler.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-306",
@@ -7702,7 +7734,11 @@
 }
 ],
 "forklaring": "$F = \\mathrm{k_e}|q_1q_2|/r^2$ med $r = 0.040\\ \\mathrm{m}$. Motsatte fortegn tiltrekker hverandre.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-307",
@@ -7727,7 +7763,11 @@
 }
 ],
 "forklaring": "Telleren blir $2\\cdot2 = 4$ ganger større, og $r^2$ blir 4 ganger større. Kraften er uendret.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-308",
@@ -7752,7 +7792,11 @@
 }
 ],
 "forklaring": "$E = \\mathrm{k_e}q/r^2 = 8.99\\cdot10^{9}\\cdot4.0\\cdot10^{-9}/0.50^2\\ \\mathrm{N/C}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-309",
@@ -7777,7 +7821,11 @@
 }
 ],
 "forklaring": "$a = F/m = \\mathrm{e}E/\\mathrm{m_e} = 1.602\\cdot10^{-19}\\cdot2.0\\cdot10^{3}/9.11\\cdot10^{-31}\\ \\mathrm{m/s^2}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-310",
@@ -7802,7 +7850,11 @@
 }
 ],
 "forklaring": "$U = Ed = 8.0\\cdot10^{3}\\ \\mathrm{V/m}\\cdot5.0\\cdot10^{-3}\\ \\mathrm{m}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-311",
@@ -7827,7 +7879,11 @@
 }
 ],
 "forklaring": "$F = \\mathrm{e}E$. Kraften virker uansett om ladningen ligger i ro.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-312",
@@ -7852,7 +7908,11 @@
 }
 ],
 "forklaring": "Hver av de positive ladningene drar med $1.8\\ \\mathrm{N}$, men i hver sin retning. Kreftene er vektorer og opphever hverandre.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-313",
@@ -7877,7 +7937,11 @@
 }
 ],
 "forklaring": "$F = \\mathrm{k_e}q^2/r^2$ gir $q = r\\sqrt{F/\\mathrm{k_e}} = 0.30\\sqrt{0.10/8.99\\cdot10^{9}}\\ \\mathrm{C}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-314",
@@ -7902,7 +7966,11 @@
 }
 ],
 "forklaring": "Feltene peker hver sin vei: $E = \\mathrm{k_e}q(1/0.10^2 - 1/0.30^2) = 2.70\\ \\mathrm{kN/C} - 0.30\\ \\mathrm{kN/C}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-315",
@@ -7927,7 +7995,11 @@
 }
 ],
 "forklaring": "$q = Er^2/\\mathrm{k_e} = 450\\cdot2.0^2/8.99\\cdot10^{9}\\ \\mathrm{C}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-316",
@@ -7952,7 +8024,11 @@
 }
 ],
 "forklaring": "Tiden er $t = 0.050/2.0\\cdot10^{6}\\ \\mathrm{s}$, akselerasjonen $a = \\mathrm{e}E/\\mathrm{m_e}$, og avbøyningen $y = \\frac{1}{2}at^2$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-felt-317",
@@ -7977,7 +8053,12 @@
 }
 ],
 "forklaring": "$qE = mg$ gir $q = mg/E = 4.8\\cdot10^{-19}\\ \\mathrm{C} = 3\\mathrm{e}$. Kraften må peke oppover, med feltet, så ladningen er positiv.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": false,
+"ki": "3, negativt",
+"merknad": "KI valgte et annet alternativ enn fasiten (negativ ladning, som i Millikans forsøk der feltet peker nedover). Her peker feltet oppover, så den elektriske kraften må peke oppover med feltet, og ladningen er positiv. Claude mener fasiten er riktig."
+}
 },
 {
 "id": "elektrisk-felt-318",
@@ -8002,7 +8083,11 @@
 }
 ],
 "forklaring": "Første berøring: A og B får $4.0\\ \\mathrm{nC}$ hver. Andre berøring: B og C deler $4.0\\ \\mathrm{nC}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-319",
@@ -8027,7 +8112,11 @@
 }
 ],
 "forklaring": "Potensial er potensiell energi per ladning: joule per coulomb, som kalles volt.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-320",
@@ -8052,7 +8141,11 @@
 }
 ],
 "forklaring": "$W = qU = 1.0\\ \\mathrm{C}\\cdot9.0\\ \\mathrm{V}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-321",
@@ -8077,7 +8170,11 @@
 }
 ],
 "forklaring": "Elektronet trekkes mot den positive ladningen, og feltet gjør positivt arbeid. Da minker den potensielle energien.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-322",
@@ -8102,7 +8199,11 @@
 }
 ],
 "forklaring": "Spenning er potensialforskjell: $U_{AB} = V_A - V_B$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-323",
@@ -8127,7 +8228,11 @@
 }
 ],
 "forklaring": "1 eV er energien én elementærladning får gjennom 1 V: $1.602\\cdot10^{-19}\\ \\mathrm{C}\\cdot1\\ \\mathrm{V}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-324",
@@ -8152,7 +8257,11 @@
 }
 ],
 "forklaring": "$\\Delta E_p = q\\Delta V = 3.0\\cdot10^{-6}\\ \\mathrm{C}\\cdot50\\ \\mathrm{V}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-325",
@@ -8177,7 +8286,11 @@
 }
 ],
 "forklaring": "Langs en ekvipotensialflate endres ikke potensialet, så feltet har ingen komponent langs flata.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-326",
@@ -8202,7 +8315,11 @@
 }
 ],
 "forklaring": "$V = \\mathrm{k_e}q/r = 8.99\\cdot10^{9}\\cdot(-5.0\\cdot10^{-9})/0.20\\ \\mathrm{V}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-327",
@@ -8227,7 +8344,11 @@
 }
 ],
 "forklaring": "Potensialene adderes som tall: $V = \\mathrm{k_e}(4.0 + 2.0)\\cdot10^{-9}/0.20\\ \\mathrm{V}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-328",
@@ -8252,7 +8373,11 @@
 }
 ],
 "forklaring": "$W = q(V_2 - V_1) = 2.0\\cdot10^{-9}\\cdot200\\ \\mathrm{J}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-329",
@@ -8277,7 +8402,11 @@
 }
 ],
 "forklaring": "$\\mathrm{e}U = \\frac{1}{2}\\mathrm{m_e}v^2$ gir $v = \\sqrt{2\\mathrm{e}U/\\mathrm{m_e}}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-330",
@@ -8302,7 +8431,11 @@
 }
 ],
 "forklaring": "$E_p = \\mathrm{k_e}q_1q_2/r = -8.99\\cdot10^{9}\\cdot(1.602\\cdot10^{-19})^2/5.3\\cdot10^{-11}\\ \\mathrm{J}$. Motsatte fortegn gir negativ energi.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-331",
@@ -8327,7 +8460,11 @@
 }
 ],
 "forklaring": "$U = Ed = 2.5\\cdot10^{3}\\ \\mathrm{V/m}\\cdot0.040\\ \\mathrm{m}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-332",
@@ -8352,7 +8489,11 @@
 }
 ],
 "forklaring": "$\\Delta E_p = q(V_2 - V_1) = (-4.0\\cdot10^{-9})\\cdot(50 - 200)\\ \\mathrm{J} = +0.60\\ \\mathrm{\\mu J}$. Negativ ladning får høyere energi ved lavere potensial.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-333",
@@ -8377,7 +8518,11 @@
 }
 ],
 "forklaring": "Tre par: $W = 3\\mathrm{k_e}q^2/a = 3\\cdot8.99\\cdot10^{9}\\cdot(2.0\\cdot10^{-9})^2/0.10\\ \\mathrm{J}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-334",
@@ -8402,7 +8547,11 @@
 }
 ],
 "forklaring": "$\\mathrm{k_e}\\cdot3.0/x = \\mathrm{k_e}\\cdot1.0/(0.40 - x)$ gir $3(0.40 - x) = x$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-335",
@@ -8427,7 +8576,11 @@
 }
 ],
 "forklaring": "All kinetisk energi blir potensiell energi: $E_k = \\mathrm{k_e}\\cdot79\\mathrm{e}^2/r$, med $E_k = 5.0\\cdot10^{6}\\cdot1.602\\cdot10^{-19}\\ \\mathrm{J}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-336",
@@ -8452,7 +8605,11 @@
 }
 ],
 "forklaring": "$U = \\mathrm{m_e}v^2/(2\\mathrm{e}) = 9.11\\cdot10^{-31}\\cdot(4.0\\cdot10^{6})^2/(2\\cdot1.602\\cdot10^{-19})\\ \\mathrm{V}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-337",
@@ -8477,7 +8634,11 @@
 }
 ],
 "forklaring": "$2\\mathrm{e}U = \\frac{1}{2}mv^2$ gir $v = \\sqrt{4\\mathrm{e}U/m}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-338",
@@ -8502,7 +8663,11 @@
 }
 ],
 "forklaring": "Feltet er homogent, så potensialet øker jevnt: $V = 600\\ \\mathrm{V}\\cdot1.0/3.0$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "elektrisk-potensial-339",
@@ -8527,7 +8692,11 @@
 }
 ],
 "forklaring": "$E_p = \\mathrm{k_e}\\mathrm{e}^2/r$ deles likt: $2\\cdot\\frac{1}{2}\\mathrm{m_p}v^2 = E_p$ gir $v = \\sqrt{E_p/\\mathrm{m_p}}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-340",
@@ -8552,7 +8721,11 @@
 }
 ],
 "forklaring": "Strømretningen er definert som retningen positive ladninger ville gått. Elektronene går motsatt vei.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-341",
@@ -8577,7 +8750,11 @@
 }
 ],
 "forklaring": "$Q = It = 0.50\\ \\mathrm{A}\\cdot60\\ \\mathrm{s}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-342",
@@ -8602,7 +8779,11 @@
 }
 ],
 "forklaring": "Ohms lov: $I = U/R$ med konstant $R$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-343",
@@ -8627,7 +8808,11 @@
 }
 ],
 "forklaring": "I serie legges resistansene sammen: $R = R_1 + R_2 + R_3$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-344",
@@ -8652,7 +8837,11 @@
 }
 ],
 "forklaring": "Spenningsloven er energibevaring: en ladning som går rundt sløyfen, kommer tilbake til samme potensial.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-345",
@@ -8677,7 +8866,11 @@
 }
 ],
 "forklaring": "$U = \\varepsilon - rI$, og med $I = 0$ blir $U = \\varepsilon$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-346",
@@ -8702,7 +8895,11 @@
 }
 ],
 "forklaring": "$E = Pt = 0.060\\ \\mathrm{kW}\\cdot5.0\\ \\mathrm{h}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-347",
@@ -8727,7 +8924,11 @@
 }
 ],
 "forklaring": "$n = It/\\mathrm{e} = 1.0\\cdot10^{-3}\\ \\mathrm{A}\\cdot1\\ \\mathrm{s}/1.602\\cdot10^{-19}\\ \\mathrm{C}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-348",
@@ -8752,7 +8953,11 @@
 }
 ],
 "forklaring": "$R = \\rho L/A$ med $A = 1.0\\cdot10^{-6}\\ \\mathrm{m^2}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-349",
@@ -8777,7 +8982,11 @@
 }
 ],
 "forklaring": "$1/R = 3/12\\ \\mathrm{\\Omega^{-1}}$, så $R = 12\\ \\mathrm{\\Omega}/3$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-350",
@@ -8802,7 +9011,11 @@
 }
 ],
 "forklaring": "Parallelldelen: $1/R_p = 1/6.0 + 1/3.0$ gir $R_p = 2.0\\ \\mathrm{\\Omega}$. I serie: $4.0 + 2.0$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-351",
@@ -8827,7 +9040,11 @@
 }
 ],
 "forklaring": "$I = 12\\ \\mathrm{V}/30\\ \\mathrm{\\Omega} = 0.40\\ \\mathrm{A}$, og $U = RI = 20\\cdot0.40\\ \\mathrm{V}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-352",
@@ -8852,7 +9069,11 @@
 }
 ],
 "forklaring": "Bare den indre resistansen begrenser strømmen: $I = \\varepsilon/r$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-353",
@@ -8877,7 +9098,11 @@
 }
 ],
 "forklaring": "$P = RI^2 = 50\\cdot0.20^2\\ \\mathrm{W}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-354",
@@ -8902,7 +9127,11 @@
 }
 ],
 "forklaring": "$R = \\rho L/A$. Dobbel lengde med samme volum gir halvt tverrsnitt, så $R$ blir $2\\cdot2 = 4$ ganger så stor.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-355",
@@ -8927,7 +9156,11 @@
 }
 ],
 "forklaring": "Uten C øker resistansen fra $1.5R$ til $2R$, så strømmen gjennom A blir mindre.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-356",
@@ -8952,7 +9185,11 @@
 }
 ],
 "forklaring": "Batteriene virker mot hverandre: $I = (12 - 6.0)\\ \\mathrm{V}/3.0\\ \\mathrm{\\Omega}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-357",
@@ -8977,7 +9214,11 @@
 }
 ],
 "forklaring": "Begge grenene har 12 V over seg: $12/4.0 + 12/12\\ \\mathrm{A}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-358",
@@ -9002,7 +9243,11 @@
 }
 ],
 "forklaring": "$U = \\varepsilon - rI$: $11 = \\varepsilon - 2.0r$ og $10 = \\varepsilon - 4.0r$ gir $r = 0.50\\ \\mathrm{\\Omega}$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-359",
@@ -9027,7 +9272,11 @@
 }
 ],
 "forklaring": "$R = U^2/P$, så 60 W-pæra har størst resistans. I serie er strømmen lik, og $P = RI^2$ blir størst der $R$ er størst.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 },
 {
 "id": "kretser-360",
@@ -9052,7 +9301,11 @@
 }
 ],
 "forklaring": "$P = RI^2$, og $1.20^2 = 1.44$.",
-"godkjenning": "kreves"
+"godkjenning": "kreves",
+"kontroll": {
+"ok": true,
+"dato": "2026-11-18"
+}
 }
 ]
 }
