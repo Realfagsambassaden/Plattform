@@ -1,6 +1,6 @@
 # Notasjon – regler for alt fagstoff
 
-**Versjon: 2** (4. november 2026)
+**Versjon: 3** (18. november 2026)
 
 Disse reglene gjelder alt fagstoff på fysikkhjelp.no og matematikkhjelp.no: sider i fagrepoene, tematekster, oppgaver og løsninger, figurer, videomanus og alt som vises i videoene (animasjoner og formelbilder). De gjelder også donert stoff, som tilpasses når det legges inn. Er du i tvil, følg reglene her foran vanen i et enkelt dokument.
 
@@ -75,6 +75,11 @@ Gjelder svar i oppgaver, løsninger og eksempler, og tall i teksten ellers.
 
 Bruk samme symbol for samme størrelse på tvers av sider og lærebøker.
 
+## 5b. Fortegn i termodynamikk
+
+- Termodynamikkens 1. lov skrives $\Delta U = Q + W$. **$Q$ og $W$ er positive når de går *inn* i gassen** (tilført varme, arbeid gjort *på* gassen).
+- Ved konstant trykk er arbeidet på gassen $W = -p\,\Delta V$. Arbeidet gassen selv gjør, skrives $W_\text{gass} = p\,\Delta V$ (alltid med indeksen).
+
 ## 6. Sjekk av innhold
 
 - `rutiner/notasjon-status.yml` viser hvilke filer som er sjekket, mot hvilken versjon av reglene, og innholdet (git-blob) som ble sjekket.
@@ -83,6 +88,8 @@ Bruk samme symbol for samme størrelse på tvers av sider og lærebøker.
 - **Nye regler:** Øk versjonsnummeret øverst og skriv en linje i endringsloggen under. Da er alt usjekket, og nattjobben går gjennom alt innholdet på nytt.
 
 ## Endringslogg
+
+- **Versjon 3** (18. november 2026): Fortegnsregel i termodynamikk (5b): $Q$ og $W$ positive inn i gassen, $W = -p\,\Delta V$ ved konstant trykk.
 
 - **Versjon 2** (4. november 2026): Desimaltegn er punktum (1.00), også i tekst og video. SI-enheter der det er naturlig, og dekadiske prefikser. Om siunitx: kan brukes i ren LaTeX, men ikke på nettsidene.
 
