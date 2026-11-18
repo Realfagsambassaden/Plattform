@@ -48,6 +48,8 @@ website:
           - href: emner/moderne/index.qmd
             text: "Moderne fysikk"
     right:
+      - href: om.qmd
+        text: Om oss
       - href: dekning.qmd
         text: Dekker vi emnet ditt?
       - href: konto/index.qmd
