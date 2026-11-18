@@ -4,6 +4,7 @@ toc: false
 ---
 
 ```{=html}
+<div class="svamp-dekor" aria-hidden="true"><img src="../assets/img/tegninger/svampespor.webp" alt=""></div>
 <div id="konto" class="konto" aria-live="polite">
   <p class="konto-laster">Laster …</p>
 </div>

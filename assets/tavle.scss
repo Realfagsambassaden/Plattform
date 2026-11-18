@@ -235,7 +235,11 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 
 // ---------- konto ----------
 .navbar .nav-link.innlogget { color: $neon !important; }
-.konto { max-width: 460px; margin: 1rem auto 3rem; }
+.konto { max-width: 460px; margin: 1rem auto 3rem; position: relative; z-index: 1; }
+// ekte tavlesvamp (lærerens foto) med vaskespor øverst til høyre på Min side (pynt)
+.svamp-dekor { position: relative; height: 0; pointer-events: none; }
+.svamp-dekor img { position: absolute; top: -3.2rem; right: -2rem; width: min(520px, 52vw); }
+@media (max-width: 700px) { .svamp-dekor img { top: -4.5rem; right: -1rem; width: 62vw; opacity: .6; } }
 .konto-laster { color: $dust; text-align: center; padding: 2rem 0; }
 .konto-boks { border: 1px solid $line; border-radius: 12px; padding: 1.4rem; }
 .faner { display: flex; gap: .4rem; margin-bottom: 1rem; }
