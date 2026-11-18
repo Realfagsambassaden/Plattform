@@ -1550,7 +1550,8 @@ function studieStart() {
         l.forEach(function (y) { if (y.gruppe != null) y.gruppe = stempel + '-' + y.gruppe; });
         if (kk.vanskelighet === 'tilpasset' && l.some(function (y) { return y.gruppe == null; })) gjettGrupper(l, stempel);
         v.sporsmal = v.rekkefolge === 'tilfeldig' ? v.sporsmal.concat(l) : sorterDelkap(v.sporsmal.concat(l), (v.ut[0] || '').split('/')[1]); v.kilde = 'egne'; if (v.krav > spAntall(v.sporsmal)) v.krav = spAntall(v.sporsmal);
-        var ng = spAntall(l);
+        var ng = spAntall(l), nSjekk = l.filter(function (y) { return y.kontroll && !y.kontroll.ok; }).length;
+        if (nSjekk) setTimeout(function () { varsle('KI-kontrollen er uenig med fasiten eller fant problemer i ' + nSjekk + ' av ' + l.length + ' spørsmål. De er merket ⚠ – se over dem før du lagrer.', true); }, 4500);
         varsle((ng < l.length ? ng + ' spørsmål i tre varianter hver (' + l.length + ' i alt) lagt til. Studenten får variant etter nivået sitt.' : l.length + ' spørsmål lagt til.') + ' Sjekk fasiten før du lagrer.' + (d.vedlegg ? ' ' + d.vedlegg : '')); kk.ulest = [];
       })
       .catch(function (e) { varsle(feilmelding(e), true); })
@@ -1604,6 +1605,10 @@ function studieStart() {
           '<select data-ovspv="' + i + '.vanskelighet">' + NIV.map(function (z) { return opt(z, z, x.vanskelighet === z); }).join('') + '</select> ' +
           (v.ut.length ? '<select data-ovspv="' + i + '.undertema">' + opt('', '(undertema)', !x.undertema) + v.ut.map(function (id) { var kort = id.split('/').slice(1).join('/'); return opt(kort, utNavnKort(id), x.undertema === kort || x.undertema === id.split('/')[2]); }).join('') + '</select> ' : '') +
           '<button type="button" class="st-btn g liten" data-h="slettSp" data-i="' + i + '">Fjern</button></span></div>' +
+          // Selvkontrollen (en uavhengig KI har løst spørsmålet bare fra teksten): grønt = enig med fasiten, oransje = sjekk.
+          (x.kontroll ? '<div class="st-fb ' + (x.kontroll.ok ? '' : 'kanskje') + '" style="margin:.3rem 0"><b>' + (x.kontroll.ok ? '✓ KI-kontroll: enig med fasiten' : x.kontroll.ok === false ? '⚠ Sjekk dette spørsmålet' : 'KI-kontroll: usikker') + '</b>' +
+            (x.kontroll.ok ? '' : '<p class="st-sm">' + esc(x.kontroll.merknad || '') + (x.kontroll.ki ? ' KI fikk: ' + esc(x.kontroll.ki) + (x.kontroll.fasit ? ' (fasit for eksempelet: ' + esc(x.kontroll.fasit) + ')' : '') + '.' : '') +
+              ' Rett spørsmålet, eller trykk «Godta» hvis fasiten er riktig.</p><p><button type="button" class="st-btn g liten" data-h="godtaKontroll" data-i="' + i + '">Godta</button></p>') + '</div>' : '') +
           '<label class="st-valg st-sm"><input type="checkbox" data-ovmal="' + i + '"' + (mal ? ' checked' : '') + '> Varierende tall (hver student får egne tall)</label>';
         if (!mal) return '<div class="st-spred">' + hode +
           '<textarea class="st-felt" rows="2" data-ovsp="' + i + '.tekst" placeholder="Oppgavetekst. Formler mellom $ … $">' + esc(x.tekst) + '</textarea>' +
@@ -2887,6 +2892,7 @@ function studieStart() {
       slettVar: function () { T.fag.ov.sporsmal[+d.i].variabler.splice(+d.j, 1); tegn(); },
       nyeTall: function () { tegn(); },
       grupperVarianter: function () { var v = T.fag.ov; v.sporsmal.forEach(function (x) { delete x.gruppe; }); gjettGrupper(v.sporsmal, Date.now().toString(36)); if (v.krav > spAntall(v.sporsmal)) v.krav = spAntall(v.sporsmal); varsle(spAntall(v.sporsmal) + ' spørsmål med varianter. Husk å lagre arbeidskravet.'); tegn(); },
+      godtaKontroll: function () { var x = T.fag.ov.sporsmal[+d.i]; if (x && x.kontroll) { x.kontroll = { ok: true, godtatt: true }; tegn(); } },
       slettSp: function () { var v = T.fag.ov; v.sporsmal.splice(+d.i, 1); if (v.krav > spAntall(v.sporsmal)) v.krav = Math.max(1, spAntall(v.sporsmal)); tegn(); },
       slettOvelse: function () { slettOvelse(d.id); },
       eksempel: function () { ev.preventDefault(); location.hash = 'eksempel'; location.reload(); },
