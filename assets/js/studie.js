@@ -354,7 +354,16 @@ function studieStart() {
     var n = liste ? liste.length : o.antall;
     if (!n) return varsle('Arbeidskravet har ingen spørsmål ennå.', true);
     T.q = { tema: t, nr: 0, hoved: n, antall: n, brukt: [], res: [], hovedRes: [], rekke: 0, ovelse: o, liste: liste, ut: ut, forsok: nyUuid() };
-    nesteSp(); ga('quiz');
+    // Fortsett der du slapp: spørsmål som allerede er godkjent (eller under vurdering) fra før, hoppes over.
+    // Svarene ligger i databasen, så dette virker også på en annen enhet og etter at appen er lukket.
+    if (liste && o.kilde === 'egne') {
+      var okIder = {}, nOk = 0;
+      ovStatus(o).forEach(function (g) { if (g.status === 'ok' || g.status === 'kanskje') { nOk++; g.ider.forEach(function (id) { okIder[id] = true; }); } });
+      if (nOk) { T.q.okIder = okIder; varsle(nOk === n ? 'Alle spørsmålene er allerede godkjent.' : 'Du fortsetter der du slapp. ' + nOk + ' av ' + n + ' spørsmål er allerede godkjent.'); }
+    }
+    nesteSp();
+    if (T.q.ferdig) { avsluttQuiz(); return ga('resultat'); }
+    ga('quiz');
   }
   // Lagres når quizen er ferdig. Øvingsquizer teller mot godkjenning.
   function avsluttQuiz() {
@@ -539,6 +548,11 @@ function studieStart() {
   }
   function nesteSp() {
     var q = T.q, x = null, rep = false;
+    // Arbeidskrav: godkjente spørsmål fra tidligere økter telles som riktige og hoppes over.
+    if (q.okIder && q.liste) {
+      while (q.nr < q.hoved && q.liste[q.nr].some(function (y) { return q.okIder[y.id]; })) { q.res.push('riktig'); q.hovedRes.push('riktig'); q.nr++; }
+      if (q.nr >= q.hoved) { q.ferdig = true; return; }
+    }
     if (q.nr >= q.hoved) { x = repSp(q); rep = !!x; }
     if (!x && q.nr < q.hoved) x = q.liste ? velgVariant(q.liste[q.nr]) : velgNeste(q.tema, q.brukt, q.ut);
     if (!x) { q.ferdig = true; return; }
@@ -2950,7 +2964,7 @@ function studieStart() {
       lukkQuiz: function () {
         var q = T.q, halv = q && T.vis === 'quiz' && q.res.length > 0 && !q.lagret;
         stoppTale(); T.q = null; ga('idag');
-        if (halv) varsle(q.ovelse ? 'Arbeidskravet er avbrutt. Forsøket teller ikke før du har fullført det.' : 'Quizen er avsluttet. Svarene du har gitt, er lagret i kunnskapsprofilen din.');
+        if (halv) varsle(q.ovelse ? (q.ovelse.kilde === 'egne' ? 'Svarene dine er lagret. Neste gang fortsetter du der du slapp.' : 'Arbeidskravet er avbrutt. Forsøket teller ikke før du har fullført det.') : 'Quizen er avsluttet. Svarene du har gitt, er lagret i kunnskapsprofilen din.');
       },
       skannNy: function () { var sk = T.skann || {}; T.skann = { valgt: sk.valgt, fri: sk.fri, oppgave: sk.oppgave }; tegn(); },
       skannAnnen: function () { var b = (T.skann || {}).bilde; T.skann = { bilde: b }; tegn(); },
@@ -2993,7 +3007,7 @@ function studieStart() {
       hoppOver: function () {
         // Hopp over: spørsmålet flyttes sist (arbeidskrav) eller hoppes over (quiz fra banken).
         var q = T.q; if (q.svart != null) return;
-        if (q.liste && q.nr < q.liste.length - 1) { q.liste.push(q.liste.splice(q.nr, 1)[0]); q.brukt.pop(); nesteSp(); tegn(); return; }
+        if (q.liste && q.nr < q.liste.length - 1) { q.liste.push(q.liste.splice(q.nr, 1)[0]); q.brukt.pop(); nesteSp(); if (q.ferdig) { avsluttQuiz(); return ga('resultat'); } tegn(); return; }
         if (q.liste) return varsle('Dette er det siste spørsmålet. Svar på det, eller trykk ✕ for å avslutte.', true);
         q.brukt.pop(); q.nr++; if (q.nr >= q.antall) { avsluttQuiz(); return ga('resultat'); } nesteSp(); tegn();
       },
