@@ -1149,3 +1149,12 @@ begin
 end $$;
 revoke execute on function public.sett_sporsmal_status(text[], text, text) from public, anon;
 grant execute on function public.sett_sporsmal_status(text[], text, text) to authenticated;
+
+-- Arbeidskrav uten krav (frivillig øving, 18. nov. 2026): krav = 0 er lov.
+do $$ declare c text; begin
+  for c in select conname from pg_constraint where conrelid = 'public.ovelser'::regclass and contype = 'c' and pg_get_constraintdef(oid) ~ 'krav >= 1' loop
+    execute format('alter table public.ovelser drop constraint %I', c);
+  end loop;
+end $$;
+alter table public.ovelser drop constraint if exists ovelser_krav_min;
+alter table public.ovelser add constraint ovelser_krav_min check (krav >= 0);
