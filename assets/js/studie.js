@@ -91,7 +91,7 @@ function studieStart() {
   var FINNES = null;
   var LOYPER = [], ALLE_LOYPER = [];   // løyper med ukeplan (kilde: utvalg i Plattform/loyper), til «Bygg etter løype»
   var temaUrl = function (t, u) {
-    var sti = '/tema/' + S[t].omrade + '/' + t + (u ? '/' + u : '') + '.html';
+    var sti = '/tema/' + (S[t] || K[t]).omrade + '/' + t + (u ? '/' + u : '') + '.html';
     return u && FINNES && !FINNES[sti] ? null : '..' + sti;
   };
   var tittel = function (t) { return S[t] ? S[t].tittel : K[t] ? K[t].tittel : t; };
@@ -1802,7 +1802,8 @@ function studieStart() {
     return id === 'egen' ? 'egen' : ((T.deltar || []).find(function (d) { return d.kurs === id; }) || null);
   }
   function settAktivtKurs(id) { T.aktivKurs = id; try { if (id) localStorage.setItem('fh-aktivt-kurs', id); else localStorage.removeItem('fh-aktivt-kurs'); } catch (e) {} }
-  function kursTemaer(d) { return ((d && d.kursinfo && d.kursinfo.temaer) || []).filter(function (x) { return x.indexOf(NETTSTED + '/') === 0; }).map(function (x) { return x.slice(NETTSTED.length + 1); }).filter(function (t) { return S[t]; }); }
+  // Alle temaene i kurset, i kursets rekkefølge – også de som ennå ikke har spørsmål i banken (de får lærestoff, men ingen quiz).
+  function kursTemaer(d) { return ((d && d.kursinfo && d.kursinfo.temaer) || []).filter(function (x) { return x.indexOf(NETTSTED + '/') === 0; }).map(function (x) { return x.slice(NETTSTED.length + 1); }).filter(function (t) { return S[t] || K[t]; }); }
   // «Løypene mine»: én løype per kurs med temaer, pluss egen løype hvis studenten har valgt temaer selv.
   function mineLoyper() {
     var l = (T.deltar || []).filter(function (d) { return kursTemaer(d).length; }).map(function (d) { return { id: d.kurs, navn: fagnavn(d), tm: kursTemaer(d) }; });
@@ -2005,6 +2006,7 @@ function studieStart() {
       // Fokusmodus øverst: ett trykk inn i faget man holder på med (studentene ville ha dette lett tilgjengelig).
       if (!T.eksempel && (ak || v.length)) o += '<a class="st-dkort st-fokusknapp" href="fokus.html#' + (ak && ak !== 'egen' ? encodeURIComponent(ak) : 'min') + '"><span class="st-merke">Fokusmodus</span><b class="st-dtittel">▶ ' + esc(ak && ak !== 'egen' ? fagnavn(ak) : 'Min løype') + '</b><span class="st-sm">Les sidene, se videoene og gjør oppgavene i rekkefølge, uten noe annet på skjermen.</span></a>';
       if (!v.length) o += '<div class="st-dkort g"><span class="st-merke">Kom i gang</span><b class="st-dtittel">Velg hva du skal studere</b><span class="st-sm">Velg temaer, så får du en løype med én uke per tema og en liten quiz hver dag.</span><div><button type="button" class="st-btn" data-h="ga" data-v="innstillinger">Velg temaer</button></div></div>';
+      else if (!S[t]) o += '<div class="st-dkort g"><span class="st-merke">Denne uka</span><b class="st-dtittel">' + esc(tittel(t)) + '</b><span class="st-sm">Det finnes ingen quiz for dette temaet ennå. Les lærestoffet under, og spør Dashman hvis noe er uklart. Ferdig? Si hvor vanskelig det var:</span>' + skala(t) + '</div>';
       else {
         var dag = T.inn.modus === 'dag', ferdig = dag && iDag(t) >= PER_DAG;
         var ff = fagForTema(t);
@@ -2021,9 +2023,9 @@ function studieStart() {
       });
       o += '<button type="button" class="st-dmrad" data-h="dashman"><img src="' + DMBILDER + 'noytral.webp" alt="" class="st-dmfigur">' +
         krittboble('Står du fast på noe? Spør meg, så finner vi ut av det sammen.', true) + '</button>';
-      if (t && S[t]) {
-        var u = Object.keys(S[t].undertemaer).filter(function (x) { return temaUrl(t, x); })[0];
-        if (u) o += '<a class="st-lesrad" href="' + temaUrl(t, u) + '">' + ikon('bok', 18) + '<span>Les om ukens tema: <b>' + esc(S[t].undertemaer[u]) + '</b></span>' + ikon('pil', 18) + '</a>';
+      if (t && (S[t] || K[t])) {
+        var ut0 = (S[t] || K[t]).undertemaer, u = Object.keys(ut0).filter(function (x) { return temaUrl(t, x); })[0];
+        if (u) o += '<a class="st-lesrad" href="' + temaUrl(t, u) + '">' + ikon('bok', 18) + '<span>Les om ukens tema: <b>' + esc(ut0[u]) + '</b></span>' + ikon('pil', 18) + '</a>';
       }
       return o;
     },
@@ -2103,7 +2105,7 @@ function studieStart() {
       if (!v.length) o += '<div class="st-kort st-viktig"><b>Kom i gang</b><p>Velg temaene du skal studere, så lager vi en løype med én uke per tema.</p></div>';
       else o += '<div class="st-rad" style="align-items:center"><h2>Din løype</h2>' + (T.eksempel ? '' : '<a class="st-btn g liten" href="fokus.html#min">Fokusmodus</a>') + '</div>' + v.map(function (t, i) {
         return '<button type="button" class="st-kort" data-h="uke" data-t="' + t + '"><div class="st-rad"><b>Uke ' + (i + 1) + ': ' + esc(tittel(t)) + '</b><span class="st-sm">' + (T.ukevurd[t] ? 'Vurdert ' + T.ukevurd[t] + '/5' : '→') + '</span></div>' +
-          '<span class="st-sm">' + Object.keys(S[t].undertemaer).length + ' undertemaer · nivå: ' + NIV[niva(t)] + ' · ' + Math.min(denneUken(t), OKT) + ' av ' + OKT + ' spørsmål denne uken</span></button>';
+          '<span class="st-sm">' + Object.keys((S[t] || K[t]).undertemaer).length + ' undertemaer · ' + (S[t] ? 'nivå: ' + NIV[niva(t)] + ' · ' + Math.min(denneUken(t), OKT) + ' av ' + OKT + ' spørsmål denne uken' : 'lærestoff (quiz kommer)') + '</span></button>';
       }).join('');
       var mo = mineOvelser();
       var akn = aktivtKurs(); if (mo.length && akn && akn !== 'egen') o += '<h2>Arbeidskrav i ' + esc(fagnavn(akn)) + '</h2><button type="button" class="st-kort" data-h="ga" data-v="kurs"><div class="st-rad"><b>' + mo.filter(godkjent).length + ' av ' + mo.length + ' godkjent</b><span class="st-sm">Se øvingene →</span></div></button>';
@@ -2113,7 +2115,12 @@ function studieStart() {
       return o;
     },
     uke: function () {
-      var t = T.t, nr = valgt().indexOf(t) + 1, u = S[t].undertemaer, dag = T.inn.modus === 'dag';
+      var t = T.t, nr = loypeTemaer().indexOf(t) + 1, u = (S[t] || K[t]).undertemaer, dag = T.inn.modus === 'dag';
+      if (!S[t]) return '<button type="button" class="st-tilbake" data-h="ga" data-v="hjem">← Løypa</button><h2 class="st-h1">Uke ' + nr + ': ' + esc(tittel(t)) + '</h2><h3>Undertemaer</h3>' + Object.keys(u).map(function (id) {
+          var url = temaUrl(t, id);
+          return url ? '<a class="st-kort" href="' + url + '"><div class="st-rad"><span>' + esc(u[id]) + '</span><span class="st-sm">Lærestoff og video →</span></div></a>' : '<div class="st-kort st-tom"><div class="st-rad"><span>' + esc(u[id]) + '</span><span class="st-sm">Lærestoff kommer</span></div></div>';
+        }).join('') + '<h3>Ukens quiz</h3><p class="st-ind">Det finnes ingen quiz for dette temaet ennå. Les lærestoffet og bruk Dashman.</p>' +
+          '<h3>Ferdig med uka?</h3><p class="st-sm">Hvor vanskelig var temaet? Når du har svart, går planen videre til neste uke.</p>' + skala(t);
       return '<button type="button" class="st-tilbake" data-h="ga" data-v="hjem">← Løypa</button><h2 class="st-h1">Uke ' + nr + ': ' + esc(tittel(t)) + '</h2>' +
         '<h3>Undertemaer</h3>' + Object.keys(u).map(function (id) {
           var url = temaUrl(t, id);
