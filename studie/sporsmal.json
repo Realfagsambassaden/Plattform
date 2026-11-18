@@ -7653,7 +7653,7 @@
 "undertema": "ladning",
 "vanskelighet": "middels",
 "forventet_tid_s": 60,
-"tekst": "To like store metallkuler (gode ledere), A og B, har ladningene +6.0 nC og −2.0 nC. Kulene berøres og skilles. Hvor mye ladning har A etterpå?",
+"tekst": "To like store metallkuler, A og B, har ladningene +6.0 nC og −2.0 nC. Kulene berøres, slik at ladningen utlignes, og skilles. Hvor mye ladning har A etterpå?",
 "riktig": "+2.0 nC",
 "feil": [
 {
@@ -7965,7 +7965,7 @@
 "undertema": "ladning",
 "vanskelighet": "vanskelig",
 "forventet_tid_s": 120,
-"tekst": "Tre like store metallkuler (gode ledere) A, B og C står isolert. A har +8.0 nC, og B og C er nøytrale. A berøres med B, og de skilles. Så berøres B med C. Hvor mye ladning har C til slutt?",
+"tekst": "Tre like store metallkuler A, B og C står isolert. A har +8.0 nC, og B og C er nøytrale. A berøres med B, slik at ladningen utlignes, og de skilles. Så gjøres det samme med B og C. Hvor mye ladning har C til slutt?",
 "riktig": "+2.0 nC",
 "feil": [
 {
