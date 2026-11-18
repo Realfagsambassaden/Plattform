@@ -271,3 +271,20 @@
   document.addEventListener('visibilitychange', sjekk);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sjekk); else sjekk();
 })();
+
+// Forstørret figur (lightbox): teksten under bildet hentes fra figurteksten på siden, der formlene allerede er satt
+// (lightboxen viser ellers rå LaTeX, f.eks. «\Delta E_p»).
+(function () {
+  function fiks() {
+    document.querySelectorAll('.glightbox-container .gslide').forEach(function (sl) {
+      var im = sl.querySelector('.gslide-image img'), t = sl.querySelector('.gslide-title');
+      if (!im || !t || t.dataset.fiks) return;
+      var p = Array.prototype.find.call(document.querySelectorAll('main img'), function (x) { return x.src === im.src; });
+      var fc = p && p.closest('figure') && p.closest('figure').querySelector('figcaption');
+      if (fc) { t.innerHTML = fc.innerHTML; t.dataset.fiks = '1'; }
+    });
+  }
+  if (window.MutationObserver) new MutationObserver(function (m) {
+    if (document.querySelector('.glightbox-container')) fiks();
+  }).observe(document.body || document.documentElement, { childList: true, subtree: true });
+})();
