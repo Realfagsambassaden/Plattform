@@ -338,7 +338,107 @@ async function kvisslag(request, env, b, h) {
       : { ...felles, riktig: kort(x.riktig, 200) };
   }).filter((x) => x.tekst && (x.variabler || x.riktig) && x.feil.length >= 2);
   if (!sp.length) throw feil("Fikk ingen brukbare spørsmål fra KI denne gangen. Prøv igjen.", 502);
+  // Selvkontroll (AGENTS.md): en uavhengig KI løser hvert spørsmål bare fra teksten, og svaret sammenlignes med fasiten.
+  await kontrollerSporsmal(kenv, sp).catch((e) => console.log("kontroll feilet:", e && e.message));
   return json({ sporsmal: sp, vedlegg: vedleggTekst(vi, r) }, 200, h);
+}
+
+// ---- Selvkontroll av spørsmål -------------------------------------------------------------------------------------
+// Liten, trygg regnemaskin for fasituttrykk i malspørsmål (eval er ikke tillatt i Workers): + - * / ^, parenteser,
+// variabler, pi, e og funksjonene under.
+const RF = { sqrt: Math.sqrt, sin: Math.sin, cos: Math.cos, tan: Math.tan, asin: Math.asin, acos: Math.acos, atan: Math.atan,
+  abs: Math.abs, ln: Math.log, log: Math.log10, log10: Math.log10, exp: Math.exp };
+function regnUttrykk(u, v) {
+  const t = String(u).replace(/·|×/g, "*").replace(/−/g, "-").replace(/\s+/g, "").replace(/(\d),(\d)/g, "$1.$2");
+  let i = 0;
+  const tall = () => { const m = /^(\d+\.?\d*(?:[eE][-+]?\d+)?|\.\d+)/.exec(t.slice(i)); if (!m) return null; i += m[0].length; return +m[0]; };
+  const atom = () => {
+    if (t[i] === "(") { i++; const x = sum(); if (t[i++] !== ")") throw new Error("parentes"); return x; }
+    if (t[i] === "-") { i++; return -pot(); }
+    if (t[i] === "+") { i++; return pot(); }
+    const n = tall(); if (n !== null) return n;
+    const m = /^[a-zA-Z_]\w*/.exec(t.slice(i)); if (!m) throw new Error("uttrykk");
+    i += m[0].length;
+    if (t[i] === "(" && RF[m[0]]) { i++; const x = sum(); if (t[i++] !== ")") throw new Error("parentes"); return RF[m[0]](x); }
+    if (m[0] in v) return +v[m[0]];
+    if (m[0] === "pi") return Math.PI;
+    if (m[0] === "e") return Math.E;
+    throw new Error("ukjent " + m[0]);
+  };
+  const pot = () => { const a = atom(); if (t[i] === "^" || t.slice(i, i + 2) === "**") { i += t[i] === "^" ? 1 : 2; return Math.pow(a, pot()); } return a; };
+  const prod = () => { let a = pot(); while (t[i] === "*" || t[i] === "/") { const o = t[i++]; const b = pot(); a = o === "*" ? a * b : a / b; } return a; };
+  const sum = () => { let a = prod(); while (t[i] === "+" || t[i] === "-") { const o = t[i++]; const b = prod(); a = o === "+" ? a + b : a - b; } return a; };
+  const x = sum(); if (i < t.length) throw new Error("rest"); return x;
+}
+// Tall og enhet fra et svar som «−0.80 µC», «2.0·10¹⁰», «6.0e-3 A».
+const SUP = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁻": "-", "⁺": "+" };
+function lesSvarTall(s) {
+  let t = String(s || "").replace(/\$/g, "").replace(/\\cdot|\\times|·|×/g, "*").replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]+/g, (m) => "^" + [...m].map((c) => SUP[c]).join(""))
+    .replace(/−/g, "-").replace(/\\,|~|\{|\}/g, " ").replace(/\\mathrm|\\text/g, "").trim();
+  const m = /^([-+]?\d+(?:[.,]\d+)?)\s*(?:(?:[eE]\s*([-+]?\d+))|(?:\*\s*10\s*\^\s*\(?\s*([-+]?\d+)\s*\)?))?\s*(.*)$/.exec(t);
+  if (!m) return null;
+  const v = parseFloat(m[1].replace(",", ".")) * Math.pow(10, +(m[2] || m[3] || 0));
+  return Number.isFinite(v) ? { v, enhet: m[4].trim() } : null;
+}
+// Ett eksempel på et malspørsmål: variablene midt i intervallet (på steg-rutenettet).
+function eksempel(x) {
+  const v = {};
+  for (const a of x.variabler || []) { const n = Math.round((a.maks - a.min) / (a.steg || 1) / 2); v[a.navn] = +(a.min + n * (a.steg || 1)).toPrecision(10); }
+  const sett = (s) => String(s || "").replace(/\{\{([^{}]+)\}\}/g, (_, u) => { u = u.trim(); if (u in v) return String(v[u]); try { return String(+regnUttrykk(u, v).toPrecision(4)); } catch (e) { return "?"; } });
+  return { tekst: sett(x.tekst), fasit: regnUttrykk(x.svar, v), enhet: x.enhet || "" };
+}
+// Løser alle spørsmålene i ett kall og markerer x.kontroll = { ok, ki, merknad }. Tallsvar godtas innen 3 % (avrunding),
+// flervalg ved at KI velger samme alternativ som fasiten.
+async function kontrollerSporsmal(env, sp) {
+  const oppg = sp.map((x, i) => {
+    if (x.variabler && x.variabler.length) {
+      try { const e = eksempel(x); return { i, type: "tall", tekst: e.tekst, enhet: e.enhet, _fasit: e.fasit }; }
+      catch (err) { x.kontroll = { ok: false, merknad: "Fasituttrykket kan ikke regnes ut: " + err.message }; return null; }
+    }
+    const f = lesSvarTall(x.riktig);
+    if (f && /\d/.test(String(x.riktig)) && !/[a-zæøå]{4,}/i.test(f.enhet)) return { i, type: "tall", tekst: x.tekst, enhet: f.enhet, _fasit: f.v };
+    const alt = [x.riktig, ...(x.feil || []).map((y) => y.svar)].filter(Boolean);
+    const stokket = alt.map((a, k) => ({ a, k })).sort((p, q) => (p.a.length * 7 + p.k * 13) % 5 - (q.a.length * 7 + q.k * 13) % 5);
+    return { i, type: "valg", tekst: x.tekst, alternativer: stokket.map((y) => y.a), _riktig: stokket.findIndex((y) => y.k === 0) };
+  }).filter(Boolean);
+  if (!oppg.length) return;
+  const system = `Du er en nøye fysikklærer som kontrollerer oppgaver før studentene får dem. Løs HVER oppgave selvstendig, bare ut fra teksten.
+Bruk g = 9.81 m/s², k_e = 8.99·10^9 N·m²/C², e = 1.602·10^-19 C, m_e = 9.11·10^-31 kg, m_p = 1.673·10^-27 kg når de trengs.
+For type "tall": gi svaret som et tall i den oppgitte enheten (bare tallet, med punktum som desimaltegn).
+For type "valg": gi nummeret (fra 0) på det riktige alternativet.
+Si også fra hvis oppgaven er tvetydig, mangler opplysninger, har feil fysikk eller avslører svaret.
+Svar KUN med JSON: {"svar":[{"i":0,"tall":1.23,"valg":null,"problem":"" }, …]} – "problem" er tom når oppgaven er i orden.`;
+  const melding = JSON.stringify(oppg.map(({ _fasit, _riktig, ...o }) => o));
+  const r = lesJson(await spor(env, system, melding, 4000)) || {};
+  const svar = new Map((Array.isArray(r.svar) ? r.svar : []).map((s) => [s && s.i, s]));
+  for (const o of oppg) {
+    const s = svar.get(o.i), x = sp[o.i];
+    if (!s) { x.kontroll = { ok: null, merknad: "KI-kontrollen ga ikke svar på dette spørsmålet." }; continue; }
+    const problem = kort(s.problem, 300);
+    if (o.type === "tall") {
+      const t = +s.tall, ok = Number.isFinite(t) && Math.abs(t - o._fasit) <= 0.03 * Math.abs(o._fasit) + 1e-12;
+      x.kontroll = { ok: ok && !problem, ki: Number.isFinite(t) ? `${+t.toPrecision(4)} ${o.enhet}`.trim() : "", fasit: `${+o._fasit.toPrecision(4)} ${o.enhet}`.trim(),
+        merknad: [ok ? "" : "KI fikk et annet svar enn fasiten.", problem].filter(Boolean).join(" ") };
+    } else {
+      const ok = +s.valg === o._riktig;
+      x.kontroll = { ok: ok && !problem, ki: Number.isFinite(+s.valg) ? o.alternativer[+s.valg] || "" : "",
+        merknad: [ok ? "" : "KI valgte et annet alternativ enn fasiten.", problem].filter(Boolean).join(" ") };
+    }
+  }
+}
+
+// Kontroll av spørsmål fra banken eller et arbeidskrav (bare undervisere): {sporsmal:[…]} → samme liste med «kontroll».
+async function kontroller(request, env, b, h) {
+  if (!(await innloggetBruker(request, env))) return json({ feil: "Du må være logget inn." }, 401, h);
+  if (!(await erUnderviser(request, env))) return json({ feil: "Bare undervisere kan kontrollere spørsmål." }, 403, h);
+  const sp = (Array.isArray(b.sporsmal) ? b.sporsmal : []).slice(0, 30).map((x) => ({
+    tekst: kort(x && x.tekst, 1500), riktig: kort(x && x.riktig, 200), svar: kort(x && x.svar, 200), enhet: kort(x && x.enhet, 30),
+    feil: (Array.isArray(x && x.feil) ? x.feil : []).slice(0, 3).map((f) => ({ svar: kort(f && f.svar, 200) })),
+    variabler: (Array.isArray(x && x.variabler) ? x.variabler : []).slice(0, 8).map((a) => ({ navn: kort(a && a.navn, 20), min: +a.min, maks: +a.maks, steg: +a.steg || 1 })),
+  }));
+  if (!sp.length) return json({ feil: "Ingen spørsmål å kontrollere." }, 400, h);
+  await kontrollerSporsmal(env, sp);
+  return json({ kontroll: sp.map((x) => x.kontroll || { ok: null }) }, 200, h);
 }
 
 // Vedlegg fra underviseren: bilde eller PDF (som data-URL). Lagres ikke.
@@ -484,6 +584,7 @@ export default {
       if (sti.endsWith("/rad")) return await rad(request, env, b, h);
       if (sti.endsWith("/fagforslag")) return await fagforslag(request, env, b, h);
       if (sti.endsWith("/loypeforslag")) return await loypeforslag(request, env, b, h);
+      if (sti.endsWith("/kontroller")) return await kontroller(request, env, b, h);
       if (sti.endsWith("/kvisslag")) return await kvisslag(request, env, b, h);
       if (sti.endsWith("/materiale")) return await materiale(request, env, b, h);
       if (sti.endsWith("/salen")) return await salen(request, env, b, h);
