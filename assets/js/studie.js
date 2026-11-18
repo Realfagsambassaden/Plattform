@@ -2224,7 +2224,7 @@ function studieStart() {
           var kt = { riktig: 'KI: Riktig fysikk og riktig regning.', regnefeil: 'KI: Riktig tankegang, men en regnefeil.', begrep: 'KI: Her bør du se på fysikken igjen.', uklar: 'KI: Klarte ikke å lese besvarelsen.' }[kis.vurdering];
           if (q.kiGodkjent === 'ja') fb += '<div class="st-fb"><b>Godkjent ✓</b><p class="st-sm">Svaret er riktig, og utregningen din viser at du har forstått.</p></div>';
           else if (kis.forstaelse === 'ja' && kis.streker !== 'ja') fb += '<div class="st-fb kanskje"><b>Sett to streker under svaret</b><p class="st-sm">Utregningen ser bra ut, men sluttsvaret må ha to streker under. Ta et nytt bilde.</p></div>';
-          else if (q.forstatt && q.forstatt.id === x.id && a.type !== 'riktig') fb += '<div class="st-fb kanskje"><b>Utregningen viser forståelse</b><p class="st-sm">Finn feilen, trykk «Prøv igjen» og skriv inn riktig svar. Da er spørsmålet godkjent, uten nytt bilde.</p></div>';
+          else if (q.forstatt && q.forstatt.id === x.id && a.type !== 'riktig') { /* forståelse vist: ingen egen melding, KI-tilbakemeldingen under holder */ }
           else if (q.kiGodkjent === 'kanskje') fb += '<div class="st-fb kanskje"><b>Kanskje godkjent</b><p class="st-sm">Dashman tror utregningen er riktig, men er ikke helt sikker. Spørsmålet teller som riktig inntil faglæreren eventuelt sier noe annet.</p></div>';
           fb += '<div class="st-fb ki"><b>' + kt + '</b><div class="st-avsnitt">' + tx(kis.tilbakemelding) + '</div>' + 
             (q.gjennomsyn && q.sist && q.sist.ki && q.sist.ki.gjennomsyn ? '<p class="st-sm">Bildet er sendt til gjennomsyn hos en lærer. Avvises det, teller ikke forsøket.</p>' : '') +
