@@ -88,7 +88,7 @@ def profilside(p, nr, mal):
     hode = mal[:mal.index('<main>')]
     hode = (hode.replace('href="stil.css"', 'href="../stil.css"').replace('href="img/', 'href="../img/')
             .replace('src="img/', 'src="../img/').replace('href="./', 'href="../')
-            .replace('href="doner.html" aria-current="page"', 'href="../doner.html"'))
+            .replace('href="stott.html"', 'href="../stott.html"').replace('href="doner.html"', 'href="../doner.html"'))
     hode = re.sub(r'<title>.*?</title>', f'<title>{e(p["navn"])} – Realfagsambassaden</title>', hode)
     hode = re.sub(r'<meta name="description" content=".*?">',
                   f'<meta name="description" content="{e(p.get("rolle", ""))}. Ambassadør i Realfagsambassaden.">', hode)
