@@ -21,8 +21,8 @@ ambassadorer:
     utdanning: 95
     utdanning_tekst: Ph.d.
     erfaring_ar: 10
-    kvalitet:
-    funfact:
+    kvalitet: Engasjert
+    funfact: Går i søvne
     koffein: 3
     om: >-
       Jeg heter Ben, har doktorgrad i matematisk kosmologi og har formidlet og undervist realfag i ti år. Forklaringene jeg legger ut,
@@ -55,8 +55,8 @@ ambassadorer:
     utdanning: 85
     utdanning_tekst: Dobbel master
     erfaring_ar:
-    kvalitet:
-    funfact:
+    kvalitet: Nøyaktig
+    funfact: Bor i Tyskland
     koffein: 3
     om: Andrea har i en årrekke vært ansiktet utad og selve drivkraften i NTNU Fysikkstudio, som lager fysikkvideoer av høy kvalitet.
     erfaring:
@@ -76,8 +76,8 @@ ambassadorer:
     utdanning: 95
     utdanning_tekst: Ph.d.
     erfaring_ar:
-    kvalitet:
-    funfact:
+    kvalitet: Snill
+    funfact: Spiller sjakk hele tiden
     koffein: 2
     om: Siebe har doktorgrad i fysikk og brenner for å formidle matematikk og realfag.
     erfaring: [Doktorgrad i fysikk]
@@ -95,8 +95,8 @@ ambassadorer:
     utdanning: 95
     utdanning_tekst: Ph.d.
     erfaring_ar:
-    kvalitet:
-    funfact:
+    kvalitet: Kreativ
+    funfact: Har spilt fotball i Kina
     koffein: 4
     om: Mikael har doktorgrad i matematikk.
     erfaring: [Doktorgrad i matematikk]
@@ -114,8 +114,8 @@ ambassadorer:
     utdanning: 78
     utdanning_tekst: Master + lektor
     erfaring_ar:
-    kvalitet: Kul
-    funfact:
+    kvalitet: Chill
+    funfact: Gift med drømmedama
     koffein: 1
     te: true
     om: Kenny er veldig kul. Han har mastergrad i fysikk, er lektor i fysikk og har erfaring fra Newton-rommet.
@@ -134,8 +134,8 @@ ambassadorer:
     utdanning: 80
     utdanning_tekst: Master + bachelor
     erfaring_ar:
-    kvalitet: Dyktig formidler
-    funfact:
+    kvalitet: Fikser alt
+    funfact: Geni
     koffein: 99
     om: Jonas er en ekstremt dyktig formidler, med bachelorgrad i datavitenskap og master i fysikk.
     erfaring: [Bachelorgrad i datavitenskap, Master i fysikk]
