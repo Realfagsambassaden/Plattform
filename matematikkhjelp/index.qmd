@@ -21,7 +21,7 @@ page-layout: full
     <div class="kritt-ramme">
       <p class="kritt-laer">Lær med</p>
       <p class="kritt-formel"><span class="t">Video + lærebok + KI =</span> <span class="hjerte" aria-label="kjærlighet">♥</span></p>
-      <p class="kritt-av">GRATIS, av EKTE realfagsfolk!</p>
+      <p class="kritt-av"><span class="gratis">GRATIS</span>, av EKTE realfagsfolk!</p>
     </div>
     <div class="cta">
       <a class="btn-chalk" href="#lopene">Velg løype</a>
