@@ -181,28 +181,16 @@ body{background:var(--tavle) url(img/realfag-tegninger.svg) 0 0/960px repeat}
 .kortlag .samlekort:nth-of-type(4){--vri:5deg}.kortlag .samlekort:nth-of-type(5){--vri:-5deg}.kortlag .samlekort:nth-of-type(6){--vri:2.5deg}
 .kortlag .samlekort:hover{transform:rotate(0deg);z-index:3}
 
-/* Brede skjermer: innholdet i midten, tre kort på hver side spredt nedover hele siden, litt på skrå. */
-@media (min-width:1240px){
-  .side{display:grid;grid-template-columns:minmax(260px,1fr) minmax(0,760px) minmax(260px,1fr);grid-template-rows:auto auto auto;max-width:1680px;padding:0 1.5vw;column-gap:1rem}
-  .side>main{display:block;grid-column:2;grid-row:1/span 3;min-width:0}
-  .kortlag,.kortlag .samlekort-rad{display:contents}
-  .kortlag-tittel{display:none}
-  .kortlag .samlekort{position:relative;justify-self:center;margin:2.5rem 0;transform:rotate(var(--vri)) scale(.84)}
-  .kortlag .samlekort:hover{transform:rotate(0deg) scale(.9)}
-  .kortlag .samlekort:nth-of-type(odd){grid-column:1}
-  .kortlag .samlekort:nth-of-type(even){grid-column:3}
-  .kortlag .samlekort:nth-of-type(1),.kortlag .samlekort:nth-of-type(2){grid-row:1;align-self:start}
-  .kortlag .samlekort:nth-of-type(3),.kortlag .samlekort:nth-of-type(4){grid-row:2;align-self:center}
-  .kortlag .samlekort:nth-of-type(5),.kortlag .samlekort:nth-of-type(6){grid-row:3;align-self:end}
-  .kortlag .samlekort:nth-of-type(1){margin-top:4rem;justify-self:end}
-  .kortlag .samlekort:nth-of-type(2){margin-top:7rem;justify-self:start}
-  .kortlag .samlekort:nth-of-type(3){justify-self:start}
-  .kortlag .samlekort:nth-of-type(4){justify-self:end}
-  .kortlag .samlekort:nth-of-type(6){justify-self:start;margin-bottom:6rem}
-  .side>main>.hero{min-height:clamp(560px,80vh,820px)}
-  .side .fag{grid-template-columns:1fr 1fr}
-  .side .podkast{grid-template-columns:1fr}
-}
+/* Brede skjermer (spred.js): innholdet har vanlig bredde, og mange samlekort ligger rundt forsideteksten og
+   langs sidene nedover hele siden, på skrå. Kortraden under teksten (.kortlag) skjules da. */
+.side{position:relative}
+.kortspredning{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.side>main{position:relative;z-index:1}
+.kortspredning .samlekort{position:absolute;left:0;top:0;width:300px;transform-origin:0 0;pointer-events:auto;
+  transform:translate(var(--x),var(--y)) rotate(var(--vri)) scale(var(--s));transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .35s;opacity:var(--o,1)}
+.kortspredning .samlekort:hover{transform:translate(var(--x),var(--y)) rotate(0deg) scale(calc(var(--s) * 1.12));z-index:5;opacity:1}
+html.spredt .kortlag{display:none}
+html.spredt .side>main>.hero{min-height:clamp(600px,82vh,860px)}
 @media (max-width:560px){.kortlag .samlekort{flex-basis:280px;width:280px}.hero .knapp{font-size:1.1rem}}
 
 /* Book / Våre opplegg */
@@ -221,3 +209,5 @@ body{background:var(--tavle) url(img/realfag-tegninger.svg) 0 0/960px repeat}
   .kortlag .samlekort{scroll-snap-align:center;flex:0 0 270px;width:270px}
   .kortlag-tittel::after{content:" → sveip";font-size:.5em;color:var(--stov)}
 }
+html.spredt .side{display:block;max-width:none;padding:0}
+html.spredt .side>main{display:block}
