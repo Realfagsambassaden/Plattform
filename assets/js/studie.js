@@ -159,6 +159,28 @@ function studieStart() {
   }
   var mineSvar = function (t, u) { return T.svar.filter(function (s) { return s.nettsted === NETTSTED && s.tema === t && (!u || s.undertema === u); }); };
   function stolpe(navn, v, kl) { return '<div class="st-stolpe"><span class="st-ord ' + kl + '">' + navn + '</span><div class="st-bar"><i class="' + kl + '" style="width:' + (v == null ? 0 : Math.round(v * 100)) + '%"></i></div><span class="st-sm">' + pst(v) + '</span></div>'; }
+  // Kunnskapsprofilen som trekant (som et radardiagram): Forståelse øverst, Presisjon nede til høyre, Hurtighet nede til venstre.
+  // Rutenett ved 25/50/75/100 %, fylt trekant for studentens skår. stor = false gir en liten utgave (undertemaer).
+  function trekant(s, stor) {
+    var W = stor === false ? 180 : 270, H = stor === false ? 170 : 255, cx = W / 2, cy = H * .55, R = H * .36;
+    var akser = [{ v: s.f, kl: 'f', navn: 'Forståelse', a: -90 }, { v: s.p, kl: 'p', navn: 'Presisjon', a: 30 }, { v: s.h, kl: 'h', navn: 'Hurtighet', a: 150 }];
+    var pkt = function (a, r) { var t = a * Math.PI / 180; return [cx + r * Math.cos(t), cy + r * Math.sin(t)]; };
+    var poly = function (f) { return akser.map(function (x) { return pkt(x.a, R * f(x)).map(function (n) { return n.toFixed(1); }).join(','); }).join(' '); };
+    var o = '<svg class="st-trekant' + (stor === false ? ' liten' : '') + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Forståelse ' + pst(s.f) + ', presisjon ' + pst(s.p) + ', hurtighet ' + pst(s.h) + '">';
+    [.25, .5, .75, 1].forEach(function (g) { o += '<polygon class="nett" points="' + poly(function () { return g; }) + '"/>'; });
+    akser.forEach(function (x) { var p = pkt(x.a, R); o += '<line class="akse" x1="' + cx + '" y1="' + cy + '" x2="' + p[0].toFixed(1) + '" y2="' + p[1].toFixed(1) + '"/>'; });
+    o += '<polygon class="skar" points="' + poly(function (x) { return x.v == null ? 0 : Math.max(.03, x.v); }) + '"/>';
+    akser.forEach(function (x) {
+      var p = pkt(x.a, R * (x.v == null ? 0 : Math.max(.03, x.v))), l = pkt(x.a, R + (stor === false ? 13 : 18));
+      o += '<circle class="prikk ' + x.kl + '" cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="' + (stor === false ? 3 : 4.5) + '"/>';
+      var anker = x.a === -90 ? 'middle' : x.a === 30 ? 'end' : 'start', dy = x.a === -90 ? -2 : 14;
+      if (x.a !== -90) l = [x.a === 30 ? W - 4 : 4, cy + R * .5 + 6];
+      var ty = l[1] + (x.a === -90 ? -16 : dy), lh = stor === false ? 11 : 14;
+      o += '<text class="navn ' + x.kl + '" x="' + l[0].toFixed(1) + '" y="' + ty.toFixed(1) + '" text-anchor="' + anker + '">' + x.navn + '</text>' +
+        '<text class="pst" x="' + l[0].toFixed(1) + '" y="' + (ty + lh).toFixed(1) + '" text-anchor="' + anker + '">' + pst(x.v) + '</text>';
+    });
+    return '<div class="st-trekant-ramme">' + o + '</svg></div>';
+  }
   function stolper(s) { return stolpe('Forståelse', s.f, 'f') + stolpe('Presisjon', s.p, 'p') + stolpe('Hurtighet', s.h, 'h'); }
   function profilRader() {
     var r = [];
@@ -2197,7 +2219,7 @@ function studieStart() {
       }).join('');
       var mo = mineOvelser();
       var akn = aktivtKurs(); if (mo.length && akn && akn !== 'egen') o += '<h2>Arbeidskrav i ' + esc(fagnavn(akn)) + '</h2><button type="button" class="st-kort" data-h="ga" data-v="kurs"><div class="st-rad"><b>' + mo.filter(godkjent).length + ' av ' + mo.length + ' godkjent</b><span class="st-sm">Se øvingene →</span></div></button>';
-      if (alle) o += '<h2>Kunnskapsprofil</h2>' + stolper(alle) + '<p><button type="button" class="st-btn g" data-h="ga" data-v="profil">Se hele profilen</button></p>';
+      if (alle) o += '<h2>Kunnskapsprofil</h2>' + trekant(alle) + '<p><button type="button" class="st-btn g" data-h="ga" data-v="profil">Se hele profilen</button></p>';
       o += appModus() ? '<p><button type="button" class="st-btn g" data-h="ga" data-v="innstillinger">Endre temaer og quiz</button></p>'
         : '<h2>Temaer du studerer</h2><p class="st-sm">Rekkefølgen her blir rekkefølgen i løypa.</p>' + temavalg();
       return o;
@@ -2301,8 +2323,8 @@ function studieStart() {
         var l = mineSvar(t), s = skar(l);
         if (!s) return '<div class="st-kort"><b>' + esc(tittel(t)) + '</b><p class="st-sm">Ingen svar ennå.</p></div>';
         var u = S[t].undertemaer;
-        return '<div class="st-kort"><b>' + esc(tittel(t)) + '</b><span class="st-sm"> · ' + s.n + ' svar' + (s.ki ? ', ' + s.ki + ' vurdert av KI' : '') + '</span>' + stolper(s) +
-          Object.keys(u).map(function (id) { var d = skar(l.filter(function (x) { return x.undertema === id; })); return d ? '<details><summary class="st-sm">' + esc(u[id]) + ' (' + d.n + ' svar)</summary>' + stolper(d) + '</details>' : ''; }).join('') + '</div>';
+        return '<div class="st-kort"><b>' + esc(tittel(t)) + '</b><span class="st-sm"> · ' + s.n + ' svar' + (s.ki ? ', ' + s.ki + ' vurdert av KI' : '') + '</span>' + trekant(s) +
+          Object.keys(u).map(function (id) { var d = skar(l.filter(function (x) { return x.undertema === id; })); return d ? '<details><summary class="st-sm">' + esc(u[id]) + ' (' + d.n + ' svar)</summary>' + trekant(d, false) + '</details>' : ''; }).join('') + '</div>';
       }).join('') || '<p class="st-ind">Velg temaer på løypa først.</p>';
       var kr = T.kiRad, radDel = kr && kr.rad
         ? '<p class="st-sm">Personlige råd fra KI' + (kr.rad.bra ? ': ' + txLinje(kr.rad.bra) : '') + '</p>' + radKort(fraKi(kr.rad))
