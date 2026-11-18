@@ -79,20 +79,23 @@ anchor-sections: false
   var b = document.querySelector('.hero-dm-boble'), dm = document.querySelector('.hero-dashman-v'), h = b && b.querySelector('.hero-dm-hale');
   if (!b || !dm || !h) return;
   function sikt() {
-    var br = b.getBoundingClientRect(), cs = getComputedStyle(dm), pt = parseFloat(cs.paddingTop) || 0, pl = parseFloat(cs.paddingLeft) || 0, pr = parseFloat(cs.paddingRight) || 0, pb = parseFloat(cs.paddingBottom) || 0;
+    // Boblen er rotert, så alt regnes i boblens egen ramme (0..W, 0..H) – ellers havner halen under den skrå kanten.
+    var br = b.getBoundingClientRect(), W = b.offsetWidth, H = b.offsetHeight, cs = getComputedStyle(dm), pt = parseFloat(cs.paddingTop) || 0, pl = parseFloat(cs.paddingLeft) || 0, pr = parseFloat(cs.paddingRight) || 0, pb = parseFloat(cs.paddingBottom) || 0;
+    var m = (getComputedStyle(b).transform.match(/matrix\(([^)]+)\)/) || [0, '1,0'])[1].split(',').map(parseFloat), v = Math.atan2(m[1], m[0]);
     var dr = dm.getBoundingClientRect(), iw = dr.width - pl - pr, ih = dr.height - pt - pb;
-    var hx = dr.left + pl + iw * .5, hy = dr.top + pt + ih * .2;          // hodet: øverst på figuren
-    var bx, by, under = hy > br.bottom - 10;
-    if (under) { bx = Math.max(br.left + 22, Math.min(br.right - 22, hx)); by = br.bottom - 2; }
-    else { bx = hx < br.left ? br.left + 2 : br.right - 2; by = Math.max(br.top + 20, Math.min(br.bottom - 20, hy)); }
+    var gx = dr.left + pl + iw * .5 - (br.left + br.right) / 2, gy = dr.top + pt + ih * .2 - (br.top + br.bottom) / 2;   // hodet, fra boblens midtpunkt
+    var hx = W / 2 + gx * Math.cos(v) + gy * Math.sin(v), hy = H / 2 - gx * Math.sin(v) + gy * Math.cos(v);
+    var bx, by, under = hy > H - 10;
+    if (under) { bx = Math.max(22, Math.min(W - 22, hx)); by = H - 1; }
+    else { bx = hx < 0 ? 1 : W - 1; by = Math.max(20, Math.min(H - 20, hy)); }
     var dx = hx - bx, dy = hy - by, len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len, px = -uy, py = ux;
     var L = Math.max(30, Math.min(52, len - 34)), tx = ux * L, ty = uy * L, w = 17;
     var f = function (x, y) { return x.toFixed(1) + ' ' + y.toFixed(1); };
     var b1 = [px * w, py * w], b2 = [-px * w, -py * w], c1 = [tx * .55 + px * 16, ty * .55 + py * 16], c2 = [tx * .45 + px * 7, ty * .45 + py * 7];
     var stk = 'M' + f(b1[0], b1[1]) + ' Q' + f(c1[0], c1[1]) + ' ' + f(tx, ty) + ' Q' + f(c2[0], c2[1]) + ' ' + f(b2[0], b2[1]);
     h.querySelector('.strek').setAttribute('d', stk);
-    h.querySelector('.fyll').setAttribute('d', 'M' + f(b1[0] - ux * 10, b1[1] - uy * 10) + ' L' + stk.slice(1) + ' L' + f(b2[0] - ux * 10, b2[1] - uy * 10) + ' Z');
-    h.style.left = (bx - br.left) + 'px'; h.style.top = (by - br.top) + 'px';
+    h.querySelector('.fyll').setAttribute('d', 'M' + f(b1[0] - ux * 7, b1[1] - uy * 7) + ' L' + stk.slice(1) + ' L' + f(b2[0] - ux * 7, b2[1] - uy * 7) + ' Z');
+    h.style.left = bx + 'px'; h.style.top = by + 'px';
   }
   sikt(); window.addEventListener('resize', sikt); window.addEventListener('load', sikt);
   if (document.fonts) document.fonts.ready.then(sikt);

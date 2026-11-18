@@ -89,6 +89,17 @@ toc: false
 .studie .st-anslag-bar i { position: absolute; top: 0; bottom: 0; background: rgba(227,157,99,.55); border-radius: 6px; }
 .studie .st-anslag-bar s { position: absolute; top: -4px; bottom: -4px; width: 3px; margin-left: -1.5px; background: #e39d63; border-radius: 2px; }
 .studie .st-forbehold { font-size: .82rem; border-left: 3px solid #e39d63; padding-left: .6rem; color: var(--bs-secondary-color); }
+.studie .st-trekant-ramme { display: flex; justify-content: center; margin: .4rem 0; }
+.studie .st-trekant { width: 100%; max-width: 300px; height: auto; overflow: visible; }
+.studie .st-trekant.liten { max-width: 200px; }
+.studie .st-trekant .nett { fill: none; stroke: var(--bs-border-color); stroke-width: 1; }
+.studie .st-trekant .nett:last-of-type { stroke-width: 1.6; }
+.studie .st-trekant .akse { stroke: var(--bs-border-color); stroke-width: 1; stroke-dasharray: 2 3; }
+.studie .st-trekant .skar { fill: rgba(143,207,134,.28); stroke: #8fcf86; stroke-width: 2.2; stroke-linejoin: round; transition: all .5s; }
+.studie .st-trekant .prikk.f { fill: var(--st-f); } .studie .st-trekant .prikk.p { fill: var(--st-p); } .studie .st-trekant .prikk.h { fill: var(--st-h); }
+.studie .st-trekant .navn { font-size: 12px; font-weight: 700; } .studie .st-trekant.liten .navn { font-size: 10px; }
+.studie .st-trekant .navn.f { fill: var(--st-f); } .studie .st-trekant .navn.p { fill: var(--st-p); } .studie .st-trekant .navn.h { fill: var(--st-h); }
+.studie .st-trekant .pst { fill: var(--bs-body-color); font-size: 12px; } .studie .st-trekant.liten .pst { font-size: 10px; }
 .studie .st-kravbar { position: relative; flex: 1; height: 12px; background: var(--bs-border-color); border-radius: 6px; margin: .3rem 0; }
 .studie .st-kravbar i { display: block; height: 100%; border-radius: 6px; transition: width .6s ease, background .4s; }
 .studie .st-kravbar i.r { background: #e06c6c; } .studie .st-kravbar i.o { background: #e39d63; } .studie .st-kravbar i.g { background: #8fcf86; box-shadow: 0 0 8px rgba(143,207,134,.5); }
