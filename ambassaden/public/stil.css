@@ -146,3 +146,10 @@ a.plattform{color:var(--kritt);text-decoration:none}a.plattform:hover{border-col
 .profilside-tekst h2:first-child{margin-top:0}
 .profilside-tekst ul{padding-left:1.2rem}
 @media (max-width:760px){.profilside-rad{grid-template-columns:1fr}.profilside-kort{position:static;justify-self:center}}
+/* «Støtt oss!» som oransje knapp i menyen, og stott.html */
+.topp nav a.stott-knapp{background:var(--oransje);color:var(--tavle);font-weight:700;padding:.3rem .85rem;border-radius:8px;box-shadow:0 0 10px rgba(227,157,99,.45)}
+.topp nav a.stott-knapp:hover{color:var(--tavle);box-shadow:0 0 16px rgba(227,157,99,.7)}
+.stott-side{max-width:760px}
+.stott-side h1{font:400 clamp(2rem,4.5vw,3rem)/1.15 "Kritt","Architects Daughter",cursive;margin-bottom:1rem}
+.stott-kommer{color:var(--oransje);font-size:1.5rem}
+@media (max-width:900px){.topp nav{display:flex}.topp nav a:not(.stott-knapp){display:none}}
