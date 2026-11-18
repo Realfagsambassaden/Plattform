@@ -38,52 +38,5 @@
   <span><a href="./">Til forsiden</a></span>
 </footer>
 
-<script>
-(function () {
-  var skjema = document.getElementById('doner'), slipp = document.getElementById('slipp');
-  var input = slipp.querySelector('input[type=file]'), liste = slipp.querySelector('.filliste');
-  var melding = skjema.querySelector('.melding'), fremdrift = skjema.querySelector('.fremdrift'), knapp = skjema.querySelector('button[type=submit]');
-  var valgte = [];
-  function mb(b) { return (b / 1048576).toFixed(1) + ' MB'; }
-  function vis() {
-    liste.innerHTML = '';
-    valgte.forEach(function (f, i) {
-      var li = document.createElement('li'); li.textContent = f.name + ' · ' + mb(f.size);
-      var x = document.createElement('button'); x.type = 'button'; x.textContent = '×'; x.setAttribute('aria-label', 'Fjern ' + f.name);
-      x.onclick = function (e) { e.preventDefault(); valgte.splice(i, 1); vis(); };
-      li.appendChild(x); liste.appendChild(li);
-    });
-  }
-  function legg(fl) { Array.prototype.forEach.call(fl, function (f) { valgte.push(f); }); vis(); }
-  input.addEventListener('change', function () { legg(input.files); input.value = ''; });
-  ['dragenter', 'dragover'].forEach(function (t) { slipp.addEventListener(t, function (e) { e.preventDefault(); slipp.classList.add('over'); }); });
-  ['dragleave', 'drop'].forEach(function (t) { slipp.addEventListener(t, function (e) { e.preventDefault(); slipp.classList.remove('over'); }); });
-  slipp.addEventListener('drop', function (e) { legg(e.dataTransfer.files); });
-  function si(t, feil) { melding.textContent = t; melding.className = 'melding' + (feil ? ' feil' : ' ok'); }
-
-  skjema.addEventListener('submit', function (e) {
-    e.preventDefault();
-    if (!skjema.navn.value.trim() || !skjema.epost.value.trim() || !skjema.fag.value.trim()) return si('Fyll inn navn, e-post og fag.', true);
-    if (!valgte.length) return si('Legg ved minst én fil.', true);
-    if (!skjema.rettigheter.checked) return si('Du må bekrefte at du har rett til å dele notatene.', true);
-    var tot = valgte.reduce(function (s, f) { return s + f.size; }, 0);
-    if (tot > 90 * 1048576) return si('Filene er for store til sammen (maks 90 MB). Del dem opp i flere donasjoner.', true);
-    var fd = new FormData(skjema); fd.delete('filer'); valgte.forEach(function (f) { fd.append('filer', f, f.name); });
-    var x = new XMLHttpRequest(); x.open('POST', '/api/doner');
-    knapp.disabled = true; fremdrift.hidden = false; si('Laster opp …');
-    x.upload.onprogress = function (ev) { if (ev.lengthComputable) { fremdrift.firstElementChild.style.width = (100 * ev.loaded / ev.total) + '%'; si(ev.loaded < ev.total ? 'Laster opp … ' + Math.round(100 * ev.loaded / ev.total) + ' %' : 'Lagrer notatene trygt … dette tar litt tid. Ikke lukk siden.'); } };
-    x.onload = function () {
-      var j = {}; try { j = JSON.parse(x.responseText); } catch (er) {}
-      knapp.disabled = false; fremdrift.hidden = true;
-      if (x.status >= 200 && x.status < 300 && j.ok) {
-        skjema.reset(); valgte = []; vis();
-        si('Tusen takk! Notatene er mottatt. Vi tar kontakt når vi har gått gjennom dem.');
-      } else si(j.feil || ('Noe gikk galt (' + x.status + '). Prøv igjen.'), true);
-    };
-    x.onerror = function () { knapp.disabled = false; fremdrift.hidden = true; si('Fikk ikke kontakt. Sjekk nettforbindelsen og prøv igjen.', true); };
-    x.send(fd);
-  });
-})();
-</script>
 </body>
 </html>
