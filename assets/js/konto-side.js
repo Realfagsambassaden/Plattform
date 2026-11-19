@@ -296,12 +296,22 @@ function start() {
     // Bilder til gjennomsyn (studieappen): vis bildet, KI-vurderingen og oppgaven, og godkjenn eller avvis.
     function tegnGjennomsyn() {
       var el = boks.querySelector('.admin-gjennomsyn'); if (!el) return;
-      k.from('gjennomsyn').select('*').eq('status', 'venter').order('tid', { ascending: true }).limit(30).then(function (r) {
+      // Bilder fra den fiktive klassen (robot-elever) skilles ut: merket «🤖 Fiktiv elev», eller fra et arbeidskrav i en
+      // fiktiv kopi av et kurs. De vises ikke enkeltvis, men kan avvises samlet.
+      var fiktiveOv = k.from('kurs').select('id, ramme').then(function (r) {
+        var kurs = ((r && r.data) || []).filter(function (c) { return c.ramme && c.ramme.fiktivFra; }).map(function (c) { return c.id; });
+        return kurs.length ? k.from('ovelser').select('id').in('kurs', kurs).then(function (r2) { return ((r2 && r2.data) || []).map(function (o) { return o.id; }); }) : [];
+      }, function () { return []; });
+      Promise.all([k.from('gjennomsyn').select('*').eq('status', 'venter').order('tid', { ascending: true }).limit(500), fiktiveOv]).then(function (rr) {
+        var r = rr[0], fOv = rr[1] || [];
         if (r.error) { el.innerHTML = '<p class="konto-ingress">Tabellen «gjennomsyn» finnes ikke ennå. Kjør supabase/oppsett.sql på nytt i Supabase.</p>'; return; }
-        var l = r.data || [], ant = boks.querySelector('.admin-gjs-antall');
+        var erFiktiv = function (g) { return /^🤖 Fiktiv/.test(g.kilde || '') || (g.ovelse && fOv.indexOf(g.ovelse) >= 0); };
+        var alle = r.data || [], fiktive = alle.filter(erFiktiv), l = alle.filter(function (g) { return !erFiktiv(g); }).slice(0, 30), ant = boks.querySelector('.admin-gjs-antall');
         if (ant) ant.textContent = l.length ? String(l.length) : '';
         varselOverst(l.length);
-        el.innerHTML = l.length ? l.map(function (g) {
+        var fHtml = fiktive.length ? '<div class="admin-gjs-fiktiv"><p>🤖 <b>' + fiktive.length + (fiktive.length === 1 ? ' bilde' : ' bilder') + ' fra den fiktive klassen</b> (robot-elever) venter. De gjelder ikke ekte studenter.</p>' +
+          '<button type="button" data-gjs-fiktive="' + fiktive.map(function (g) { return g.id; }).join(',') + '">Avvis alle fra den fiktive klassen</button></div>' : '';
+        el.innerHTML = fHtml + (l.length ? l.map(function (g) {
           var kv = g.ki || {};
           return '<div class="admin-gjs"><a href="' + esc(g.bilde || '') + '" target="_blank" rel="noopener">' + (g.bilde ? '<img src="' + esc(g.bilde) + '" alt="Bilde til gjennomsyn">' : '') + '</a><div>' +
             '<p><b>' + esc(g.kilde || 'Ukjent') + '</b> · ' + esc(g.nettsted) + ' · ' + dato(g.tid) + '</p>' +
@@ -309,7 +319,7 @@ function start() {
             '<p class="konto-ingress">KI: ' + esc(kv.vurdering || '–') + (kv.tilbakemelding ? ' – ' + esc(kv.tilbakemelding) : '') + '</p>' +
             '<label class="konto-ingress" for="gjs-kom-' + g.id + '">Kommentar til studenten (valgfritt)</label><textarea id="gjs-kom-' + g.id + '" rows="2"></textarea>' +
             '<button type="button" data-gjs="' + g.id + '" data-gjs-status="godkjent">Godkjenn</button> <button type="button" data-gjs="' + g.id + '" data-gjs-status="avvist">Avvis</button></div></div>';
-        }).join('') : '<p class="konto-ingress">Ingen bilder venter på gjennomsyn.</p>';
+        }).join('') : '<p class="konto-ingress">Ingen bilder fra ekte studenter venter på gjennomsyn.</p>');
       });
     }
     // Varsel øverst på Min side når noe venter.
@@ -396,6 +406,14 @@ function start() {
         return;
       }
       if (b.dataset.spgVisAvviste) { spgAvviste = !spgAvviste; tegnSpg(); return; }
+      if (b.dataset.gjsFiktive) {
+        var ider = b.dataset.gjsFiktive.split(',').map(Number);
+        if (b.dataset.bekreft !== '1') { b.dataset.bekreft = '1'; b.textContent = 'Bekreft: avvis ' + ider.length + ' bilder'; return; }
+        b.disabled = true; b.textContent = 'Avviser …';
+        ider.reduce(function (p, id) { return p.then(function () { return k.rpc('behandle_gjennomsyn', { g: id, s: 'avvist', kom: 'Fiktiv klasse (robot-elev)' }); }); }, Promise.resolve())
+          .then(tegnGjennomsyn);
+        return;
+      }
       if (b.dataset.gjs) {
         var st = b.dataset.gjsStatus;
         if (st === 'avvist' && b.dataset.bekreft !== '1') { b.dataset.bekreft = '1'; b.textContent = 'Bekreft avvisning'; return; }
