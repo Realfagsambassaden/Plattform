@@ -10,7 +10,7 @@
 
   // Fast «tilfeldighet», så kortene står likt hver gang.
   function rng(fro) { var a = fro; return function () { a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  var KORT_B = 300, KORT_H = 535, nr = 0;
+  var KORT_B = 300, KORT_H = 535, nr = 0, kransFase = 0, kransAnim = 0;
 
   // «Eksplosjonen» rundt forsideteksten: en sirkelformet stjerne med tagger, i kritt med grønt lys. Tegnes etter
   // tekstens størrelse. På brede skjermer får forsiden høyde nok til at kortkransen får plass rundt.
@@ -59,6 +59,7 @@
     navnebredde();
     var W = document.documentElement.clientWidth;
     lag.innerHTML = ''; nr = 0;
+    cancelAnimationFrame(kransAnim);
     if (W < 1100) { document.documentElement.classList.remove('spredt'); tegnStjerne(W); return; }
     document.documentElement.classList.add('spredt');
     tegnStjerne(W);
@@ -81,13 +82,32 @@
       var a = rot * Math.PI / 180, bx = KORT_B * sk / 2, by = KORT_H * sk / 2;
       nyttKort(x - (bx * Math.cos(a) - by * Math.sin(a)), y - (bx * Math.sin(a) + by * Math.cos(a)), sk, rot);
     }
-    var N = 7, L = rs + kh * .12;   // kortets midtpunkt litt utenfor stjerna: den indre delen skjules bak den
-    for (var gren = -1; gren <= 1; gren += 2) {   // -1 venstre, 1 høyre
-      for (var i = 0; i < N; i++) {
-        var t = i / (N - 1), vinkel = gren * (-112 + t * 96) + (r() * 2 - 1) * 3;   // grader fra loddrett opp; kortet peker utover
-        var a = vinkel * Math.PI / 180, sk = s * (.95 + r() * .1), l = L + (r() * 2 - 1) * kh * .05;
-        senter(cx + Math.sin(a) * l, cy - Math.cos(a) * l, sk, vinkel);
-      }
+    // Kortene ruller sakte rundt stjerna (én runde på ca. 3 minutter). De vippes etter hvor de står (rett opp
+    // øverst, på skrå langs sidene), og tones ut nederst, der de ellers ville snudd. Står stille når musa er over et kort,
+    // og for dem som har bedt om mindre bevegelse.
+    var N = 12, L = rs + kh * .12, ring = [];   // 12 = to av hver, så samme person aldri står ved siden av seg selv
+    for (var i = 0; i < N; i++) { senter(0, 0, s * (.95 + r() * .1), 0); var k = lag.lastChild; k.classList.add('i-ring'); ring.push({ k: k, sk: parseFloat(k.style.getPropertyValue('--s')), l: L + (r() * 2 - 1) * kh * .05 }); }
+    function plasserRing(fase) {
+      ring.forEach(function (o, i) {
+        var v = ((fase + i * 360 / N) % 360 + 360) % 360, vv = v > 180 ? v - 360 : v;   // -180..180, 0 = rett opp
+        var a = vv * Math.PI / 180, rot = vv * .55;
+        var x = cx + Math.sin(a) * o.l, y = cy - Math.cos(a) * o.l, ar = rot * Math.PI / 180, bx = KORT_B * o.sk / 2, by = KORT_H * o.sk / 2;
+        o.k.style.setProperty('--x', Math.round(x - (bx * Math.cos(ar) - by * Math.sin(ar))) + 'px');
+        o.k.style.setProperty('--y', Math.round(y - (bx * Math.sin(ar) + by * Math.cos(ar))) + 'px');
+        o.k.style.setProperty('--vri', rot.toFixed(1) + 'deg');
+        var nede = Math.abs(vv) > 125 ? Math.max(0, 1 - (Math.abs(vv) - 125) / 30) : 1;   // tones ut nederst
+        o.k.style.setProperty('--o', nede.toFixed(2)); o.k.style.pointerEvents = nede < .3 ? 'none' : '';
+      });
+    }
+    var rolig = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    kransFase = kransFase || 0; plasserRing(kransFase);
+    if (!rolig) {
+      cancelAnimationFrame(kransAnim);
+      var forrige = null;
+      (function steg(t) {
+        if (forrige !== null && !lag.querySelector('.i-ring:hover')) kransFase += (t - forrige) * 360 / 180000;
+        forrige = t; plasserRing(kransFase); kransAnim = requestAnimationFrame(steg);
+      })(performance.now());
     }
 
     // Emojier og stjerner strødd rundt kransen og nedover sidene.
