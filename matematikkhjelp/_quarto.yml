@@ -91,7 +91,7 @@ format:
               var s = document.querySelector('script[src*="site_libs/"]');
               var root = s ? s.getAttribute('src').split('site_libs/')[0] : '';
               ['assets/js/konto.js', 'assets/js/loype.js', 'assets/js/kode.js', 'assets/js/oppgaver.js', 'assets/js/forelesning-knapp.js', 'assets/js/bakgrunn.js', 'assets/js/dashman-figur.js', 'assets/js/dashman.js'].forEach(function (p) {
-                var el = document.createElement('script'); el.src = root + p; document.body.appendChild(el);
+                var el = document.createElement('script'); el.src = root + p; el.async = false; document.body.appendChild(el);
               });
             })();
           </script>

@@ -9,7 +9,9 @@
   var BILDER = skript.replace(/js\/dashman\.js.*$/, 'img/dashman/');
   var URL_ = (document.querySelector('meta[name="supabase-url"]') || {}).content || '';
   var api = ((document.querySelector('meta[name="fysikkhjelp-hint-api"]') || {}).content || '').replace(/\/hint\/?$/, '/dashman');
-  if (!URL_ || !api || !window.fhKonto) return;
+  if (!URL_ || !api) return;
+  // konto.js lastes før denne fila (async = false i _quarto.yml), men vent likevel litt om den ikke er klar.
+  if (!window.fhKonto) { var forsok = 0; var t = setInterval(function () { if (window.fhKonto || ++forsok > 50) { clearInterval(t); if (window.fhKonto && !window.Dashman) { var s = document.createElement('script'); s.src = skript; document.body.appendChild(s); } } }, 100); return; }
   var lagringsnavn = 'sb-' + URL_.split('//')[1].split('.')[0] + '-auth-token';
   // Innlogget: Supabase-økta ligger i localStorage. Sjekk både det forventede navnet og alle «sb-…-auth-token»,
   // så knappen ikke forsvinner hvis navnet skulle avvike (f.eks. i appen på hjemskjermen).
