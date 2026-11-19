@@ -425,7 +425,7 @@
   window.addEventListener('dashman:oppgave', function (e) {
     var d = e.detail || {}; if (!d.oppgave) return;   // innlogging sjekkes av tjenesten; Dashman svarer selv om økta mangler
     oppgave = { tittel: String(d.tittel || '').slice(0, 150), oppgave: String(d.oppgave).slice(0, 2000), losning: String(d.losning || '').slice(0, 2500),
-                forsok: String(d.forsok || '').slice(0, 1500), hint: (d.hint || []).slice(0, 3), kilde: d.kilde || 'hint' };
+                forsok: String(d.forsok || '').slice(0, 1500), hint: (d.hint || []).slice(0, 3), kilde: d.kilde || 'hint', id: String(d.id || '').slice(0, 300) };
     lagreOppgave(); samtale = []; lagre();
     forhandslast(); panel.hidden = false; knapp.hidden = true; settHumor('glad');
     (profil === null ? hentProfil().then(function (p) { profil = p; }) : Promise.resolve()).then(function () {

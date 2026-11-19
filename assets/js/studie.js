@@ -2166,7 +2166,7 @@ function studieStart() {
     var oppg = (document.getElementById('st-skann-oppg') || {}).value || '';
     sk.oppgave = oppg.trim(); sk.venter = true; sk.svar = null; tegn();
     var vo = sk.valgt;
-    ki('/vurder', vo ? { sporsmal: { tekst: vo.oppgave, riktig: '(se løsningsforslaget)', forklaring: vo.losning || '(ikke oppgitt: vurder selv om fysikken og regningen er riktig)' }, valgt: '', forklaring: '', bilde: sk.bilde }
+    ki('/vurder', vo ? { sporsmal: { id: vo.id, tekst: vo.oppgave, riktig: vo.fasit || '(se løsningsforslaget)', forklaring: vo.losning || '' }, valgt: '', forklaring: '', bilde: sk.bilde }
       : { sporsmal: { tekst: sk.oppgave || 'Oppgaven står på bildet. Les oppgaven og studentens løsning derfra.', riktig: '(ikke oppgitt: vurder selv om fysikken og regningen i løsningen er riktig)', forklaring: '' }, valgt: '', forklaring: sk.oppgave ? 'Oppgaven: ' + sk.oppgave : '', bilde: sk.bilde })
       .then(function (d) {
         if (d.handskrift === 'nei') sk.svar = { feil: IKKE_HAND };

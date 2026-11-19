@@ -1,12 +1,14 @@
-// Oppgaver: «Vis løsning» og «Få et hint» (KI-hint via hint-tjeneren).
+// Oppgaver: «Få et hint» (KI-hint via hint-tjeneren) og «Vis svar» (bare sluttsvaret, ::: {.fasit}).
+// Løsningsforslagene står ikke i lærebøkene (de kan brukes i øvingsopplegg): de ligger i det private repoet og
+// hentes av hint-tjeneren. Undervisere og admin får knappen «Løsningsforslag (lærer)» (/losning).
 // Etter et hint: innloggede kan fortsette med Dashman (assets/js/dashman.js) om oppgaven; andre får lenke til innlogging.
 // Er studenten påmeldt et fag der faglæreren har satt Dashman i fase 4 (selvstendighet) eller av, svarer tjenesten
 // at hint er slått av.
 // Bruk i en .qmd-fil:
 //   ::: {.oppgave niva="Middels"}
 //   Oppgavetekst …
-//   ::: {.losning}
-//   Løsning …
+//   ::: {.fasit}
+//   a) $4.5\,\mathrm{MJ}$ · b) $12\,^\circ\mathrm{C}$
 //   :::
 //   :::
 (function () {
@@ -21,8 +23,20 @@
   }
   var emne = ((document.querySelector('h1.title') || {}).textContent || document.title) + ' – ' + ((document.querySelector('.subtitle') || {}).textContent || '');
 
+  // Er brukeren underviser eller admin? (Spørres én gang per side.)
+  var laerer = null;
+  function erLaerer() {
+    if (!laerer) laerer = !innlogget() || !window.fhKonto ? Promise.resolve(false)
+      : window.fhKonto().then(function (k) { return k.rpc('min_rolle'); }).then(function (r) { return r && (r.data === 'underviser' || r.data === 'admin'); }).catch(function () { return false; });
+    return laerer;
+  }
+  var LOS_API = API.replace(/\/hint\/?$/, '/losning');
+
   document.querySelectorAll('div.oppgave').forEach(function (opp, i) {
-    var los = opp.querySelector(':scope > .losning');
+    var oppId = location.pathname + '#' + i;
+    // Gammelt oppsett med løsning i læreboka vises som før; nytt oppsett har bare fasit.
+    var los = opp.querySelector(':scope > .losning') || opp.querySelector(':scope > .fasit');
+    var erFasit = !!(los && los.classList.contains('fasit'));
     var niva = opp.getAttribute('data-niva') || opp.getAttribute('niva') || '';
     var tittel = opp.getAttribute('data-tittel') || opp.getAttribute('tittel') || '';
     var tEl = opp.querySelector(':scope > p > .oppg-tittel, :scope > .oppg-tittel'); if (tEl) { var par = tEl.closest('p'); (par && par.parentNode === opp && par.textContent.trim() === tEl.textContent.trim() ? par : tEl).remove(); }
@@ -43,7 +57,8 @@
     var verktoy = document.createElement('div');
     verktoy.className = 'oppg-verktoy';
     verktoy.innerHTML = '<button type="button" class="hint" aria-expanded="false">Få et hint</button>' +
-                        (los ? '<button type="button" class="vis" aria-expanded="false">Vis løsning</button>' : '') +
+                        (los ? '<button type="button" class="vis" aria-expanded="false">' + (erFasit ? 'Vis svar' : 'Vis løsning') + '</button>' : '') +
+                        '<button type="button" class="laerer-los" hidden>Løsningsforslag (lærer)</button>' +
                         // Skann: ta bilde av den håndskrevne løsningen i studieappen, som henter oppgaven og løsningsforslaget fra oppgaver.json
                         '<a class="skann" href="/studie/index.html#skann=' + encodeURIComponent(location.pathname + '#' + i) + '">📷 Skann løsningen din</a>';
     var panel = document.createElement('div');
@@ -59,9 +74,29 @@
     var visBtn = verktoy.querySelector('.vis');
     if (visBtn) visBtn.addEventListener('click', function () {
       los.hidden = !los.hidden;
-      visBtn.textContent = los.hidden ? 'Vis løsning' : 'Skjul løsning';
+      visBtn.textContent = los.hidden ? (erFasit ? 'Vis svar' : 'Vis løsning') : (erFasit ? 'Skjul svar' : 'Skjul løsning');
       visBtn.setAttribute('aria-expanded', String(!los.hidden));
       if (!los.hidden && window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([los]);
+    });
+
+    // Undervisere: løsningsforslaget fra det private repoet, vist under oppgaven.
+    var lBtn = verktoy.querySelector('.laerer-los'), lBoks = null;
+    erLaerer().then(function (ja) { if (ja) lBtn.hidden = false; });
+    lBtn.addEventListener('click', function () {
+      if (lBoks) { lBoks.hidden = !lBoks.hidden; return; }
+      lBtn.disabled = true;
+      token().then(function (t) { return fetch(LOS_API, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t }, body: JSON.stringify({ id: oppId }) }); })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          lBoks = document.createElement('div'); lBoks.className = 'losning laerer-losning';
+          var md = (j && j.losning) || (j && j.feil) || 'Det finnes ikke noe løsningsforslag til denne oppgaven.';
+          lBoks.innerHTML = '<p class="laerer-merke">Løsningsforslag – bare for undervisere</p>' + md.split(/\n{2,}/).map(function (p) {
+            return '<p>' + p.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>') + '</p>'; }).join('');
+          panel.after(lBoks);
+          if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([lBoks]);
+        })
+        .catch(function () { alert('Fikk ikke hentet løsningsforslaget.'); })
+        .then(function () { lBtn.disabled = false; });
     });
 
     var hintBtn = verktoy.querySelector('.hint');
@@ -75,7 +110,7 @@
     var send = panel.querySelector('.send');
     var tidligere = [];
     send.addEventListener('click', function () {
-      if (tidligere.length >= MAX_HINT) { vis('Du har fått tre hint på denne oppgaven. Prøv litt selv, eller se på løsningen.', true); return; }
+      if (tidligere.length >= MAX_HINT) { vis('Du har fått tre hint på denne oppgaven. Prøv litt selv, eller snakk med Dashman om den.', true); return; }
       if (!API || API.indexOf('DITTNAVN') >= 0) { vis('Hint-tjenesten er ikke satt opp ennå.', true); return; }
       send.disabled = true; send.textContent = 'Tenker …';
       token().then(function (t) { return fetch(API, {
@@ -83,8 +118,9 @@
         headers: t ? { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t } : { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           emne: emne.trim(),
+          id: oppId,
           oppgave: oppgavetekst,
-          losning: losningstekst,
+          losning: erFasit ? '' : losningstekst,
           forsok: panel.querySelector('textarea').value.slice(0, 1500),
           tidligereHint: tidligere
         })
@@ -113,7 +149,7 @@
         d.innerHTML = '<button type="button" class="hint-dashman">Snakk med Dashman om denne oppgaven</button>';
         d.querySelector('button').addEventListener('click', function () {
           window.dispatchEvent(new CustomEvent('dashman:oppgave', { detail: {
-            emne: emne.trim(), tittel: tittel, oppgave: oppgavetekst, losning: losningstekst,
+            emne: emne.trim(), tittel: tittel, oppgave: oppgavetekst, losning: erFasit ? '' : losningstekst, id: oppId,
             forsok: panel.querySelector('textarea').value.slice(0, 1500), hint: tidligere.slice()
           } }));
         });

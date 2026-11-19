@@ -118,7 +118,7 @@ jobs:
           path: eksamener-repo
           token: ${{ secrets.EKSAMEN_TOKEN || secrets.PLATTFORM_TOKEN }}
       - name: Bygg eksamenstreningen inn i KI-tjeneren
-        run: pip install -q pyyaml && python3 verktoy/eksamener.py eksamener-repo .
+        run: pip install -q pyyaml && python3 verktoy/eksamener.py eksamener-repo . && python3 verktoy/losninger.py eksamener-repo .
       - name: Publiser KI-tjeneren
         uses: cloudflare/wrangler-action@v3
         with:
