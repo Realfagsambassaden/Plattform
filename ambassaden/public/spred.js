@@ -80,19 +80,28 @@
     }
 
     // Emojier og stjerner strødd rundt kransen og nedover sidene.
-    var EMOJI = ['⭐', '✨', '🔭', '🧪', '🧬', '⚛️', '🧲', '📐', '🚀', '💡', '🌍', '🔬', '🪐', '⚡', '🧮', '🌡️'];
+    var EMOJI = ['⭐', '⭐', '🌟', '✨', '⭐', '🧪', '🧪', '⚗️', '🧫', '🦠', '🧬', '🔬', '🔭', '🪐', '🪐', '🌍', '🌙', '☄️', '🚀', '⚛️', '🧲', '💡', '⚡', '🌡️', '📐', '🧮',
+      '🐢', '🐙', '🦋', '🐝', '🐸', '🦕', '🐋', '🦉', '🌱', '🍄'];
+    var FORMLER = ['E = mc²', 'F = ma', 'π', '∑', '∫ f dx', '√2', 'ΔU = Q + W', 'λ = h/p', 'H₂O', 'e^iπ + 1 = 0', 'pV = nRT', 'DNA', 'CO₂', 'a² + b² = c²', '∇·E = ρ/ε₀'];
     function pynt(x, y, tegn, kl, str, o) {
       var e = document.createElement('span'); e.className = 'pynt ' + (kl || ''); e.textContent = tegn;
       e.style.setProperty('--x', Math.round(x) + 'px'); e.style.setProperty('--y', Math.round(y) + 'px');
       e.style.setProperty('--vri', Math.round((r() * 2 - 1) * 25) + 'deg'); e.style.setProperty('--d', (r() * 3).toFixed(2) + 's');
       e.style.fontSize = str + 'px'; if (o) e.style.setProperty('--o', o); lag.appendChild(e);
     }
-    for (var j = 0; j < 22; j++) {   // rundt kransen, mellom og utenfor kortene
-      var pa = (j / 22) * Math.PI * 2 + r() * .2, pr = R + kh * (.55 + r() * .45);
+    for (var j = 0; j < 30; j++) {   // rundt kransen, mellom og utenfor kortene
+      var pa = (j / 30) * Math.PI * 2 + r() * .2, pr = R + kh * (.55 + r() * .45);
       var px = cx + pr * Math.cos(pa), py = cy + pr * Math.sin(pa);
       if (px < 10 || px > sr.width - 40 || py < hy + 10) continue;
-      var stjerne = j % 3 !== 0;
-      pynt(px, py, stjerne ? (r() < .5 ? '✦' : '★') : EMOJI[Math.floor(r() * EMOJI.length)], stjerne ? (r() < .6 ? 'stjerne-tegn' : 'glimt') : '', stjerne ? 14 + r() * 16 : 26 + r() * 14, stjerne ? .55 + r() * .4 : .9);
+      var hva = j % 4;   // 0, 1: emoji, 2: stjerne, 3: formel i kritt
+      if (hva === 3) pynt(px, py, FORMLER[Math.floor(r() * FORMLER.length)], 'formel', 15 + r() * 8, .75);
+      else if (hva === 2) pynt(px, py, r() < .7 ? '⭐' : '✦', r() < .6 ? 'stjerne-tegn' : 'glimt', 18 + r() * 16, .7 + r() * .3);
+      else pynt(px, py, EMOJI[Math.floor(r() * EMOJI.length)], '', 26 + r() * 14, .92);
+    }
+
+    for (var q = 0; q < 14; q++) {   // ekstra ⭐ tett rundt stjerna i midten
+      var qa = r() * Math.PI * 2, qr = rs * (1.02 + r() * .12);
+      pynt(cx + qr * Math.cos(qa) - 12, cy + qr * Math.sin(qa) - 12, '⭐', 'stjerne-tegn', 16 + r() * 14, .75 + r() * .25);
     }
 
     // 2) Langs sidene nedover resten av siden, i margen utenfor innholdet (gjerne litt ut over kanten).
@@ -109,8 +118,8 @@
         var xh = smal ? sr.width - b2 * .45 : (sr.width - marg / 2) - b2 / 2 + (r() * 2 - 1) * 30;
         nyttKort(smal ? xh : Math.min(sr.width - b2 * .6, xh), y + steg / 2 + r() * 30, s2 * (.9 + r() * .15), vri());
         if (!smal) {   // litt pynt i margen mellom kortene
-          pynt(Math.max(8, xv + b2 * (.2 + r() * .6)), y + steg * .7, r() < .6 ? '✦' : EMOJI[Math.floor(r() * EMOJI.length)], 'stjerne-tegn', 16 + r() * 14, .7);
-          pynt(Math.min(sr.width - 40, xh + b2 * (.2 + r() * .6)), y + steg * 1.15, r() < .6 ? '★' : EMOJI[Math.floor(r() * EMOJI.length)], 'glimt', 16 + r() * 14, .7);
+          pynt(Math.max(8, xv + b2 * (.2 + r() * .6)), y + steg * .7, r() < .35 ? '✦' : EMOJI[Math.floor(r() * EMOJI.length)], r() < .35 ? 'stjerne-tegn' : '', 20 + r() * 14, .85);
+          pynt(Math.min(sr.width - 60, xh + b2 * (.1 + r() * .5)), y + steg * 1.15, r() < .4 ? FORMLER[Math.floor(r() * FORMLER.length)] : EMOJI[Math.floor(r() * EMOJI.length)], 'formel', 18 + r() * 10, .8);
         }
       }
     }
