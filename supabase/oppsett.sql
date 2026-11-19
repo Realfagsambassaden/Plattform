@@ -1158,3 +1158,18 @@ do $$ declare c text; begin
 end $$;
 alter table public.ovelser drop constraint if exists ovelser_krav_min;
 alter table public.ovelser add constraint ovelser_krav_min check (krav >= 0);
+
+-- Læring for håndskriftsjekken (19. nov. 2026): de siste avgjørelsene på bilder til gjennomsyn, som korte beskrivelser
+-- (ki.bildebeskrivelse: underlag, skriveverktøy, kjennetegn – aldri navn eller innhold). Ingen bilder, ingen brukere.
+-- Hint-tjeneren sender dem med i /vurder, så KI-en lærer av lærerens godkjenn/avvis.
+create or replace function public.handskrift_laering()
+returns table (status text, beskrivelse text)
+language sql stable security definer set search_path = public as $$
+  select g.status, g.ki->>'bildebeskrivelse'
+  from public.gjennomsyn g
+  where g.status in ('godkjent', 'avvist') and coalesce(g.ki->>'bildebeskrivelse', '') <> ''
+  order by g.behandlet desc nulls last
+  limit 20;
+$$;
+revoke all on function public.handskrift_laering() from public;
+grant execute on function public.handskrift_laering() to authenticated;

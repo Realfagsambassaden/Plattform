@@ -35,6 +35,7 @@ import DASHMAN_INSTRUKS from "./dashman-instruks.md";
 import DASHMAN_UNDERVISER from "./dashman-underviser.md";
 import { pushRunde, sendPush } from "./push.js";
 import { eksamenNeste, eksamenSvar, eksamenAnslag, eksamenKontekst } from "./eksamen.js";
+import { FONT_EKSEMPEL } from "./handskrift-eksempel.js";
 
 const STANDARD_MODELL = { claude: "claude-haiku-5-5", openai: "gpt-4o-mini" };
 const NETTSTED = "https://fysikkhjelp.no";
@@ -108,6 +109,12 @@ Håndskrift (bare når det er vedlagt et bilde): Vurder om bildet viser studente
 - "nei": skjermdump, maskinskrevet eller trykt tekst, typesatte formler, en løsning fra en KI-chat eller nettside, eller et bilde av en skjerm.
 - "usikker": du klarer ikke å avgjøre det (for eksempel svært ryddig skrift, delvis skjerm, uskarpt bilde).
 Uten bilde: bruk "ja".
+Det andre bildet (når det er med) er et FAST EKSEMPEL, ikke studentens: tekst skrevet på PC med en håndskriftfont. Slikt er "nei":
+helt like bokstaver hver gang, perfekt rette linjer, ingen overstrykninger eller trykk-variasjon. Vurder bare det første bildet.
+Under «Lærerens tidligere avgjørelser» står korte beskrivelser av bilder du var usikker på, og om læreren godtok dem som
+egen håndskrift (godkjent) eller ikke (avvist). Bruk dem til å kalibrere vurderingen.
+"bildebeskrivelse" (bare med bilde): maks 20 ord, nøytralt, om HVORDAN bildet er laget: underlag (papir, ruteark, tavle, skjerm),
+skriveverktøy, og kjennetegn på håndskrift eller font/skjerm. Aldri navn, aldri innholdet i løsningen.
 
 Forståelse (bare med bilde), uavhengig av om sluttsvaret er riktig:
 - "forstaelse": "ja" når utregningen viser tilstrekkelig forståelse: riktig fysikk/modell og en fornuftig vei mot svaret, selv om det
@@ -116,7 +123,7 @@ Forståelse (bare med bilde), uavhengig av om sluttsvaret er riktig:
 Studenten kan rette sluttsvaret i appen etterpå; da holder det at bildet viser forståelse.
 
 Svar KUN med gyldig JSON:
-{"vurdering":"riktig|regnefeil|begrep|uklar","forstaelse":"ja|nei","streker":"ja|nei","sikkerhet":"hoy|middels|lav","handskrift":"ja|nei|usikker","tilbakemelding":"…"}
+{"vurdering":"riktig|regnefeil|begrep|uklar","forstaelse":"ja|nei","streker":"ja|nei","sikkerhet":"hoy|middels|lav","handskrift":"ja|nei|usikker","bildebeskrivelse":"…","tilbakemelding":"…"}
 - Gjeldende siffer: Sluttsvar har ALLTID like mange gjeldende siffer som det minst nøyaktige måltallet i oppgaven (konstanter teller med, eksakte tall ikke).
   Slik teller du: alle sifre i mantissen unntatt nuller foran. Tierpotensen teller IKKE. 6·10^10 har 1, 3.0 har 2, 0.250 har 3, 1.602·10^-19 har 4.
   Står det et krav i «Riktig svar» (krav: n gjeldende siffer), er det regnet ut av appen: bruk det, ikke tell selv.
@@ -695,21 +702,31 @@ async function vurder(request, env, b, h) {
     return json({ feil: "Bildevurdering er ikke tilgjengelig ennå. Skriv forklaringen som tekst i stedet." }, 501, h);
 
   const s = b.sporsmal || {};
+  // Læring for håndskriftsjekken: lærerens avgjørelser på bilder til gjennomsyn (bare korte beskrivelser, ingen bilder).
+  let laering = "";
+  if (bilde) {
+    const token = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
+    const l = await supabaseRpc(env, token, "handskrift_laering", {}).catch(() => []);
+    if (Array.isArray(l) && l.length) laering = "\n\nLærerens tidligere avgjørelser (bilder KI-en var usikker på):\n" +
+      l.map((x) => `- ${kort(x.beskrivelse, 160)} → ${x.status === "godkjent" ? "godkjent (egen håndskrift)" : "avvist (ikke egen håndskrift)"}`).join("\n");
+  }
   const melding =
     `Spørsmål:\n${kort(s.tekst, 1500)}\n\nRiktig svar: ${kort(s.riktig, 200)}\nForklaring (fasit): ${kort(s.forklaring, 1500)}\n\n` +
     `Studenten valgte: ${kort(b.valgt, 200)}\n\n` +
-    `Studentens forklaring: ${tekst || "(se bildet)"}${bilde ? "\n\nStudentens håndskrevne besvarelse er vedlagt som bilde." : ""}`;
+    `Studentens forklaring: ${tekst || "(se bildet)"}${bilde ? "\n\nStudentens besvarelse er det FØRSTE bildet. Det andre bildet er det faste eksempelet på tekst skrevet med en håndskriftfont (ikke håndskrift)." + laering : ""}`;
   // Får vi ikke et svar vi kan lese (feil hos KI-leverandøren eller avkuttet JSON), prøver vi én gang til med mer plass.
   let r = {};
-  try { r = lesJson(await spor(env, SYSTEM_VURDER.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 1500, bilde)) || {}; } catch (e) { r = {}; }
-  if (!r.tilbakemelding) { try { r = lesJson(await spor(env, SYSTEM_VURDER.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 2500, bilde)) || {}; } catch (e) { r = {}; } }
+  const bilder = bilde && bilde.type !== "application/pdf" ? [bilde, FONT_EKSEMPEL] : bilde;
+  try { r = lesJson(await spor(env, SYSTEM_VURDER.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 1500, bilder)) || {}; } catch (e) { r = {}; }
+  if (!r.tilbakemelding) { try { r = lesJson(await spor(env, SYSTEM_VURDER.replace("NETTSTED", NETTSTEDNAVN(request)), melding, 2500, bilder)) || {}; } catch (e) { r = {}; } }
   const vurdering = ["riktig", "regnefeil", "begrep", "uklar"].includes(r.vurdering) ? r.vurdering : "uklar";
   const sikkerhet = ["hoy", "middels", "lav"].includes(r.sikkerhet) ? r.sikkerhet : "lav";
   // Uten bilde er det ingenting å sjekke. Med bilde: alt annet enn et tydelig ja/nei regnes som usikkert.
   const handskrift = !bilde ? "ja" : (["ja", "nei", "usikker"].includes(r.handskrift) ? r.handskrift : "usikker");
   const forstaelse = bilde && (r.forstaelse === "ja" || vurdering === "riktig") ? "ja" : "nei";
   const streker = bilde && r.streker === "ja" ? "ja" : "nei";
-  return json({ vurdering, forstaelse, streker, sikkerhet, handskrift, tilbakemelding: kort(r.tilbakemelding, 1200) || "Klarte ikke å vurdere besvarelsen denne gangen." }, 200, h);
+  return json({ vurdering, forstaelse, streker, sikkerhet, handskrift, bildebeskrivelse: bilde ? kort(r.bildebeskrivelse, 200) : "",
+    tilbakemelding: kort(r.tilbakemelding, 1200) || "Klarte ikke å vurdere besvarelsen denne gangen." }, 200, h);
 }
 
 async function rad(request, env, b, h) {
@@ -1114,13 +1131,14 @@ function kiFeil(status) {
 async function spor(env, system, melding, maksTokens, bilde) {
   const lev = (env.LEVERANDOR || "claude").toLowerCase();
   const modell = (bilde && env.MODELL_BILDE) || env.MODELL || STANDARD_MODELL[lev] || STANDARD_MODELL.claude;
+  const bildeliste = Array.isArray(bilde) ? bilde : bilde ? [bilde] : [];   // flere bilder: det første er studentens
   if (lev === "openai") {
     if (!env.KI_URL || !env.KI_API_KEY) throw feil("KI-tjenesten er ikke satt opp ennå.", 503);
     const r = await kiFetch(env.KI_URL, {
       method: "POST",
       headers: { "Authorization": `Bearer ${env.KI_API_KEY}`, "content-type": "application/json" },
       body: JSON.stringify({ model: modell, max_tokens: maksTokens, messages: [{ role: "system", content: system }, { role: "user", content: bilde
-        ? [{ type: "image_url", image_url: { url: `data:${bilde.type};base64,${bilde.data}` } }, { type: "text", text: melding }]
+        ? [...bildeliste.map((x) => ({ type: "image_url", image_url: { url: `data:${x.type};base64,${x.data}` } })), { type: "text", text: melding }]
         : melding }] }),
     });
     if (!r.ok) throw kiFeil(r.status);
@@ -1135,7 +1153,7 @@ async function spor(env, system, melding, maksTokens, bilde) {
     method: "POST",
     headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
     body: JSON.stringify({ model: modell, max_tokens: maksTokens, system, messages: [{ role: "user", content: bilde
-      ? [{ type: bilde.type === "application/pdf" ? "document" : "image", source: { type: "base64", media_type: bilde.type, data: bilde.data } }, { type: "text", text: melding }]
+      ? [...bildeliste.map((x) => ({ type: x.type === "application/pdf" ? "document" : "image", source: { type: "base64", media_type: x.type, data: x.data } })), { type: "text", text: melding }]
       : melding }] }),
   });
   if (!r.ok) throw kiFeil(r.status);
