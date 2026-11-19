@@ -997,3 +997,10 @@ img.kompendium-bilde.foto, img.kompendium-bilde.farge { filter: none; }
 .navbar .nav-link:hover .stott-knapp, .navbar .nav-link:focus .stott-knapp { box-shadow: 0 0 16px rgba($orange, .7); }
 .stott-side { max-width: 720px; margin: 0 auto 3rem; }
 .stott-kommer { font-family: "Kritt", "Architects Daughter", cursive; color: $orange; font-size: 1.4rem; }
+
+// Lærebokoppgaver: sluttsvaret (::: {.fasit}) bak «Vis svar», og løsningsforslaget som bare undervisere ser.
+.oppgave .fasit { margin: .5rem 0; padding: .4rem .8rem; border-left: 3px solid $neon; background: rgba($neon, .06); }
+.oppgave .fasit::before { content: "Svar: "; color: $neon; font-weight: 600; }
+.oppgave .laerer-losning { margin: .6rem 0; padding: .6rem .9rem; border: 1px dashed $orange; border-radius: 8px; background: rgba($orange, .05); }
+.oppgave .laerer-merke { color: $orange; font-size: .85em; margin: 0 0 .4rem; }
+.oppg-verktoy .laerer-los { border-color: $orange; color: $orange; }

@@ -36,6 +36,10 @@ import DASHMAN_UNDERVISER from "./dashman-underviser.md";
 import { pushRunde, sendPush } from "./push.js";
 import { eksamenNeste, eksamenSvar, eksamenAnslag, eksamenKontekst } from "./eksamen.js";
 import { FONT_EKSEMPEL } from "./handskrift-eksempel.js";
+// Løsningsforslag til lærebokoppgavene (id = sidens adresse + '#' + oppgavenummer). Ligger i det private repoet
+// (eksamener/losninger), bakes inn ved publisering (verktoy/losninger.py) og vises aldri for studenter.
+import LOSNINGER from "./losninger.json";
+const losningFor = (id) => (id && LOSNINGER[String(id).replace(/^https?:\/\/[^/]+/, "")]) || "";
 
 const STANDARD_MODELL = { claude: "claude-haiku-5-5", openai: "gpt-4o-mini" };
 const NETTSTED = "https://fysikkhjelp.no";
@@ -475,6 +479,15 @@ function lesVedlegg(d) {
 
 // Fiktiv klasse: admin starter GitHub-jobben «Fiktiv klasse» (.github/workflows/fiktiv-klasse.yml) for et kurs.
 // Nøkkelen GH_DISPATCH (GitHub-hemmeligheten FIKTIV_TOKEN eller PLATTFORM_TOKEN) settes på workeren ved publisering.
+// Løsningsforslaget til en lærebokoppgave, bare for undervisere og admin (vises på oppgaven i læreboka).
+async function losningForLaerer(request, env, b, h) {
+  const token = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
+  const rolle = token ? await supabaseRpc(env, token, "min_rolle", {}).catch(() => "") : "";
+  if (rolle !== "underviser" && rolle !== "admin") return json({ feil: "Løsningsforslagene er bare for undervisere." }, 403, h);
+  const losning = losningFor(b.id);
+  return json({ losning }, 200, h);
+}
+
 async function fiktivStart(request, env, b, h) {
   const token = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
   const rolle = token ? await supabaseRpc(env, token, "min_rolle", {}).catch(() => "") : "";
@@ -621,6 +634,7 @@ export default {
       if (sti.endsWith("/eksamen/anslag")) return await eksamenAnslag(request, env, b, h, EKS(request));
       if (sti.endsWith("/dashman")) return await dashman(request, env, b, h);
       if (sti.endsWith("/fiktiv/start")) return await fiktivStart(request, env, b, h);
+      if (sti.endsWith("/losning")) return await losningForLaerer(request, env, b, h);
       if (sti.endsWith("/gjennomsyn")) return await gjennomsynVarsel(request, env, b, h);
       if (sti.endsWith("/push-test")) return await pushTest(request, env, b, h);
       return await hint(request, env, b, h);
@@ -674,7 +688,7 @@ async function hint(request, env, b, h) {
   const melding =
     `Emne: ${kort(b.emne, 120)}\n\n` +
     `Oppgave:\n${kort(b.oppgave, 2000)}\n\n` +
-    `Løsningsforslag (bare for deg, ikke vis det):\n${kort(b.losning, 2500)}\n\n` +
+    `Løsningsforslag (bare for deg, ikke vis det):\n${kort(b.losning || losningFor(b.id), 2500) || "(ikke oppgitt)"}\n\n` +
     (tidligere.length ? `Hint studenten allerede har fått:\n${tidligere.map((t, i) => `${i + 1}. ${t}`).join("\n")}\n\n` : "") +
     `Dette har studenten prøvd:\n${kort(b.forsok, 1500) || "(ingenting skrevet)"}\n\n` +
     `Gi neste hint.`;
@@ -702,7 +716,9 @@ async function vurder(request, env, b, h) {
   if (bilde && (env.LEVERANDOR || "claude").toLowerCase() === "openai" && env.KI_BILDER !== "ja")
     return json({ feil: "Bildevurdering er ikke tilgjengelig ennå. Skriv forklaringen som tekst i stedet." }, 501, h);
 
-  const s = b.sporsmal || {};
+  const s = Object.assign({}, b.sporsmal || {});
+  // Lærebokoppgaver: løsningsforslaget hentes fra det private repoet (studentene har det ikke).
+  if (!s.forklaring) s.forklaring = losningFor(s.id) || "(ikke oppgitt: vurder selv om fysikken og regningen er riktig)";
   // Læring for håndskriftsjekken: lærerens avgjørelser på bilder til gjennomsyn (bare korte beskrivelser, ingen bilder).
   let laering = "";
   if (bilde) {
@@ -872,7 +888,7 @@ async function dashman(request, env, b, h) {
     ...(b.oppgave && b.oppgave.oppgave ? [
       `Studenten jobber med denne oppgaven (${{ quiz: "et spørsmål i quizen", skann: "en oppgave studenten har skannet løsningen på", hint: "hint-knappen på oppgaven" }[b.oppgave.kilde] || "hint-knappen på oppgaven"}) og vil sparre med deg:`,
       `Oppgave: ${kort(b.oppgave.oppgave, 2000)}`,
-      `Løsningsforslag (bare for deg – vis det ALDRI, verken helt eller delvis): ${kort(b.oppgave.losning, 2500) || "(ikke oppgitt)"}`,
+      `Løsningsforslag (bare for deg – vis det ALDRI, verken helt eller delvis): ${kort(b.oppgave.losning || losningFor(b.oppgave.id), 2500) || "(ikke oppgitt)"}`,
       `Dette har studenten prøvd: ${kort(b.oppgave.forsok, 1500) || "(ingenting skrevet)"}`,
       ...((Array.isArray(b.oppgave.hint) ? b.oppgave.hint : []).slice(0, 3).map((x, i) => `Hint ${i + 1} studenten allerede har fått: ${kort(x, 600)}`)),
     ] : []),

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Lager oppgaver.json: alle oppgavene i lærebøkene, med tekst og løsningsforslag.
+"""Lager oppgaver.json: alle oppgavene i lærebøkene, med tekst og fasit (sluttsvar). Fila er offentlig, så
+løsningsforslagene står ikke her: de ligger i det private repoet og hentes av hint-tjeneren (verktoy/losninger.py).
 Studieappen bruker den i «Skann»: studenten velger en oppgave, tar bilde av sin håndskrevne løsning, og KI vurderer
 løsningen mot løsningsforslaget. «Skann løsningen»-knappen på oppgavene (assets/js/oppgaver.js) lenker hit med id-en.
 id = sidens adresse + '#' + oppgavens nummer på siden (0, 1, 2 …), i samme rekkefølge som div.oppgave på siden.
@@ -42,7 +43,7 @@ def les(fil, url, kilde):
         a = APNE.match(linje)
         if a:
             klasse = a.group(2)
-            node = {'farger': len(a.group(1)), 'klasse': klasse, 'linjer': [], 'losning': None}
+            node = {'farger': len(a.group(1)), 'klasse': klasse, 'linjer': [], 'losning': None, 'fasit': None}
             if '.oppgave' in re.findall(r'\.[\w-]+', klasse):
                 node['oppgave'] = {'nr': nr, 'tittel': attr(klasse, 'tittel'), 'niva': attr(klasse, 'niva')}; nr += 1
             stakk.append(node); continue
@@ -50,12 +51,14 @@ def les(fil, url, kilde):
             node = stakk.pop()
             if '.losning' in node['klasse'] and stakk:
                 stakk[-1]['losning'] = node['linjer']
+            elif '.fasit' in node['klasse'] and stakk:
+                stakk[-1]['fasit'] = node['linjer']
             elif 'oppgave' in node:
                 o = node['oppgave']
                 ut.append({'id': f"{url}#{o['nr']}", 'url': url, 'kilde': kilde, 'side': side, 'tema': tema, 'undertema': undertema,
                            'tittel': o['tittel'], 'niva': o['niva'], 'oppgave': rens(node['linjer'])[:2500],
-                           'losning': rens(node['losning'] or [])[:3000]})
-            if stakk and node.get('oppgave') is None and '.losning' not in node['klasse']:
+                           'fasit': rens(node['fasit'] or [])[:300]})
+            if stakk and node.get('oppgave') is None and '.losning' not in node['klasse'] and '.fasit' not in node['klasse']:
                 stakk[-1]['linjer'] += node['linjer']                  # annet innhold i oppgaven (f.eks. callout) tas med
             continue
         if stakk:
@@ -81,4 +84,4 @@ if fag_f.exists():
                     oppgaver += les(f, f"/{fg['kortnavn']}/kapitler/{k['dir']}/{s['fil'].replace('.qmd', '.html')}", fg['tittel'])
 oppgaver = [o for o in oppgaver if o['oppgave']]
 (P / 'oppgaver.json').write_text(json.dumps({'oppgaver': oppgaver}, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
-print('oppgaver.json:', len(oppgaver), 'oppgaver,', sum(1 for o in oppgaver if o['losning']), 'med løsning')
+print('oppgaver.json:', len(oppgaver), 'oppgaver,', sum(1 for o in oppgaver if o['fasit']), 'med fasit')
