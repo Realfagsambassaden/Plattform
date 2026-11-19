@@ -16,7 +16,7 @@ const OPPGAVER = [];   // flat liste: { eid, eksamen, nr, tema, tekst, alternati
       if (!o.tekst || !Array.isArray(o.alternativer) || !o.riktig || sett.has(o.tekst)) continue;
       sett.add(o.tekst);
       OPPGAVER.push({ eid: e.id, eksamen: e.tittel || e.id, nr: o.nr, tema: o.tema || "", tekst: o.tekst, alternativer: o.alternativer,
-        riktig: o.riktig, losning: o.losning || "", figur: o.figur || "", gruppe: o.gruppe || "", kontekst: o.kontekst || "" });
+        riktig: o.riktig, losning: o.losning || "", figur: o.figur || "", gruppe: o.gruppe || "", kontekst: o.kontekst || "", merknad: o.merknad || "" });
     }
   }
 })();
@@ -39,7 +39,7 @@ async function mineSvar(env, token) {
 
 function utenFasit(o, origin) {
   return { eid: o.eid, nr: o.nr, eksamen: o.eksamen, tema: o.tema, tekst: o.tekst, alternativer: o.alternativer, gruppe: o.gruppe || null,
-    kontekst: o.kontekst || null, figur: o.figur ? `${origin}/eksamen/${o.eid}/${o.figur}` : null };
+    kontekst: o.kontekst || null, merknad: o.merknad || null, figur: o.figur ? `${origin}/eksamen/${o.eid}/${o.figur}` : null };
 }
 
 export async function eksamenNeste(request, env, b, h, d) {
@@ -57,10 +57,21 @@ export async function eksamenNeste(request, env, b, h, d) {
   const ikkeGjort = l.filter((o) => !sett.has(nokkel(o))), feil = l.filter((o) => sett.has(nokkel(o)) && sett.get(nokkel(o)) !== "riktig");
   const pool = ikkeGjort.length ? ikkeGjort : feil.length ? feil : l;
   if (!pool.length) return d.json({ ferdig: true }, 200, h);
-  let o = pool[Math.floor(Math.random() * pool.length)];
-  if (o.gruppe) {   // start på første ugjorte oppgave i gruppa
-    const g = pool.filter((x) => x.eid === o.eid && x.gruppe === o.gruppe).sort((a, c) => a.nr - c.nr);
-    if (g.length) o = g[0];
+  let o = null;
+  // Oppgaver som henger sammen (f.eks. «Oppgave 25 og 26 henger sammen»): har studenten nettopp svart på en oppgave i
+  // en gruppe, kommer neste oppgave i samme gruppe – uansett tema og om den er gjort før – til hele gruppa er gjort.
+  const siste = svar.find((s) => String(s.sporsmal).startsWith("eks:"));
+  if (siste) {
+    const [eid, nr] = String(siste.sporsmal).slice(4).split("#");
+    const forrige = OPPGAVER.find((x) => x.eid === eid && x.nr === Number(nr));
+    if (forrige && forrige.gruppe) o = OPPGAVER.filter((x) => x.eid === eid && x.gruppe === forrige.gruppe && x.nr > forrige.nr && !hoppOver.has(nokkel(x))).sort((a, c) => a.nr - c.nr)[0] || null;
+  }
+  if (!o) {
+    o = pool[Math.floor(Math.random() * pool.length)];
+    if (o.gruppe) {   // start på første oppgave i gruppa, så studenten får hele sammenhengen
+      const g = OPPGAVER.filter((x) => x.eid === o.eid && x.gruppe === o.gruppe && !hoppOver.has(nokkel(x))).sort((a, c) => a.nr - c.nr);
+      if (g.length) o = g[0];
+    }
   }
   // Oppgaver som henger sammen: ta med teksten fra den første oppgaven i gruppa som bakgrunn.
   let kontekst = null;
@@ -103,7 +114,7 @@ Alternativer:
 ${alt}
 Riktig svar: ${BOKSTAV[o.riktig - 1]}
 Studentens svar: ${BOKSTAV[valgt - 1]} (${riktig ? "riktig" : "feil"})
-Løsningsforslag: ${o.losning}`;
+Løsningsforslag: ${o.losning}${o.merknad ? `\nMerknad om oppgaven (feil på den originale eksamenen e.l.): ${o.merknad}` : ""}`;
   let svar = "", humor = riktig ? "glad" : "tenker", type = riktig ? "riktig" : "begrep";
   try {
     const raa = await d.spor(env, system, melding, 900, bilde);
