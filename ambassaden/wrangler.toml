@@ -1,5 +1,5 @@
 # Realfagsambassaden – paraplysiden. Publiseres av GitHub-automatikken (.github/workflows/bygg.yml).
-# Statiske sider i public/; worker.js tar imot donasjoner på /api/doner.
+# Statiske sider i public/; worker.js tar imot bookingforespørsler på /api/book og sender dem på e-post.
 name = "realfagsambassaden"
 main = "worker.js"
 compatibility_date = "2024-11-01"
@@ -8,3 +8,8 @@ workers_dev = true
 [assets]
 directory = "./public"
 binding = "ASSETS"
+
+# Bookingforespørsler sendes på e-post. Krever Email Routing på realfagsambassaden.no med normann.formidling@gmail.com som bekreftet mottaker.
+[[send_email]]
+name = "EPOST"
+destination_address = "normann.formidling@gmail.com"

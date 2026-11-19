@@ -119,7 +119,7 @@ def profilside(p, nr, mal):
     hode = mal[:mal.index('<main>')]
     hode = (hode.replace('href="stil.css"', 'href="../stil.css"').replace('href="img/', 'href="../img/')
             .replace('src="img/', 'src="../img/').replace('href="./', 'href="../')
-            .replace('href="stott.html"', 'href="../stott.html"').replace('href="doner.html"', 'href="../doner.html"'))
+            .replace('href="stott.html"', 'href="../stott.html"'))
     hode = hode.replace('</head>', '<link rel="stylesheet" href="../samlekort.css">\n</head>')
     hode = re.sub(r'<title>.*?</title>', f'<title>{e(p["navn"])} – Realfagsambassaden</title>', hode)
     hode = re.sub(r'<meta name="description" content=".*?">',
@@ -157,7 +157,7 @@ def main():
     # Realfagsambassaden
     bytt(AMB / 'index.html', '    <link rel="stylesheet" href="samlekort.css">\n    ' + FILTER + '\n    <div class="samlekort-rad">\n' + '\n'.join(
         '      ' + kort(p, i + 1, 'img/', f'profil/{p["id"]}.html') for i, p in enumerate(folk)) + '\n    </div>')
-    mal = (AMB / 'doner.html').read_text(encoding='utf-8')
+    mal = (AMB / 'stott.html').read_text(encoding='utf-8')   # felles topp og bunn
     (AMB / 'profil').mkdir(exist_ok=True)
     for i, p in enumerate(folk):
         (AMB / 'profil' / f'{p["id"]}.html').write_text(profilside(p, i + 1, mal), encoding='utf-8')
