@@ -36,6 +36,9 @@
   td.h b { color: var(--kritt); font-weight: 700; }
   .merk { font-size: .82rem; color: var(--gul); margin: .35rem 0 .1rem; }
   .tre { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+  table.verdier { display: table; } table.verdier tr { display: table-row; } table.verdier th, table.verdier td { display: table-cell; padding: .22rem .4rem; text-align: left; border-top: 1px dashed rgba(236,238,234,.12); }
+  table.verdier th { color: var(--neon); font-weight: 400; font-family: "Architects Daughter", cursive; border-top: 0; }
+  table.verdier td:not(:first-child) { text-align: right; white-space: nowrap; }
   .prefiks tr { display: table-row; } .prefiks td { text-align: center; }
   @media print {
     body { background: #fff; color: #000; font-size: 11px; }
@@ -57,6 +60,8 @@
         <tr><td class="f">$\mathrm{g} = 9.81\ \mathrm{m/s^2}$</td><td class="h">tyngdeakselerasjonen ved jordoverflaten</td></tr>
         <tr><td class="f">$\mathrm{e} = 1.602\cdot 10^{-19}\ \mathrm{C}$</td><td class="h">elementærladningen</td></tr>
         <tr><td class="f">$\mathrm{k_B} = 1.381\cdot 10^{-23}\ \mathrm{J/K}$</td><td class="h">Boltzmanns konstant</td></tr>
+        <tr><td class="f">$\mathrm{m_e} = 9.109\cdot 10^{-31}\ \mathrm{kg}$</td><td class="h">elektronmassen</td></tr>
+        <tr><td class="f">$\mathrm{m_p} = 1.673\cdot 10^{-27}\ \mathrm{kg}$</td><td class="h">protonmassen</td></tr>
         <tr><td class="f">$1\ \mathrm{atm} = 1.013\cdot 10^{5}\ \mathrm{Pa}$</td><td class="h">lufttrykket ved havoverflaten</td></tr>
         <tr><td class="f">$\rho_\text{vann} = 1.00\cdot 10^{3}\ \mathrm{kg/m^3}$</td><td class="h">massetettheten til vann</td></tr>
       </table>
@@ -193,6 +198,40 @@
         <tr><td class="f">$\sum U = 0$</td><td class="h">Kirchhoffs spenningslov (rundt en lukket sløyfe)</td></tr>
         <tr><td class="f">$P = UI = RI^2 = \dfrac{U^2}{R}$</td><td class="h"><b>elektrisk effekt</b>; energi $E = Pt$</td></tr>
       </table>
+    </section>
+    <section class="bred">
+      <h2>Stoffverdier</h2>
+      <div class="tre">
+        <table class="verdier">
+          <tr><th>Stoff</th><th>$c$ / $\mathrm{\tfrac{kJ}{kg\cdot K}}$</th></tr>
+          <tr><td>Vann</td><td>4.2</td></tr>
+          <tr><td>Is</td><td>2.1</td></tr>
+          <tr><td>Vanndamp</td><td>2.0</td></tr>
+          <tr><td>Luft</td><td>1.0</td></tr>
+          <tr><td>Aluminium</td><td>0.90</td></tr>
+          <tr><td>Glass</td><td>0.84</td></tr>
+          <tr><td>Jern</td><td>0.45</td></tr>
+          <tr><td>Kobber</td><td>0.39</td></tr>
+          <tr><td>Bly</td><td>0.13</td></tr>
+        </table>
+        <table class="verdier">
+          <tr><th>Stoff</th><th>smelter ved</th><th>$\ell_\text{smelte}$ / $\mathrm{\tfrac{kJ}{kg}}$</th></tr>
+          <tr><td>Vann (is)</td><td>$0\ ^\circ\mathrm{C}$</td><td>334</td></tr>
+          <tr><td>Etanol</td><td>$-114\ ^\circ\mathrm{C}$</td><td>108</td></tr>
+          <tr><td>Bly</td><td>$327\ ^\circ\mathrm{C}$</td><td>23</td></tr>
+          <tr><td>Aluminium</td><td>$660\ ^\circ\mathrm{C}$</td><td>397</td></tr>
+          <tr><td>Kobber</td><td>$1085\ ^\circ\mathrm{C}$</td><td>207</td></tr>
+          <tr><td>Jern</td><td>$1538\ ^\circ\mathrm{C}$</td><td>247</td></tr>
+        </table>
+        <table class="verdier">
+          <tr><th>Stoff</th><th>koker ved</th><th>$\ell_\text{fordamp}$ / $\mathrm{\tfrac{kJ}{kg}}$</th></tr>
+          <tr><td>Vann</td><td>$100\ ^\circ\mathrm{C}$</td><td>2 259</td></tr>
+          <tr><td>Etanol</td><td>$78\ ^\circ\mathrm{C}$</td><td>855</td></tr>
+          <tr><td>Nitrogen</td><td>$-196\ ^\circ\mathrm{C}$</td><td>199</td></tr>
+          <tr><td>Oksygen</td><td>$-183\ ^\circ\mathrm{C}$</td><td>213</td></tr>
+        </table>
+      </div>
+      <p class="merk">Ved 1 atm. Spesifikk varmekapasitet $c$, spesifikk smeltevarme $\ell_\text{smelte}$ og spesifikk fordampningsvarme $\ell_\text{fordamp}$.</p>
     </section>
   </div>
 </main>
