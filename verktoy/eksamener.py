@@ -51,7 +51,11 @@ def main():
                     shutil.copyfile(fra, FIG / eid / figur)
             oppg.append({k: v for k, v in {'nr': o['nr'], 'tema': o.get('tema', ''), 'tekst': str(o.get('tekst', '')).strip(),
                          'alternativer': [str(a) for a in o['alternativer']], 'riktig': int(o['riktig']),
-                         'losning': str(o.get('losning', '')).strip(), 'figur': figur, 'gruppe': o.get('gruppe', '')}.items() if v != ''})
+                         'losning': str(o.get('losning', '')).strip(), 'figur': figur, 'gruppe': o.get('gruppe', ''),
+                         # rettelse: hva som var feil i originalen (oppgavetekst eller løsningsforslag) og er rettet her.
+                         # Vises aldri for studenten; Dashman får den bare når studenten diskuterer oppgaven, og sier
+                         # det bare hvis studenten spør.
+                         'rettelse': str(o.get('rettelse', '')).strip()}.items() if v != ''})
         if oppg:
             ut.append({'id': eid, 'emne': e.get('emne', ''), 'tittel': e.get('tittel', eid), 'dato': str(e.get('dato', '')), 'oppgaver': oppg})
     UT.write_text(json.dumps({'eksamener': ut}, ensure_ascii=False), encoding='utf-8')

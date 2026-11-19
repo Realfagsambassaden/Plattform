@@ -16,7 +16,7 @@ const OPPGAVER = [];   // flat liste: { eid, eksamen, nr, tema, tekst, alternati
       if (!o.tekst || !Array.isArray(o.alternativer) || !o.riktig || sett.has(o.tekst)) continue;
       sett.add(o.tekst);
       OPPGAVER.push({ eid: e.id, eksamen: e.tittel || e.id, nr: o.nr, tema: o.tema || "", tekst: o.tekst, alternativer: o.alternativer,
-        riktig: o.riktig, losning: o.losning || "", figur: o.figur || "", gruppe: o.gruppe || "", kontekst: o.kontekst || "" });
+        riktig: o.riktig, losning: o.losning || "", figur: o.figur || "", gruppe: o.gruppe || "", kontekst: o.kontekst || "", rettelse: o.rettelse || "" });
     }
   }
 })();
@@ -178,5 +178,5 @@ export async function eksamenAnslag(request, env, b, h, d) {
 export function eksamenKontekst(eid, nr) {
   const o = OPPGAVER.find((x) => x.eid === String(eid) && x.nr === Number(nr));
   if (!o) return null;
-  return { oppgave: `${o.eksamen}, oppgave ${o.nr}: ${o.tekst}\nAlternativer: ${o.alternativer.map((a, i) => `${BOKSTAV[i]}. ${a}`).join("; ")}\nRiktig svar: ${BOKSTAV[o.riktig - 1]}`, losning: o.losning };
+  return { oppgave: `${o.eksamen}, oppgave ${o.nr}: ${o.tekst}\nAlternativer: ${o.alternativer.map((a, i) => `${BOKSTAV[i]}. ${a}`).join("; ")}\nRiktig svar: ${BOKSTAV[o.riktig - 1]}`, losning: o.losning, rettelse: o.rettelse || "" };
 }
