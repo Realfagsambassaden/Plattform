@@ -158,29 +158,29 @@ filer:
     dato: '2026-11-18'
     versjon: 2
   flervariabel-kalkulus/kapitler/05-integralsetninger/05-stokes-teorem.qmd:
-    blob: b3ba52a7a13ef165595af7c95b275c9d3ca6a1c2
-    dato: '2026-11-12'
-    versjon: 2
+    blob: 2ee3c3beae37186abd4e7273a645f52105a92e52
+    dato: '2026-11-19'
+    versjon: 3
   flervariabel-kalkulus/kapitler/05-integralsetninger/06-oppgaver.qmd:
-    blob: 49bd843879bd97784263322b0c85e321e04fb409
-    dato: '2026-11-12'
-    versjon: 2
+    blob: 696b41baa71c8f8c768fc633883fb9a8e903939f
+    dato: '2026-11-19'
+    versjon: 3
   flervariabel-kalkulus/kapitler/05-integralsetninger/index.qmd:
     blob: 77622889a071f083d91c54913e9342fb57ccef13
     dato: '2026-11-13'
     versjon: 2
   flervariabel-kalkulus/kapitler/06-partielle-differensiallikninger/01-hva-er-en-pde.qmd:
-    blob: af4387d8088249b883d31cbec3f181aaf6691923
-    dato: '2026-11-13'
-    versjon: 2
+    blob: ceb7414a2caa114cf4ecac53f160024d0db8aa60
+    dato: '2026-11-19'
+    versjon: 3
   flervariabel-kalkulus/kapitler/06-partielle-differensiallikninger/02-rand-og-initialbetingelser.qmd:
-    blob: 93f4385f83ea7278213714860c9b945867ec2ab8
-    dato: '2026-11-13'
-    versjon: 2
+    blob: bcadaf823172294c357046bff1d7b15203a36c7b
+    dato: '2026-11-19'
+    versjon: 3
   flervariabel-kalkulus/kapitler/06-partielle-differensiallikninger/03-separasjon-av-variabler.qmd:
-    blob: 6b44b425ffc1670c9790452d7b7a4a3847c86059
-    dato: '2026-11-13'
-    versjon: 2
+    blob: 463fa0636d0f7561c643c20a87865ad3d621c3c3
+    dato: '2026-11-19'
+    versjon: 3
   flervariabel-kalkulus/kapitler/06-partielle-differensiallikninger/04-bevaringslover.qmd:
     blob: 038304535b67b668cdc9b3aa7e3e4d10a564e68d
     dato: '2026-11-13'
@@ -645,6 +645,18 @@ filer:
     blob: a6f920f5613639a060a6d8995807d77ce9fb9cc1
     dato: '2026-11-16'
     versjon: 2
+  fysikk-forkurs/kapitler/13-programmering/01-python-i-fysikk.qmd:
+    blob: 954d11bd1b08d26d5b763745bc7fdadebb92d5fb
+    dato: '2026-11-19'
+    versjon: 3
+  fysikk-forkurs/kapitler/13-programmering/02-plotting.qmd:
+    blob: e97c97338a5046a4fe21efd9de13ef18d408d966
+    dato: '2026-11-19'
+    versjon: 3
+  fysikk-forkurs/kapitler/13-programmering/03-numerisk-losning-av-bevegelse.qmd:
+    blob: cced587165d2ead390e9d85af38f8bb2199d29fd
+    dato: '2026-11-19'
+    versjon: 3
   fysikk-forkurs/kapitler/13-programmering/04-skratt-kast-med-luftmotstand.qmd:
     blob: 4629df4a534b1d33dcf232d912249c87d7bb9060
     dato: '2026-11-15'
@@ -657,6 +669,10 @@ filer:
     blob: b79c282d5b9cec2214bd3f857a71664c99464f95
     dato: '2026-11-15'
     versjon: 2
+  fysikk-forkurs/kapitler/13-programmering/index.qmd:
+    blob: 2938f643bfb86fc0c19645741a6d251c05400722
+    dato: '2026-11-19'
+    versjon: 3
   ingeniorfysikk/kapitler/01-introduksjon/01-hva-er-fysikk.qmd:
     blob: 1ce59400433cd0095ab6278927d543ddab469c83
     dato: '2026-11-11'
@@ -801,6 +817,18 @@ filer:
     blob: 6dd7c8f799026ef6b7500ba657e2540a8ff4e7bc
     dato: '2026-11-09'
     versjon: 2
+  ingeniorfysikk/kapitler/07-gravitasjon/01-gravitasjonsloven.qmd:
+    blob: eb2aed4047f5a4ebff5bebf13687b80e359d3f6b
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/07-gravitasjon/02-satellitter-og-baner.qmd:
+    blob: 323f738c8727319865fee7fad178ce9ba9c09704
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/07-gravitasjon/index.qmd:
+    blob: 79568a24ad0d1be9ee2ee44250771dc4df3dfc41
+    dato: '2026-11-19'
+    versjon: 3
   ingeniorfysikk/kapitler/08-elektrisk-potensial/01-elektrisk-potensiell-energi.qmd:
     blob: 1c56f0f00de6396d34fec614d2850f1eafc3f648
     dato: '2026-11-11'
@@ -813,6 +841,18 @@ filer:
     blob: 2982d662fdd2cb6156da60540aedda8f7a4d48be
     dato: '2026-11-09'
     versjon: 2
+  ingeniorfysikk/kapitler/08-fluidmekanikk/01-tetthet-og-trykk.qmd:
+    blob: a1eecb2f60ea944210f0f1eb735b3fd19e519410
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/08-fluidmekanikk/02-hydrostatisk-trykk.qmd:
+    blob: 540c8dc2bb36c37549de7bd62fe272b04561d09c
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/08-fluidmekanikk/03-oppdrift.qmd:
+    blob: 06eb0b9176f5a0d4d057788b2b8f9e87d40ab6bb
+    dato: '2026-11-19'
+    versjon: 3
   ingeniorfysikk/kapitler/08-fluidmekanikk/04-volumstrom-og-kontinuitet.qmd:
     blob: a5832286f16863874c289c8475b0a2fa8c3511a2
     dato: '2026-11-14'
@@ -821,10 +861,70 @@ filer:
     blob: 3e47d09be4ddeb9d0147749199c66b5ca350d1cf
     dato: '2026-11-14'
     versjon: 2
+  ingeniorfysikk/kapitler/08-fluidmekanikk/06-viskositet-og-reynolds-tall.qmd:
+    blob: 0289c43b3a2df525564ddf5c254cfc50a3afebac
+    dato: '2026-11-19'
+    versjon: 3
   ingeniorfysikk/kapitler/08-fluidmekanikk/07-tap-i-ror.qmd:
     blob: a5d0d0b57d4aa6dbbba6a6639b05df3eace7ccf2
     dato: '2026-11-14'
     versjon: 2
+  ingeniorfysikk/kapitler/08-fluidmekanikk/index.qmd:
+    blob: 4f05a93f8d297f2bcb3d0b6e664111b6c4426f96
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/09-svingninger/01-harmonisk-svingning.qmd:
+    blob: 476b913d393847a0f7d9d6011f138f44f3c76d41
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/09-svingninger/02-pendel.qmd:
+    blob: 271d23591937ab2a2751ac5d852302c241a30509
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/09-svingninger/03-dempede-svingninger.qmd:
+    blob: 7012c04623eb89fd415efe1094f3d85f5cec05e5
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/09-svingninger/04-tvungne-svingninger.qmd:
+    blob: a7d72251c215be3f591601341af8951dc5bd6a7d
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/09-svingninger/index.qmd:
+    blob: 7a9984943961c247c5b595b8172f8b8a9d1c001e
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/10-bolger/01-bolgebeskrivelse.qmd:
+    blob: 4a88ffb75c99bbef893b1506acce81d5ec5e7bc0
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/10-bolger/02-bolgefunksjonen.qmd:
+    blob: 8578e7c7f808f83b1490b875f366cc8102fac310
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/10-bolger/03-energi-og-intensitet.qmd:
+    blob: d44f48416d5a03cba59ba3d526138f7dd0ceb121
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/10-bolger/04-interferens.qmd:
+    blob: d06a57e4f2fbfc72fd27a99f6a6c71f0e0309f79
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/10-bolger/05-staende-bolger.qmd:
+    blob: c0fc8cf7b94aeb791a893d44c6ec236a88576bb9
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/10-bolger/06-lyd.qmd:
+    blob: c6cd3ed272b180a143850453d5c2758731c45e78
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/10-bolger/07-dopplereffekten.qmd:
+    blob: 8ea1ef1a6f08b59f4f5d38de9a53ef8522178111
+    dato: '2026-11-19'
+    versjon: 3
+  ingeniorfysikk/kapitler/10-bolger/index.qmd:
+    blob: c20e72d328c68692d618bda7949e1abe5fa2567b
+    dato: '2026-11-19'
+    versjon: 3
   plattform/tema-tekster/arbeid-og-energi.md:
     blob: 87208138c9df648273ceba258069d31593bee5b0
     dato: '2026-11-09'
@@ -889,4 +989,4 @@ filer:
     blob: 224d2d1835f91a06f0c9d077a142da95b91ee88f
     dato: '2026-11-18'
     versjon: 2
-versjon: 2
+versjon: 3
