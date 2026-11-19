@@ -186,7 +186,7 @@ body{background:var(--tavle) url(img/realfag-tegninger.svg) 0 0/960px repeat}
 .side{position:relative}
 .kortspredning{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .side>main{position:relative;z-index:1}
-.kortspredning .samlekort{position:absolute;left:0;top:0;width:300px;transform-origin:0 0;pointer-events:auto;
+.kortspredning .samlekort{position:absolute !important;left:0;top:0;width:300px;transform-origin:0 0;pointer-events:auto;
   transform:translate(var(--x),var(--y)) rotate(var(--vri)) scale(var(--s));transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .35s;opacity:var(--o,1)}
 .kortspredning .samlekort:hover{transform:translate(var(--x),var(--y)) rotate(0deg) scale(calc(var(--s) * 1.12));z-index:5;opacity:1}
 html.spredt .kortlag{display:none}
@@ -211,3 +211,19 @@ html.spredt .side>main>.hero{min-height:clamp(600px,82vh,860px)}
 }
 html.spredt .side{display:block;max-width:none;padding:0}
 html.spredt .side>main{display:block}
+
+/* Eksplosjonen rundt forsideteksten (spred.js tegner den) */
+.hero{position:relative;isolation:isolate}
+.hero .stjerne{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:-1;pointer-events:none;
+  filter:drop-shadow(0 0 18px rgba(143,207,134,.18));max-width:none;opacity:.9}
+.hero .hero-tekst{position:relative;z-index:1}
+html.spredt .side>main>.hero{min-height:0}
+/* I kransen og langs sidene: koffein-«sprengningen» på Jonas-kortet holdes inne i kortet (den la seg over teksten) */
+.kortspredning .samlekort[data-sprenger] .sk-flate,.kortspredning .samlekort[data-sprenger] .sk-stat,.kortspredning .samlekort[data-sprenger] .sk-verdi{overflow:hidden}
+.kortspredning .sk-verdi .sk-sprenger{white-space:normal;animation:none}
+/* Emojier og stjerner strødd rundt kortene */
+.pynt{position:absolute;left:0;top:0;pointer-events:none;user-select:none;line-height:1;transform:translate(var(--x),var(--y)) rotate(var(--vri));opacity:var(--o,.9);filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
+.pynt.stjerne-tegn{color:#eee462;text-shadow:0 0 10px rgba(238,228,98,.6)}
+.pynt.glimt{color:#8fcf86;text-shadow:0 0 10px rgba(143,207,134,.7)}
+@media (prefers-reduced-motion:no-preference){.pynt.stjerne-tegn,.pynt.glimt{animation:pynt-glimt 3.2s ease-in-out infinite;animation-delay:var(--d,0s)}}
+@keyframes pynt-glimt{0%,100%{opacity:var(--o,.9)}50%{opacity:calc(var(--o,.9) * .35)}}
