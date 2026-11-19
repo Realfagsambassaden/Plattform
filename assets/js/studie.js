@@ -764,6 +764,8 @@ function studieStart() {
   // Lagrer bildet til gjennomsyn (studenten har sagt ja) og varsler administratoren (Min side, og e-post hvis satt opp).
   function lagreGjennomsyn(rad) {
     rad.nettsted = NETTSTED;
+    // Robot-elevene i den fiktive klassen (verktoy/fiktiv_klasse) merkes, så admin kan rydde dem bort samlet.
+    if (bruker && bruker.user_metadata && bruker.user_metadata.fiktiv) rad.kilde = ('🤖 Fiktiv elev · ' + (rad.kilde || '')).slice(0, 200);
     return k.from('gjennomsyn').insert(rad).then(sjekk).then(function () { ki('/gjennomsyn', {}, 20).catch(function () {}); });
   }
   function svarLagre(ja) {
