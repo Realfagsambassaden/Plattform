@@ -4,6 +4,19 @@ Dette er den felles instruksen for **alle** KI-agenter som jobber med nettsteden
 
 Instruksene skal ligge her i repoet, ikke bare i en chat eller et prosjektdokument, slik at alle agenter ser de samme reglene. Endrer læreren en regel i en samtale, skal den skrives inn her (eller i fila det lenkes til) i samme økt.
 
+## Når Ben må gjøre noe selv: fast oppskrift med lenker
+
+Besluttet 19. nov. 2026. Hver gang Ben må gjøre noe selv, avslutt svaret med en kort, nummerert oppskrift med **direkte lenker**, i samme form hver gang. Ikke skriv bare «merge PR-en» eller «kjør SQL-en»:
+
+- **Merge:** én lenke per PR, f.eks. `[Merge #123 her](https://github.com/Realfagsambassaden/Plattform/pull/123)`. Ta med alle PR-er som venter, i alle repoene.
+- **SQL:** lenke til SQL-editoren, [supabase.com/dashboard/project/fwyoldmtjnfxtkdwldzx/sql/new](https://supabase.com/dashboard/project/fwyoldmtjnfxtkdwldzx/sql/new), og SQL-en i én kodeblokk han kan kopiere.
+- **Secrets i GitHub:** [github.com/Realfagsambassaden/Plattform/settings/secrets/actions/new](https://github.com/Realfagsambassaden/Plattform/settings/secrets/actions/new), med navnet som skal stå i «Name».
+- **Nøkler (tokens):** [github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new), med hvert felt og hver tilgang som skal velges.
+- **API-nøkler i Supabase:** [supabase.com/dashboard/project/fwyoldmtjnfxtkdwldzx/settings/api-keys](https://supabase.com/dashboard/project/fwyoldmtjnfxtkdwldzx/settings/api-keys).
+- **Kjøringer i Actions:** lenke direkte til kjøringen eller arbeidsflyten.
+
+Kan du gjøre det selv (f.eks. starte en jobb eller kjøre noe gjennom et verktøy du har tilgang til), gjør det i stedet for å be Ben om det.
+
 ## 0. Begreper: lærebok, løype, kurs og emne
 
 Fire ord som lett blandes sammen (besluttet av læreren 14. nov. 2026). Bruk dem slik i all tekst, i instruksene og på nettstedet:
