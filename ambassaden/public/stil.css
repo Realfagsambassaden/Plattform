@@ -236,3 +236,16 @@ html.spredt .side>main>.hero{min-height:0}
 .pynt.formel{font-family:"Kritt","Architects Daughter",cursive;color:var(--kritt);white-space:nowrap;text-shadow:0 0 8px rgba(236,238,234,.25)}
 .kortspredning .samlekort.i-ring{transition:opacity .3s}
 .kortspredning .samlekort.i-ring:hover{z-index:6}
+
+/* Bookingsiden: bilder i aksjon og tilbud */
+.aksjon{display:grid;grid-template-columns:1.25fr 1fr;gap:.8rem;margin:1.2rem 0 1.4rem}
+.aksjon figure{margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--linje);transform:rotate(-1deg);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.aksjon figure+figure{transform:rotate(1.2deg)}
+.aksjon img{display:block;width:100%;height:100%;aspect-ratio:3/2;object-fit:cover}
+.book-overskrift{font:400 1.8rem/1.2 "Kritt","Architects Daughter",cursive;margin:2.2rem 0 .8rem;color:var(--neon)}
+.tilbud{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.9rem}
+.tilbud-kort{padding:1rem 1.1rem;border:1px solid var(--linje);border-radius:14px;background:rgba(44,48,51,.82)}
+.tilbud-kort h3{font:400 1.3rem/1.2 "Kritt","Architects Daughter",cursive;margin:.3rem 0 .3rem}
+.tilbud-kort p{margin:0;color:var(--stov)}
+.tilbud-ikon{font-size:1.8rem}
+@media (max-width:640px){.aksjon{grid-template-columns:1fr}}
