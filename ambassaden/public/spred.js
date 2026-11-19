@@ -47,7 +47,16 @@
     lag.appendChild(k);
   }
 
+  // «ambassaden» skaleres til samme bredde som «REALFAGS».
+  function navnebredde() {
+    var st = document.querySelector('.ht-stor'), li = document.querySelector('.ht-liten');
+    if (!st || !li) return;
+    li.style.fontSize = ''; li.style.letterSpacing = '';
+    var f = st.getBoundingClientRect().width / Math.max(1, li.getBoundingClientRect().width);
+    li.style.fontSize = (parseFloat(getComputedStyle(li).fontSize) * f).toFixed(1) + 'px';
+  }
   function legg() {
+    navnebredde();
     var W = document.documentElement.clientWidth;
     lag.innerHTML = ''; nr = 0;
     if (W < 1100) { document.documentElement.classList.remove('spredt'); tegnStjerne(W); return; }
@@ -65,18 +74,20 @@
     var st = hero.querySelector('.stjerne'), sb = st ? st.getBoundingClientRect() : tr;
     var cx = (sb.left + sb.right) / 2 - sr.left, cy = (sb.top + sb.bottom) / 2 + scrollY - topp, rs = Math.max(sb.width, sb.height) / 2;
     var s = Math.max(.34, Math.min(.46, (W - 2 * rs) / 2 / 330)), kb = KORT_B * s, kh = KORT_H * s;
-    var R = rs + kh * .42;   // kransens radius: kortene ligger rett utenfor stjerna
-    var N = 6;               // blad per side
+    var R = rs + kh * .42;   // brukes av pynten og kortene nedover
+    // Kortene som en hånd med kort: to vifter, én på hver side, med bunnen skjult bak stjerna og kortene delvis
+    // over hverandre. Hver vifte dreier rundt et punkt inne i stjerna.
     function senter(x, y, sk, rot) {   // plasser et kort med midtpunkt i (x, y)
       var a = rot * Math.PI / 180, bx = KORT_B * sk / 2, by = KORT_H * sk / 2;
       nyttKort(x - (bx * Math.cos(a) - by * Math.sin(a)), y - (bx * Math.sin(a) + by * Math.cos(a)), sk, rot);
     }
-    for (var i = 0; i < N; i++) {
-      var t = i / (N - 1), phi = 112 + t * 128;                    // grader, y nedover: 90 = rett under, 180 = venstre
-      var rot = (phi - 180) * .8 + (r() * 2 - 1) * 4;              // følger kransen
-      var rad = R + (r() * 2 - 1) * 10, sk = s * (.92 + r() * .14), a = phi * Math.PI / 180;
-      senter(cx + rad * Math.cos(a), cy + rad * Math.sin(a), sk, rot);                 // venstre gren
-      senter(cx - rad * Math.cos(a), cy + rad * Math.sin(a), sk * (.97 + r() * .06), -rot); // høyre gren (speilet)
+    var N = 7, L = rs + kh * .12;   // kortets midtpunkt litt utenfor stjerna: den indre delen skjules bak den
+    for (var gren = -1; gren <= 1; gren += 2) {   // -1 venstre, 1 høyre
+      for (var i = 0; i < N; i++) {
+        var t = i / (N - 1), vinkel = gren * (-112 + t * 96) + (r() * 2 - 1) * 3;   // grader fra loddrett opp; kortet peker utover
+        var a = vinkel * Math.PI / 180, sk = s * (.95 + r() * .1), l = L + (r() * 2 - 1) * kh * .05;
+        senter(cx + Math.sin(a) * l, cy - Math.cos(a) * l, sk, vinkel);
+      }
     }
 
     // Emojier og stjerner strødd rundt kransen og nedover sidene.
