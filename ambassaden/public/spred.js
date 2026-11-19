@@ -1,5 +1,5 @@
-// Forsiden på brede skjermer: samlekortene spres rundt forsideteksten og langs sidene nedover hele siden, litt på skrå
-// (i stedet for de diffuse bildene av ambassadørene). Kortene gjentas til siden er fylt. Kopiene er skjult for
+// Forsiden på brede skjermer: samlekortene står i en krans rundt forsideteksten, litt på skrå
+// (i stedet for de diffuse bildene av ambassadørene). Kopiene er skjult for
 // skjermlesere; de ekte kortene ligger i #ambassadorer (som vises som en rad på smale skjermer).
 // Må lastes før kort.js, så kopiene også får vippeeffekten.
 (function () {
@@ -135,24 +135,11 @@
       pynt(cx + qr * Math.cos(qa) - 12, cy + qr * Math.sin(qa) - 12, '⭐', 'stjerne-tegn', 16 + r() * 14, .75 + r() * .25);
     }
 
-    // 2) Langs sidene nedover resten av siden, i margen utenfor innholdet (gjerne litt ut over kanten).
+    // 2) Nedover resten av siden: ingen kort (bare kransen øverst), men litt pynt i margen på begge sider.
     var marg = mr.left - sr.left, start = Math.max(hy + hh * .95, cy + R + kh * .6);
-    // Smal marg (f.eks. 1280 px): kortene stikker halvveis inn fra kanten.
-    var smal = marg < 90;
-    {
-      var s2 = smal ? .42 : Math.max(.42, Math.min(.78, (marg + 70) / KORT_B)), b2 = KORT_B * s2, h2 = KORT_H * s2;
-      var steg = h2 * (smal ? 1.5 : .78);
-      for (var y = start, i = 0; y < H - h2 * .6; y += steg, i++) {
-        // Venstre og høyre side forskjøvet med et halvt steg, så det blir et lappeteppe av kort.
-        var xv = smal ? -b2 * .55 : marg / 2 - b2 / 2 + (r() * 2 - 1) * 30;
-        nyttKort(smal ? xv : Math.max(-b2 * .4, xv), y + r() * 30, s2 * (.9 + r() * .15), vri());
-        var xh = smal ? sr.width - b2 * .45 : (sr.width - marg / 2) - b2 / 2 + (r() * 2 - 1) * 30;
-        nyttKort(smal ? xh : Math.min(sr.width - b2 * .6, xh), y + steg / 2 + r() * 30, s2 * (.9 + r() * .15), vri());
-        if (!smal) {   // litt pynt i margen mellom kortene
-          pynt(Math.max(8, xv + b2 * (.2 + r() * .6)), y + steg * .7, r() < .35 ? '✦' : EMOJI[Math.floor(r() * EMOJI.length)], r() < .35 ? 'stjerne-tegn' : '', 20 + r() * 14, .85);
-          pynt(Math.min(sr.width - 60, xh + b2 * (.1 + r() * .5)), y + steg * 1.15, r() < .4 ? FORMLER[Math.floor(r() * FORMLER.length)] : EMOJI[Math.floor(r() * EMOJI.length)], 'formel', 18 + r() * 10, .8);
-        }
-      }
+    if (marg > 50) for (var y = start; y < H - 120; y += 340) {
+      pynt(Math.max(8, marg * (.15 + r() * .5)), y + r() * 80, r() < .35 ? '✦' : EMOJI[Math.floor(r() * EMOJI.length)], r() < .35 ? 'stjerne-tegn' : '', 20 + r() * 14, .85);
+      pynt(Math.min(sr.width - 60, sr.width - marg * (.4 + r() * .45)), y + 170 + r() * 80, r() < .4 ? FORMLER[Math.floor(r() * FORMLER.length)] : EMOJI[Math.floor(r() * EMOJI.length)], 'formel', 18 + r() * 10, .8);
     }
   }
   var t; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(legg, 150); });
