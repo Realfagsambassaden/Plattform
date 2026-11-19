@@ -332,7 +332,17 @@ function start() {
     }
     // ---- Spørsmål til godkjenning (studie/sporsmal.json: «godkjenning»: «kreves»; status i sporsmal_status)
     var spgAvviste = false;
-    function spgMatte(el) { try { if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([el]); else if (window.renderMathInElement) renderMathInElement(el, { delimiters: [{ left: '$', right: '$', display: false }] }); } catch (e) {} }
+    // Formler ($…$) i spørsmålene: MathJax lastes ved behov (Min side har ikke formler ellers).
+    function spgMatte(el) {
+      try {
+        if (window.MathJax && MathJax.typesetPromise) return MathJax.typesetPromise([el]);
+        if (window.renderMathInElement) return renderMathInElement(el, { delimiters: [{ left: '$', right: '$', display: false }] });
+        if (!window.MathJax) {
+          window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }, startup: { pageReady: function () { return MathJax.typesetPromise([el]); } } };
+          var sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js'; sc.async = true; document.head.appendChild(sc);
+        }
+      } catch (e) {}
+    }
     function tegnSpg() {
       var el = boks.querySelector('.admin-spg'); if (!el) return;
       fetch('../studie/sporsmal.json', { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (d) {
@@ -347,7 +357,12 @@ function start() {
           boks.querySelector('.admin-spg-antall').textContent = venter.length ? '(' + venter.length + ' venter' + (nf ? ', ' + nf + ' flagget' : '') + ')' : '';
           var kort = function (x, s) {
             return '<div class="spg"><div class="spg-meta">' + esc(x.id) + ' · ' + esc(x.vanskelighet) + ' · ' + esc(x.undertema) + '</div>' +
-              (flagg(x) ? '<p class="spg-flagg"><b>⚠ KI-kontrollen:</b> ' + esc(x.kontroll.merknad || '') + (x.kontroll.ki ? ' (KI fikk ' + esc(x.kontroll.ki) + ')' : '') + '</p>' : x.kontroll && x.kontroll.ok ? '<p class="spg-ok">✓ KI-kontrollen er enig med fasiten</p>' : '') +
+              // Tydelig hvem som sier hva: fasiten (i spørsmålet), den automatiske KI-kontrollen, og en eventuell ny sjekk etterpå.
+              (flagg(x) ? '<div class="spg-flagg"><p><b>⚠ Den automatiske KI-kontrollen er uenig med fasiten.</b></p>' +
+                  (x.kontroll.ki ? '<p>KI-kontrollen svarte: <b>' + esc(x.kontroll.ki) + '</b> (fasit: ' + esc(x.riktig) + ')</p>' : '') +
+                  (x.kontroll.merknad ? '<p>Hvorfor: ' + esc(x.kontroll.merknad.replace(/^KI (fikk et annet svar|valgte et annet alternativ) enn fasiten\.?\s*/, '')) + '</p>' : '') + '</div>' +
+                (x.kontroll.vurdering ? '<p class="spg-ok"><b>✓ Sjekket på nytt (Claude):</b> ' + esc(x.kontroll.vurdering) + '</p>' : '')
+                : x.kontroll && x.kontroll.ok ? '<p class="spg-ok">✓ KI-kontrollen er enig med fasiten</p>' : '') +
               '<p class="spg-tekst">' + esc(x.tekst) + '</p><p>Fasit: <b>' + esc(x.riktig) + '</b> · Feil: ' + (x.feil || []).map(function (f) { return esc(f.svar); }).join(' · ') + '</p>' +
               '<p class="konto-ingress">' + esc(x.forklaring) + '</p><div class="spg-knapper">' +
               (s === 'avvist' ? '<button type="button" data-spg="' + esc(x.id) + '" data-spg-st="angre">Angre avvisning</button>'

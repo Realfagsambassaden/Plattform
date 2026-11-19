@@ -8057,7 +8057,8 @@
 "kontroll": {
 "ok": false,
 "ki": "3, negativt",
-"merknad": "KI valgte et annet alternativ enn fasiten (negativ ladning, som i Millikans forsøk der feltet peker nedover). Her peker feltet oppover, så den elektriske kraften må peke oppover med feltet, og ladningen er positiv. Claude mener fasiten er riktig."
+"merknad": "KI-kontrollen valgte negativ ladning, trolig fordi feltet peker nedover i Millikans forsøk.",
+"vurdering": "Sjekket på nytt: feltet peker oppover, så kraften qE må peke oppover, med feltet, og ladningen er positiv. q = mg/E = 4.9·10⁻¹⁵ kg · 9.81 m/s² / 1.0·10⁵ N/C = 4.8·10⁻¹⁹ C = 3e. Fasiten er riktig."
 }
 },
 {

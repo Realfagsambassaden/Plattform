@@ -395,7 +395,8 @@ function eksempel(x) {
   const sett = (s) => String(s || "").replace(/\{\{([^{}]+)\}\}/g, (_, u) => { u = u.trim(); if (u in v) return String(v[u]); try { return String(+regnUttrykk(u, v).toPrecision(4)); } catch (e) { return "?"; } });
   return { tekst: sett(x.tekst), fasit: regnUttrykk(x.svar, v), enhet: x.enhet || "" };
 }
-// Løser alle spørsmålene i ett kall og markerer x.kontroll = { ok, ki, merknad }. Tallsvar godtas innen 3 % (avrunding),
+// Løser alle spørsmålene i ett kall og markerer x.kontroll = { ok, ki, merknad }. (En agent som sjekker et flagget
+// spørsmål på nytt, legger svaret sitt i x.kontroll.vurdering – Min side viser det som «Sjekket på nytt».) Tallsvar godtas innen 3 % (avrunding),
 // flervalg ved at KI velger samme alternativ som fasiten.
 async function kontrollerSporsmal(env, sp) {
   const oppg = sp.map((x, i) => {
