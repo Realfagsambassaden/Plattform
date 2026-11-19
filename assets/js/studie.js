@@ -773,14 +773,14 @@ function studieStart() {
     if (!ja) { q.kiSvar = { feil: NEI_LAGRE }; q.kiBilde = false; return tegn(); }
     q.venter = true; tegn();
     lagreGjennomsyn({ kilde: q.ovelse ? 'Arbeidskrav: ' + q.ovelse.tittel : 'Quiz: ' + tittel(q.tema), ovelse: q.ovelse ? q.ovelse.id : null, forsok: q.forsok,
-      oppgave: String(x.tekst || '').slice(0, 3000), bilde: q.bilde, ki: { vurdering: d.vurdering, sikkerhet: d.sikkerhet, tilbakemelding: d.tilbakemelding } })
+      oppgave: String(x.tekst || '').slice(0, 3000), bilde: q.bilde, ki: { vurdering: d.vurdering, sikkerhet: d.sikkerhet, tilbakemelding: d.tilbakemelding, bildebeskrivelse: d.bildebeskrivelse || '' } })
       .then(function () { q.gjennomsyn = true; return godtaKi(q, s, d, true); })
       .catch(function (e) { q.kiSvar = { feil: 'Bildet ble ikke lagret (' + feilmelding(e) + '). ' + NEI_LAGRE }; q.kiBilde = false; })
       .then(function () { q.venter = false; tegn(); });
   }
   function samtykkeHtml(h) {
     return '<div class="st-fb r"><b>Er dette håndskrevet?</b><p>Jeg er ikke sikker på om bildet viser din egen håndskrevne løsning. Får jeg lagre bildet, så en lærer kan se på det? ' +
-      'Det brukes også til å gjøre Dashman flinkere til å se forskjell. Bildet slettes når læreren har sett på det.</p>' +
+      'Lærerens svar, med en kort beskrivelse av hvordan bildet er laget (ikke selve bildet), brukes til å gjøre Dashman flinkere til å se forskjell. Bildet slettes når læreren har sett på det.</p>' +
       '<p class="st-sm">Sier du nei, kan jeg ikke godkjenne bildet. Da kan du skrive løsningen for hånd og prøve igjen.</p>' +
       '<div class="st-knapperad"><button type="button" class="st-btn" data-h="' + h + '" data-v="ja">Ja, lagre for gjennomsyn</button><button type="button" class="st-btn g" data-h="' + h + '" data-v="nei">Nei</button></div></div>';
   }
@@ -2179,7 +2179,7 @@ function studieStart() {
     var sk = T.skann, d = sk.sporLagre; sk.sporLagre = null;
     if (!ja) { sk.svar = { feil: NEI_LAGRE }; return tegn(); }
     sk.venter = true; tegn();
-    lagreGjennomsyn({ kilde: sk.valgt ? 'Skann: ' + (sk.valgt.tittel || sk.valgt.side).slice(0, 180) : 'Skann', oppgave: (sk.valgt ? sk.valgt.oppgave : sk.oppgave || '').slice(0, 3000), bilde: sk.bilde, ki: { vurdering: d.vurdering, sikkerhet: d.sikkerhet, tilbakemelding: d.tilbakemelding } })
+    lagreGjennomsyn({ kilde: sk.valgt ? 'Skann: ' + (sk.valgt.tittel || sk.valgt.side).slice(0, 180) : 'Skann', oppgave: (sk.valgt ? sk.valgt.oppgave : sk.oppgave || '').slice(0, 3000), bilde: sk.bilde, ki: { vurdering: d.vurdering, sikkerhet: d.sikkerhet, tilbakemelding: d.tilbakemelding, bildebeskrivelse: d.bildebeskrivelse || '' } })
       .then(function () { sk.svar = Object.assign({ gjennomsyn: true }, d); }, function (e) { sk.svar = { feil: 'Bildet ble ikke lagret (' + feilmelding(e) + '). ' + NEI_LAGRE }; })
       .then(function () { sk.venter = false; tegn(); });
   }
