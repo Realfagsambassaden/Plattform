@@ -195,14 +195,14 @@ async function arbeidskrav(side, elev, o, r, p) {
     if (await side.$('[data-h=videre]') === null && await side.$('.st-sporsmal') === null) break;   // resultatskjerm
     const tekst = await side.$eval('.st-sporsmal', (e) => e.innerText).catch(() => '');
     if (!tekst) break;
-    if (tekst === forrigeTekst) { if (++fast >= 3) { await nyttFunn(elev, 'feil', 'Appen står fast på samme spørsmål', tekst, side); break; } } else fast = 0;
+    if (tekst === forrigeTekst) { if (++fast >= 3) { await nyttFunn(elev, 'feil', 'Appen står fast på samme spørsmål', tekst + '\n\nSkjermen:\n' + (await visning(side)).slice(0, 900), side); break; } } else fast = 0;
     forrigeTekst = tekst;
 
     // Kaos: det ekte studenter gjør. Last siden på nytt, gå til et annet nummer, hopp over.
     if (r() < p.kaos) { if (await omlasting(side, elev, o)) continue; }
     if (r() < p.kaos / 2 && await side.$('[data-h=ovGa]')) {
-      const knapper = await side.$$('[data-h=ovGa]'); const k = knapper[Math.floor(r() * knapper.length)];
-      notat(elev, 'trykker på et annet spørsmålsnummer'); await k.click(); await side.waitForTimeout(600); continue;
+      const n = (await side.$$('[data-h=ovGa]')).length, i = Math.floor(r() * n);
+      notat(elev, 'trykker på et annet spørsmålsnummer'); await side.locator('[data-h=ovGa]').nth(i).click({ timeout: 8000 }).catch(() => {}); await side.waitForTimeout(600); continue;
     }
     if (r() < p.kaos / 3 && await side.$('[data-h=hoppOver]')) { notat(elev, 'hopper over'); await side.click('[data-h=hoppOver]'); await side.waitForTimeout(500); continue; }
 
@@ -256,7 +256,8 @@ async function svarPa(side, elev, o, tekst, r, p) {
   if (fil && (o.svarform === 'bilde' || r() < 0.3) && r() < p.bilde) {
     const streker = r() < p.streker;
     const png = path.join(UT, `utregning-${elev.navn}.png`);
-    await lagUtregning(side.context().browser(), (losning.utregning && losning.utregning.length ? losning.utregning : [svar]).slice(0, 7), streker, png);
+    const linjer = (Array.isArray(losning.utregning) ? losning.utregning : []).map(String).filter((l) => l.replace(/[\s=]/g, '').length > 2);
+    await lagUtregning(side.context().browser(), (linjer.length >= 2 ? linjer : ['Svar:', svar]).slice(0, 7), streker, png);
     const vent = side.waitForResponse((s) => /\/vurder$/.test(new URL(s.url()).pathname), { timeout: 120000 }).catch(() => null);
     const t0 = Date.now();
     await fil.setInputFiles(png);
@@ -302,7 +303,10 @@ async function snakkMedDashman(side, elev, r) {
     if (!boks || boks.y < 0 || boks.y + boks.height > vp.height) await nyttFunn(elev, 'feil', 'Dashman kan ikke lukkes: × er utenfor skjermen', JSON.stringify({ boks, vp }), side);
     else await lukk.click();
   } catch (e) {
-    await nyttFunn(elev, 'feil', 'Samtalen med Dashman feilet', e.message, side);
+    const tilstand = await side.evaluate(() => JSON.stringify({ url: location.href, Dashman: !!window.Dashman, fhKonto: !!window.fhKonto,
+      knapp: !!document.querySelector('.dm-knapp'), knappSkjult: (document.querySelector('.dm-knapp') || {}).hidden, panel: !!document.querySelector('.dm-panel'),
+      skript: [...document.scripts].map((x) => x.src.split('/').pop()).filter(Boolean), body: document.body.className })).catch(() => '?');
+    await nyttFunn(elev, 'feil', 'Samtalen med Dashman feilet', e.message.split('\n')[0] + '\nTilstand: ' + tilstand, side);
   }
 }
 
