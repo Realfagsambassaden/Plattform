@@ -860,7 +860,8 @@ async function dashman(request, env, b, h) {
     ] : []),
     ...((() => { const ek = b.eksamen && eksamenKontekst(b.eksamen.eid, b.eksamen.nr); return ek ? [
       "Studenten trente i eksamensmodus og har allerede svart på denne eksamensoppgaven og fått fasit og forklaring. Nå har hen slått av eksamensmodus for å diskutere den. Her kan du gjerne gå gjennom løsningen, men la studenten tenke selv der det hjelper læringen.",
-      `Eksamensoppgaven: ${kort(ek.oppgave, 2500)}`, `Løsningsforslag: ${kort(ek.losning, 2500)}`] : []; })()),
+      `Eksamensoppgaven: ${kort(ek.oppgave, 2500)}`, `Løsningsforslag: ${kort(ek.losning, 2500)}`,
+      ...(ek.rettelse ? [`Intern rettelse (oppgaven og løsningen over er allerede rettet): ${kort(ek.rettelse, 800)}. Ikke ta dette opp selv. Bare hvis studenten spør om det er feil i oppgaven, i fasiten eller på den originale eksamenen, kan du si at originalen hadde en feil og hva den var.`] : [])] : []; })()),
     ...(side.tekst ? [`Utdrag av siden:\n${kort(side.tekst, 3000)}`] : []),
     ...(bilde ? ["Studenten har lagt ved et bilde av sin egen løsning i siste melding. Les utregningen nøye, finn det første stedet det faktisk går galt (eller bekreft det som er riktig, også når det ikke er forenklet eller ferdig ennå – si «riktig» og spør om det kan skrives enklere), og veiled derfra med et spørsmål eller hint – ikke regn ut svaret for studenten. Ikke kommenter håndskrift, navn eller annet personlig på bildet."] : []),
   ];
