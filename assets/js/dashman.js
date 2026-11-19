@@ -237,7 +237,6 @@
   function visEksOppgave() {
     var o = eks.opp, d = document.createElement('div'); d.className = 'dm-m dm-fra dm-eksoppg';
     d.innerHTML = '<p class="dm-eksmerke">Eksamensoppgave · ' + esc(o.eksamen) + ', oppgave ' + o.nr + '</p>' +
-      (o.merknad ? '<p class="dm-eksmerknad">⚠️ ' + md(o.merknad) + '</p>' : '') +
       (o.kontekst ? '<details class="dm-ekskontekst"><summary>Bakgrunn fra oppgaven før</summary>' + md(o.kontekst) + '</details>' : '') +
       md(o.tekst) + (o.figur ? '<img class="dm-eksfig" alt="Figur til oppgaven" src="' + esc(o.figur) + '">' : '') +
       '<div class="dm-eksalt">' + o.alternativer.map(function (a, i) {

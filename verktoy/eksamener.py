@@ -51,9 +51,7 @@ def main():
                     shutil.copyfile(fra, FIG / eid / figur)
             oppg.append({k: v for k, v in {'nr': o['nr'], 'tema': o.get('tema', ''), 'tekst': str(o.get('tekst', '')).strip(),
                          'alternativer': [str(a) for a in o['alternativer']], 'riktig': int(o['riktig']),
-                         'losning': str(o.get('losning', '')).strip(), 'figur': figur, 'gruppe': o.get('gruppe', ''),
-                         # merknad: vises for studenten før svaret, f.eks. om en feil i oppgaveteksten på den originale eksamenen.
-                         'merknad': str(o.get('merknad', '')).strip()}.items() if v != ''})
+                         'losning': str(o.get('losning', '')).strip(), 'figur': figur, 'gruppe': o.get('gruppe', '')}.items() if v != ''})
         if oppg:
             ut.append({'id': eid, 'emne': e.get('emne', ''), 'tittel': e.get('tittel', eid), 'dato': str(e.get('dato', '')), 'oppgaver': oppg})
     UT.write_text(json.dumps({'eksamener': ut}, ensure_ascii=False), encoding='utf-8')

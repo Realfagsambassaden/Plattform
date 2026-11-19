@@ -16,7 +16,7 @@ const OPPGAVER = [];   // flat liste: { eid, eksamen, nr, tema, tekst, alternati
       if (!o.tekst || !Array.isArray(o.alternativer) || !o.riktig || sett.has(o.tekst)) continue;
       sett.add(o.tekst);
       OPPGAVER.push({ eid: e.id, eksamen: e.tittel || e.id, nr: o.nr, tema: o.tema || "", tekst: o.tekst, alternativer: o.alternativer,
-        riktig: o.riktig, losning: o.losning || "", figur: o.figur || "", gruppe: o.gruppe || "", kontekst: o.kontekst || "", merknad: o.merknad || "" });
+        riktig: o.riktig, losning: o.losning || "", figur: o.figur || "", gruppe: o.gruppe || "", kontekst: o.kontekst || "" });
     }
   }
 })();
@@ -39,7 +39,7 @@ async function mineSvar(env, token) {
 
 function utenFasit(o, origin) {
   return { eid: o.eid, nr: o.nr, eksamen: o.eksamen, tema: o.tema, tekst: o.tekst, alternativer: o.alternativer, gruppe: o.gruppe || null,
-    kontekst: o.kontekst || null, merknad: o.merknad || null, figur: o.figur ? `${origin}/eksamen/${o.eid}/${o.figur}` : null };
+    kontekst: o.kontekst || null, figur: o.figur ? `${origin}/eksamen/${o.eid}/${o.figur}` : null };
 }
 
 export async function eksamenNeste(request, env, b, h, d) {
@@ -114,7 +114,7 @@ Alternativer:
 ${alt}
 Riktig svar: ${BOKSTAV[o.riktig - 1]}
 Studentens svar: ${BOKSTAV[valgt - 1]} (${riktig ? "riktig" : "feil"})
-Løsningsforslag: ${o.losning}${o.merknad ? `\nMerknad om oppgaven (feil på den originale eksamenen e.l.): ${o.merknad}` : ""}`;
+Løsningsforslag: ${o.losning}`;
   let svar = "", humor = riktig ? "glad" : "tenker", type = riktig ? "riktig" : "begrep";
   try {
     const raa = await d.spor(env, system, melding, 900, bilde);

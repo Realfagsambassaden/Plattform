@@ -383,7 +383,6 @@ main table { display: block; overflow-x: auto; max-width: 100%; }
 .dm-alt b { color: $orange; }
 .dm-alt:hover:not(:disabled) { border-color: $orange; }
 .dm-alt.valgt { border-color: $orange; }
-.dm-eksmerknad { margin: .4rem 0; padding: .4rem .6rem; border-left: 3px solid $orange; font-size: .9em; color: $chalk; background: rgba($orange, .08); }
 .dm-alt.riktig { border-color: $neon; background: rgba($neon, .14); }
 .dm-alt.riktig b { color: $neon; }
 .dm-alt.feil { border-color: #e06c6c; background: rgba(224, 108, 108, .12); }
