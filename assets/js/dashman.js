@@ -79,6 +79,33 @@
   document.addEventListener('visibilitychange', function () { if (!document.hidden) synlig(); });
   document.addEventListener('fh-innlogget', synlig);
   var logg = panel.querySelector('.dm-logg'), holder = panel.querySelector('.dm-holder'), felt = panel.querySelector('textarea');
+  // Krittstreken rundt boblen tegnes etter boblens faktiske størrelse (i piksler), så hjørnene alltid er små og runde.
+  // (Med en fast form som ble strukket, trakk hjørnet øverst til høyre seg langt inn når boblen var høy, og
+  // knappene i toppen havnet utenfor streken.) «bred»: hale mot venstre nede; «smal»: hale opp mot Dashman.
+  var boble = panel.querySelector('.dm-boble');
+  function tegnKontur() {
+    var w = boble.clientWidth, h = boble.clientHeight; if (!w || !h) return;
+    var r = 28, f = function (n) { return Math.round(n * 10) / 10; };
+    function sti(smal) {
+      var L = smal ? 12 : 30, T = smal ? 22 : 8, R = w - 4, B = h - 5;
+      var topp = 'C ' + f(w * .4) + ' ' + (T - 5) + ', ' + f(w * .72) + ' ' + (T - 1) + ', ' + f(R - r) + ' ' + (T + 3) + ' C ' + f(R - 6) + ' ' + (T + 6) + ', ' + R + ' ' + (T + 14) + ', ' + R + ' ' + (T + r + 4);
+      var hoyre = ' C ' + (R + 3) + ' ' + f(h * .45) + ', ' + (R + 2) + ' ' + f(h * .72) + ', ' + (R - 2) + ' ' + f(B - r) + ' C ' + (R - 4) + ' ' + (B - 8) + ', ' + (R - 14) + ' ' + B + ', ' + f(R - r - 6) + ' ' + B;
+      var bunn = ' C ' + f(w * .62) + ' ' + (B + 5) + ', ' + f(w * .3) + ' ' + (B + 3) + ', ' + f(L + r + 14) + ' ' + (B - 2);
+      if (smal) return 'M ' + (L + 4) + ' ' + (T + 10) + ' L ' + (L + 18) + ' 2 L ' + (L + 52) + ' ' + T + ' ' + topp + hoyre + bunn +
+        ' C ' + (L + 6) + ' ' + (B - 4) + ', ' + L + ' ' + (B - 22) + ', ' + (L - 2) + ' ' + f(B - r - 10) + ' C ' + (L - 6) + ' ' + f(h * .6) + ', ' + (L - 6) + ' ' + f(h * .3) + ', ' + (L + 4) + ' ' + (T + 10) + ' Z';
+      return 'M ' + (L + r) + ' ' + T + ' ' + topp + hoyre + bunn +
+        ' C ' + (L + 8) + ' ' + (B - 4) + ', ' + (L + 4) + ' ' + (B - 22) + ', ' + (L + 2) + ' ' + (B - 46) + ' L 2 ' + (B - 30) + ' L ' + L + ' ' + (B - 78) +
+        ' C ' + (L - 8) + ' ' + f(h * .55) + ', ' + (L - 9) + ' ' + f(h * .25) + ', ' + (L - 3) + ' ' + (T + r) + ' C ' + L + ' ' + (T + 10) + ', ' + (L + 10) + ' ' + (T + 2) + ', ' + (L + r) + ' ' + T + ' Z';
+    }
+    panel.querySelectorAll('.dm-kontur').forEach(function (svg) {
+      var smal = svg.classList.contains('smal'), L = smal ? 12 : 30, T = smal ? 22 : 8;
+      svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+      var p = svg.querySelectorAll('path');
+      p[0].setAttribute('d', sti(smal));
+      if (p[1]) p[1].setAttribute('d', 'M ' + (L + r + 6) + ' ' + (T + 6) + ' C ' + f(w * .4) + ' ' + T + ', ' + f(w * .72) + ' ' + (T + 4) + ', ' + f(w - r - 12) + ' ' + (T + 9) + ' C ' + (w - 14) + ' ' + (T + 13) + ', ' + (w - 11) + ' ' + (T + 24) + ', ' + (w - 11) + ' ' + f(h * .5));
+    });
+  }
+  if (window.ResizeObserver) new ResizeObserver(tegnKontur).observe(boble); else window.addEventListener('resize', tegnKontur);
   // Mobil: Dashman skal alltid få plass på den delen av skjermen som faktisk synes (også når tastaturet er oppe
   // eller adresselinja i Safari tar plass), så × øverst alltid kan nås. visualViewport gir den synlige høyden.
   function tilpassHoyde() {
