@@ -64,6 +64,7 @@ toc: false
 .studie .st-fb.r { border-color: var(--bs-warning); }
 .studie .st-ovoversikt { margin: .5rem 0; } .studie .st-ovprikker { display: flex; flex-wrap: wrap; gap: .3rem; }
 .studie button.st-ovprikk { background: none; cursor: pointer; padding: 0 .3rem; } .studie button.st-ovprikk:hover { filter: brightness(1.3); outline: 1px dashed #a3a9ad; outline-offset: 2px; }
+.studie .st-fiktiv { border: 1px dashed #8fcf86; background: rgba(143,207,134,.06); }
 .studie .st-ovprikk { display: inline-flex; align-items: center; justify-content: center; min-width: 1.6rem; height: 1.6rem; border-radius: 99px; font-size: .75rem; font-weight: 700; border: 2px solid #6b7276; color: #a3a9ad; }
 .studie .st-ovprikk.ok { border-color: #8fcf86; background: rgba(143,207,134,.25); color: #8fcf86; }
 .studie .st-ovprikk.kanskje { border-color: #e39d63; background: rgba(227,157,99,.25); color: #e39d63; }

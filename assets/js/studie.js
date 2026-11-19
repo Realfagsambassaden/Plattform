@@ -1176,16 +1176,23 @@ function studieStart() {
       : '<button type="button" class="st-btn" data-h="publiser">Publiser for studentene</button><p class="st-sm">Til da er kurset et utkast, og studentene finner det ikke med koden.</p>') + '</div>';
     o += '<div class="st-kort"><label class="st-valg"><input type="checkbox" data-h="apenKursValg"' + (c.apen ? ' checked' : '') + (c.status === 'publisert' ? '' : ' disabled') + '> <b>Åpent kurs</b>: vises i lista over åpne kurs i studieappen, og alle kan melde seg på uten kode</label>' +
       (c.status === 'publisert' ? '' : '<p class="st-sm">Publiser kurset først.</p>') + '</div>';
-    // Fiktiv klasse (bare admin): ti robot-elever bruker en kopi av kurset og lager en feilrapport (verktoy/fiktiv_klasse).
-    if (T.rolle === 'admin' && !(c.ramme || {}).fiktivFra) o += '<div class="st-kort"><b>Fiktiv klasse</b><p class="st-sm">Ti robot-elever (Arnt, svakest … Julie, sterkest) svarer på arbeidskravene, laster opp utregninger, laster siden på nytt, snakker med Dashman og skriver tilbakemeldinger – i en kopi av kurset, så studentene ikke ser dem. Alt som går galt, havner i en feilrapport (issue i Plattform). Tar 20–60 minutter per runde.</p>' +
-      '<div class="st-rad"><label class="st-sm">Runder <select class="st-felt" id="st-fiktiv-runder" style="width:auto">' + [1, 2, 3, 5, 10].map(function (n) { return '<option>' + n + '</option>'; }).join('') + '</select></label>' +
-      '<label class="st-valg st-sm"><input type="checkbox" id="st-fiktiv-null"> Start robotene på nytt (slett svarene deres)</label>' +
-      '<button type="button" class="st-btn g" data-h="fiktivKlasse" data-id="' + c.id + '"' + (T.fiktivVenter ? ' disabled' : '') + '>' + (T.fiktivVenter ? 'Starter …' : 'Kjør fiktiv klasse') + '</button></div></div>';
     o += '<p><button type="button" class="st-btn g liten" data-h="slettKurs" data-id="' + c.id + '">' + (T.slett === c.id ? 'Bekreft: slett kurset for godt' : 'Slett kurset') + '</button></p>';
     if (f.matRed) o += matRedigerer();
     return o;
   }
   function studentNavn(x) { return (x.navn || '').trim() || x.epost; }
+  // Den fiktive klassen (bare admin) er en kopi av kurset som robot-elevene bruker (verktoy/fiktiv_klasse). Den står ikke
+  // i kursoversikten; man kommer hit med «🤖 Fiktiv klasse» i det ekte kurset, og herfra starter man robotene.
+  function fiktivBanner(c, ekte) {
+    var fra = c.ramme.fiktivFra;
+    return '<div class="st-kort st-fiktiv"><div class="st-rad" style="flex-wrap:wrap;justify-content:space-between">' +
+      '<button type="button" class="st-tilbake" data-h="apneKurs" data-id="' + fra + '" style="margin:0">← Tilbake til ' + esc(ekte ? ekte.navn : 'kurset') + '</button>' +
+      '<a class="st-sm" href="https://github.com/Realfagsambassaden/Plattform/issues?q=label%3Afiktiv-klasse+OR+%22Fiktiv+klasse%22" target="_blank" rel="noopener" data-h="ingen">Rapportene →</a></div>' +
+      '<p><b>🤖 Fiktiv klasse.</b> Ti robot-elever (Arnt, svakest … Julie, sterkest) bruker denne kopien av kurset: de svarer på arbeidskravene, laster opp utregninger, laster siden på nytt, snakker med Dashman og skriver tilbakemeldinger. Alt som går galt, havner i en rapport. Studentene ser ikke denne kopien. Endringer i det ekte kurset blir med neste gang robotene kjører.</p>' +
+      '<div class="st-rad" style="flex-wrap:wrap"><label class="st-sm">Runder <select class="st-felt" id="st-fiktiv-runder" style="width:auto">' + [1, 2, 3, 5, 10].map(function (n) { return '<option' + (n === 3 ? ' selected' : '') + '>' + n + '</option>'; }).join('') + '</select></label>' +
+      '<label class="st-valg st-sm"><input type="checkbox" id="st-fiktiv-null"> Start robotene på nytt (slett svarene deres)</label>' +
+      '<button type="button" class="st-btn" data-h="fiktivKlasse" data-id="' + fra + '"' + (T.fiktivVenter ? ' disabled' : '') + '>' + (T.fiktivVenter ? 'Starter …' : 'Kjør fiktiv klasse') + '</button></div></div>';
+  }
   function visStudent(id, epost) {
     T.fag.student = { id: id, epost: epost, laster: true }; tegn();
     k.from('studie_svar').select('*').eq('eier', id).limit(5000).then(sjekk)
@@ -2442,8 +2449,9 @@ function studieStart() {
     kurs: function () {
       var o = '<h2 class="st-h1">Kurs</h2>';
       if (erUnderviser() && !T.eksempel) {
-        o += '<h3>Kursene du underviser</h3>' + (T.mine.length ? '<div class="st-tabell-ramme"><table class="st-tabell"><thead><tr><th>Kurs</th><th>Kode</th><th>Studenter</th><th>Temaer</th><th></th></tr></thead><tbody>' +
-          T.mine.map(function (c) {
+        var synlige = T.mine.filter(function (c) { return !(c.ramme || {}).fiktivFra; });   // fiktive klasser åpnes fra kurset sitt
+        o += '<h3>Kursene du underviser</h3>' + (synlige.length ? '<div class="st-tabell-ramme"><table class="st-tabell"><thead><tr><th>Kurs</th><th>Kode</th><th>Studenter</th><th>Temaer</th><th></th></tr></thead><tbody>' +
+          synlige.map(function (c) {
             return '<tr class="st-klikk" data-h="apneKurs" data-id="' + c.id + '" tabindex="0"><td><b>' + esc(c.navn) + '</b>' + (c.status === 'pabegynt' ? ' <span class="st-pabegynt">(påbegynt)</span>' : '') + (c.krev_innsyn ? '' : '<br><span class="st-sm">bare samletall</span>') + '</td><td class="st-kode">' + esc(c.kode) + '</td><td>' + (c.antall == null ? '–' : c.antall) + '</td><td>' + (c.temaer || []).length + '</td><td><a class="st-btn g liten" href="index.html#undervis-' + encodeURIComponent(c.id) + '" target="_blank" rel="noopener" data-h="ingen" title="Tidslinjen med plan for dagen og slides for hver samling">🎓 Undervisningsmodus</a> <button type="button" class="st-btn g liten" data-h="qr" data-id="' + c.id + '" title="QR-kode studentene skanner for å bli med i kurset">📱 QR</button></td></tr>';
           }).join('') + '</tbody></table></div>' : '<p class="st-ind">Du har ingen kurs ennå.</p>');
         o += '<details class="st-kort"' + (T.mine.length ? '' : ' open') + '><summary><b>Lag nytt kurs</b></summary>' +
@@ -2495,9 +2503,12 @@ function studieStart() {
     },
     fag: function () {
       var f = T.fag, c = f.c;
-      var o = '<button type="button" class="st-tilbake" data-h="ga" data-v="kurs">← Kursene dine</button><h2 class="st-h1">' + esc(c.navn) + (c.status === 'pabegynt' ? ' <span class="st-pabegynt">(påbegynt)</span>' : '') + '</h2>' +
+      var fra = (c.ramme || {}).fiktivFra, ekte = fra && T.mine.find(function (x) { return x.id === fra; });
+      var kopi = !fra && T.rolle === 'admin' && T.mine.find(function (x) { return (x.ramme || {}).fiktivFra === c.id; });
+      var o = (fra ? fiktivBanner(c, ekte) : '<button type="button" class="st-tilbake" data-h="ga" data-v="kurs">← Kursene dine</button>') + '<h2 class="st-h1">' + esc(c.navn) + (c.status === 'pabegynt' ? ' <span class="st-pabegynt">(påbegynt)</span>' : '') + '</h2>' +
         '<div class="st-rad" style="flex-wrap:wrap"><p class="st-sm" style="margin:0">Kode til studentene: <b class="st-kode">' + esc(c.kode) + '</b> · ' + (c.krev_innsyn ? 'innsyn i studentenes profil' : 'bare samletall') + '</p>' +
-        '<span><button type="button" class="st-btn liten" data-h="qr" data-id="' + c.id + '">📱 QR-kode</button> <a class="st-btn liten" href="index.html#undervis-' + encodeURIComponent(c.id) + '" target="_blank" rel="noopener" data-h="ingen">🎓 Undervisningsmodus</a> <button type="button" class="st-btn g liten" data-h="studentvisning" data-id="' + c.id + '">Se kurset som student</button></span></div>' +
+        '<span><button type="button" class="st-btn liten" data-h="qr" data-id="' + c.id + '">📱 QR-kode</button> <a class="st-btn liten" href="index.html#undervis-' + encodeURIComponent(c.id) + '" target="_blank" rel="noopener" data-h="ingen">🎓 Undervisningsmodus</a> <button type="button" class="st-btn g liten" data-h="studentvisning" data-id="' + c.id + '">Se kurset som student</button>' +
+          (T.rolle === 'admin' && !fra ? ' <button type="button" class="st-btn g liten" data-h="' + (kopi ? 'apneKurs' : 'fiktivKlasse') + '" data-id="' + (kopi ? kopi.id : c.id) + '" title="Ti robot-elever som tester kurset og appen">🤖 Fiktiv klasse</button>' : '') + '</span></div>' +
         '<nav class="st-underfaner">' + [['design', 'Utforming'], ['ovinger', 'Arbeidskrav'], ['oppmote', 'Oppmøte'], ['studenter', 'Studenter'], ['statistikk', 'Statistikk']].filter(function (x) { return x[0] !== 'ovinger' || f.u.elementer.arbeidskrav; }).map(function (x) {
           return '<button type="button" aria-selected="' + (f.fane === x[0]) + '" data-h="fagFane" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</nav>';
       if (f.fane === 'design') return o + byggerHtml();
@@ -3115,7 +3126,7 @@ function studieStart() {
         var rn = document.getElementById('st-fiktiv-runder'), nl = document.getElementById('st-fiktiv-null');
         T.fiktivVenter = true; tegn();
         ki('/fiktiv/start', { kurs: d.id, runder: rn ? +rn.value : 1, nullstill: !!(nl && nl.checked) }, 30)
-          .then(function (r) { varsle('Den fiktive klassen er startet. Rapporten kommer som et issue i Plattform når den er ferdig.' + (r && r.url ? ' Følg med: ' + r.url : '')); })
+          .then(function (r) { varsle('Den fiktive klassen er startet. ' + (T.mine.some(function (x) { return (x.ramme || {}).fiktivFra === d.id; }) ? '' : 'Første gang lages kopien av kurset; last siden på nytt om noen minutter, så finner du den under «🤖 Fiktiv klasse». ') + 'Rapporten kommer som et issue i Plattform når robotene er ferdige.'); })
           .catch(function (e) { varsle(feilmelding(e), true); })
           .then(function () { T.fiktivVenter = false; tegn(); });
       },
