@@ -33,9 +33,16 @@ const LAGRING = 'sb-fwyoldmtjnfxtkdwldzx-auth-token';
 const ALLE = ['Arnt', 'Bernt', 'Celine', 'David', 'Ernst', 'Felicia', 'Gunn', 'Hårek', 'Iselin', 'Julie'];
 const VALGT = (process.env.ELEVER || '').trim() ? process.env.ELEVER.split(',').map((s) => s.trim()).filter((n) => ALLE.includes(n)) : ALLE;
 
-if (!SERVICE) { console.error('Mangler SUPABASE_SERVICE_ROLE_KEY (GitHub-hemmelighet).'); process.exit(1); }
-if (!KILDE) { console.error('Mangler KURS (kurs-id).'); process.exit(1); }
 fs.mkdirSync(path.join(UT, 'bilder'), { recursive: true });
+// Stopper roboten før den kommer i gang, skrives grunnen i rapporten (så den havner i sammendraget og issuet).
+function stopp(grunn) {
+  fs.writeFileSync(path.join(UT, 'rapport.md'), `# Fiktiv klasse: stoppet før start\n\n**1 feil, 0 til sjekk**\n\n\`\`\`\n${grunn}\n\`\`\`\n`);
+  console.error(grunn); process.exit(1);
+}
+process.on('unhandledRejection', (e) => stopp('Roboten krasjet: ' + (e && e.stack || e)));
+process.on('uncaughtException', (e) => stopp('Roboten krasjet: ' + (e && e.stack || e)));
+if (!SERVICE) stopp('Mangler SUPABASE_SERVICE_ROLE_KEY (GitHub-hemmelighet).');
+if (!KILDE) stopp('Mangler KURS (kurs-id).');
 const admin = createClient(SUPA_URL, SERVICE, { auth: { persistSession: false, autoRefreshToken: false } });
 
 // ---------------------------------------------------------------- funn
@@ -262,20 +269,28 @@ async function svarPa(side, elev, o, tekst, r, p) {
       if (/Klarte ikke å vurdere/.test(d.tilbakemelding || '')) await nyttFunn(elev, 'feil', 'KI-en klarte ikke å vurdere bildet', JSON.stringify(d).slice(0, 600), side);
       notat(elev, `lastet opp utregning (${streker ? 'med' : 'uten'} streker) → ${d.vurdering || '?'} / håndskrift ${d.handskrift || '?'} / streker ${d.streker || '?'}`);
       if (streker && d.streker === 'nei') await nyttFunn(elev, 'til sjekk', 'KI-en så ikke de to strekene under svaret', d.tilbakemelding, side);
+      // «Er dette håndskrevet?» (robotens skrift er en font, så KI-en er ofte usikker): eleven sier ja til gjennomsyn.
+      const ja = await side.$('[data-h=lagreSvar][data-v=ja]');
+      if (ja) { notat(elev, 'KI-en lurte på om det var håndskrevet → ja, lagre for gjennomsyn'); await ja.click(); await side.waitForTimeout(2500); }
     }
   }
 }
 
 async function snakkMedDashman(side, elev, r) {
   try {
-    await side.goto(`${NETTSTED}/studie/index.html#dashman`, { waitUntil: 'domcontentloaded' });
+    await side.goto(`${NETTSTED}/studie/index.html`, { waitUntil: 'domcontentloaded' });
+    // På mobil (appmodus) er den runde knappen skjult og Dashman åpnes fra menyen; Dashman.apne() gjør det samme.
+    await side.waitForFunction(() => window.Dashman && window.Dashman.apne, null, { timeout: 20000 });
+    if (await side.isVisible('.dm-knapp')) await side.click('.dm-knapp'); else await side.evaluate(() => window.Dashman.apne());
     await side.waitForSelector('.dm-panel:not([hidden]) textarea', { timeout: 20000 });
     const sporsmal = (await ki(`Du er ${elev.navn}, elev på forkurs i fysikk (nivå ${elev.niva} av 10). Skriv ETT kort, naturlig spørsmål til KI-læringsassistenten Dashman om elektrisitet eller noe du lurer på i fysikken. Bare spørsmålet, på norsk, som en ekte elev ville skrevet det (gjerne med skrivefeil hvis nivået er lavt).`, 'Spørsmål:', 120)).trim() || 'Hva er forskjellen på strøm og spenning?';
-    const for_ = await side.$$eval('.dm-m.dm-fra', (l) => l.length);
+    const SVAR = '.dm-m.dm-fra:not(.dm-tenker):not(.dm-niva):not(.dm-husker)';
+    const for_ = await side.$$eval(SVAR, (l) => l.length);
     await side.fill('.dm-panel textarea', sporsmal); await side.press('.dm-panel textarea', 'Enter');
     const t0 = Date.now();
-    await side.waitForFunction((n) => { const l = document.querySelectorAll('.dm-m.dm-fra:not(.dm-tenker)'); return l.length > n; }, for_, { timeout: 90000 });
-    const svar = await side.$$eval('.dm-m.dm-fra:not(.dm-tenker)', (l) => l[l.length - 1].innerText);
+    await side.waitForFunction(([n, sel]) => !document.querySelector('.dm-tenker') && document.querySelectorAll(sel).length > n, [for_, SVAR], { timeout: 90000 });
+    await side.waitForTimeout(1500);   // svaret kan skrives fram litt etter litt
+    const svar = await side.$$eval(SVAR, (l) => l[l.length - 1].innerText);
     const feil = await side.$('.dm-feil');
     if (feil) await nyttFunn(elev, 'feil', 'Dashman svarte med en feilmelding', svar, side);
     else if (svar.trim().length < 15) await nyttFunn(elev, 'advarsel', 'Dashman ga et tomt eller svært kort svar', svar, side);
@@ -328,10 +343,11 @@ function rapport(info) {
 }
 
 // ---------------------------------------------------------------- hovedløp
-const info = await lagKopi();
+let info;
+try { info = await lagKopi(); } catch (e) { stopp('Kopien av kurset: ' + e.message); }
 console.log(`Kopi: ${info.kopi.navn} (${info.kopi.id}), ${info.ovelser.length} arbeidskrav`);
 const elever = [];
-for (const navn of VALGT) elever.push(await lagElev(navn, ALLE.indexOf(navn) + 1, info.kopi.id));
+for (const navn of VALGT) { try { elever.push(await lagElev(navn, ALLE.indexOf(navn) + 1, info.kopi.id)); } catch (e) { stopp('Kontoen til ' + navn + ': ' + e.message); } }
 if (NULLSTILL) for (const e of elever) await nullstill(e, info.ovelser);
 const nettleser = await chromium.launch();
 for (let runde = 1; runde <= RUNDER; runde++) {
