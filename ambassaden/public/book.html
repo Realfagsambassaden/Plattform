@@ -43,6 +43,42 @@
       <article class="tilbud-kort"><span class="tilbud-ikon" aria-hidden="true">🎤</span><h3>Festivaler, bedrifter og bibliotek</h3><p>Populærvitenskapelige foredrag og show for alle aldre.</p></article>
     </div>
 
+    <form id="book" class="doner-skjema book-skjema" novalidate>
+      <h2 class="book-overskrift">Send en forespørsel</h2>
+      <div class="felt-rad">
+        <label>Navn <input name="navn" required autocomplete="name"></label>
+        <label>E-post <input name="epost" type="email" required autocomplete="email"></label>
+      </div>
+      <div class="felt-rad">
+        <label>Skole eller organisasjon <input name="organisasjon" required placeholder="f.eks. Lade skole, Trondheim"></label>
+        <label>Telefon <span class="valgfritt">(valgfritt)</span> <input name="telefon" type="tel" autocomplete="tel"></label>
+      </div>
+      <div class="felt-rad">
+        <label>Hvem er publikum?
+          <select name="publikum">
+            <option>Barneskole</option><option>Ungdomsskole</option><option>Videregående</option>
+            <option>Politikere og beslutningstakere</option><option>Festival, bedrift eller bibliotek</option><option>Annet</option>
+          </select>
+        </label>
+        <label>Ønsket ambassadør
+          <select name="ambassador">
+            <option>Hvem som helst – foreslå en</option><option>Dr. Normann</option><option>Andrea</option><option>Distriktsmatematikeren (Siebe)</option>
+            <option>Mikael</option><option>Kenny</option><option>Jonas</option>
+          </select>
+        </label>
+      </div>
+      <div class="felt-rad">
+        <label>Når? <span class="valgfritt">(dato eller periode)</span> <input name="tid" placeholder="f.eks. uke 12, eller våren 2027"></label>
+        <label>Antall deltakere <span class="valgfritt">(omtrent)</span> <input name="antall" inputmode="numeric" placeholder="f.eks. 60"></label>
+      </div>
+      <label>Fortell litt om hva dere ønsker
+        <textarea name="melding" rows="4" required placeholder="Foredrag, show, verksted? Tema, lengde, sted og annet vi bør vite."></textarea>
+      </label>
+      <label class="honning" aria-hidden="true">Nettadresse <input name="nettadresse" tabindex="-1" autocomplete="off"></label>
+      <button class="knapp" type="submit">Send forespørsel 🚀</button>
+      <p class="melding" role="status"></p>
+    </form>
+
     <h2 class="book-overskrift">Hvem passer for dere?</h2>
     <div class="book-liste">
     <article class="book-kort"><img src="img/ben-portrett.webp" alt=""><div><h2>Dr. Normann</h2><p class="rolle">Ph.d. i matematisk kosmologi</p><p>Erfaring fra TV, film, klasserom og barneskole. Holder foredrag og show om kosmologi og fysikk, og kan bookes til skolebesøk, show og privatundervisning.</p><p><a href="mailto:normann.formidling@gmail.com?subject=Booking%20av%20Dr.%20Normann">Book Dr. Normann →</a> · <a href="profil/ben.html">Les mer</a></p></div></article>
@@ -60,5 +96,23 @@
   <span>Realfagsambassaden · drevet av Normann Formidling</span>
   <span><a href="./">Til forsiden</a></span>
 </footer>
+<script>
+(function () {
+  var f = document.getElementById('book'), m = f.querySelector('.melding'), k = f.querySelector('button');
+  function si(t, feil) { m.textContent = t; m.className = 'melding ' + (feil ? 'feil' : 'ok'); }
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!f.navn.value.trim() || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.epost.value.trim()) || !f.organisasjon.value.trim() || !f.melding.value.trim())
+      return si('Fyll inn navn, e-post, skole/organisasjon og hva dere ønsker.', true);
+    k.disabled = true; si('Sender …');
+    fetch('/api/book', { method: 'POST', body: new FormData(f) }).then(function (r) { return r.json().catch(function () { return {}; }); })
+      .then(function (j) {
+        k.disabled = false;
+        if (j.ok) { f.reset(); si('Tusen takk! Vi har fått forespørselen og svarer så snart vi kan.'); }
+        else si(j.feil || 'Noe gikk galt. Prøv igjen, eller send en e-post til normann.formidling@gmail.com.', true);
+      }).catch(function () { k.disabled = false; si('Fikk ikke kontakt. Sjekk nettforbindelsen og prøv igjen.', true); });
+  });
+})();
+</script>
 </body>
 </html>

@@ -1,6 +1,8 @@
 // Realfagsambassaden – Worker foran de statiske sidene.
 //   POST /api/doner  – tar imot donerte forelesningsnotater og legger dem i det private repoet
 //                      Realfagsambassaden/donasjoner (én mappe per donasjon + en sak/issue i køen).
+//   POST /api/book   – bookingforespørsel fra book.html → en sak (issue) med merkelappen «booking» i samme repo.
+//                      GitHub sender e-post om nye saker til dem som følger repoet.
 // Alt annet serveres fra public/ (env.ASSETS).
 //
 // Hemmeligheter (settes av GitHub-automatikken):
@@ -22,6 +24,11 @@ export default {
       if (request.method !== "POST") return json({ feil: "Bruk POST." }, 405);
       try { return await doner(request, env); }
       catch (e) { return json({ feil: e.brukermelding || "Noe gikk galt under opplastingen. Prøv igjen, eller send notatene på e-post." }, e.status || 500); }
+    }
+    if (url.pathname === "/api/book") {
+      if (request.method !== "POST") return json({ feil: "Bruk POST." }, 405);
+      try { return await book(request, env); }
+      catch (e) { return json({ feil: e.brukermelding || "Fikk ikke sendt forespørselen. Prøv igjen, eller send en e-post til normann.formidling@gmail.com." }, e.status || 500); }
     }
     return env.ASSETS.fetch(request);
   },
@@ -88,6 +95,31 @@ async function doner(request, env) {
     labels: ["donasjon"],
   });
   return json({ ok: true, id: mappe });
+}
+
+async function book(request, env) {
+  if (!env.GH_DONASJON) throw feil("Skjemaet er ikke åpnet ennå. Send en e-post til normann.formidling@gmail.com.", 503);
+  if (Number(request.headers.get("content-length") || 0) > 64 * 1024) throw feil("Meldingen er for lang.", 413);
+  const f = await request.formData();
+  if (f.get("nettadresse")) return json({ ok: true });            // honningkrukke
+  const d = {
+    navn: kort(f.get("navn"), 100), epost: kort(f.get("epost"), 120), organisasjon: kort(f.get("organisasjon"), 160),
+    telefon: kort(f.get("telefon"), 40), publikum: kort(f.get("publikum"), 60), ambassador: kort(f.get("ambassador"), 60),
+    tid: kort(f.get("tid"), 120), antall: kort(f.get("antall"), 30), melding: kort(f.get("melding"), 4000),
+  };
+  if (!d.navn || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.epost) || !d.organisasjon || !d.melding)
+    throw feil("Fyll inn navn, e-post, skole/organisasjon og hva dere ønsker.", 400);
+  const body = [
+    `- **Navn:** ${d.navn}`, `- **E-post:** ${d.epost}`, `- **Telefon:** ${d.telefon || "–"}`,
+    `- **Skole/organisasjon:** ${d.organisasjon}`, `- **Publikum:** ${d.publikum || "–"}`, `- **Ønsket ambassadør:** ${d.ambassador || "–"}`,
+    `- **Når:** ${d.tid || "–"}`, `- **Antall deltakere:** ${d.antall || "–"}`, `- **Mottatt:** ${new Date().toISOString()}`, "",
+    "## Hva de ønsker", "", d.melding, "", "---", `Svar på e-post: ${d.epost}`,
+  ].join("\n");
+  try { await gh(env, `repos/${REPO}/issues`, "POST", {
+    title: `Booking: ${d.organisasjon} – ${d.publikum || "publikum ukjent"} (${d.ambassador || "hvem som helst"})`,
+    body, labels: ["booking"],
+  }); } catch (e) { throw feil("Fikk ikke sendt forespørselen akkurat nå. Prøv igjen, eller send en e-post til normann.formidling@gmail.com.", 502); }
+  return json({ ok: true });
 }
 
 function base64(buf) {
