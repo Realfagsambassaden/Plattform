@@ -182,13 +182,13 @@ filer:
     dato: '2026-11-19'
     versjon: 3
   flervariabel-kalkulus/kapitler/06-partielle-differensiallikninger/04-bevaringslover.qmd:
-    blob: 038304535b67b668cdc9b3aa7e3e4d10a564e68d
-    dato: '2026-11-13'
-    versjon: 2
+    blob: 2ac0317ce5575d6d0ab54cfcc28ca97dcc262110
+    dato: '2026-11-20'
+    versjon: 3
   flervariabel-kalkulus/kapitler/06-partielle-differensiallikninger/05-oppgaver.qmd:
-    blob: 7b99b9e19d208fb22fee68a9830e4966ff516403
-    dato: '2026-11-13'
-    versjon: 2
+    blob: 4f90a19cdcc6deaf32467ddbffebc9d7b357eb59
+    dato: '2026-11-20'
+    versjon: 3
   flervariabel-kalkulus/kapitler/06-partielle-differensiallikninger/index.qmd:
     blob: c6c31f478bfaa66f027d5ef014a37a5443b75645
     dato: '2026-11-13'
@@ -925,6 +925,66 @@ filer:
     blob: c20e72d328c68692d618bda7949e1abe5fa2567b
     dato: '2026-11-19'
     versjon: 3
+  ingeniorfysikk/kapitler/11-elektrisk-ladning-og-felt/01-elektrisk-ladning.qmd:
+    blob: 1fc4321793695c64b71cb5fc526d1facc7cda6ea
+    dato: '2026-11-20'
+    versjon: 3
+  ingeniorfysikk/kapitler/11-elektrisk-ladning-og-felt/02-coulombs-lov.qmd:
+    blob: 9b675d1a892ae3701ac3c2ee9f13a0d6940e2f5e
+    dato: '2026-11-20'
+    versjon: 3
+  ingeniorfysikk/kapitler/11-elektrisk-ladning-og-felt/03-elektrisk-felt.qmd:
+    blob: 8d9323d1aac1e95c296a90edad7fd09579ce3fdf
+    dato: '2026-11-20'
+    versjon: 3
+  ingeniorfysikk/kapitler/11-elektrisk-ladning-og-felt/04-felt-fra-flere-ladninger.qmd:
+    blob: d99af927bbcc74c1a1ee39f28993cd6bde962261
+    dato: '2026-11-20'
+    versjon: 3
+  ingeniorfysikk/kapitler/11-elektrisk-ladning-og-felt/05-ladning-i-homogent-felt.qmd:
+    blob: e9ddfbd5874ff26bd70c3f42509c3d9c8face193
+    dato: '2026-11-20'
+    versjon: 3
+  ingeniorfysikk/kapitler/11-elektrisk-ladning-og-felt/06-gauss-lov.qmd:
+    blob: 979c126c1f42477063c4812599fe13e0cb024d98
+    dato: '2026-11-20'
+    versjon: 3
+  ingeniorfysikk/kapitler/11-elektrisk-ladning-og-felt/index.qmd:
+    blob: 595aafdc2c3f69b7853b1669671874aa5eea2f70
+    dato: '2026-11-20'
+    versjon: 3
+  ingeniorfysikk/kapitler/12-elektrisk-potensial/01-elektrisk-potensiell-energi.qmd:
+    blob: 5fbd7648c2740e755da4167ffc3a36dab531dd14
+    dato: '2026-11-20'
+    versjon: 3
+  ingeniorfysikk/kapitler/12-elektrisk-potensial/02-elektrisk-potensial-og-spenning.qmd:
+    blob: 946d3f1a8007084295d3545d844c38730a275d82
+    dato: '2026-11-20'
+    versjon: 3
+  ingeniorfysikk/kapitler/12-elektrisk-potensial/index.qmd:
+    blob: 7b7c8ef1f9f9ff8beba95cd0678f1b7aa078eca0
+    dato: '2026-11-20'
+    versjon: 3
+  ingeniorfysikk/kapitler/13-kondensatorer/01-kapasitans.qmd:
+    blob: 46213ca2f561e8cb9f1d694cddb1560f88e4b840
+    dato: '2026-11-20'
+    versjon: 3
+  ingeniorfysikk/kapitler/13-kondensatorer/02-serie-og-parallell.qmd:
+    blob: 8301ee380734aee0dfbaf163cefefa2e31a1be8c
+    dato: '2026-11-20'
+    versjon: 3
+  ingeniorfysikk/kapitler/13-kondensatorer/03-energi-i-kondensator.qmd:
+    blob: 257719e3f54c114d9566eb3ae80bea0ae867da14
+    dato: '2026-11-20'
+    versjon: 3
+  ingeniorfysikk/kapitler/13-kondensatorer/04-dielektrikum.qmd:
+    blob: c79cc525edfa5d61ad4a05780b9db3d989660066
+    dato: '2026-11-20'
+    versjon: 3
+  ingeniorfysikk/kapitler/13-kondensatorer/index.qmd:
+    blob: f81cd7f58454f86c3a71befb1981910d96d724b0
+    dato: '2026-11-20'
+    versjon: 3
   plattform/tema-tekster/arbeid-og-energi.md:
     blob: 87208138c9df648273ceba258069d31593bee5b0
     dato: '2026-11-09'
@@ -945,6 +1005,10 @@ filer:
     blob: 4d57c5ae31d41e2a7de91ed1a9aed5f47984db07
     dato: '2026-11-18'
     versjon: 2
+  plattform/tema-tekster/gravitasjon.md:
+    blob: 428fe994a40bed055555908c1abb0b11ed7ac9c3
+    dato: '2026-11-20'
+    versjon: 3
   plattform/tema-tekster/hva-er-fysikk.md:
     blob: 2c83ba9bf784e6f162912073c7c300bbf1490d2d
     dato: '2026-11-09'
@@ -961,10 +1025,22 @@ filer:
     blob: 6b5fa605d52c9b9cb7977f5a3f8d2d84328d293c
     dato: '2026-11-18'
     versjon: 2
+  plattform/tema-tekster/matematiske-verktoy.md:
+    blob: 451a8e700dfd696b4663085c987139a40207b8eb
+    dato: '2026-11-20'
+    versjon: 3
+  plattform/tema-tekster/modellering.md:
+    blob: d903962ccb47e93b962a9b5aef089092cbd06926
+    dato: '2026-11-20'
+    versjon: 3
   plattform/tema-tekster/newtons-lover.md:
     blob: f34c0b2bf0c3ac23dd4518a05850b74273845657
     dato: '2026-11-16'
     versjon: 2
+  plattform/tema-tekster/rotasjon.md:
+    blob: 5f3ee2c7ffd02018cdf86819693b85feb58b6866
+    dato: '2026-11-20'
+    versjon: 3
   plattform/tema-tekster/sirkelbevegelse.md:
     blob: 8f58b88acb5a0f28d09bcb8800b4c9e725d75b30
     dato: '2026-11-17'
@@ -977,6 +1053,10 @@ filer:
     blob: 0f123d9fc0101e496ade42e85a3a722293c131f3
     dato: '2026-11-16'
     versjon: 2
+  plattform/tema-tekster/stromning.md:
+    blob: 0aabea654699211dbd21edd23fa69ad4c07a2f3a
+    dato: '2026-11-20'
+    versjon: 3
   plattform/tema-tekster/svingninger.md:
     blob: 61a65da65941c8b6cce183afd6fb15a863834015
     dato: '2026-11-17'
