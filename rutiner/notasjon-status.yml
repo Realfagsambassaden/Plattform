@@ -985,6 +985,114 @@ filer:
     blob: f81cd7f58454f86c3a71befb1981910d96d724b0
     dato: '2026-11-20'
     versjon: 3
+  ingeniorfysikk/kapitler/14-strom-og-kretser/01-elektrisk-strom.qmd:
+    blob: d210132237a4d821a61d2761039aa1950f83f9ab
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/14-strom-og-kretser/02-resistans-og-resistivitet.qmd:
+    blob: 2197234d88e00ba90cb00d1f37e923eaf308656d
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/14-strom-og-kretser/03-emf-og-indre-resistans.qmd:
+    blob: e93a9a66eed303c92acb8818268baf74e13161ed
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/14-strom-og-kretser/04-kirchhoffs-lover.qmd:
+    blob: ff1c9b0966c6f7226e56dc0ff5b20a1f7b747365
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/14-strom-og-kretser/05-elektrisk-effekt.qmd:
+    blob: 2c8837838f250bfc666f664a2d2b176da68a5232
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/14-strom-og-kretser/06-rc-kretser.qmd:
+    blob: 2364e2176373e4f414f3c908bcf243422980cda6
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/14-strom-og-kretser/index.qmd:
+    blob: 25e1785fa1eeb0054783d4ccd9ddb64f6df5afaf
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/15-magnetiske-krefter/01-magnetfelt.qmd:
+    blob: 1df307ac62c3498f5eab00d7a916698f074b43f0
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/15-magnetiske-krefter/02-kraft-pa-ladning.qmd:
+    blob: f3b437743b40cadc244e03e8c294c7b094a42318
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/15-magnetiske-krefter/03-kraft-pa-leder.qmd:
+    blob: c39c9c866ede536423926fe19239189bf822d8b1
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/15-magnetiske-krefter/04-dreiemoment-pa-stromsloyfe.qmd:
+    blob: 1206304c1c0dda165e1e435eb64bbea8d2b969df
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/15-magnetiske-krefter/index.qmd:
+    blob: 746f1336f25f4dba4c20d8d1eff86f53a9b5e271
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/16-kilder-til-magnetfelt/01-biot-savarts-lov.qmd:
+    blob: c9c550dc7e91967baba3dc7d147aad0864787735
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/16-kilder-til-magnetfelt/02-kraft-mellom-ledere.qmd:
+    blob: 8f40211a2e500d3b8035df14657d3eb918a94273
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/16-kilder-til-magnetfelt/03-amperes-lov.qmd:
+    blob: c5fdd066cd55b246a581e856579c82c852edd9aa
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/16-kilder-til-magnetfelt/04-solenoide.qmd:
+    blob: b6521cba5c8eee49b8ceb466901026fd46c155b1
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/16-kilder-til-magnetfelt/index.qmd:
+    blob: b5dd9febaa24e1fc11de648f8eb947b5c466dc81
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/17-induksjon/01-faraday-og-lenz.qmd:
+    blob: 0647e2fac1d4327125d3271e2bf46fff10ebb7cd
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/17-induksjon/02-bevegelses-emf.qmd:
+    blob: 7f3ff96940441abe4b0f41c96045e7454d7239cb
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/17-induksjon/03-generator-og-motor.qmd:
+    blob: db2aad45deb4195040f544026656881e57f0e6d8
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/17-induksjon/04-induktans.qmd:
+    blob: 8f2134ae0aec068248e9693e9aed7de915b99177
+    dato: '2026-11-21'
+    versjon: 3
+  ingeniorfysikk/kapitler/17-induksjon/index.qmd:
+    blob: fcb3b005c12603fe6a5176d3cf55695983d359cf
+    dato: '2026-11-21'
+    versjon: 3
+  plattform/matematikkhjelp/tema-tekster/algebra-og-likninger.md:
+    blob: f9a9dabe1118514e607778fef0b4feed57427d40
+    dato: '2026-11-21'
+    versjon: 3
+  plattform/matematikkhjelp/tema-tekster/eksponential-og-logaritme.md:
+    blob: 4bf5b59e04bb855f8944aeebf91a46cc19ce5f1c
+    dato: '2026-11-21'
+    versjon: 3
+  plattform/matematikkhjelp/tema-tekster/funksjoner.md:
+    blob: ea8ec9f17dda2850d70e7799556db40e8aba31e3
+    dato: '2026-11-21'
+    versjon: 3
+  plattform/matematikkhjelp/tema-tekster/geometri.md:
+    blob: 18a12ad057ad7d1e05b7cdb0749c0946d0e14117
+    dato: '2026-11-21'
+    versjon: 3
+  plattform/matematikkhjelp/tema-tekster/tall-og-regneregler.md:
+    blob: 1665b7e5ef432c4cb6e73bd6b68da54d1a52cfa2
+    dato: '2026-11-21'
+    versjon: 3
   plattform/tema-tekster/arbeid-og-energi.md:
     blob: 87208138c9df648273ceba258069d31593bee5b0
     dato: '2026-11-09'
@@ -1001,6 +1109,10 @@ filer:
     blob: a69bc6f0900e4ca15a5ada622fdd20951ee32962
     dato: '2026-11-18'
     versjon: 2
+  plattform/tema-tekster/elektrisk-potensial.md:
+    blob: 365a682e9d630e35986d5a9d2d1124709acf6b79
+    dato: '2026-11-21'
+    versjon: 3
   plattform/tema-tekster/gasser.md:
     blob: 4d57c5ae31d41e2a7de91ed1a9aed5f47984db07
     dato: '2026-11-18'
@@ -1017,14 +1129,30 @@ filer:
     blob: 85a8eeef8318a47220f6078c96fa70876b0ad1f2
     dato: '2026-11-17'
     versjon: 2
+  plattform/tema-tekster/induksjon.md:
+    blob: 3f74bef464c66b7f36cc94a35012574ce516bbfa
+    dato: '2026-11-21'
+    versjon: 3
+  plattform/tema-tekster/kilder-magnetfelt.md:
+    blob: 3ce9c6ee823d199e778a66b17892de2a905e86a9
+    dato: '2026-11-21'
+    versjon: 3
   plattform/tema-tekster/kinematikk.md:
     blob: 247dc4fdd20df018041078666fa8fa1203d316a3
     dato: '2026-11-09'
     versjon: 2
+  plattform/tema-tekster/kondensatorer.md:
+    blob: a1d58e18623d703bf21de20f3716915533ab28f7
+    dato: '2026-11-21'
+    versjon: 3
   plattform/tema-tekster/kretser.md:
     blob: 6b5fa605d52c9b9cb7977f5a3f8d2d84328d293c
     dato: '2026-11-18'
     versjon: 2
+  plattform/tema-tekster/magnetisme.md:
+    blob: f981400a325c338ad6493c9401b5c274f707cfc4
+    dato: '2026-11-21'
+    versjon: 3
   plattform/tema-tekster/matematiske-verktoy.md:
     blob: 451a8e700dfd696b4663085c987139a40207b8eb
     dato: '2026-11-20'
