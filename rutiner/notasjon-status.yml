@@ -1073,9 +1073,177 @@ filer:
     blob: fcb3b005c12603fe6a5176d3cf55695983d359cf
     dato: '2026-11-21'
     versjon: 3
+  matte-forkurs/kapitler/01-tall-og-variabler/01-tall-og-tallregning.qmd:
+    blob: c91a7951e1fd73e243d9d5fcd2ec6b34cfd5a5a5
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/01-tall-og-variabler/02-brokregning.qmd:
+    blob: 0b50d8f5a400dea9c9de61e3809ea37d93bb0ef6
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/01-tall-og-variabler/03-bokstavregning-og-parenteser.qmd:
+    blob: fdad0659f0927e3b44f4dcf449604295483c05b3
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/01-tall-og-variabler/04-rasjonale-uttrykk.qmd:
+    blob: b6df0017db6ece04577b3bde1ca6d20f5824ab91
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/01-tall-og-variabler/05-potenser.qmd:
+    blob: 0d706a0e050c9661cf7b04e5d69e8e6a41e0b6e2
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/01-tall-og-variabler/06-tall-pa-standardform.qmd:
+    blob: 2107e4cf3e8ead27aabfabd85d9d2c7a1af19a97
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/01-tall-og-variabler/07-rotter-og-brokeksponenter.qmd:
+    blob: 3300d7d997b61fd267c9856fb7163056273dace1
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/01-tall-og-variabler/08-oppgaver.qmd:
+    blob: 3daefebead831088e1482fcfd00bf482c47a0b9e
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/01-tall-og-variabler/index.qmd:
+    blob: c680d9537db2352f0cdb071e0ff9b802d5ed1296
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/02-likninger-og-ulikheter/01-likninger.qmd:
+    blob: 0317979b983c5632da8c3237bc7ce2a869dc6a55
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/02-likninger-og-ulikheter/02-to-likninger-med-to-ukjente.qmd:
+    blob: 6f7a4a29e9e77cb7dd6aec6c5122f7d797b69ade
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/02-likninger-og-ulikheter/03-formler.qmd:
+    blob: 552437d8beac6ebbb3231fcbacfb22056b3dff73
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/02-likninger-og-ulikheter/04-lineare-ulikheter.qmd:
+    blob: 18722bfe1d0f1304b73498cb046aa5b7b2e28c86
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/02-likninger-og-ulikheter/05-intervaller-og-mengder.qmd:
+    blob: ca9eabc61559f04113d758ed6fcd2ea1fecf366b
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/02-likninger-og-ulikheter/06-doble-ulikheter.qmd:
+    blob: cb35dd04c4b621f87fec2c80fd62d92f06285dd8
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/02-likninger-og-ulikheter/07-oppgaver.qmd:
+    blob: 497df2ea4b03bd2f95d7a3e839372323d396185c
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/02-likninger-og-ulikheter/index.qmd:
+    blob: c78f487b570947994ff097cf24ff3b5c509a8285
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/03-linjer-og-grafer/01-rette-linjer.qmd:
+    blob: 9cb639f328ab4ed5fecd245d8a03ff9ae83461c9
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/03-linjer-og-grafer/02-graftegning-og-grafisk-losning.qmd:
+    blob: dc829ec1b59e9075c9264bffdaae79e0732a501c
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/03-linjer-og-grafer/03-funksjonsbegrepet.qmd:
+    blob: a65d7469f12d8c8ee8f9cd59cb0b0d18ebc2506a
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/03-linjer-og-grafer/04-andregradsfunksjoner.qmd:
+    blob: f5143d0943aeed14271f3a57fb762cb4a4610b7e
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/03-linjer-og-grafer/05-oppgaver.qmd:
+    blob: 438af55853e30a249aed582caaf0420783f9ebb9
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/03-linjer-og-grafer/index.qmd:
+    blob: 06279f51025342e6f1f7596362b702829f19ee05
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/04-faktorisering/01-kvadratsetningene.qmd:
+    blob: 7583b66d4f1782f3a7a2cb56fedbce836ceeabae
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/04-faktorisering/02-faktorisering.qmd:
+    blob: d16e0e6a06f9d6f61f9478713c35e3e214dfa8bc
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/04-faktorisering/03-rasjonale-uttrykk.qmd:
+    blob: a1aa6d7c2585f481feb029c7c6e51c873b3046ef
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/04-faktorisering/04-andregradslikninger.qmd:
+    blob: 9432b2dbf819db8141f1ef496c152a7a29f67d4a
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/04-faktorisering/05-ikke-lineare-likningssett.qmd:
+    blob: 4168dc5dd89ec047da6271b707453977190b925b
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/04-faktorisering/06-andregradsulikheter.qmd:
+    blob: 268bd180b7d8111358e39972b3fc1d261f86b0ef
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/04-faktorisering/07-oppgaver.qmd:
+    blob: 66564e04c9371b65843c2392b1e883cfeee68946
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/04-faktorisering/index.qmd:
+    blob: 7da739a515c05f900645eb28981a469f87bace6f
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/05-polynomer-og-rasjonale-uttrykk/01-polynomfunksjoner.qmd:
+    blob: e98c388c57929bda7d0f77e266e4eac4adeb7a0c
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/05-polynomer-og-rasjonale-uttrykk/02-polynomdivisjon.qmd:
+    blob: 8dc5402a5d0a393e14fc2f4e8ec8b463d1fce417
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/05-polynomer-og-rasjonale-uttrykk/03-faktorisering-av-polynomer.qmd:
+    blob: ce83dd70595bc55e89233ad738b614c9a0726df5
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/05-polynomer-og-rasjonale-uttrykk/04-likninger-og-ulikheter-av-tredje-grad.qmd:
+    blob: 0185ad022af2f0ec0a4001c1bdcbc23113665b2b
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/05-polynomer-og-rasjonale-uttrykk/05-rasjonale-likninger-og-ulikheter.qmd:
+    blob: 8a2fc37ddbaa2b515351c6b90068a006cda9a0a8
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/05-polynomer-og-rasjonale-uttrykk/06-irrasjonale-likninger.qmd:
+    blob: 184e5ae004cb1dff89f1ad5f0572850d03faf16b
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/05-polynomer-og-rasjonale-uttrykk/07-oppgaver.qmd:
+    blob: b869c291c74f2a45b11fb2cead4c3d12cb2bdca1
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/05-polynomer-og-rasjonale-uttrykk/index.qmd:
+    blob: 5fbae3da66dc8c36e4d9550b5aa913e8f11a41e9
+    dato: '2026-11-22'
+    versjon: 3
+  matte-forkurs/kapitler/06-grenseverdier-og-derivasjon/01-grenseverdier.qmd:
+    blob: 063f00349e1ce4ff973907cd9cd3871cbdcf8945
+    dato: '2026-11-22'
+    versjon: 3
   plattform/matematikkhjelp/tema-tekster/algebra-og-likninger.md:
     blob: f9a9dabe1118514e607778fef0b4feed57427d40
     dato: '2026-11-21'
+    versjon: 3
+  plattform/matematikkhjelp/tema-tekster/anvendelser-derivasjon.md:
+    blob: 1155da356d14436dbb2d4c84f45ea649390bec12
+    dato: '2026-11-22'
+    versjon: 3
+  plattform/matematikkhjelp/tema-tekster/derivasjon.md:
+    blob: 9b6597d9a467a639de99816c7b6b3c0679326199
+    dato: '2026-11-22'
     versjon: 3
   plattform/matematikkhjelp/tema-tekster/eksponential-og-logaritme.md:
     blob: 4bf5b59e04bb855f8944aeebf91a46cc19ce5f1c
@@ -1089,46 +1257,62 @@ filer:
     blob: 18a12ad057ad7d1e05b7cdb0749c0946d0e14117
     dato: '2026-11-21'
     versjon: 3
+  plattform/matematikkhjelp/tema-tekster/grenseverdier.md:
+    blob: 56336d7fbad6daa6f271fdfd188d17ee71005236
+    dato: '2026-11-22'
+    versjon: 3
+  plattform/matematikkhjelp/tema-tekster/inverse-funksjoner.md:
+    blob: 9a8a03e4f85de82e0cba31d770e8ae0826a8db93
+    dato: '2026-11-22'
+    versjon: 3
   plattform/matematikkhjelp/tema-tekster/tall-og-regneregler.md:
     blob: 1665b7e5ef432c4cb6e73bd6b68da54d1a52cfa2
     dato: '2026-11-21'
     versjon: 3
+  plattform/matematikkhjelp/tema-tekster/trigonometri.md:
+    blob: 66c59f144ee9d999d549d5c62a614a6563dc6b71
+    dato: '2026-11-22'
+    versjon: 3
   plattform/tema-tekster/arbeid-og-energi.md:
     blob: 87208138c9df648273ceba258069d31593bee5b0
-    dato: '2026-11-09'
-    versjon: 2
+    dato: '2026-11-22'
+    versjon: 3
   plattform/tema-tekster/atom-og-kjerne.md:
     blob: 18d1a33f838ed426d6368bf594591718134d08ff
-    dato: '2026-11-16'
-    versjon: 2
+    dato: '2026-11-22'
+    versjon: 3
   plattform/tema-tekster/bevegelsesmengde.md:
     blob: dcb429033ecb794b7547fea7cdafe4f8e85b9d00
-    dato: '2026-11-17'
-    versjon: 2
+    dato: '2026-11-22'
+    versjon: 3
   plattform/tema-tekster/bolger-og-lyd.md:
     blob: a69bc6f0900e4ca15a5ada622fdd20951ee32962
-    dato: '2026-11-18'
-    versjon: 2
+    dato: '2026-11-22'
+    versjon: 3
+  plattform/tema-tekster/elektrisk-felt.md:
+    blob: be8338da8d72d51703057653c05a30038b0ba914
+    dato: '2026-11-22'
+    versjon: 3
   plattform/tema-tekster/elektrisk-potensial.md:
     blob: 365a682e9d630e35986d5a9d2d1124709acf6b79
     dato: '2026-11-21'
     versjon: 3
   plattform/tema-tekster/gasser.md:
     blob: 4d57c5ae31d41e2a7de91ed1a9aed5f47984db07
-    dato: '2026-11-18'
-    versjon: 2
+    dato: '2026-11-22'
+    versjon: 3
   plattform/tema-tekster/gravitasjon.md:
     blob: 428fe994a40bed055555908c1abb0b11ed7ac9c3
     dato: '2026-11-20'
     versjon: 3
   plattform/tema-tekster/hva-er-fysikk.md:
     blob: 2c83ba9bf784e6f162912073c7c300bbf1490d2d
-    dato: '2026-11-09'
-    versjon: 2
+    dato: '2026-11-22'
+    versjon: 3
   plattform/tema-tekster/hydrostatikk.md:
     blob: 85a8eeef8318a47220f6078c96fa70876b0ad1f2
-    dato: '2026-11-17'
-    versjon: 2
+    dato: '2026-11-22'
+    versjon: 3
   plattform/tema-tekster/induksjon.md:
     blob: 3f74bef464c66b7f36cc94a35012574ce516bbfa
     dato: '2026-11-21'
@@ -1139,19 +1323,23 @@ filer:
     versjon: 3
   plattform/tema-tekster/kinematikk.md:
     blob: 247dc4fdd20df018041078666fa8fa1203d316a3
-    dato: '2026-11-09'
-    versjon: 2
+    dato: '2026-11-22'
+    versjon: 3
   plattform/tema-tekster/kondensatorer.md:
     blob: a1d58e18623d703bf21de20f3716915533ab28f7
     dato: '2026-11-21'
     versjon: 3
   plattform/tema-tekster/kretser.md:
     blob: 6b5fa605d52c9b9cb7977f5a3f8d2d84328d293c
-    dato: '2026-11-18'
-    versjon: 2
+    dato: '2026-11-22'
+    versjon: 3
   plattform/tema-tekster/magnetisme.md:
     blob: f981400a325c338ad6493c9401b5c274f707cfc4
     dato: '2026-11-21'
+    versjon: 3
+  plattform/tema-tekster/maling-og-usikkerhet.md:
+    blob: df8a7c2d1ffc32fd31779606172eab89b22c5b48
+    dato: '2026-11-22'
     versjon: 3
   plattform/tema-tekster/matematiske-verktoy.md:
     blob: 451a8e700dfd696b4663085c987139a40207b8eb
@@ -1163,38 +1351,50 @@ filer:
     versjon: 3
   plattform/tema-tekster/newtons-lover.md:
     blob: f34c0b2bf0c3ac23dd4518a05850b74273845657
-    dato: '2026-11-16'
-    versjon: 2
+    dato: '2026-11-22'
+    versjon: 3
+  plattform/tema-tekster/programmering.md:
+    blob: 58b774a9de06d9290a8cda93d906923fb213ccea
+    dato: '2026-11-22'
+    versjon: 3
   plattform/tema-tekster/rotasjon.md:
     blob: 5f3ee2c7ffd02018cdf86819693b85feb58b6866
     dato: '2026-11-20'
     versjon: 3
   plattform/tema-tekster/sirkelbevegelse.md:
     blob: 8f58b88acb5a0f28d09bcb8800b4c9e725d75b30
-    dato: '2026-11-17'
-    versjon: 2
+    dato: '2026-11-22'
+    versjon: 3
   plattform/tema-tekster/statikk.md:
     blob: 88edd1be0033ef4430e2523916a26ecf96b4f4e1
-    dato: '2026-11-17'
-    versjon: 2
+    dato: '2026-11-22'
+    versjon: 3
+  plattform/tema-tekster/storrelser-og-enheter.md:
+    blob: 05c52560dac8c1947004339721b6d439af0cb2e0
+    dato: '2026-11-22'
+    versjon: 3
   plattform/tema-tekster/straling.md:
     blob: 0f123d9fc0101e496ade42e85a3a722293c131f3
-    dato: '2026-11-16'
-    versjon: 2
+    dato: '2026-11-22'
+    versjon: 3
   plattform/tema-tekster/stromning.md:
     blob: 0aabea654699211dbd21edd23fa69ad4c07a2f3a
     dato: '2026-11-20'
     versjon: 3
   plattform/tema-tekster/svingninger.md:
     blob: 61a65da65941c8b6cce183afd6fb15a863834015
-    dato: '2026-11-17'
-    versjon: 2
+    dato: '2026-11-22'
+    versjon: 3
   plattform/tema-tekster/temperatur-og-varme.md:
     blob: 28b57ea7e0aeea77ea802cd609e27451baad2703
-    dato: '2026-11-18'
-    versjon: 2
+    dato: '2026-11-22'
+    versjon: 3
   plattform/tema-tekster/termodynamikk.md:
     blob: 224d2d1835f91a06f0c9d077a142da95b91ee88f
-    dato: '2026-11-18'
-    versjon: 2
+    dato: '2026-11-22'
+    versjon: 3
+  plattform/tema-tekster/vektorer.md:
+    blob: 47a26f6763abe3a5cfa6774298153c231f06b088
+    dato: '2026-11-22'
+    versjon: 3
 versjon: 3
