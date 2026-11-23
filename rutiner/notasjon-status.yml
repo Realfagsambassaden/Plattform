@@ -1233,6 +1233,202 @@ filer:
     blob: 063f00349e1ce4ff973907cd9cd3871cbdcf8945
     dato: '2026-11-22'
     versjon: 3
+  matte-forkurs/kapitler/06-grenseverdier-og-derivasjon/02-kontinuitet.qmd:
+    blob: b97a2def24a159c49049320eefaf896a2b89f270
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/06-grenseverdier-og-derivasjon/03-asymptoter.qmd:
+    blob: 39f5bddc73abfa0ad80e9a326e643035e34f4f87
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/06-grenseverdier-og-derivasjon/04-vekstfart.qmd:
+    blob: d3a8b615a0e6f44f20387b0016a017e7f6d587d4
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/06-grenseverdier-og-derivasjon/05-tangenter-og-normaler.qmd:
+    blob: 72a77c3878e065255609e43ac6c27a1312d74c89
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/06-grenseverdier-og-derivasjon/06-derivasjon.qmd:
+    blob: 19415b664bbe91c35daf5bb8d29c66ad8705aae0
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/06-grenseverdier-og-derivasjon/07-fart-og-akselerasjon.qmd:
+    blob: 71a0e660a8ef73a08ab58b68055e1c341ab26428
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/06-grenseverdier-og-derivasjon/08-oppgaver.qmd:
+    blob: 1b796915612ed20cffd2c84c0fbd697935df9a7d
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/06-grenseverdier-og-derivasjon/index.qmd:
+    blob: 7fcedc65c7494c5431b1559a27115b3feca806aa
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/07-funksjonsdrofting/01-funksjonsdrofting.qmd:
+    blob: 37e7d4cc048c9c9c10e799f3400bdd50977c5e16
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/07-funksjonsdrofting/02-krumning-og-vendepunkter.qmd:
+    blob: ca555c02633067a8561e0149cdc505834d9a4d22
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/07-funksjonsdrofting/03-optimering.qmd:
+    blob: 3faa854f6b53584a3856ef16c236384e495b81d9
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/07-funksjonsdrofting/04-potens-og-rotfunksjoner.qmd:
+    blob: f161b2befa57ace1d15732d2835865debc2fb224
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/07-funksjonsdrofting/05-kjerneregelen.qmd:
+    blob: e85d2cc9d401f5d64da776f9f1be3b33cc7dfea4
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/07-funksjonsdrofting/06-produkt-og-kvotientregelen.qmd:
+    blob: 0f521bed077f3b4840e11860c37ebef32ef140d5
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/07-funksjonsdrofting/07-oppgaver.qmd:
+    blob: 6cc0c5ffa4e9d2955abfbfc29f7beb13277520a2
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/07-funksjonsdrofting/index.qmd:
+    blob: 2c18c50953446d4f0cd0a9367c759b9cc911e1d1
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/08-logaritmer-og-eksponentialfunksjoner/01-briggske-logaritmer.qmd:
+    blob: 08d3f5f450a19c79a5437632528e14cbd9f7be29
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/08-logaritmer-og-eksponentialfunksjoner/02-eksponential-og-logaritmelikninger.qmd:
+    blob: 5a8caf6bb5189caa3b7866a2b5587fb77fd7986e
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/08-logaritmer-og-eksponentialfunksjoner/03-den-naturlige-logaritmen.qmd:
+    blob: 006f8ba042a257251ecb6264d999ad420861e7c6
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/08-logaritmer-og-eksponentialfunksjoner/04-funksjonen-ln-x.qmd:
+    blob: 9908160490d0a715a5101ccd7eaea863e3f31638
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/08-logaritmer-og-eksponentialfunksjoner/05-eksponentialfunksjoner.qmd:
+    blob: cb76302c970ee0546923d48955addee0bc77f41a
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/08-logaritmer-og-eksponentialfunksjoner/06-oppgaver.qmd:
+    blob: c4b90bb0fc11e8bdb4672017a38738e392f6acb8
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/08-logaritmer-og-eksponentialfunksjoner/index.qmd:
+    blob: fbb6900cfee475915c6b9bc8244efdebdcba3341
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/09-trigonometri-og-geometri/01-pytagorassetningen.qmd:
+    blob: 538962745928eaa9a52a92eb0be0b7e5518cd5b3
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/09-trigonometri-og-geometri/02-sinus-cosinus-og-tangens.qmd:
+    blob: 7b74b37d10c27739d34e7ec590b1b83b5b0739b5
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/09-trigonometri-og-geometri/03-arealsetningen.qmd:
+    blob: 7ff960e5ca739310318ba5381c48bad461f890df
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/09-trigonometri-og-geometri/04-sinus-og-cosinussetningen.qmd:
+    blob: 24ace803b370376efa14e8b358e467e2ecc067f9
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/09-trigonometri-og-geometri/05-areal-og-volum.qmd:
+    blob: 70b24c98c3c0df089f89ab27c01b8c506cac1401
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/09-trigonometri-og-geometri/06-oppgaver.qmd:
+    blob: e92684107d1662d5f77d3eafa07930a505bc4f9e
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/09-trigonometri-og-geometri/index.qmd:
+    blob: 60f84dcd5122e8f120d7ed964030c6e3c2dcbac9
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/10-trigonometriske-likninger/01-radianer-og-sirkelsektorer.qmd:
+    blob: f629119cc19b72a067183a3703936c387aa9abaf
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/10-trigonometriske-likninger/02-enhetssirkelen.qmd:
+    blob: f7ae5cbb3d5704f83d65424c4027a27225fbd876
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/10-trigonometriske-likninger/03-sinus-og-cosinuslikninger.qmd:
+    blob: 7577c516bb0d667f47d8357addac468aca7fc489
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/10-trigonometriske-likninger/04-tangenslikninger.qmd:
+    blob: 86375665854b3d99afa92a58234d2b6f682490cb
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/10-trigonometriske-likninger/05-trigonometriske-formler.qmd:
+    blob: cfd289051824ffd61a44d62437b3ae8a500c41e3
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/10-trigonometriske-likninger/06-oppgaver.qmd:
+    blob: c100798b8628652426b6e6d85acc4032474143d2
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/10-trigonometriske-likninger/index.qmd:
+    blob: bfa612a9c96572e969a22d2b1d02f739048e55df
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/11-trigonometriske-funksjoner/01-sinusfunksjonen.qmd:
+    blob: 3585458ec75c38b0ccd08cb7ed17863c81c66809
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/11-trigonometriske-funksjoner/02-cosinus-og-tangensfunksjonen.qmd:
+    blob: 58f39acf4684246b1cc92d171cf04edbd62c9d04
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/11-trigonometriske-funksjoner/03-trigonometriske-ulikheter.qmd:
+    blob: fd1760766c0443ba986f6df089b93f6de9b8584e
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/11-trigonometriske-funksjoner/04-derivasjon-av-trigonometriske-funksjoner.qmd:
+    blob: 0736b88c91ed0ad395a22374ab0753ee87a80c28
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/11-trigonometriske-funksjoner/05-oppgaver.qmd:
+    blob: 99a0370aff8215f4bd7dd4e76f6376a3a13dd5d0
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/11-trigonometriske-funksjoner/index.qmd:
+    blob: 780a03363008121ec1d5a32e9003f13b1c042752
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/12-vektorer/01-vektorer-i-koordinatsystemet.qmd:
+    blob: be1a782a8545fa3dd724f4b93427796ba77ca0e4
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/12-vektorer/02-regning-med-vektorer.qmd:
+    blob: 6525e98822c27861d0942f4ad28598545e3304d4
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/12-vektorer/03-vektorregning-i-python.qmd:
+    blob: 22bfe159af3bd60f20f172516dcc7880ace5bd3c
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/12-vektorer/04-parallelle-vektorer-og-dekomponering.qmd:
+    blob: fbd3b0224a699cd78c28e13c6d1cb98efb159c63
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/12-vektorer/05-oppgaver.qmd:
+    blob: 9c53dda1fe34ec9b34de6fe202a95a21c858289f
+    dato: '2026-11-23'
+    versjon: 3
+  matte-forkurs/kapitler/12-vektorer/index.qmd:
+    blob: 43eb33dab93233e7eba29f9c1422758aef8755c4
+    dato: '2026-11-23'
+    versjon: 3
   plattform/matematikkhjelp/tema-tekster/algebra-og-likninger.md:
     blob: f9a9dabe1118514e607778fef0b4feed57427d40
     dato: '2026-11-21'
@@ -1241,6 +1437,10 @@ filer:
     blob: 1155da356d14436dbb2d4c84f45ea649390bec12
     dato: '2026-11-22'
     versjon: 3
+  plattform/matematikkhjelp/tema-tekster/anvendelser-integrasjon.md:
+    blob: 673a3a5bb77df3dc66da1aa4b663a03bb5c1eac4
+    dato: '2026-11-23'
+    versjon: 3
   plattform/matematikkhjelp/tema-tekster/derivasjon.md:
     blob: 9b6597d9a467a639de99816c7b6b3c0679326199
     dato: '2026-11-22'
@@ -1248,6 +1448,14 @@ filer:
   plattform/matematikkhjelp/tema-tekster/eksponential-og-logaritme.md:
     blob: 4bf5b59e04bb855f8944aeebf91a46cc19ce5f1c
     dato: '2026-11-21'
+    versjon: 3
+  plattform/matematikkhjelp/tema-tekster/flervariable-funksjoner.md:
+    blob: 686fd3ba973a6a7ee20f9300b77b254c2efc65d7
+    dato: '2026-11-23'
+    versjon: 3
+  plattform/matematikkhjelp/tema-tekster/folger-og-rekker.md:
+    blob: 5ee3fc30fbfe75dff064cdf7623e963e71e2a3a6
+    dato: '2026-11-23'
     versjon: 3
   plattform/matematikkhjelp/tema-tekster/funksjoner.md:
     blob: ea8ec9f17dda2850d70e7799556db40e8aba31e3
@@ -1260,6 +1468,14 @@ filer:
   plattform/matematikkhjelp/tema-tekster/grenseverdier.md:
     blob: 56336d7fbad6daa6f271fdfd188d17ee71005236
     dato: '2026-11-22'
+    versjon: 3
+  plattform/matematikkhjelp/tema-tekster/integrasjon.md:
+    blob: 425407892dd7bc7bf7c04d8b5f0981b376033763
+    dato: '2026-11-23'
+    versjon: 3
+  plattform/matematikkhjelp/tema-tekster/integrasjonsteknikker.md:
+    blob: 206d7f933981e89c6425d481d4aa4ef6272c192d
+    dato: '2026-11-23'
     versjon: 3
   plattform/matematikkhjelp/tema-tekster/inverse-funksjoner.md:
     blob: 9a8a03e4f85de82e0cba31d770e8ae0826a8db93
