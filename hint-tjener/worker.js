@@ -1073,13 +1073,29 @@ async function hentInnhold(side) {
 function lesJson(s) {
   if (!s) return null;
   s = s.replace(/```(?:json)?/gi, "");
+  const prov = (t) => {
+    try { return JSON.parse(t); } catch {}
+    try { return JSON.parse(t.replace(/,\s*([}\]])/g, "$1")); } catch {}   // komma før } eller ]
+    // LaTeX med enkel backslash (\cdot, \sqrt …) er ugyldig JSON. Dobler backslash som ikke starter en gyldig JSON-escape.
+    try { return JSON.parse(t.replace(/\\(?!["\\/bfnrtu])/g, "\\\\").replace(/,\s*([}\]])/g, "$1")); } catch { return null; }
+  };
   const a = s.indexOf("{"), z = s.lastIndexOf("}");
   if (a < 0 || z <= a) return null;
-  const t = s.slice(a, z + 1);
-  try { return JSON.parse(t); } catch {}
-  try { return JSON.parse(t.replace(/,\s*([}\]])/g, "$1")); } catch {}   // komma før } eller ]
-  // LaTeX med enkel backslash (\cdot, \sqrt …) er ugyldig JSON. Dobler backslash som ikke starter en gyldig JSON-escape.
-  try { return JSON.parse(t.replace(/\\(?!["\\/bfnrtu])/g, "\\\\").replace(/,\s*([}\]])/g, "$1")); } catch { return null; }
+  const hel = prov(s.slice(a, z + 1));
+  if (hel) return hel;
+  // Modellen sender av og til to JSON-objekter etter hverandre (samme svar to ganger). Bruk det første hele objektet.
+  let dybde = 0, iStreng = false, esc = false;
+  for (let i = a; i < s.length; i++) {
+    const c = s[i];
+    if (iStreng) { if (esc) esc = false; else if (c === "\\") esc = true; else if (c === '"') iStreng = false; continue; }
+    if (c === '"') iStreng = true;
+    else if (c === "{") dybde++;
+    else if (c === "}" && --dybde === 0) { const r = prov(s.slice(a, i + 1)); if (r) return r; break; }
+  }
+  // Siste utvei: plukk ut "svar"-feltet, så studenten aldri ser rå JSON.
+  const m = s.match(/"svar"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+  if (m) { const r = prov(`{"svar":"${m[1]}"}`); if (r) { const h = s.match(/"humor"\s*:\s*"(\w+)"/); if (h) r.humor = h[1]; return r; } }
+  return null;
 }
 
 // ---------------------------------------------------------------- felles

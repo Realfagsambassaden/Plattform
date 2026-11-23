@@ -138,7 +138,20 @@
       '<button type="button" class="fc-knapp" aria-expanded="false">💬<span class="fc-tekst"> Tilbakemelding</span></button>';
     document.body.appendChild(rot);
     var panel = rot.querySelector('.fc-panel'), knapp = rot.querySelector('.fc-knapp'), logg = rot.querySelector('.fc-logg'), skj = rot.querySelector('form');
-    function apne(v) { panel.hidden = !v; knapp.setAttribute('aria-expanded', String(v)); if (v) skj.tekst.focus(); }
+    // Mobil: tastaturet dekker nederste del av skjermen uten at 70vh krymper, så tekstfeltet havnet bak tastaturet.
+    // visualViewport gir det synlige området; panelet løftes over tastaturet og krymper til det som er synlig.
+    function tilpass() {
+      var vv = window.visualViewport; if (!vv || panel.hidden) return;
+      var under = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      rot.style.bottom = under > 40 ? (under + 8) + 'px' : '';
+      panel.style.maxHeight = under > 40 ? Math.max(200, vv.height - 70) + 'px' : '';
+    }
+    if (window.visualViewport) { visualViewport.addEventListener('resize', tilpass); visualViewport.addEventListener('scroll', tilpass); }
+    function apne(v) {
+      panel.hidden = !v; knapp.setAttribute('aria-expanded', String(v));
+      if (v) { skj.tekst.focus(); tilpass(); setTimeout(function () { tilpass(); skj.tekst.scrollIntoView({ block: 'nearest' }); }, 350); }
+      else { rot.style.bottom = ''; panel.style.maxHeight = ''; }
+    }
     window.fhTilbakemelding = function () { apne(true); };   // studieappen åpner tilbakemeldingen fra menyen
     knapp.onclick = function () { apne(panel.hidden); };
     rot.querySelector('.fc-lukk').onclick = function () { apne(false); };
