@@ -6,7 +6,7 @@
 <title>Formelark TRES0312</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
-<script>window.MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] }, svg: { fontCache: "global", scale: 1.02 } };</script>
+<script>window.MathJax = { tex: { macros: { gc: '\\mathrm{g}', ec: '\\mathrm{e}', kB: '\\mathrm{k_B}', dvec: ['\\overrightarrow{\\Delta #1}', 1], enh: ['\\,\\mathrm{#1}', 1], sub: ['_\\textrm{#1}', 1] }, inlineMath: [['$', '$']], displayMath: [['$$', '$$']] }, svg: { fontCache: "global", scale: 1.02 } };</script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js"></script>
 <style>
   :root { --tavle: #24272a; --tavle2: #2c3033; --linje: #3f4448; --kritt: #eceeea; --stov: #a3a9ad; --neon: #8fcf86; --oransje: #e39d63; --gul: #e6d98a; }
@@ -51,131 +51,119 @@
 <body>
 <main>
   <h1>Formelark <span>TRES0312</span></h1>
-  <p class="under">Forkurs i fysikk · formlene du har med på eksamen</p>
+  <p class="under">Forkurs i fysikk · NTNU · formlene du har med på eksamen · <a href="tres0312.pdf" style="color:var(--neon)">last ned som PDF</a></p>
 
   <div class="tre">
     <section>
-      <h2>Naturkonstanter og verdier</h2>
+      <h2>Naturkonstanter og enheter</h2>
       <table>
-        <tr><td class="f">$\mathrm{g} = 9.81\ \mathrm{m/s^2}$</td><td class="h">tyngdeakselerasjonen ved jordoverflaten</td></tr>
-        <tr><td class="f">$\mathrm{e} = 1.602\cdot 10^{-19}\ \mathrm{C}$</td><td class="h">elementærladningen</td></tr>
-        <tr><td class="f">$\mathrm{k_B} = 1.381\cdot 10^{-23}\ \mathrm{J/K}$</td><td class="h">Boltzmanns konstant</td></tr>
-        <tr><td class="f">$\mathrm{m_e} = 9.109\cdot 10^{-31}\ \mathrm{kg}$</td><td class="h">elektronmassen</td></tr>
-        <tr><td class="f">$\mathrm{m_p} = 1.673\cdot 10^{-27}\ \mathrm{kg}$</td><td class="h">protonmassen</td></tr>
-        <tr><td class="f">$1\ \mathrm{atm} = 1.013\cdot 10^{5}\ \mathrm{Pa}$</td><td class="h">lufttrykket ved havoverflaten</td></tr>
-        <tr><td class="f">$\rho_\text{vann} = 1.00\cdot 10^{3}\ \mathrm{kg/m^3}$</td><td class="h">massetettheten til vann</td></tr>
+        <tr><td class="f">$\displaystyle \gc = 9.81\enh{m/s^2}$</td><td class="h">tyngdeakselerasjonen ved jordoverflaten</td></tr>
+        <tr><td class="f">$\displaystyle \ec = 1.602\cdot10^{-19}\enh{C}$</td><td class="h">elementærladningen</td></tr>
+        <tr><td class="f">$\displaystyle \kB = 1.381\cdot10^{-23}\enh{J/K}$</td><td class="h">Boltzmanns konstant</td></tr>
+        <tr><td class="f">$\displaystyle \mathrm{m_e} = 9.109\cdot10^{-31}\enh{kg}$</td><td class="h">elektronmassen</td></tr>
+        <tr><td class="f">$\displaystyle \mathrm{m_p} = 1.673\cdot10^{-27}\enh{kg}$</td><td class="h">protonmassen</td></tr>
       </table>
-    </section>
-    <section>
-      <h2>Enheter</h2>
       <table>
-        <tr><td class="f">$\mathrm{N} = \mathrm{kg\cdot m/s^2}$</td><td class="h">newton, enheten for kraft $F$</td></tr>
-        <tr><td class="f">$\mathrm{J} = \mathrm{N\cdot m}$</td><td class="h">joule, enheten for energi $E$ og arbeid $W$</td></tr>
-        <tr><td class="f">$\mathrm{W} = \mathrm{J/s}$</td><td class="h">watt, enheten for effekt $P$</td></tr>
-        <tr><td class="f">$\mathrm{Pa} = \mathrm{N/m^2}$</td><td class="h">pascal, enheten for trykk $p$</td></tr>
-        <tr><td class="f">$\mathrm{C} = \mathrm{A\cdot s}$</td><td class="h">coulomb, enheten for ladning $q$</td></tr>
-        <tr><td class="f">$\mathrm{V} = \mathrm{J/C}$</td><td class="h">volt, enheten for spenning $U$</td></tr>
-        <tr><td class="f">$\Omega = \mathrm{V/A}$</td><td class="h">ohm, enheten for resistans $R$</td></tr>
-        <tr><td class="f">$T = t + 273.15$</td><td class="h">temperatur i kelvin ($T$) fra grader celsius ($t$)</td></tr>
-        <tr><td class="f">$1\ \mathrm{km/h} = \tfrac{1}{3.6}\ \mathrm{m/s}$</td><td class="h">og $1\ \mathrm{kWh} = 3.6\ \mathrm{MJ}$</td></tr>
+        <tr><td class="f">$\displaystyle \mathrm{N} = \mathrm{kg\cdot m/s^2}$</td><td class="h">newton, enhet for kraft $F$</td></tr>
+        <tr><td class="f">$\displaystyle \mathrm{J} = \mathrm{N\cdot m}$</td><td class="h">joule, enhet for energi $E$ og arbeid $W$</td></tr>
+        <tr><td class="f">$\displaystyle \mathrm{W} = \mathrm{J/s}$</td><td class="h">watt, enhet for effekt $P$</td></tr>
+        <tr><td class="f">$\displaystyle \mathrm{Pa} = \mathrm{N/m^2}$</td><td class="h">pascal, enhet for trykk $p$</td></tr>
+        <tr><td class="f">$\displaystyle 1\enh{atm} = 1.013\cdot10^{5}\enh{Pa}$</td><td class="h">lufttrykket ved havoverflaten</td></tr>
+        <tr><td class="f">$\displaystyle 1\enh{bar} = 1.00\cdot10^{5}\enh{Pa}$</td><td class="h"></td></tr>
+        <tr><td class="f">$\displaystyle \mathrm{C} = \mathrm{A\cdot s}$</td><td class="h">coulomb, enhet for ladning $q$</td></tr>
+        <tr><td class="f">$\displaystyle \mathrm{V} = \mathrm{J/C}$</td><td class="h">volt, enhet for spenning $U$</td></tr>
+        <tr><td class="f">$\displaystyle \Omega = \mathrm{V/A}$</td><td class="h">ohm, enhet for resistans $R$</td></tr>
+        <tr><td class="f">$\displaystyle T = t + 273.15$</td><td class="h">temperatur i kelvin ($T$) fra grader celsius ($t$)</td></tr>
+        <tr><td class="f">$\displaystyle 1\enh{km/h} = \tfrac{1}{3.6}\enh{m/s}$</td><td class="h"></td></tr>
+        <tr><td class="f">$\displaystyle 1\enh{kWh} = 3.6\enh{MJ}$</td><td class="h"></td></tr>
       </table>
-    </section>
-    <section>
-      <h2>Dekadiske prefikser</h2>
-      <table class="prefiks" style="display:table">
+      <p class="merk" style="color:var(--neon);font-family:'Architects Daughter',cursive;font-size:1rem">Dekadiske prefikser</p>
+      <table class="verdier prefiks">
         <tr><td>G</td><td>giga</td><td>$10^{9}$</td><td>c</td><td>centi</td><td>$10^{-2}$</td></tr>
         <tr><td>M</td><td>mega</td><td>$10^{6}$</td><td>m</td><td>milli</td><td>$10^{-3}$</td></tr>
         <tr><td>k</td><td>kilo</td><td>$10^{3}$</td><td>µ</td><td>mikro</td><td>$10^{-6}$</td></tr>
         <tr><td>h</td><td>hekto</td><td>$10^{2}$</td><td>n</td><td>nano</td><td>$10^{-9}$</td></tr>
       </table>
     </section>
-  </div>
-
-  <div class="rutenett" style="margin-top:1rem">
     <section>
       <h2>Matematiske verktøy</h2>
       <table>
-        <tr><td class="f">$a^2 + b^2 = c^2$</td><td class="h">Pytagoras ($c$ er hypotenusen)</td></tr>
-        <tr><td class="f">$\sin\theta = \dfrac{\text{mot}}{\text{hyp}} \qquad \cos\theta = \dfrac{\text{hos}}{\text{hyp}}$</td><td class="f">$\tan\theta = \dfrac{\text{mot}}{\text{hos}}$</td><td class="h">rettvinklet trekant</td></tr>
-        <tr><td class="f">$x = \dfrac{-b \pm \sqrt{b^2 - 4ac}}{2a}$</td><td class="h">løsningene av $ax^2 + bx + c = 0$</td></tr>
-        <tr><td class="f">$\vec{A} = [A_x,\, A_y] = [A\cos\theta,\, A\sin\theta]$</td><td class="h">dekomponering; $\theta$ fra $x$-aksen</td></tr>
-        <tr><td class="f">$A = |\vec{A}| = \sqrt{A_x^2 + A_y^2}$</td><td class="h">lengden av en vektor</td></tr>
-        <tr><td class="f">$\vec{A}\cdot\vec{B} = AB\cos\theta = A_xB_x + A_yB_y$</td><td class="h">skalarprodukt; $\theta$ er vinkelen mellom vektorene</td></tr>
-        <tr><td class="f">$|\vec{A}\times\vec{B}| = AB\sin\theta$</td><td class="h">lengden av vektorproduktet</td></tr>
+        <tr><td class="f">$\displaystyle a^2 + b^2 = c^2$</td><td class="h">Pytagoras ($c$ er hypotenusen)</td></tr>
+        <tr><td class="f">$\begin{gathered}\sin\theta = \frac{\text{mot}}{\text{hyp}},\ \ \cos\theta = \frac{\text{hos}}{\text{hyp}} \\ \tan\theta = \frac{\text{mot}}{\text{hos}}\end{gathered}$</td><td class="h">rettvinklet trekant</td></tr>
+        <tr><td class="f">$\displaystyle x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$</td><td class="h">løsningene av $ax^2 + bx + c = 0$</td></tr>
+        <tr><td class="f">$\displaystyle \vec{A} = [A\cos\theta,\, A\sin\theta]$</td><td class="h">dekomponering; $\theta$ målt fra $x$-aksen</td></tr>
+        <tr><td class="f">$\displaystyle A = |\vec{A}| = \sqrt{A_x^2 + A_y^2}$</td><td class="h">lengden av en vektor</td></tr>
+        <tr><td class="f">$\displaystyle \vec{A}\cdot\vec{B} = AB\cos\theta$</td><td class="h">skalarprodukt; $=A_xB_x + A_yB_y$</td></tr>
+        <tr><td class="f">$\displaystyle |\vec{A}\times\vec{B}| = AB\sin\theta$</td><td class="h">lengden av vektorproduktet</td></tr>
       </table>
     </section>
-
     <section>
       <h2>Kinematikk</h2>
       <table>
-        <tr><td class="f">$\vec{v} = \dfrac{\Delta\vec{s}}{\Delta t}$</td><td class="h"><b>fart</b> $\vec v$ (m/s), forflytning $\Delta\vec s$ (m), tid $\Delta t$ (s)</td></tr>
-        <tr><td class="f">$\vec{a} = \dfrac{\Delta\vec{v}}{\Delta t}$</td><td class="h"><b>akselerasjon</b> $\vec a$ ($\mathrm{m/s^2}$)</td></tr>
-        <tr><td class="f">$\vec{v} = \vec{v}_0 + \vec{a}\,t$</td><td class="f">$\vec{s} = \vec{s}_0 + \vec{v}_0\,t + \tfrac12\vec{a}\,t^2$</td><td class="f">$v^2 - v_0^2 = 2a\,(s - s_0)$</td><td class="h">konstant akselerasjon $\vec a$; startfart $\vec v_0$, startposisjon $\vec s_0$. Gjelder hver komponent for seg: i et kast er $\vec a = [0,\,-\mathrm g]$</td></tr>
-        <tr><td class="f">$a_\perp = \dfrac{v^2}{r}$</td><td class="h">sirkelbevegelse: akselerasjon <b>mot sentrum</b>, radius $r$ (m)</td></tr>
-        <tr><td class="f">$v = \dfrac{2\pi r}{T}$</td><td class="h">banefart ved jevn sirkelbevegelse, omløpstid $T$ (s)</td></tr>
+        <tr><td class="f">$\displaystyle \vec{v} = \frac{\dvec{s}}{\Delta t}$</td><td class="h">fart $\vec v$ (m/s), forflytning $\dvec{s}$ (m), tid $\Delta t$ (s)</td></tr>
+        <tr><td class="f">$\displaystyle \vec{a} = \frac{\dvec{v}}{\Delta t}$</td><td class="h">akselerasjon $\vec a$ ($\mathrm{m/s^2}$)</td></tr>
+        <tr><td class="f">$\begin{gathered}\vec{v} = \vec{v}_0 + \vec{a}\,t \\ \vec{s} = \vec{s}_0 + \vec{v}_0\,t + \tfrac12\vec{a}\,t^2 \\ v^2 - v_0^2 = 2a\,(s - s_0)\end{gathered}$</td><td class="h">konstant akselerasjon; startfart $\vec v_0$, startposisjon $\vec s_0$. Gjelder hver komponent for seg: i et kast er $\vec a = [0, -\gc]$</td></tr>
+        <tr><td class="f">$\displaystyle a_\perp = \frac{v^2}{r}$</td><td class="h">sirkelbevegelse: akselerasjon mot sentrum, radius $r$ (m)</td></tr>
+        <tr><td class="f">$\displaystyle v = \frac{2\pi r}{T}$</td><td class="h">banefart ved jevn sirkelbevegelse, omløpstid $T$ (s)</td></tr>
       </table>
     </section>
-
     <section>
       <h2>Krefter og bevegelsesmengde</h2>
       <table>
-        <tr><td class="f">$\vec{p} = m\vec{v}$</td><td class="h"><b>bevegelsesmengde</b> ($\mathrm{kg\cdot m/s}$), masse $m$ (kg)</td></tr>
-        <tr><td class="f">$\sum\vec{F} = \dfrac{\Delta\vec{p}}{\Delta t} = m\vec{a}$</td><td class="h"><b>Newtons 2. lov</b>, kraft $\vec F$ (N). Newtons 1. lov: $\sum\vec F = \vec 0 \Leftrightarrow \vec v$ konstant</td></tr>
-        <tr><td class="f">$\vec{F}_{AB} = -\vec{F}_{BA}$</td><td class="h"><b>Newtons 3. lov</b>: kraft og motkraft virker på hvert sitt legeme</td></tr>
-        <tr><td class="f">$\vec{G} = m\vec{\mathrm g}$</td><td class="h">tyngdekraften</td></tr>
-        <tr><td class="f">$R = \mu N$</td><td class="h">friksjon: kinetisk $\mu_k$ (glir), statisk $R \le \mu_s N$ (står stille); normalkraft $N$</td></tr>
-        <tr><td class="f">$\vec{F} = -k\,\vec{x}$</td><td class="h">fjærkraft, fjærstivhet $k$ (N/m), forlengelse $\vec x$ (m)</td></tr>
-        <tr><td class="f">$\sum F = m\dfrac{v^2}{r}$</td><td class="h">sirkelbevegelse: kraftsum mot sentrum</td></tr>
-        <tr><td class="f">$\Delta\vec{p} = \vec{F}\,\Delta t$</td><td class="h">impuls (kraftstøt)</td></tr>
-        <tr><td class="f">$\vec{p}_\text{før} = \vec{p}_\text{etter}$</td><td class="h">bevaring av bevegelsesmengde når ytre krefter kan ses bort fra (støt). Elastisk støt: også $E_\text{K}$ bevart</td></tr>
+        <tr><td class="f">$\displaystyle \vec{p} = m\vec{v}$</td><td class="h">bevegelsesmengde ($\mathrm{kg\cdot m/s}$), masse $m$ (kg)</td></tr>
+        <tr><td class="f">$\displaystyle {\sum}\vec{F} = m\vec{a} = \frac{\dvec{p}}{\Delta t}$</td><td class="h">Newtons 2. lov, kraft $\vec F$ (N)</td></tr>
+        <tr><td class="f">$\displaystyle \sum\vec F = \vec 0 \;\Leftrightarrow\; \vec v \text{ konstant}$</td><td class="h">Newtons 1. lov</td></tr>
+        <tr><td class="f">$\displaystyle \vec{F}_{AB} = -\vec{F}_{BA}$</td><td class="h">Newtons 3. lov: kraft og motkraft virker på hvert sitt legeme</td></tr>
+        <tr><td class="f">$\displaystyle \vec{G} = m\vec{\gc}$</td><td class="h">tyngdekraften</td></tr>
+        <tr><td class="f">$\displaystyle R = \mu N$</td><td class="h">friksjon: kinetisk $\mu_\text{k}$ (glir), statisk $R \le \mu_\text{s} N$ (står stille); normalkraft $N$</td></tr>
+        <tr><td class="f">$\displaystyle \vec{F} = -k\,\vec{x}$</td><td class="h">fjærkraft, fjærstivhet $k$ (N/m), forlengelse $\vec x$ (m)</td></tr>
+        <tr><td class="f">$\displaystyle {\sum} F = m\frac{v^2}{r}$</td><td class="h">sirkelbevegelse: kraftsum mot sentrum</td></tr>
+        <tr><td class="f">$\displaystyle \dvec{p} = \vec{F}\,\Delta t$</td><td class="h">impuls (kraftstøt)</td></tr>
+        <tr><td class="f">$\displaystyle \vec{p}\sub{før} = \vec{p}\sub{etter}$</td><td class="h">bevaring av bevegelsesmengde når ytre krefter kan ses bort fra (støt). Elastisk støt: også $E\sub{K}$ bevart</td></tr>
       </table>
     </section>
-
     <section>
       <h2>Arbeid, energi og effekt</h2>
       <table>
-        <tr><td class="f">$W = \vec{F}\cdot\vec{s} = Fs\cos\theta$</td><td class="h"><b>arbeid</b> $W$ (J); $\theta$ mellom kraft og forflytning</td></tr>
-        <tr><td class="f">$E_\text{K} = \tfrac12 mv^2$</td><td class="h">kinetisk energi</td></tr>
-        <tr><td class="f">$E_\text{p} = m\mathrm{g}h$</td><td class="h">potensiell energi i tyngdefeltet, høyde $h$ (m)</td></tr>
-        <tr><td class="f">$E_\text{p} = \tfrac12 kx^2$</td><td class="h">potensiell energi i en fjær</td></tr>
-        <tr><td class="f">$W_\text{tot} = \Delta E_\text{K}$</td><td class="h">arbeid–energi-setningen</td></tr>
-        <tr><td class="f">$E_\text{K} + E_\text{p} = \text{konstant}$</td><td class="h">bevaring av mekanisk energi når bare tyngde- og fjærkraft gjør arbeid. Ellers: $E_\text{før} + W_\text{andre} = E_\text{etter}$</td></tr>
-        <tr><td class="f">$P = \dfrac{W}{t} = Fv$</td><td class="h"><b>effekt</b> $P$ (W)</td></tr>
+        <tr><td class="f">$\displaystyle W = \vec{F}\cdot\vec{s} = Fs\cos\theta$</td><td class="h">arbeid $W$ (J); $\theta$ mellom kraft og forflytning</td></tr>
+        <tr><td class="f">$\displaystyle E\sub{K} = \tfrac12 mv^2$</td><td class="h">kinetisk energi</td></tr>
+        <tr><td class="f">$\displaystyle E\sub{p} = m\gc h$</td><td class="h">potensiell energi i tyngdefeltet, høyde $h$ (m)</td></tr>
+        <tr><td class="f">$\displaystyle E\sub{p} = \tfrac12 kx^2$</td><td class="h">potensiell energi i en fjær</td></tr>
+        <tr><td class="f">$\displaystyle W\sub{tot} = \Delta E\sub{K}$</td><td class="h">arbeid–energi-setningen</td></tr>
+        <tr><td class="f">$\displaystyle E\sub{K} + E\sub{p} = \text{konstant}$</td><td class="h">bevaring av mekanisk energi når bare tyngde- og fjærkraft gjør arbeid</td></tr>
+        <tr><td class="f">$\displaystyle P = \frac{W}{t} = Fv$</td><td class="h">effekt $P$ (W)</td></tr>
       </table>
     </section>
-
     <section>
       <h2>Statikk</h2>
       <table>
-        <tr><td class="f">$\sum\vec{F} = \vec{0}$</td><td class="h">kraftlikevekt: $\sum F_x = 0$ og $\sum F_y = 0$</td></tr>
-        <tr><td class="f">$\tau = rF\sin\theta$</td><td class="h"><b>kraftmoment</b> ($\mathrm{N\cdot m}$), $\vec\tau = \vec r\times\vec F$; arm $r$ fra omdreiningspunktet</td></tr>
-        <tr><td class="f">$\sum\tau = 0$</td><td class="h">rotasjonslikevekt (om et valgfritt punkt)</td></tr>
-        <tr><td class="f">$x_\text{ms} = \dfrac{\sum m_i x_i}{\sum m_i}$</td><td class="h">massesenteret (tilsvarende for $y$)</td></tr>
+        <tr><td class="f">$\displaystyle \sum F_x = 0,\ \ \sum F_y = 0$</td><td class="h">kraftlikevekt ($\sum\vec F = \vec 0$)</td></tr>
+        <tr><td class="f">$\displaystyle \tau = rF\sin\theta$</td><td class="h">kraftmoment ($\mathrm{N\cdot m}$) om et valgt punkt; $r$ er avstanden fra punktet til angrepspunktet, og $F\sin\theta$ er kraftkomponenten vinkelrett på $\vec r$</td></tr>
+        <tr><td class="f">$\displaystyle \sum\tau = 0$</td><td class="h">rotasjonslikevekt (om et valgfritt punkt)</td></tr>
+        <tr><td class="f">$\displaystyle x\sub{T} = \frac{\sum m_i x_i}{\sum m_i}$</td><td class="h">tyngdepunkt (/massesenter); tilsvarende for $y$</td></tr>
       </table>
     </section>
-
     <section>
       <h2>Fluider</h2>
       <table>
-        <tr><td class="f">$\rho = \dfrac{m}{V}$</td><td class="h"><b>massetetthet</b> ($\mathrm{kg/m^3}$), volum $V$ ($\mathrm{m^3}$)</td></tr>
-        <tr><td class="f">$p = \dfrac{F}{A}$</td><td class="h"><b>trykk</b> (Pa), areal $A$ ($\mathrm{m^2}$)</td></tr>
-        <tr><td class="f">$p = p_0 + \rho\mathrm{g}h$</td><td class="h">trykket i dybden $h$ under overflaten med trykk $p_0$</td></tr>
-        <tr><td class="f">$\dfrac{F_1}{A_1} = \dfrac{F_2}{A_2}$</td><td class="h">Pascals lov (hydraulisk løft)</td></tr>
-        <tr><td class="f">$F_\text{B} = \rho_\text{væske}\,\mathrm{g}\,V_\text{fortrengt}$</td><td class="h"><b>oppdrift</b> (Arkimedes' lov)</td></tr>
+        <tr><td class="f">$\displaystyle \rho = \frac{m}{V}$</td><td class="h">massetetthet ($\mathrm{kg/m^3}$), volum $V$ ($\mathrm{m^3}$)</td></tr>
+        <tr><td class="f">$\displaystyle p = \frac{F}{A}$</td><td class="h">trykk (Pa), areal $A$ ($\mathrm{m^2}$)</td></tr>
+        <tr><td class="f">$\displaystyle p = p_0 + \rho\gc h$</td><td class="h">trykket i dybden $h$ under overflaten med trykk $p_0$</td></tr>
+        <tr><td class="f">$\displaystyle \frac{F_1}{A_1} = \frac{F_2}{A_2}$</td><td class="h">Pascals lov (hydraulisk løft)</td></tr>
+        <tr><td class="f">$\displaystyle F\sub{B} = \rho\sub{væske}\,\gc\,V\sub{fortrengt}$</td><td class="h">oppdrift (Arkimedes' lov)</td></tr>
       </table>
     </section>
-
     <section>
       <h2>Termofysikk</h2>
       <table>
-        <tr><td class="f">$Q = cm\,\Delta T$</td><td class="h"><b>varme</b> $Q$ (J), spesifikk varmekapasitet $c$ ($\mathrm{J/(kg\cdot K)}$). Med varmekapasitet $C$: $Q = C\,\Delta T$</td></tr>
-        <tr><td class="f">$Q = \ell\,m$</td><td class="h">faseovergang, spesifikk smelte-/fordampningsvarme $\ell$ (J/kg)</td></tr>
-        <tr><td class="f">$\Delta U = Q + W$</td><td class="h"><b>termodynamikkens 1. lov</b>: $Q$ varme tilført gassen, $W$ arbeid gjort <i>på</i> gassen (begge positive når de går inn i gassen), $\Delta U$ endring i indre energi</td></tr>
-        <tr><td class="f">$pV = N\mathrm{k_B}T$</td><td class="h"><b>ideell gass</b>: antall partikler $N$, temperatur $T$ (K)</td></tr>
-        <tr><td class="f">$\bar{E}_\text{K} = \tfrac32\,\mathrm{k_B}T$</td><td class="h">midlere kinetisk energi per partikkel</td></tr>
-        <tr><td class="f">$W = -p\,\Delta V$</td><td class="h">arbeid gjort <i>på</i> gassen i en <b>isobar</b> prosess. Gassen selv gjør arbeidet $p\,\Delta V$</td></tr>
+        <tr><td class="f">$\displaystyle Q = cm\,\Delta T$</td><td class="h">varme $Q$ (J), spesifikk varmekapasitet $c$ ($\mathrm{J/(kg\cdot K)}$)</td></tr>
+        <tr><td class="f">$\displaystyle Q = C\,\Delta T$</td><td class="h">varmekapasitet $C$ (J/K)</td></tr>
+        <tr><td class="f">$\displaystyle Q = \ell\,m$</td><td class="h">faseovergang; spesifikk smelte-/fordampningsvarme $\ell$ (J/kg)</td></tr>
+        <tr><td class="f">$\displaystyle \Delta U = Q + W$</td><td class="h">termodynamikkens 1. lov: $Q$ varme tilført gassen, $W$ arbeid gjort <i>på</i> gassen, $\Delta U$ endring i indre energi</td></tr>
+        <tr><td class="f">$\displaystyle W = -p\,\Delta V$</td><td class="h">arbeid gjort på gassen ved konstant trykk (gassen selv gjør arbeidet $p \Delta V$)</td></tr>
+        <tr><td class="f">$\displaystyle pV = N\kB T$</td><td class="h">ideell gass: antall partikler $N$, temperatur $T$ (K)</td></tr>
+        <tr><td class="f">$\displaystyle \bar{E}\sub{k} = \tfrac32\,\kB T$</td><td class="h">midlere kinetisk energi per partikkel</td></tr>
       </table>
-      <p class="merk">Prosesser for en gass:</p>
       <table>
         <tr><td class="f"><b>isobar</b></td><td class="h">konstant trykk: $\Delta p = 0$</td></tr>
         <tr><td class="f"><b>isokor</b></td><td class="h">konstant volum: $\Delta V = 0$, så $W = 0$</td></tr>
@@ -183,55 +171,53 @@
         <tr><td class="f"><b>adiabatisk</b></td><td class="h">ingen varmeutveksling: $Q = 0$</td></tr>
       </table>
     </section>
-
     <section>
       <h2>Elektrisitet</h2>
       <table>
-        <tr><td class="f">$q = N\mathrm{e}$</td><td class="h"><b>ladning</b> $q$ (C), $N$ elementærladninger</td></tr>
-        <tr><td class="f">$\vec{F} = q\vec{E}$</td><td class="h">kraft på en ladning i et elektrisk felt $\vec E$ (N/C = V/m)</td></tr>
-        <tr><td class="f">$I = \dfrac{\Delta q}{\Delta t}$</td><td class="h"><b>strøm</b> $I$ (A)</td></tr>
-        <tr><td class="f">$U = \dfrac{W}{q}$</td><td class="h"><b>spenning</b> $U$ (V): energi per ladning</td></tr>
-        <tr><td class="f">$U = RI$</td><td class="h">Ohms lov, resistans $R$ ($\Omega$)</td></tr>
-        <tr><td class="f">$R = R_1 + R_2 + \dots$</td><td class="h">seriekobling</td></tr>
-        <tr><td class="f">$\dfrac{1}{R} = \dfrac{1}{R_1} + \dfrac{1}{R_2} + \dots$</td><td class="h">parallellkobling</td></tr>
-        <tr><td class="f">$\sum I_\text{inn} = \sum I_\text{ut}$</td><td class="h">Kirchhoffs strømlov (i et knutepunkt)</td></tr>
-        <tr><td class="f">$\sum U = 0$</td><td class="h">Kirchhoffs spenningslov (rundt en lukket sløyfe)</td></tr>
-        <tr><td class="f">$P = UI = RI^2 = \dfrac{U^2}{R}$</td><td class="h"><b>elektrisk effekt</b>; energi $E = Pt$</td></tr>
+        <tr><td class="f">$\displaystyle q = N\ec$</td><td class="h">ladning $q$ (C), $N$ elementærladninger</td></tr>
+        <tr><td class="f">$\displaystyle I = \frac{\Delta q}{\Delta t}$</td><td class="h">strøm $I$ (A)</td></tr>
+        <tr><td class="f">$\displaystyle U = \frac{W}{q}$</td><td class="h">spenning $U$ (V): energi per ladning</td></tr>
+        <tr><td class="f">$\displaystyle U = RI$</td><td class="h">Ohms lov, resistans $R$ ($\Omega$)</td></tr>
+        <tr><td class="f">$\displaystyle R = R_1 + R_2 + \dots$</td><td class="h">seriekobling</td></tr>
+        <tr><td class="f">$\displaystyle \frac{1}{R} = \frac{1}{R_1} + \frac{1}{R_2} + \dots$</td><td class="h">parallellkobling</td></tr>
+        <tr><td class="f">$\displaystyle \sum I\sub{inn} = \sum I\sub{ut}$</td><td class="h">Kirchhoffs strømlov (i et knutepunkt)</td></tr>
+        <tr><td class="f">$\displaystyle \sum U = 0$</td><td class="h">Kirchhoffs spenningslov (rundt en lukket sløyfe)</td></tr>
+        <tr><td class="f">$\displaystyle P = UI = RI^2 = \frac{U^2}{R}$</td><td class="h">elektrisk effekt; energi $E = Pt$</td></tr>
       </table>
     </section>
     <section class="bred">
       <h2>Stoffverdier</h2>
-      <div class="tre">
-        <table class="verdier">
-          <tr><th>Stoff</th><th>$c$ / $\mathrm{\tfrac{kJ}{kg\cdot K}}$</th></tr>
-          <tr><td>Vann</td><td>4.2</td></tr>
-          <tr><td>Is</td><td>2.1</td></tr>
-          <tr><td>Vanndamp</td><td>2.0</td></tr>
-          <tr><td>Luft</td><td>1.0</td></tr>
-          <tr><td>Aluminium</td><td>0.90</td></tr>
-          <tr><td>Glass</td><td>0.84</td></tr>
-          <tr><td>Jern</td><td>0.45</td></tr>
-          <tr><td>Kobber</td><td>0.39</td></tr>
-          <tr><td>Bly</td><td>0.13</td></tr>
-        </table>
-        <table class="verdier">
-          <tr><th>Stoff</th><th>smelter ved</th><th>$\ell_\text{smelte}$ / $\mathrm{\tfrac{kJ}{kg}}$</th></tr>
-          <tr><td>Vann (is)</td><td>$0\ ^\circ\mathrm{C}$</td><td>334</td></tr>
-          <tr><td>Etanol</td><td>$-114\ ^\circ\mathrm{C}$</td><td>108</td></tr>
-          <tr><td>Bly</td><td>$327\ ^\circ\mathrm{C}$</td><td>23</td></tr>
-          <tr><td>Aluminium</td><td>$660\ ^\circ\mathrm{C}$</td><td>397</td></tr>
-          <tr><td>Kobber</td><td>$1085\ ^\circ\mathrm{C}$</td><td>207</td></tr>
-          <tr><td>Jern</td><td>$1538\ ^\circ\mathrm{C}$</td><td>247</td></tr>
-        </table>
-        <table class="verdier">
-          <tr><th>Stoff</th><th>koker ved</th><th>$\ell_\text{fordamp}$ / $\mathrm{\tfrac{kJ}{kg}}$</th></tr>
-          <tr><td>Vann</td><td>$100\ ^\circ\mathrm{C}$</td><td>2 259</td></tr>
-          <tr><td>Etanol</td><td>$78\ ^\circ\mathrm{C}$</td><td>855</td></tr>
-          <tr><td>Nitrogen</td><td>$-196\ ^\circ\mathrm{C}$</td><td>199</td></tr>
-          <tr><td>Oksygen</td><td>$-183\ ^\circ\mathrm{C}$</td><td>213</td></tr>
-        </table>
-      </div>
-      <p class="merk">Ved 1 atm. Spesifikk varmekapasitet $c$, spesifikk smeltevarme $\ell_\text{smelte}$ og spesifikk fordampningsvarme $\ell_\text{fordamp}$.</p>
+      <table class="verdier">
+        <tr><th><b>Stoff</b></th><th><b>massetetthet $\rho$</b></th><th><b>spes. v.kap. $c$</b></th></tr>
+        <tr><th></th><th>[$\mathrm{kg/m^3}$]</th><th>[$\mathrm{kJ/(kg\cdot K)}$]</th></tr>
+        <tr><td>Luft (20 $^\circ$C, 1 atm)</td><td>$1.20$</td><td>1.0</td></tr>
+        <tr><td>Tre (furu)</td><td>$\approx 0.5\cdot10^{3}$</td><td>–</td></tr>
+        <tr><td>Etanol</td><td>$0.789\cdot10^{3}$</td><td>2.4</td></tr>
+        <tr><td>Is</td><td>$0.917\cdot10^{3}$</td><td>2.1</td></tr>
+        <tr><td>Vann</td><td>$1.00\cdot10^{3}$</td><td>4.2</td></tr>
+        <tr><td>Vanndamp</td><td>–</td><td>2.0</td></tr>
+        <tr><td>Sjøvann</td><td>$1.03\cdot10^{3}$</td><td>4.0</td></tr>
+        <tr><td>Glass</td><td>$2.5\cdot10^{3}$</td><td>0.84</td></tr>
+        <tr><td>Aluminium</td><td>$2.70\cdot10^{3}$</td><td>0.90</td></tr>
+        <tr><td>Jern</td><td>$7.87\cdot10^{3}$</td><td>0.45</td></tr>
+        <tr><td>Kobber</td><td>$8.96\cdot10^{3}$</td><td>0.39</td></tr>
+        <tr><td>Bly</td><td>$11.3\cdot10^{3}$</td><td>0.13</td></tr>
+        <tr><td>Kvikksølv</td><td>$13.6\cdot10^{3}$</td><td>0.14</td></tr>
+        <tr><td>Gull</td><td>$19.3\cdot10^{3}$</td><td>0.13</td></tr>
+      </table>
+      <table class="verdier">
+        <tr><th><b>Stoff</b></th><th><b>smelter</b></th><th><b>$\ell\sub{smelte}$</b></th><th><b>koker</b></th><th><b>$\ell\sub{fordamp}$</b></th></tr>
+        <tr><th></th><th>[$^\circ$C]</th><th>[$\mathrm{kJ/kg}$]</th><th>[$^\circ$C]</th><th>[$\mathrm{kJ/kg}$]</th></tr>
+        <tr><td>Vann</td><td>0</td><td>334</td><td>100</td><td>2 257</td></tr>
+        <tr><td>Etanol</td><td>$-114$</td><td>108</td><td>78</td><td>855</td></tr>
+        <tr><td>Nitrogen</td><td>$-210$</td><td>25.7</td><td>$-196$</td><td>199</td></tr>
+        <tr><td>Oksygen</td><td>$-218$</td><td>13.9</td><td>$-183$</td><td>213</td></tr>
+        <tr><td>Bly</td><td>327</td><td>23</td><td></td><td></td></tr>
+        <tr><td>Aluminium</td><td>660</td><td>397</td><td></td><td></td></tr>
+        <tr><td>Kobber</td><td>1085</td><td>207</td><td></td><td></td></tr>
+        <tr><td>Jern</td><td>1538</td><td>247</td><td></td><td></td></tr>
+      </table>
+      <p class="merk">Verdier ved 1 atm.</p>
     </section>
   </div>
 </main>
