@@ -534,6 +534,11 @@ function studieStart() {
       return { type: 'riktig', melding: 'Godkjent, men feil antall gjeldende siffer: svaret ditt har ' + har + ', og her skal det ha ' + n +
         ' (like mange som det minst nøyaktige måltallet i oppgaven).' };
     }
+    // Riktig tallverdi, men feil fortegn (f.eks. ladningen til et legeme med overskudd av elektroner): si det, og gi ett forsøk til.
+    if (fv !== 0 && sv !== 0 && (sv < 0) !== (fv < 0) && Math.abs(Math.abs(sv) - Math.abs(fv)) / Math.abs(fv) < 0.03) {
+      if (gjentatt === 'fortegn') return { type: 'regnefeil', melding: 'Tallverdien er riktig, men fortegnet er feil.' };
+      return { sporsmal: 'Tallverdien ser riktig ut, men sjekk fortegnet. Skal svaret være positivt eller negativt?', igjen: 'fortegn' };
+    }
     if (fv !== 0 && Math.abs(sv - fv) / Math.abs(fv) < 0.03) {
       if (gjentatt === 'avrunding') return { type: 'regnefeil', melding: 'Svaret er nær, men ikke riktig. Kanskje du rundet av for tidlig underveis?' };
       return { sporsmal: 'Svaret ditt er veldig nær, men ikke helt riktig. Har du rundet av underveis i utregningen? Regn med flere siffer til slutt, og sjekk svaret.', igjen: 'avrunding' };
