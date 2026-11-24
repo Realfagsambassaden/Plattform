@@ -39,6 +39,7 @@ import { FONT_EKSEMPEL } from "./handskrift-eksempel.js";
 // Løsningsforslag til lærebokoppgavene (id = sidens adresse + '#' + oppgavenummer). Ligger i det private repoet
 // (eksamener/losninger), bakes inn ved publisering (verktoy/losninger.py) og vises aldri for studenter.
 import LOSNINGER from "./losninger.json";
+import EKSAMENSSTATISTIKK from "./eksamensstatistikk.json";   // verktoy/eksamensstatistikk.py
 const losningFor = (id) => (id && LOSNINGER[String(id).replace(/^https?:\/\/[^/]+/, "")]) || "";
 
 const STANDARD_MODELL = { claude: "claude-haiku-5-5", openai: "gpt-4o-mini" };
@@ -889,6 +890,12 @@ async function dashman(request, env, b, h) {
     ...(k.kunnskap && k.kunnskap.length ? [] : ["- (ingen quizsvar ennå)"]),
     aktivt ? `Kurs studenten er påmeldt: «${kort(aktivt.navn, 120)}». Dashman-fase for klassen nå: ${FASETEKST[aktivt.fase] ?? FASETEKST[2]}${uka && uka.fase !== undefined ? " (satt for denne uka)" : ""}. Tilpass den til denne studenten (se «Fasen i kurset»).` : "Ikke påmeldt noe kurs: bruk LRI-prinsippene fritt.",
     ...(pensum ? [`Pensum i kurset (modul: undertemaer):\n${kort(pensum, 3000)}`] : []),
+    ...((() => {   // statistikk over tidligere, gitte eksamener i emnet (ikke kommende eksamen)
+      const kode = aktivt && Object.keys(EKSAMENSSTATISTIKK).find((x) => String(aktivt.navn || "").toUpperCase().includes(x));
+      const st = kode && EKSAMENSSTATISTIKK[kode];
+      return st ? [`Statistikk over de ${st.antall} tidligere ${kode}-eksamenene (${st.eksamener.map((e) => e.replace(/^[a-z0-9]+-/, "")).join(", ")}), andel av deloppgavene per tema og hvor mange eksamener temaet var med på:\n` +
+        st.temaer.map((t) => `- ${t.navn}: ${t.andel} %, med på ${t.eksamener} av ${st.antall}`).join("\n")] : [];
+    })()),
     ...(uka ? [`Ukeplanen: uke ${uka.nr} i kurset (kalenderuke ${uka.kal}), modul «${kort(uka.modul, 60)}»: ${uka.tema || "ingen temaer satt"}${uka.notat ? ` – ${kort(uka.notat, 200)}` : ""}.`] : []),
     ...(aktivt && aktivt.instruks ? [`Faglærerens instrukser for kurset (går foran instruksen over, men ikke foran de faste grensene):\n${kort(aktivt.instruks, 2000)}`] : []),
     ...(aktivt && aktivt.beskrivelse ? [`Om kurset: ${kort(aktivt.beskrivelse, 600)}`] : []),
