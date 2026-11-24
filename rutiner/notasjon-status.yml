@@ -1429,6 +1429,126 @@ filer:
     blob: 43eb33dab93233e7eba29f9c1422758aef8755c4
     dato: '2026-11-23'
     versjon: 3
+  matte-forkurs/kapitler/13-skalarprodukt-og-parameterframstilling/01-skalarproduktet.qmd:
+    blob: e257544a985c6102decc79676da8ec045420dc40
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/13-skalarprodukt-og-parameterframstilling/02-parameterframstillinger.qmd:
+    blob: c0c941c2f296370229cb9bf964cfcc9909bf51be
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/13-skalarprodukt-og-parameterframstilling/03-rettlinjet-bevegelse.qmd:
+    blob: f623077bef7525c87046f9261ab8e08e8274ba56
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/13-skalarprodukt-og-parameterframstilling/04-oppgaver.qmd:
+    blob: 639f8e449bef3194f1abac4d585ff85498c0f239
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/13-skalarprodukt-og-parameterframstilling/index.qmd:
+    blob: 20efa5ec4bf61c16d9ad97b38ec51a758f6dfff1
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/14-vektorer-i-rommet/01-vektorer-i-rommet.qmd:
+    blob: a3c4a2d072aa6ed94930d529e030bc5536b9316c
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/14-vektorer-i-rommet/02-skalarproduktet-i-rommet.qmd:
+    blob: 562da0fc410ef003e55a09b36c341a434b5ef456
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/14-vektorer-i-rommet/03-vektorproduktet.qmd:
+    blob: 3714b5f88e226f93ffb0d1f9cb1c31f66e34704a
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/14-vektorer-i-rommet/04-linjer-og-plan.qmd:
+    blob: 5c75fc8e7771626cc6eb3e3a8dd0805f2834f76b
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/14-vektorer-i-rommet/05-oppgaver.qmd:
+    blob: cfac7c37d645f04c56be46e4690c94f323dbecdb
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/14-vektorer-i-rommet/index.qmd:
+    blob: ec1ccdab0e60f313624fb679b097ddd475ee9044
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/15-folger-og-rekker/01-tallfolger-og-rekker.qmd:
+    blob: f4247efa62c4a18954a2bebf6db8f339c6bdc639
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/15-folger-og-rekker/02-aritmetiske-folger-og-rekker.qmd:
+    blob: 5fae9aed13a85f42a47a439203963acbb92af7e9
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/15-folger-og-rekker/03-geometriske-folger-og-rekker.qmd:
+    blob: 27788c53d427eedea88ef51c3868384814f2be29
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/15-folger-og-rekker/04-uendelige-rekker.qmd:
+    blob: 1b891c54a4921afc8f09f633f17f1ccd64b532f1
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/15-folger-og-rekker/05-oppgaver.qmd:
+    blob: afd11f7325866eec53dec652eea1a941f81a3f0f
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/15-folger-og-rekker/index.qmd:
+    blob: 58a63ab1004e30bf3c29c68602e8e2c39e29d7b0
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/16-integralregning/01-ubestemt-integral.qmd:
+    blob: 9fd8ca44ce1383222dd9aa9dcb44d466561b9751
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/16-integralregning/02-bestemt-integral.qmd:
+    blob: c6468fc71d0bd6a572e59a078a26bae75f168f5c
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/16-integralregning/03-areal.qmd:
+    blob: 4d6af84189d6b1391e72adf5f01c7265304f866c
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/16-integralregning/04-oppgaver.qmd:
+    blob: 0e1f6aad0b4457c723533aa2d766798e888e6f60
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/16-integralregning/index.qmd:
+    blob: 4f6029f6986826bde74d366396d0c5a37bf0ff6d
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/17-integrasjonsmetoder/01-numerisk-integrasjon.qmd:
+    blob: 1021829e39259a685d38061e3260406870614d73
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/17-integrasjonsmetoder/02-variabelskifte.qmd:
+    blob: 30de851b61906370939b7ee3f5db298dea2e4655
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/17-integrasjonsmetoder/03-delvis-integrasjon.qmd:
+    blob: a4eddfbe8d019d8f269e44eed702d9e530fad2f9
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/17-integrasjonsmetoder/04-delbrokoppspalting.qmd:
+    blob: 1415a28d24160f7fce7ea1bf39748143a9223cf2
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/17-integrasjonsmetoder/05-integrasjon-og-volum.qmd:
+    blob: 4f58684470b26ce39632ee2f412d45f0a65bcebf
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/17-integrasjonsmetoder/06-integrasjon-av-trigonometriske-funksjoner.qmd:
+    blob: 9a7bbb644f746cb4152891d741c15748e57bd7a4
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/17-integrasjonsmetoder/07-oppgaver.qmd:
+    blob: 8552241a79be233ceae162744626de6c539b1c7c
+    dato: '2026-11-24'
+    versjon: 3
+  matte-forkurs/kapitler/17-integrasjonsmetoder/index.qmd:
+    blob: cb29f33cf77dc6014ac4b45f0ef713fec555dd31
+    dato: '2026-11-24'
+    versjon: 3
   plattform/matematikkhjelp/tema-tekster/algebra-og-likninger.md:
     blob: f9a9dabe1118514e607778fef0b4feed57427d40
     dato: '2026-11-21'
@@ -1444,6 +1564,10 @@ filer:
   plattform/matematikkhjelp/tema-tekster/derivasjon.md:
     blob: 9b6597d9a467a639de99816c7b6b3c0679326199
     dato: '2026-11-22'
+    versjon: 3
+  plattform/matematikkhjelp/tema-tekster/dobbeltintegraler.md:
+    blob: 2f68acb1f63e0e6c0cfb7cd00012dbf6be44cec6
+    dato: '2026-11-24'
     versjon: 3
   plattform/matematikkhjelp/tema-tekster/eksponential-og-logaritme.md:
     blob: 4bf5b59e04bb855f8944aeebf91a46cc19ce5f1c
@@ -1481,6 +1605,10 @@ filer:
     blob: 9a8a03e4f85de82e0cba31d770e8ae0826a8db93
     dato: '2026-11-22'
     versjon: 3
+  plattform/matematikkhjelp/tema-tekster/kurve-og-flateintegraler.md:
+    blob: f04cdc24bca02c6d2770457d09ba819f95bd3225
+    dato: '2026-11-24'
+    versjon: 3
   plattform/matematikkhjelp/tema-tekster/tall-og-regneregler.md:
     blob: 1665b7e5ef432c4cb6e73bd6b68da54d1a52cfa2
     dato: '2026-11-21'
@@ -1488,6 +1616,18 @@ filer:
   plattform/matematikkhjelp/tema-tekster/trigonometri.md:
     blob: 66c59f144ee9d999d549d5c62a614a6563dc6b71
     dato: '2026-11-22'
+    versjon: 3
+  plattform/matematikkhjelp/tema-tekster/trippelintegraler.md:
+    blob: cd501e6dfd6b85c39bfa8794400f5b47297a7d0e
+    dato: '2026-11-24'
+    versjon: 3
+  plattform/matematikkhjelp/tema-tekster/vektorer.md:
+    blob: 03b05cf30c27d13c3f077e567c1c70859e3a492b
+    dato: '2026-11-24'
+    versjon: 3
+  plattform/matematikkhjelp/tema-tekster/vektorfelt.md:
+    blob: 082eaf35ac0de3bf0af6b9ba4e5676de3ab2a843
+    dato: '2026-11-24'
     versjon: 3
   plattform/tema-tekster/arbeid-og-energi.md:
     blob: 87208138c9df648273ceba258069d31593bee5b0
