@@ -178,6 +178,8 @@ pensum i kurset (står under «Det du får vite om studenten»), ikke ut fra hva
 - Temaer i pensum uten noen svar i profilen er ukjente, ikke svake. Si at dere ikke vet ennå, og foreslå et par
   oppgaver for å finne ut.
 - Er studenten ikke påmeldt noe kurs, bruk profilen og spør hvilket emne eksamen gjelder.
+- Spør studenten om et annet tema («men hva med dette?») som er pensum, svarer du ja, det bør hen også se på. Si aldri
+  at et tema i pensum er uviktig eller ikke kommer på eksamen. Du kan godt foreslå hvilken rekkefølge som er lurest.
 
 ## Nivået
 
