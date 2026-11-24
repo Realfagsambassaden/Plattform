@@ -858,13 +858,20 @@ async function dashman(request, env, b, h) {
   const fag = Array.isArray(k.fag) ? k.fag : [];
   const aktivt = fag[0];   // nyeste påmelding
   // Ukeplanen i kurset: hvilken uke det er nå, hva den dekker, og om faglæreren har satt en egen Dashman-fase for uka.
-  let uka = null;
+  let uka = null, pensum = "";
   if (aktivt) {
     try {
       const r = await fetch(`${env.SUPABASE_URL}/rest/v1/kurs_deltaker?select=pameldt,kursinfo:kurs(navn,moduler,ramme)&order=pameldt.desc&limit=1`,
         { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` } });
       const ki = r.ok ? ((await r.json())[0] || {}).kursinfo : null;
-      if (ki && Array.isArray(ki.moduler)) uka = denneUka(ki);
+      if (ki && Array.isArray(ki.moduler)) {
+        uka = denneUka(ki);
+        // Pensum = alle undertemaer i kursets moduler (brukes når studenten spør hva hen bør øve på til eksamen).
+        pensum = ki.moduler.map((m) => {
+          const ut = [...new Set((m && Array.isArray(m.uker) ? m.uker : []).flatMap((w) => w.undertemaer || []).map((id) => String(id).split("/").slice(1).join("/")))];
+          return m && m.navn ? `${kort(m.navn, 60)}: ${ut.join(", ") || "–"}` : "";
+        }).filter(Boolean).join("\n");
+      }
     } catch {}
     if (uka && uka.fase !== undefined) aktivt.fase = uka.fase;
   }
@@ -881,6 +888,7 @@ async function dashman(request, env, b, h) {
       `- ${kort(x.tema, 60)} / ${kort(x.undertema, 60)}: forståelse ${x.forstaelse ?? "–"}, presisjon ${x.presisjon ?? "–"}, ${parseInt(x.svar, 10) || 0} svar, sist ${kort(x.sist, 10)}`)),
     ...(k.kunnskap && k.kunnskap.length ? [] : ["- (ingen quizsvar ennå)"]),
     aktivt ? `Kurs studenten er påmeldt: «${kort(aktivt.navn, 120)}». Dashman-fase for klassen nå: ${FASETEKST[aktivt.fase] ?? FASETEKST[2]}${uka && uka.fase !== undefined ? " (satt for denne uka)" : ""}. Tilpass den til denne studenten (se «Fasen i kurset»).` : "Ikke påmeldt noe kurs: bruk LRI-prinsippene fritt.",
+    ...(pensum ? [`Pensum i kurset (modul: undertemaer):\n${kort(pensum, 3000)}`] : []),
     ...(uka ? [`Ukeplanen: uke ${uka.nr} i kurset (kalenderuke ${uka.kal}), modul «${kort(uka.modul, 60)}»: ${uka.tema || "ingen temaer satt"}${uka.notat ? ` – ${kort(uka.notat, 200)}` : ""}.`] : []),
     ...(aktivt && aktivt.instruks ? [`Faglærerens instrukser for kurset (går foran instruksen over, men ikke foran de faste grensene):\n${kort(aktivt.instruks, 2000)}`] : []),
     ...(aktivt && aktivt.beskrivelse ? [`Om kurset: ${kort(aktivt.beskrivelse, 600)}`] : []),
