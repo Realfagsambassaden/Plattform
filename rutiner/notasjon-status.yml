@@ -82,29 +82,29 @@ filer:
     dato: '2026-11-26'
     versjon: 3
   flervariabel-kalkulus/kapitler/02-trippelintegraler/04-treghetsmoment.qmd:
-    blob: 89896667391c269007e8f3d19ff665d1a15f0d9b
-    dato: '2026-11-15'
-    versjon: 2
+    blob: a7a44ec2c3444ffcba7721e563c9da5ab2f8dfee
+    dato: '2026-11-27'
+    versjon: 3
   flervariabel-kalkulus/kapitler/02-trippelintegraler/05-numerisk-trippelintegral.qmd:
     blob: f6c163c0037ada1557b7717312ae5e5009651776
     dato: '2026-11-25'
     versjon: 3
   flervariabel-kalkulus/kapitler/02-trippelintegraler/06-oppgaver.qmd:
-    blob: 9368de1f923f0007a787da2bb7626f3b6f859574
-    dato: '2026-11-15'
-    versjon: 2
+    blob: 82bbdc7c941fdd70298c1efccce90ed59b7337d9
+    dato: '2026-11-27'
+    versjon: 3
   flervariabel-kalkulus/kapitler/02-trippelintegraler/index.qmd:
     blob: 739f55454a027757d44c6c55a13c214968baa5ff
     dato: '2026-11-25'
     versjon: 3
   flervariabel-kalkulus/kapitler/03-kurver-og-flater/01-linjeintegraler.qmd:
-    blob: 86c917a37caec163589065bf8c271ab28a83b53d
-    dato: '2026-11-15'
-    versjon: 2
+    blob: 077a32d72c2b4f1a358cb13307a560be8fc8ed21
+    dato: '2026-11-27'
+    versjon: 3
   flervariabel-kalkulus/kapitler/03-kurver-og-flater/02-parametriske-flater.qmd:
-    blob: 437d8769fada20fdc2bbe5c420be71c0b0aaeb5e
-    dato: '2026-11-15'
-    versjon: 2
+    blob: 7e93b2fa4ae26d4a06139161dcac7ffde6cd902a
+    dato: '2026-11-27'
+    versjon: 3
   flervariabel-kalkulus/kapitler/03-kurver-og-flater/03-flateintegraler.qmd:
     blob: 2c6229298a0d33b9e98092b44bc69012b84b7da8
     dato: '2026-11-16'
@@ -230,53 +230,53 @@ filer:
     dato: '2026-11-26'
     versjon: 3
   flervariabel-kalkulus/kapitler/08-endelig-volum/01-kontrollvolum-og-bevaring.qmd:
-    blob: 87b49b923b62914084f43933a4aad45110ca23a4
-    dato: '2026-11-14'
-    versjon: 2
+    blob: d3aa602ee26ea8fb9f34bb41cbe2056e9f7a2faa
+    dato: '2026-11-27'
+    versjon: 3
   flervariabel-kalkulus/kapitler/08-endelig-volum/02-diffusjon-i-en-dimensjon.qmd:
-    blob: c2faa41fe31bc61ac253e9143ffc33d08d51c0d3
-    dato: '2026-11-14'
-    versjon: 2
+    blob: 8df8445c6adf0186def9b66893216fa3b79b1dcc
+    dato: '2026-11-27'
+    versjon: 3
   flervariabel-kalkulus/kapitler/08-endelig-volum/03-kildeledd-og-randfluks.qmd:
-    blob: ff9411031d9c072304da869fd3fe09351f5bf611
-    dato: '2026-11-14'
-    versjon: 2
+    blob: 00e8c2d668e05b84229109c41e782c57203ee6fb
+    dato: '2026-11-27'
+    versjon: 3
   flervariabel-kalkulus/kapitler/08-endelig-volum/04-diffusjon-i-to-dimensjoner.qmd:
-    blob: 54a15ec3426ded851ca8ace745137b9f78feb7fa
-    dato: '2026-11-14'
-    versjon: 2
+    blob: 110b9b4cfe31cb9ed83bf5da4be59806ccdfbdca
+    dato: '2026-11-27'
+    versjon: 3
   flervariabel-kalkulus/kapitler/08-endelig-volum/05-tidsavhengige-problemer.qmd:
-    blob: 4600fa0eb987081142e9632840d5de1421c67f51
-    dato: '2026-11-14'
-    versjon: 2
+    blob: 5b51a26f4de839ccd70cbeddf3fd22a33a6c322b
+    dato: '2026-11-27'
+    versjon: 3
   flervariabel-kalkulus/kapitler/08-endelig-volum/06-oppgaver.qmd:
-    blob: 75743241b8a49ec0c325a34ef0ce9282304aeadb
-    dato: '2026-11-14'
-    versjon: 2
+    blob: d44f998d1fc6f803bf094c330a691328b69e49a1
+    dato: '2026-11-27'
+    versjon: 3
   flervariabel-kalkulus/kapitler/08-endelig-volum/index.qmd:
     blob: a5b8984a3eb6c5b776c9474625669525ac4c0fb9
-    dato: '2026-11-14'
-    versjon: 2
+    dato: '2026-11-27'
+    versjon: 3
   fysikk-forkurs/kapitler/01-hva-er-fysikk/01-hva-er-fysikk.qmd:
-    blob: 2d134e95f49b4624f15c0fbe3f22673f65318364
-    dato: '2026-11-14'
-    versjon: 2
+    blob: ad01411ec6591f51303d8d34bc60512709dc5e8a
+    dato: '2026-11-27'
+    versjon: 3
   fysikk-forkurs/kapitler/01-hva-er-fysikk/02-overslag.qmd:
-    blob: 7f4cb297444747ca396d6bbfa3f7b1b8bb7c886b
-    dato: '2026-11-14'
-    versjon: 2
+    blob: ad8170e4d1639091ab57bf5669c1aebf9669836c
+    dato: '2026-11-27'
+    versjon: 3
   fysikk-forkurs/kapitler/01-hva-er-fysikk/03-fysiske-storrelser.qmd:
-    blob: 18b486d0aba39420bc7d430e1dc7378f4ff7155d
-    dato: '2026-11-14'
-    versjon: 2
+    blob: dc568706eba36e4ebbd4babe5f55663c6919fb5c
+    dato: '2026-11-27'
+    versjon: 3
   fysikk-forkurs/kapitler/01-hva-er-fysikk/04-a-regne-med-enheter.qmd:
-    blob: af8a71ffcb5e49606bc933158f7533dba37cf6ce
-    dato: '2026-11-14'
-    versjon: 2
+    blob: f0e5e6d65150b4d0ee54cc6168d56c5c68124395
+    dato: '2026-11-27'
+    versjon: 3
   fysikk-forkurs/kapitler/01-hva-er-fysikk/05-signifikante-siffer.qmd:
-    blob: 2452fec33401f0008e21ffa0f984d694ecb393a3
-    dato: '2026-11-14'
-    versjon: 2
+    blob: 0c664329fe2cb99795459b2c61b9d2bf0d197c1b
+    dato: '2026-11-27'
+    versjon: 3
   fysikk-forkurs/kapitler/01-hva-er-fysikk/06-maleusikkerhet.qmd:
     blob: 5a66e9f0ef6e00130091b3ae92f239e3ebb6e64b
     dato: '2026-11-15'
@@ -546,21 +546,21 @@ filer:
     dato: '2026-11-18'
     versjon: 2
   fysikk-forkurs/kapitler/10-bolger-og-straling/01-bolger.qmd:
-    blob: 65682ffed8e4130257b54a62e41e148c546da979
-    dato: '2026-11-14'
-    versjon: 2
+    blob: c1ae53cedbbbab5bed03ad3109bed391550435fb
+    dato: '2026-11-27'
+    versjon: 3
   fysikk-forkurs/kapitler/10-bolger-og-straling/02-straling-og-drivhuseffekten.qmd:
-    blob: 0ae0873afc26ef9bc3f28491c8ed0ee76b98dcb3
-    dato: '2026-11-14'
-    versjon: 2
+    blob: de36ae713d3ad0e90e08869a08392b31a3f9be11
+    dato: '2026-11-27'
+    versjon: 3
   fysikk-forkurs/kapitler/10-bolger-og-straling/03-varmestraling.qmd:
-    blob: e041c8181b2b9696c2a470c932dd7b495bae4370
-    dato: '2026-11-14'
-    versjon: 2
+    blob: eab63d91d8c2e3824bd17a21bc2110c18aeaad5a
+    dato: '2026-11-27'
+    versjon: 3
   fysikk-forkurs/kapitler/10-bolger-og-straling/04-drivhuseffekten.qmd:
-    blob: c3fb05aaabe0e4709b2fdaaa31c42e950c0c03d5
-    dato: '2026-11-14'
-    versjon: 2
+    blob: 1f2fd4e8a7cec419ba89572f0fcdde8c161a9bae
+    dato: '2026-11-27'
+    versjon: 3
   fysikk-forkurs/kapitler/10-bolger-og-straling/index.qmd:
     blob: 90e72ba6b8bb599f7ff2ac3207ea5cd47569fceb
     dato: '2026-11-18'
@@ -854,21 +854,21 @@ filer:
     dato: '2026-11-19'
     versjon: 3
   ingeniorfysikk/kapitler/08-fluidmekanikk/04-volumstrom-og-kontinuitet.qmd:
-    blob: a5832286f16863874c289c8475b0a2fa8c3511a2
-    dato: '2026-11-14'
-    versjon: 2
+    blob: 53d917b4d59a5605691341f49aab6cee1a3acd55
+    dato: '2026-11-27'
+    versjon: 3
   ingeniorfysikk/kapitler/08-fluidmekanikk/05-bernoullis-likning.qmd:
-    blob: 3e47d09be4ddeb9d0147749199c66b5ca350d1cf
-    dato: '2026-11-14'
-    versjon: 2
+    blob: 7f9a989d4bd18379d18d84587c6286d83909a48a
+    dato: '2026-11-27'
+    versjon: 3
   ingeniorfysikk/kapitler/08-fluidmekanikk/06-viskositet-og-reynolds-tall.qmd:
     blob: 0289c43b3a2df525564ddf5c254cfc50a3afebac
     dato: '2026-11-19'
     versjon: 3
   ingeniorfysikk/kapitler/08-fluidmekanikk/07-tap-i-ror.qmd:
-    blob: a5d0d0b57d4aa6dbbba6a6639b05df3eace7ccf2
-    dato: '2026-11-14'
-    versjon: 2
+    blob: f231b7964a99f8bb34fee6fe6fd7150ddfa930e4
+    dato: '2026-11-27'
+    versjon: 3
   ingeniorfysikk/kapitler/08-fluidmekanikk/index.qmd:
     blob: 4f05a93f8d297f2bcb3d0b6e664111b6c4426f96
     dato: '2026-11-19'
