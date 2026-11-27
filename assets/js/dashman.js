@@ -257,9 +257,9 @@
   }
   function nesteEks() {
     var vent = document.createElement('div'); vent.className = 'dm-m dm-fra dm-tenker'; vent.innerHTML = '<p><span></span><span></span><span></span></p>'; logg.appendChild(vent);
-    eksPost('/neste', { temaer: eksTemaer(), hoppOver: eks.hoppOver || [] }).then(function (d) {
-      vent.remove();
-      if (d.ferdig || !d.oppgave) { visMelding({ rolle: 'dashman', tekst: 'Du har vært gjennom alle eksamensoppgavene jeg har i temaene dine. Sterkt! Slå av eksamensmodus for å se på kunnskapsprofilen, eller prøv igjen senere.' }); return; }
+    eksPost('/neste', { temaer: eksTemaer(), hoppOver: eks.hoppOver || [], alleEmner: !!eks.alleEmner }).then(function (d) {
+      vent.remove(); eks.emne = d.emne || null;
+      if (d.ferdig || !d.oppgave) { visMelding({ rolle: 'dashman', tekst: 'Du har vært gjennom alle eksamensoppgavene jeg har i temaene dine' + (d.emne ? ' fra tidligere ' + d.emne + '-eksamener' : '') + '. Sterkt! Slå av eksamensmodus for å se på kunnskapsprofilen, eller prøv igjen senere.' + (d.emne && !eks.alleEmner ? ' Vil du ha oppgaver fra andre emner også, trykk «Andre emner også».' : '') }); return; }
       eks.opp = d.oppgave; eks.svar = null; eks.start = Date.now(); lagreEks(); visEksOppgave();
     }).catch(function (e) { vent.remove(); settHumor('trist'); visMelding({ rolle: 'dashman', tekst: (e && e.melding) || 'Fikk ikke hentet en eksamensoppgave nå. Prøv igjen om litt.' }); });
   }
@@ -272,7 +272,8 @@
         var kl = eks.svar ? (i + 1 === eks.svar.fasit ? ' riktig' : i + 1 === eks.svar.valgt ? ' feil' : '') : '';
         return '<button type="button" class="dm-alt' + kl + '" data-alt="' + (i + 1) + '"' + (eks.svar ? ' disabled' : '') + '><b>' + BOKST[i] + '</b> <span>' + md(a).replace(/^<p>|<\/p>$/g, '') + '</span></button>';
       }).join('') + '</div>' +
-      (eks.svar ? '<p class="dm-eksvidere"><button type="button" data-h="eksneste">Neste oppgave →</button> <button type="button" data-h="eksdiskuter">Diskuter denne</button></p>' : '<p class="dm-sm">Velg svaret ditt. Vil du ha tilbakemelding på utregningen også, ta bilde av den med kameraet før du velger.</p>');
+      (eks.svar ? '<p class="dm-eksvidere"><button type="button" data-h="eksneste">Neste oppgave →</button> <button type="button" data-h="eksdiskuter">Diskuter denne</button>' +
+        (eks.emne || eks.alleEmner ? ' <button type="button" data-h="eksemner">' + (eks.alleEmner ? 'Bare ' + esc(eks.emne || 'mitt emne') : 'Andre emner også') + '</button>' : '') + '</p>' : '<p class="dm-sm">Velg svaret ditt. Vil du ha tilbakemelding på utregningen også, ta bilde av den med kameraet før du velger.</p>');
     logg.appendChild(d); matte(d); logg.scrollTop = logg.scrollHeight;
     return d;
   }
@@ -402,6 +403,11 @@
     var h = e.target.getAttribute && e.target.getAttribute('data-h');
     if (h === 'fjernbilde') { settVedlegg(null); return; }
     if (h === 'eksneste') { e.target.closest('.dm-eksvidere').remove(); eks.opp = null; eks.svar = null; lagreEks(); nesteEks(); return; }
+    if (h === 'eksemner') {   // studenten ber selv om oppgaver fra andre emner (eller tilbake til bare sitt eget)
+      e.target.closest('.dm-eksvidere').remove(); eks.alleEmner = !eks.alleEmner; eks.opp = null; eks.svar = null; lagreEks();
+      visMelding({ rolle: 'dashman', tekst: eks.alleEmner ? 'Greit! Nå tar jeg med oppgaver fra tidligere eksamener i andre emner også.' : 'Greit! Nå får du bare oppgaver fra tidligere ' + (eks.emne || '') + '-eksamener igjen.' });
+      nesteEks(); return;
+    }
     if (h === 'eksdiskuter') { e.target.closest('.dm-eksvidere').remove(); eksPa(false); felt.focus(); return; }
     if (h === 'lukk') { panel.hidden = true; knapp.hidden = false; knapp.focus(); }
     if (h === 'ny') { samtale = []; lagre(); oppgave = null; lagreOppgave(); eks = { pa: eks.pa }; lagreEks(); settHumor('glad'); visAlt(); }

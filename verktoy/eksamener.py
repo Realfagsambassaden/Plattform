@@ -57,7 +57,7 @@ def main():
                          # det bare hvis studenten spør.
                          'rettelse': str(o.get('rettelse', '')).strip()}.items() if v != ''})
         if oppg:
-            ut.append({'id': eid, 'emne': e.get('emne', ''), 'tittel': e.get('tittel', eid), 'dato': str(e.get('dato', '')), 'oppgaver': oppg})
+            ut.append({'id': eid, 'emne': e.get('emne', ''), 'emnekoder': [str(x) for x in (e.get('emnekoder') or [])], 'tittel': e.get('tittel', eid), 'dato': str(e.get('dato', '')), 'oppgaver': oppg})
     UT.write_text(json.dumps({'eksamener': ut}, ensure_ascii=False), encoding='utf-8')
     print(f"eksamener: {len(ut)} eksamener, {sum(len(x['oppgaver']) for x in ut)} oppgaver")
 
