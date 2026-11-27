@@ -1,0 +1,83 @@
+{
+ "TRES0312": {
+  "eksamener": [
+   "tres0312-2023-konte",
+   "tres0312-2023-ordinaer",
+   "tres0312-2024-konte",
+   "tres0312-2024-ordinaer",
+   "tres0312-2025-konte",
+   "tres0312-2025-ordinaer",
+   "tres0312-2026-konte"
+  ],
+  "antall": 7,
+  "deloppgaver": 175,
+  "temaer": [
+   {
+    "tema": "kinematikk",
+    "navn": "Kinematikk (inkl. kast)",
+    "andel": 16,
+    "eksamener": 7
+   },
+   {
+    "tema": "kretser",
+    "navn": "Elektriske kretser",
+    "andel": 15,
+    "eksamener": 7
+   },
+   {
+    "tema": "newtons-lover",
+    "navn": "Newtons lover, krefter og friksjon",
+    "andel": 13,
+    "eksamener": 6
+   },
+   {
+    "tema": "statikk",
+    "navn": "Statikk (kraftmoment, tyngdepunkt)",
+    "andel": 12,
+    "eksamener": 7
+   },
+   {
+    "tema": "hydrostatikk",
+    "navn": "Trykk og oppdrift",
+    "andel": 11,
+    "eksamener": 6
+   },
+   {
+    "tema": "arbeid-og-energi",
+    "navn": "Arbeid, energi og effekt",
+    "andel": 8,
+    "eksamener": 7
+   },
+   {
+    "tema": "termodynamikk",
+    "navn": "Termodynamikk (1. lov, prosesser, pV)",
+    "andel": 6,
+    "eksamener": 5
+   },
+   {
+    "tema": "gasser",
+    "navn": "Ideell gass",
+    "andel": 6,
+    "eksamener": 7
+   },
+   {
+    "tema": "sirkelbevegelse",
+    "navn": "Sirkelbevegelse",
+    "andel": 5,
+    "eksamener": 6
+   },
+   {
+    "tema": "temperatur-og-varme",
+    "navn": "Varme og kalorimetri",
+    "andel": 5,
+    "eksamener": 4
+   },
+   {
+    "tema": "bevegelsesmengde",
+    "navn": "Bevegelsesmengde og støt",
+    "andel": 3,
+    "eksamener": 6
+   }
+  ]
+ }
+}
