@@ -15,7 +15,8 @@ const OPPGAVER = [];   // flat liste: { eid, eksamen, nr, tema, tekst, alternati
     for (const o of e.oppgaver || []) {
       if (!o.tekst || !Array.isArray(o.alternativer) || !o.riktig || sett.has(o.tekst)) continue;
       sett.add(o.tekst);
-      OPPGAVER.push({ eid: e.id, eksamen: e.tittel || e.id, nr: o.nr, tema: o.tema || "", tekst: o.tekst, alternativer: o.alternativer,
+      const emner = [e.emne, ...(e.emnekoder || [])].filter(Boolean).map((x) => String(x).toUpperCase());
+      OPPGAVER.push({ eid: e.id, emner, eksamen: e.tittel || e.id, nr: o.nr, tema: o.tema || "", tekst: o.tekst, alternativer: o.alternativer,
         riktig: o.riktig, losning: o.losning || "", figur: o.figur || "", gruppe: o.gruppe || "", kontekst: o.kontekst || "", rettelse: o.rettelse || "" });
     }
   }
@@ -25,10 +26,24 @@ const nokkel = (o) => `eks:${o.eid}#${o.nr}`;
 const temaRot = (t) => String(t || "").split("/")[0];
 
 // Oppgaver innenfor temaene studenten jobber med (tom liste = alle).
-function relevante(temaer) {
+function relevante(temaer, iEmnet = () => true) {
   const t = new Set((Array.isArray(temaer) ? temaer : []).map((x) => String(x).split("/").pop()));
-  const l = t.size ? OPPGAVER.filter((o) => t.has(temaRot(o.tema))) : OPPGAVER;
-  return l.length ? l : OPPGAVER;
+  const alle = OPPGAVER.filter(iEmnet);
+  const l = t.size ? alle.filter((o) => t.has(temaRot(o.tema))) : alle;
+  return l.length ? l : alle.length ? alle : OPPGAVER;
+}
+
+// Emnet studenten er påmeldt (nyeste kurs), som emnekoden i kursnavnet («TRES0312—Fysikk …»). I eksamensmodus får
+// studenten bare oppgaver fra tidligere eksamener i det emnet, med mindre hen selv ber om andre emner (alleEmner).
+async function mittEmne(env, token) {
+  try {
+    const r = await fetch(`${env.SUPABASE_URL}/rest/v1/kurs_deltaker?select=pameldt,kursinfo:kurs(navn)&order=pameldt.desc&limit=1`,
+      { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` } });
+    const navn = r.ok ? String((((await r.json())[0] || {}).kursinfo || {}).navn || "").toUpperCase() : "";
+    if (!navn) return null;
+    const koder = new Set(OPPGAVER.flatMap((o) => o.emner));
+    return [...koder].find((k) => navn.includes(k)) || null;
+  } catch { return null; }
 }
 
 async function mineSvar(env, token) {
@@ -51,12 +66,14 @@ export async function eksamenNeste(request, env, b, h, d) {
   const sett = new Map();   // nøkkel -> siste type
   for (const s of svar) if (String(s.sporsmal).startsWith("eks:") && !sett.has(s.sporsmal)) sett.set(s.sporsmal, s.type);
   const hoppOver = new Set((Array.isArray(b.hoppOver) ? b.hoppOver : []).map(String).slice(0, 200));
-  const l = relevante(b.temaer).filter((o) => !hoppOver.has(nokkel(o)));
+  const emne = b.alleEmner ? null : await mittEmne(env, token);
+  const iEmnet = (o) => !emne || o.emner.includes(emne);
+  const l = relevante(b.temaer, iEmnet).filter((o) => !hoppOver.has(nokkel(o)));
   // Først oppgaver studenten ikke har gjort, så dem studenten bommet på, så resten. Innenfor hver gruppe: tilfeldig,
   // men oppgaver som henger sammen (gruppe) tas i rekkefølge.
   const ikkeGjort = l.filter((o) => !sett.has(nokkel(o))), feil = l.filter((o) => sett.has(nokkel(o)) && sett.get(nokkel(o)) !== "riktig");
   const pool = ikkeGjort.length ? ikkeGjort : feil.length ? feil : l;
-  if (!pool.length) return d.json({ ferdig: true }, 200, h);
+  if (!pool.length) return d.json({ ferdig: true, emne }, 200, h);
   let o = null;
   // Oppgaver som henger sammen (f.eks. «Oppgave 25 og 26 henger sammen»): har studenten nettopp svart på en oppgave i
   // en gruppe, kommer neste oppgave i samme gruppe – uansett tema og om den er gjort før – til hele gruppa er gjort.
@@ -80,7 +97,7 @@ export async function eksamenNeste(request, env, b, h, d) {
     if (forste && forste.nr !== o.nr) kontekst = forste.tekst;
   }
   const origin = new URL(request.url).origin;
-  return d.json({ oppgave: { ...utenFasit(o, origin), kontekst }, igjen: Math.max(0, ikkeGjort.length - 1), totalt: l.length }, 200, h);
+  return d.json({ oppgave: { ...utenFasit(o, origin), kontekst }, igjen: Math.max(0, ikkeGjort.length - 1), totalt: l.length, emne }, 200, h);
 }
 
 const BOKSTAV = ["A", "B", "C", "D", "E", "F"];
@@ -144,7 +161,8 @@ export async function eksamenAnslag(request, env, b, h, d) {
   if (!bruker) return d.json({ feil: "Logg inn først." }, 401, h);
   if (!harEksamener()) return d.json({ feil: "Eksamensoppgavene er ikke lagt inn ennå." }, 503, h);
   const token = request.headers.get("Authorization").replace(/^Bearer\s+/i, "");
-  const l = relevante(b.temaer);
+  const emne = b.alleEmner ? null : await mittEmne(env, token);   // vekt temaene etter eksamenene i studentens eget emne
+  const l = relevante(b.temaer, (o) => !emne || o.emner.includes(emne));
   const vekt = {};
   for (const o of l) { const t = temaRot(o.tema); vekt[t] = (vekt[t] || 0) + 1; }
   const sum = Object.values(vekt).reduce((a, c) => a + c, 0) || 1;
